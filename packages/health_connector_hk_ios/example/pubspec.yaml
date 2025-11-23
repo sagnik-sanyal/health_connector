@@ -1,4 +1,5 @@
 name: health_connector_hk_ios_example
+resolution: workspace
 description: "Demonstrates how to use the health_connector_hk_ios plugin."
 publish_to: 'none'
 
@@ -13,11 +14,11 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  integration_test:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   health_connector_lint: ^0.1.1
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true

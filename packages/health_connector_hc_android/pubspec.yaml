@@ -14,10 +14,10 @@ dependencies:
   health_connector_core: ^0.1.0
 
 dev_dependencies:
-  pigeon: ^26.1.0
   flutter_test:
     sdk: flutter
   health_connector_lint: ^0.1.0
+  pigeon: ^26.1.0
 
 flutter:
   plugin:

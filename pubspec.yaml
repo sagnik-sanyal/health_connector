@@ -1,0 +1,129 @@
+name: health_connector_workspace
+description: Monorepo for Health Connector Flutter plugin
+publish_to: none
+
+environment:
+  sdk: ^3.9.2
+
+# Explicitly list all packages (no globs in Dart 3.9.2)
+workspace:
+  - packages/health_connector
+  - packages/health_connector/example
+  - packages/health_connector_lint
+  - packages/health_connector_core
+  - packages/health_connector_hc_android
+  - packages/health_connector_hc_android/example
+  - packages/health_connector_hk_ios
+
+dev_dependencies:
+  melos: ^7.3.0
+
+# Melos configuration
+melos:
+  name: health_connector
+  repository: https://github.com/fam-tung-lam/health_connector
+
+  command:
+    version:
+      # Only allow versioning to happen on main branch.
+      branch: main
+      # Generates a link to a prefilled GitHub release creation page.
+      releaseUrl: true
+      includeCommitId: true
+      linkToCommits: true
+
+  scripts:
+    # Analysis
+    analyze:
+      description: Run static analysis across all packages
+      run: melos exec -- fvm dart analyze .
+
+    analyze:strict:
+      description: Run static analysis with fatal warnings
+      run: melos exec -- fvm dart analyze --fatal-infos --fatal-warnings .
+
+    # Code formatting
+    format:
+      description: Format all Dart code
+      run: melos exec -- dart format .
+
+    format:check:
+      description: Check code formatting
+      run: melos exec -- dart format --set-exit-if-changed .
+
+    # Testing
+    test:
+      description: Run all Dart tests
+      run: melos exec --dir-exists=test -- fvm flutter test
+
+    test:coverage:
+      description: Generate test coverage
+      run: |
+        melos exec --dir-exists=test -- fvm flutter test --coverage
+        melos exec --dir-exists=test -- genhtml coverage/lcov.info -o coverage/html
+
+    # Code generation
+    pigeon:generate:
+      description: Generate Pigeon code for all platform packages
+      run: |
+        melos exec --scope="health_connector_hc_android" -- dart run pigeon --input pigeons/health_connect_api.dart
+        melos exec --scope="health_connector_hk_ios" -- dart run pigeon --input pigeons/health_kit_api.dart
+
+    # Clean
+    clean:
+      description: Clean all packages
+      run: melos exec -- flutter clean
+
+    clean:deep:
+      description: Deep clean including build artifacts
+      run: |
+        melos clean
+        rm -rf **/.dart_tool
+        rm -rf **/build
+        rm -rf **/.flutter-plugins
+        rm -rf **/.flutter-plugins-dependencies
+
+    # Dependencies
+    get:
+      description: Run pub get for all packages
+      run: melos exec -- flutter pub get
+
+    upgrade:
+      description: Upgrade dependencies for all packages
+      run: melos exec -- flutter pub upgrade
+
+    # Publishing (manual - requires pub.dev credentials)
+    publish:dry:
+      description: Dry run publish for all packages
+      run: melos publish --dry-run --no-private --ignore="**/example/**"
+
+    publish:lint:
+      description: Publish lint package (must be published first)
+      run: melos publish --scope="health_connector_lint" --no-private
+
+    publish:core:
+      description: Publish core packages (lint first, then core)
+      run: |
+        melos publish --scope="health_connector_lint" --no-private
+        melos publish --scope="health_connector_core" --no-private
+
+    publish:platforms:
+      description: Publish platform implementations (requires core packages published first)
+      run: melos publish --scope="health_connector_hc_android,health_connector_hk_ios" --no-private
+
+    publish:main:
+      description: Publish main package (requires all dependencies published first)
+      run: melos publish --scope="health_connector" --no-private
+
+    publish:all:
+      description: Publish all packages in correct dependency order
+      run: |
+        melos publish --scope="health_connector_lint" --no-private
+        melos publish --scope="health_connector_core" --no-private
+        melos publish --scope="health_connector_hc_android,health_connector_hk_ios" --no-private
+        melos publish --scope="health_connector" --no-private
+
+  # IDE configuration
+  ide:
+    intellij:
+      enabled: true

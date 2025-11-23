@@ -1,0 +1,24 @@
+name: health_connector_hc_android_example
+resolution: workspace
+description: "Demonstrates how to use the health_connector_hc_android plugin."
+publish_to: 'none'
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  health_connector_hc_android:
+    path: ../
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  health_connector_lint:
+    path: ../../health_connector_lint
+
+flutter:
+  uses-material-design: true

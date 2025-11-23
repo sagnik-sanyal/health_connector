@@ -8,7 +8,7 @@ Add to your package's `pubspec.yaml`:
 
 ```yaml
 dev_dependencies:
-  health_connector_lint: ^0.1.0
+  health_connector_lint: ^0.1.1
 ```
 
 Include in your `analysis_options.yaml`:

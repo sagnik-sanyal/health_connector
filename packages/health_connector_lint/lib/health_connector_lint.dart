@@ -3,7 +3,7 @@
 /// To use this package, add it as a dev dependency:
 /// ```yaml
 /// dev_dependencies:
-///   health_connector_lint: ^0.1.0
+///   health_connector_lint: ^0.1.1
 /// ```
 ///
 /// Then include it in your analysis_options.yaml:

@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A new Flutter plugin project.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/fam-tung-lam/health_connector/tree/main/packages/health_connector_hk_ios'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Pham Tung Lam' => 'fam.tung.lam@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'health_connector_hk_ios/Sources/health_connector_hk_ios/**/*'
   s.dependency 'Flutter'
@@ -21,9 +21,6 @@ A new Flutter plugin project.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
 
-  # If your plugin requires a privacy manifest, for example if it uses any
-  # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
-  # plugin's privacy impact, and then uncomment this line. For more information,
-  # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-  # s.resource_bundles = {'health_connector_hk_ios_privacy' => ['health_connector_hk_ios/Sources/health_connector_hk_ios/PrivacyInfo.xcprivacy']}
+  # Privacy manifest for HealthKit usage
+  s.resource_bundles = {'health_connector_privacy' => ['health_connector/Sources/health_connector/PrivacyInfo.xcprivacy']}
 end

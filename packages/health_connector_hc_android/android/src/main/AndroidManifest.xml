@@ -1,3 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.phamtunglam.health_connector_hc_android">
+    package="com.phamtunglam.health_connector_hc_android">
+
+    <!-- Query for Health Connect application -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 </manifest>

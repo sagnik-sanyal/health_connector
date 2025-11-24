@@ -1,0 +1,585 @@
+package com.phamtunglam.health_connector_hc_android
+
+import android.content.Context
+import android.util.Log
+import androidx.activity.ComponentActivity
+import com.phamtunglam.health_connector_hc_android.mappers.toError
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorErrorCodeDto
+import com.phamtunglam.health_connector_hc_android.pigeon.AggregateRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.AggregateResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByIdsRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByTimeRangeRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorError
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorPlatformApi
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureDto
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureStatusDto
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformStatusDto
+import com.phamtunglam.health_connector_hc_android.pigeon.PermissionsRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.PermissionsRequestResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.UpdateRecordRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.UpdateRecordResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordsRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordsResponseDto
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+
+/**
+ * Flutter plugin for accessing Health Connect on Android devices.
+ *
+ * @see HealthConnectorPlatformApi
+ * @see HealthConnectorClient
+ */
+class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConnectorPlatformApi {
+
+    /**
+     * Application context used for accessing Health Connect services.
+     * Initialized in [onAttachedToEngine] and persists throughout the plugin lifecycle.
+     */
+    private lateinit var context: Context
+
+    /**
+     * The current Flutter activity, required for operations that need activity context.
+     * This is nullable because the activity may be detached during configuration changes
+     * or when the app is in the background.
+     *
+     * @see onAttachedToActivity
+     * @see onDetachedFromActivity
+     */
+    private var activity: ComponentActivity? = null
+
+    /**
+     * Cached instance of the Health Connect client.
+     * Created lazily on first use and reused for subsequent operations.
+     * Cleared when the engine is detached.
+     */
+    private var healthClient: HealthConnectorClient? = null
+
+    /**
+     * Coroutine scope for executing asynchronous Health Connect operations.
+     * Uses [Dispatchers.IO] for background execution and [SupervisorJob] to prevent
+     * cancellation of sibling coroutines when one fails.
+     */
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + coroutineExceptionHandler)
+
+    private companion object {
+        /**
+         * Tag used for logging throughout the plugin.
+         */
+        private val TAG = HealthConnectorHCAndroidPlugin::class.simpleName
+
+        /**
+         * Global exception handler for coroutines to catch and log unhandled exceptions.
+         */
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
+            Log.w(TAG, "Unhandled exception in coroutine scope.", e)
+        }
+    }
+
+    /**
+     * Called when the plugin is attached to a Flutter engine.
+     *
+     * @param flutterPluginBinding Provides access to the Flutter engine and application context
+     */
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        context = flutterPluginBinding.applicationContext
+        HealthConnectorPlatformApi.setUp(flutterPluginBinding.binaryMessenger, this)
+    }
+
+    /**
+     * Called when the plugin is detached from the Flutter engine.
+     *
+     * @param binding The Flutter plugin binding being detached
+     */
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        HealthConnectorPlatformApi.setUp(binding.binaryMessenger, null)
+        scope.cancel()
+        healthClient = null
+    }
+
+    /**
+     * Called when the plugin is attached to a Flutter activity.
+     *
+     * Validates that the activity is a [ComponentActivity] (required for Health Connect permissions request)
+     * and stores it for later use in permission requests.
+     *
+     * @param binding Provides access to the Flutter activity
+     * @throws IllegalStateException if the activity is not a [ComponentActivity]
+     */
+    @Throws(IllegalStateException::class)
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        val activityInstance = binding.activity
+        if (activityInstance !is ComponentActivity) {
+            throw IllegalStateException("Activity must be a ComponentActivity.")
+        }
+        activity = activityInstance
+    }
+
+    /**
+     * Called when the activity is detached for configuration changes (e.g., screen rotation).
+     *
+     * Temporarily clears the activity reference. The activity will be reattached via
+     * [onReattachedToActivityForConfigChanges] after the configuration change completes.
+     */
+    override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+    }
+
+    /**
+     * Called when the activity is reattached after configuration changes.
+     *
+     * Validates and restores the activity reference after configuration changes like screen rotation.
+     *
+     * @param binding Provides access to the reattached Flutter activity
+     * @throws IllegalStateException if the activity is not a [ComponentActivity]
+     */
+    @Throws(IllegalStateException::class)
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        val activityInstance = binding.activity
+        if (activityInstance !is ComponentActivity) {
+            throw IllegalStateException("Activity must be a ComponentActivity")
+        }
+        activity = activityInstance
+    }
+
+    /**
+     * Called when the activity is detached from the plugin.
+     *
+     * This is a permanent detachment (not due to configuration changes).
+     * Clears the activity reference to prevent memory leaks.
+     */
+    override fun onDetachedFromActivity() {
+        activity = null
+    }
+
+    /**
+     * Gets the current status of the Health Connect platform on the device.
+     *
+     * @param callback Called with a [Result] containing the platform status
+     */
+    override fun getHealthPlatformStatus(callback: (Result<HealthPlatformStatusDto>) -> Unit) {
+        scope.launch {
+            Log.d(TAG, "Getting Health Connect SDK status...")
+            val statusDto = HealthConnectorClient.getHealthPlatformStatus(context)
+            Log.d(TAG, "Health Connect SDK status DTO: $statusDto.")
+
+            callback(Result.success(statusDto))
+        }
+    }
+
+    /**
+     * Requests permissions from the user.
+     *
+     * Requires an active [ComponentActivity].
+     *
+     * @param request The permissions request containing both health data and feature permissions
+     * @param callback Called with a [Result] containing the permission request response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun requestPermissions(
+        request: PermissionsRequestDto,
+        callback: (Result<PermissionsRequestResponseDto>) -> Unit,
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                val currentActivity = activity
+                if (currentActivity == null) {
+                    Log.e(TAG, "Activity is null. Cannot request permissions without activity context.")
+                    callback(
+                        Result.failure(
+                            HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(
+                                details = "Activity is unavailable. The app may be in the background or activity has been destroyed."
+                            )
+                        )
+                    )
+                    return@launch
+                }
+
+                val totalPermissions = request.healthDataPermissions.size + request.featurePermissions.size
+                Log.d(
+                    TAG,
+                    "Requesting $totalPermissions permissions (${request.healthDataPermissions.size} health data, ${request.featurePermissions.size} features)..."
+                )
+
+                val responseDto = client.requestPermissions(activity = currentActivity, request = request)
+                Log.d(
+                    TAG,
+                    "Permission request response: ${responseDto.healthDataPermissionResults.size} health data results, ${responseDto.featurePermissionResults.size} feature results."
+                )
+
+                callback(Result.success(responseDto))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error requesting permissions: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Gets all permissions that have been granted to the app.
+     *
+     * @param callback Called with a [Result] containing the permission response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun getGrantedPermissions(callback: (Result<PermissionsRequestResponseDto>) -> Unit) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Getting granted permissions...")
+
+                val responseDto = client.getGrantedPermissions()
+                Log.d(
+                    TAG,
+                    "Granted permissions response: ${responseDto.healthDataPermissionResults.size} health data permissions, ${responseDto.featurePermissionResults.size} feature permissions."
+                )
+
+                callback(Result.success(responseDto))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error getting granted permissions: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Revokes all permissions that have been granted to the app.
+     *
+     * @param callback Called with a [Result] containing the operation result
+     */
+    @Throws(HealthConnectorError::class)
+    override fun revokeAllPermissions(callback: (Result<Unit>) -> Unit) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Revoking all permissions...")
+
+                client.revokeAllPermissions()
+                Log.d(TAG, "Successfully revoked all permissions.")
+
+                callback(Result.success(Unit))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error revoking all permissions: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Gets the status of a specific feature on the current platform.
+     *
+     * @param feature The feature to check availability for
+     * @param callback Called with a [Result] containing the feature status
+     */
+    @Throws(HealthConnectorError::class)
+    override fun getFeatureStatus(
+        feature: HealthPlatformFeatureDto,
+        callback: (Result<HealthPlatformFeatureStatusDto>) -> Unit,
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Getting feature status for: $feature...")
+
+                val featureStatusDto = client.getFeatureStatus(context, feature)
+                Log.d(TAG, "Feature status for $feature: $featureStatusDto.")
+
+                callback(Result.success(featureStatusDto))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error getting feature status: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Reads a single health record by ID.
+     *
+     * @param request Contains the data type and record ID to read
+     * @param callback Called with a [Result] containing the read record response or null if not found
+     */
+    @Throws(HealthConnectorError::class)
+    override fun readRecord(
+        request: ReadRecordRequestDto,
+        callback: (Result<ReadRecordResponseDto?>) -> Unit,
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Reading single record: dataType=${request.dataType}, id=${request.recordId}")
+
+                val result = client.readRecord(request)
+                Log.d(TAG, "Successfully read record")
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error reading record: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Reads multiple health records within a time range.
+     *
+     * @param request Contains data type, time range, page size, and optional page token
+     * @param callback Called with a [Result] containing the read records response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun readRecords(
+        request: ReadRecordsRequestDto,
+        callback: (Result<ReadRecordsResponseDto>) -> Unit,
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(
+                    TAG,
+                    "Reading records: dataType=${request.dataType}, startTime=${request.startTime}, endTime=${request.endTime}, pageSize=${request.pageSize}"
+                )
+
+                val result = client.readRecords(request)
+                Log.d(TAG, "Successfully read ${result.stepsRecords?.size ?: result.weightRecords?.size ?: 0} records")
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error reading records: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Writes a single health record.
+     *
+     * @param request Contains the data type and the typed record to write
+     * @param callback Called with a [Result] containing the write record response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun writeRecord(
+        request: WriteRecordRequestDto,
+        callback: (Result<WriteRecordResponseDto>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Writing single record: dataType=${request.dataType}")
+
+                val result = client.writeRecord(request)
+                Log.d(TAG, "Successfully wrote record with ID: ${result.recordId}")
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error writing record: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Writes multiple health records atomically.
+     *
+     * @param request Contains the data type and the list of typed records to write
+     * @param callback Called with a [Result] containing the write records response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun writeRecords(
+        request: WriteRecordsRequestDto,
+        callback: (Result<WriteRecordsResponseDto>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(
+                    TAG,
+                    "Writing ${request.stepsRecords?.size ?: request.weightRecords?.size ?: 0} records: dataTypes=${request.dataTypes}"
+                )
+
+                val result = client.writeRecords(request)
+                Log.d(TAG, "Successfully wrote ${result.recordIds.size} records")
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error writing records: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Updates a single health record.
+     *
+     * @param request Contains the data type and the typed record to update
+     * @param callback Called with a [Result] containing the update record response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun updateRecord(
+        request: UpdateRecordRequestDto,
+        callback: (Result<UpdateRecordResponseDto>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Updating single record: dataType=${request.dataType}")
+
+                val result = client.updateRecord(request)
+                Log.d(TAG, "Successfully updated record with ID: ${result.recordId}")
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error updating record: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            }
+        }
+    }
+
+    /**
+     * Deletes specific health records by their IDs.
+     *
+     * @param request Contains the data type and list of record IDs to delete
+     * @param callback Called with a [Result] indicating success or failure
+     */
+    @Throws(HealthConnectorError::class)
+    override fun deleteRecordsByIds(
+        request: DeleteRecordsByIdsRequestDto,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(TAG, "Deleting ${request.recordIds.size} records by ID: dataType=${request.dataType}")
+
+                client.deleteRecordsByIds(request)
+
+                Log.d(TAG, "Successfully deleted ${request.recordIds.size} records by IDs")
+
+                callback(Result.success(Unit))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error deleting records by IDs: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error deleting records by IDs", e)
+                callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
+            }
+        }
+    }
+
+    /**
+     * Deletes all records of a data type within a time range.
+     *
+     * @param request Contains the data type and time range (start and end timestamps) for deletion
+     * @param callback Called with a [Result] indicating success or failure
+     */
+    @Throws(HealthConnectorError::class)
+    override fun deleteRecordsByTimeRange(
+        request: DeleteRecordsByTimeRangeRequestDto,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(
+                    TAG,
+                    "Deleting records by time range: dataType=${request.dataType}, " +
+                            "startTime=${request.startTime}, endTime=${request.endTime}"
+                )
+
+                client.deleteRecordsByTimeRange(request)
+
+                Log.d(TAG, "Successfully deleted records by time range")
+
+                callback(Result.success(Unit))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error deleting records by time range: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error deleting records by time range", e)
+                callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
+            }
+        }
+    }
+
+    /**
+     * Performs an aggregation query on health records.
+     *
+     * @param request Contains data type, aggregation metric, and time range
+     * @param callback Called with a [Result] containing the aggregation response
+     */
+    @Throws(HealthConnectorError::class)
+    override fun aggregate(
+        request: AggregateRequestDto,
+        callback: (Result<AggregateResponseDto>) -> Unit
+    ) {
+        scope.launch {
+            try {
+                val client = healthClient ?: HealthConnectorClient.getOrCreate(context).also {
+                    healthClient = it
+                }
+
+                Log.d(
+                    TAG,
+                    "Aggregating records: dataType=${request.dataType}, metric=${request.aggregationMetric}, startTime=${request.startTime}, endTime=${request.endTime}"
+                )
+
+                val result = client.aggregate(request)
+                Log.d(
+                    TAG,
+                    "Successfully aggregated records: $result"
+                )
+
+                callback(Result.success(result))
+            } catch (e: HealthConnectorError) {
+                Log.e(TAG, "Error aggregating records: ${e.code} - ${e.message}", e)
+                callback(Result.failure(e))
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error aggregating records", e)
+                callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
+            }
+        }
+    }
+}

@@ -1,5 +1,1 @@
-class HealthConnectorHCAndroid {
-  Future<String?> getPlatformVersion() async {
-    return '1.0.0';
-  }
-}
+export 'src/health_connector_hc_client.dart';

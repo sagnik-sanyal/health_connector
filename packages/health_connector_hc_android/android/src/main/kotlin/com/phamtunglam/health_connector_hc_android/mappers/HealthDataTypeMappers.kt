@@ -1,0 +1,21 @@
+package com.phamtunglam.health_connector_hc_android.mappers
+
+import androidx.health.connect.client.records.Record
+import androidx.health.connect.client.records.StepsRecord
+import androidx.health.connect.client.records.WeightRecord
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
+import kotlin.reflect.KClass
+
+/**
+ * Converts a [HealthDataTypeDto] to a Health Connect record class.
+ *
+ * @receiver The [HealthDataTypeDto] to convert
+ * @return The Health Connect record class [KClass] corresponding to the DTO
+ */
+internal fun HealthDataTypeDto.toHealthConnectRecordClass(): KClass<out Record> {
+    return when (this) {
+        HealthDataTypeDto.STEPS -> StepsRecord::class
+        HealthDataTypeDto.WEIGHT -> WeightRecord::class
+    }
+}
+

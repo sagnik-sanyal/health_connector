@@ -67,8 +67,8 @@ melos:
     pigeon:generate:
       description: Generate Pigeon code for all platform packages
       run: |
-        melos exec --scope="health_connector_hc_android" -- dart run pigeon --input pigeons/health_connect_api.dart
-        melos exec --scope="health_connector_hk_ios" -- dart run pigeon --input pigeons/health_kit_api.dart
+        melos exec --scope="health_connector_hc_android" -- dart run pigeon --input pigeons/health_connector_platform_api.dart
+        melos exec --scope="health_connector_hk_ios" -- dart run pigeon --input pigeons/health_connector_platform_api.dart
 
     # Clean
     clean:

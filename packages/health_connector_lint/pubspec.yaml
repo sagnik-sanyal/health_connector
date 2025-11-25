@@ -12,3 +12,5 @@ environment:
 
 dependencies:
   lints: ^6.0.0
+
+license: Apache-2.0

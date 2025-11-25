@@ -26,3 +26,5 @@ flutter:
       android:
         package: com.phamtunglam.health_connector_hc_android
         pluginClass: HealthConnectorHCAndroidPlugin
+
+license: Apache-2.0

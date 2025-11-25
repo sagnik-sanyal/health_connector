@@ -14,3 +14,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   health_connector_lint: ^0.1.1
+
+license: Apache-2.0

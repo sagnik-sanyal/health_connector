@@ -1,3 +1,4 @@
+import 'package:health_connector_core/health_connector_core.dart' show require;
 import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
     show Since;
 import 'package:health_connector_core/src/models/health_data_types/health_data_type.dart'
@@ -39,17 +40,11 @@ final class AggregateRequest<R extends HealthRecord, U extends MeasurementUnit>
     required DateTime startTime,
     required DateTime endTime,
   }) {
-    // Use `assert` instead of `require` because `aggregationMetric` is
-    // only used internally.
-    //
-    // If this fails, it's a bug in the library implementation where
-    // a `HealthDataType` exposes an aggregation method it doesn't support.
-    assert(
+    require(
       dataType.supportedAggregationMetrics.contains(aggregationMetric),
-      '$dataType does not support '
-      'aggregation with metric ${aggregationMetric.name}',
+      '$dataType does not support aggregation with '
+      'metric ${aggregationMetric.name}',
     );
-
     requireEndTimeAfterStartTime(startTime: startTime, endTime: endTime);
 
     return AggregateRequest._(

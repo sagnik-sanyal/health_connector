@@ -5,7 +5,7 @@ export 'src/config/health_connector_config_constants.dart';
 // Core client interface
 export 'src/health_connector_health_platform_client.dart';
 // Logger
-export 'src/logger/health_connector_logger.dart' hide LogLevel;
+export 'src/logger/health_connector_logger.dart';
 // Models - Exceptions
 export 'src/models/exceptions/health_connector_error_code.dart';
 export 'src/models/exceptions/health_connector_exception.dart';

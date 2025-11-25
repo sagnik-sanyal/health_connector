@@ -1,12 +1,10 @@
 import 'dart:developer' show log;
 
-import 'package:meta/meta.dart' show internal;
-
 /// A singleton logger that wraps the `log` function from `dart:developer`.
 ///
 /// This logger provides a consistent structured logging interface with
 /// formatted messages across the plugin. It supports structured logging with
-/// operation, phase, optional message, and context.
+/// operation, optional phase, optional message, and context.
 abstract final class HealthConnectorLogger {
   /// Private constructor to prevent instantiation.
   const HealthConnectorLogger._();
@@ -15,26 +13,7 @@ abstract final class HealthConnectorLogger {
   ///
   /// When set to `false`, all logging methods will return immediately without
   /// logging any messages. Defaults to `true`.
-  static bool _isEnabled = true;
-
-  /// Gets whether logging is enabled.
-  ///
-  /// Returns `true` if logging is enabled, `false` otherwise.
-  @internal
-  static bool get isEnabled => _isEnabled;
-
-  /// Sets whether logging is enabled.
-  ///
-  /// When set to `false`, all logging methods will return immediately without
-  /// logging any messages.
-  ///
-  /// ## Parameters
-  ///
-  /// - [enabled]: Whether to enable logging.
-  @internal
-  static set isEnabled(bool enabled) {
-    _isEnabled = enabled;
-  }
+  static bool isEnabled = true;
 
   /// Indentation for top-level fields.
   static const String _indentLevel1 = '   ';
@@ -50,7 +29,7 @@ abstract final class HealthConnectorLogger {
   /// ## Parameters
   ///
   /// - [operation]: The operation being performed (e.g., 'readRecords').
-  /// - [phase]: The phase of the operation (e.g., 'entry', 'completed').
+  /// - [phase]: Optional phase of the operation (e.g., 'entry', 'completed').
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional map of contextual information.
   /// - [exception]: Optional exception object.
@@ -61,7 +40,7 @@ abstract final class HealthConnectorLogger {
   /// A formatted string in JSON-like format with indentation.
   static String _formatStructuredMessage({
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
@@ -70,9 +49,13 @@ abstract final class HealthConnectorLogger {
     final buffer = StringBuffer();
     final fields = <String>[];
 
-    // Always include operation and phase
+    // Always include operation
     fields.add('${_indentLevel1}operation: $operation,');
-    fields.add('${_indentLevel1}phase: $phase,');
+
+    // Include phase if provided
+    if (phase != null) {
+      fields.add('${_indentLevel1}phase: $phase,');
+    }
 
     // Include message if provided
     if (message != null) {
@@ -119,7 +102,7 @@ abstract final class HealthConnectorLogger {
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
   /// - [operation]: The operation being performed.
-  /// - [phase]: The phase of the operation.
+  /// - [phase]: Optional phase of the operation.
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
@@ -131,7 +114,7 @@ abstract final class HealthConnectorLogger {
   /// HealthConnectorLogger.info(
   ///   'API',
   ///   operation: 'readRecords',
-  ///   phase: 'completed',
+  ///   phase: 'succeeded',
   ///   message: 'Successfully read records',
   ///   context: {'recordCount': 42, 'duration': '123ms'},
   /// );
@@ -139,14 +122,14 @@ abstract final class HealthConnectorLogger {
   static void info(
     String tag, {
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
-      LogLevel.info,
+      _LogLevel.info,
       tag,
       operation: operation,
       phase: phase,
@@ -166,7 +149,7 @@ abstract final class HealthConnectorLogger {
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
   /// - [operation]: The operation being performed.
-  /// - [phase]: The phase of the operation.
+  /// - [phase]: Optional phase of the operation.
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
@@ -186,14 +169,14 @@ abstract final class HealthConnectorLogger {
   static void debug(
     String tag, {
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
-      LogLevel.debug,
+      _LogLevel.debug,
       tag,
       operation: operation,
       phase: phase,
@@ -213,7 +196,7 @@ abstract final class HealthConnectorLogger {
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
   /// - [operation]: The operation being performed.
-  /// - [phase]: The phase of the operation.
+  /// - [phase]: Optional phase of the operation.
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
@@ -233,14 +216,14 @@ abstract final class HealthConnectorLogger {
   static void warning(
     String tag, {
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
-      LogLevel.warning,
+      _LogLevel.warning,
       tag,
       operation: operation,
       phase: phase,
@@ -260,7 +243,7 @@ abstract final class HealthConnectorLogger {
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
   /// - [operation]: The operation being performed.
-  /// - [phase]: The phase of the operation.
+  /// - [phase]: Optional phase of the operation.
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
@@ -282,14 +265,14 @@ abstract final class HealthConnectorLogger {
   static void error(
     String tag, {
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
-      LogLevel.error,
+      _LogLevel.error,
       tag,
       operation: operation,
       phase: phase,
@@ -339,7 +322,7 @@ abstract final class HealthConnectorLogger {
   /// [{datetime}][{level}]:
   /// {
   ///    operation: {operation},
-  ///    phase: {phase},
+  ///    phase: {phase},  // Optional, only included if provided
   ///    message: {message},
   ///    exception: {
   ///      cause: {exception},
@@ -356,22 +339,22 @@ abstract final class HealthConnectorLogger {
   /// - [level]: The log level (DEBUG, INFO, WARNING, ERROR).
   /// - [tag]: The tag for categorizing the log entry.
   /// - [operation]: The operation being performed.
-  /// - [phase]: The phase of the operation.
+  /// - [phase]: Optional phase of the operation.
   /// - [message]: Optional message to include in the log.
   /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object.
   /// - [stackTrace]: Optional stack trace.
   static void _log(
-    LogLevel level,
+    _LogLevel level,
     String tag, {
     required String operation,
-    required String phase,
+    String? phase,
     String? message,
     Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
-    if (!_isEnabled) {
+    if (!isEnabled) {
       return;
     }
 
@@ -402,8 +385,7 @@ abstract final class HealthConnectorLogger {
 /// Each level has a [name] field that contains the string representation
 /// of the log level and a [value] field that contains the integer value
 /// for `dart:developer.log`.
-@internal
-enum LogLevel {
+enum _LogLevel {
   /// Debug level for detailed diagnostic information.
   debug('DEBUG', 500),
 
@@ -422,6 +404,6 @@ enum LogLevel {
   /// The integer value for `dart:developer.log`.
   final int value;
 
-  /// Creates a [LogLevel] with the given [name] and [value].
-  const LogLevel(this.name, this.value);
+  /// Creates a [_LogLevel] with the given [name] and [value].
+  const _LogLevel(this.name, this.value);
 }

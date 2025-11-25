@@ -7,6 +7,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorLogger,
         HealthConnectorPlatformClient,
         HealthDataType,
+        HealthPlatformFeaturePermission,
         HealthPlatformStatus,
         HealthRecord,
         HealthRecordId,
@@ -17,7 +18,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordRequest,
         ReadRecordsRequest,
         ReadRecordsResponse,
-        HealthConnectorErrorCode,
         formatTimeRange,
         PermissionListExtension;
 import 'package:health_connector_hk_ios/src/mappers/mappers.dart';
@@ -64,7 +64,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'getHealthPlatformStatus',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit platform status retrieved',
         context: {
           'health_platform_status': status.name,
@@ -92,12 +92,19 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
     }
   }
 
+  /// iOS-specific implementation that auto-grants feature permissions.
+  ///
+  /// HealthKit doesn't have a separate permission system for features, so
+  /// [HealthPlatformFeaturePermission] instances are automatically granted.
+  /// Health data permissions are processed through the native permission flow.
   @override
   Future<List<PermissionRequestResult>> requestPermissions(
     List<Permission> permissions,
   ) async {
     final healthDataPermissions = permissions.healthDataPermissions;
     final featurePermissions = permissions.featurePermissions;
+    final healthDataCount = healthDataPermissions.length;
+    final featureCount = featurePermissions.length;
 
     HealthConnectorLogger.debug(
       _tag,
@@ -107,86 +114,90 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       context: {
         'requested_health_data_permissions': healthDataPermissions,
         'requested_feature_permissions': featurePermissions,
+        'health_data_count': healthDataCount,
+        'feature_count': featureCount,
       },
     );
-    if (featurePermissions.isNotEmpty) {
-      final exception = HealthConnectorException(
-        HealthConnectorErrorCode.unsupportedHealthPlatformApi,
-        'Failed requestPermissions due to '
-        'unsupported feature permission: $featurePermissions',
-      );
-
-      HealthConnectorLogger.error(
-        _tag,
-        operation: 'requestPermissions',
-        phase: 'failed',
-        message: 'Feature permissions not supported on iOS',
-        context: {
-          'featurePermissions': featurePermissions,
-        },
-        exception: exception,
-      );
-
-      throw exception;
-    }
 
     if (permissions.isEmpty) {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'requestPermissions',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No permissions to request (empty list)',
       );
 
       return [];
     }
 
-    try {
-      final requestDto = healthDataPermissions.toDto();
+    final results = <PermissionRequestResult>[];
 
-      final responseDto = await _platformClient.requestPermissions(requestDto);
+    // Process health data permissions through the native iOS permission dialog
+    if (healthDataPermissions.isNotEmpty) {
+      try {
+        final requestDto = healthDataPermissions.toDto();
 
-      final results = responseDto.toDomain();
-      final grantedPermissions = results
-          .where((result) => result.status == PermissionStatus.granted)
-          .map((result) => result.permission)
-          .toList();
-      final grantedHealthDataPermissions =
-          grantedPermissions.healthDataPermissions;
+        final responseDto =
+            await _platformClient.requestPermissions(requestDto);
 
-      HealthConnectorLogger.info(
-        _tag,
-        operation: 'requestPermissions',
-        phase: 'completed',
-        message: 'HealthKit permissions requested successfully',
-        context: {
-          'granted_health_data_permissions': grantedHealthDataPermissions,
-        },
-      );
-
-      return results;
-    } on PlatformException catch (e, st) {
-      HealthConnectorLogger.error(
-        _tag,
-        operation: 'requestPermissions',
-        phase: 'failed',
-        message: 'Failed to request HealthKit permissions',
-        context: {
-          'requested_permissions': {
-            'health_data_permissions': healthDataPermissions,
+        final healthDataResults = responseDto.toDomain();
+        results.addAll(healthDataResults);
+      } on PlatformException catch (e, st) {
+        HealthConnectorLogger.error(
+          _tag,
+          operation: 'requestPermissions',
+          phase: 'failed',
+          message: 'Failed to request HealthKit permissions',
+          context: {
+            'requested_permissions': {
+              'health_data_permissions': healthDataPermissions,
+            },
           },
-        },
-        exception: e,
-        stackTrace: st,
-      );
+          exception: e,
+          stackTrace: st,
+        );
 
-      throw HealthConnectorException(
-        e.code.toHealthConnectorErrorCode(),
-        'Failed to request permissions: ${e.message ?? 'Unknown error'}',
-        cause: e,
-        stackTrace: st,
-      );
+        throw HealthConnectorException(
+          e.code.toHealthConnectorErrorCode(),
+          'Failed to request permissions: ${e.message ?? 'Unknown error'}',
+          cause: e,
+          stackTrace: st,
+        );
+      }
     }
+
+    // Auto-grant feature permissions on iOS, as iOS doesn't have a separate
+    // permission system for features
+    if (featurePermissions.isNotEmpty) {
+      final grantedFeaturePermissions = featurePermissions.map(
+        (permission) => PermissionRequestResult(
+          permission: permission,
+          status: PermissionStatus.granted,
+        ),
+      );
+      results.addAll(grantedFeaturePermissions);
+    }
+
+    final grantedPermissions = results
+        .where((result) => result.status == PermissionStatus.granted)
+        .map((result) => result.permission)
+        .toList();
+    final grantedHealthDataPermissions =
+        grantedPermissions.healthDataPermissions;
+
+    HealthConnectorLogger.info(
+      _tag,
+      operation: 'requestPermissions',
+      phase: 'succeeded',
+      message: 'HealthKit permissions requested successfully',
+      context: {
+        'granted_health_data_permissions': grantedHealthDataPermissions,
+        'auto_granted_feature_permissions_count': featureCount,
+        'total_results': results.length,
+      },
+    );
+
+    return results;
   }
 
   @override
@@ -210,7 +221,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
         HealthConnectorLogger.info(
           _tag,
           operation: 'readRecord',
-          phase: 'completed',
+          phase: 'succeeded',
           message: 'HealthKit record not found',
           context: {'request': request, 'response': null},
         );
@@ -224,7 +235,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'readRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit record read successfully',
         context: {'request': request, 'response': record},
       );
@@ -272,7 +283,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'readRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit records read successfully',
         context: {'request': request, 'response': response},
       );
@@ -318,7 +329,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'writeRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit record written successfully',
         context: {'record': record, 'assignedRecordId': assignedRecordId},
       );
@@ -360,7 +371,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'writeRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No records to write (empty list)',
       );
 
@@ -379,7 +390,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'writeRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit records written successfully',
         context: {'records': records, 'assignedRecordIds': recordIds},
       );
@@ -425,7 +436,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'updateRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit record updated successfully',
         context: {'record': record},
       );
@@ -474,7 +485,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'aggregate',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit data aggregated successfully',
         context: {'request': request, 'response': response},
       );
@@ -531,7 +542,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'deleteRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit records deleted successfully',
         context: {'request': request},
       );
@@ -577,7 +588,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'deleteRecordsByIds',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No records to delete (empty IDs list)',
       );
 
@@ -595,7 +606,7 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'deleteRecordsByIds',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'HealthKit records deleted successfully',
         context: {'request': request},
       );

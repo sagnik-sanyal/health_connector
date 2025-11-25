@@ -1,6 +1,2 @@
-
-class HealthConnector {
-  Future<String?> getPlatformVersion() async {
-    return '1.0.0';
-  }
-}
+export 'src/health_connector.dart';
+export 'src/health_connector_config.dart';

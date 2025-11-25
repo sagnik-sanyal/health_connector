@@ -8,14 +8,36 @@ import 'package:health_connector_core/src/models/measurement_units/measurement_u
     show MeasurementUnit;
 import 'package:health_connector_core/src/models/requests/request.dart'
     show Request;
+import 'package:health_connector_core/src/utils/validation.dart' show require;
 import 'package:meta/meta.dart' show immutable, internal;
 
 /// Request to read a single health record by its ID.
 @Since('0.1.0')
 @immutable
 final class ReadRecordRequest<R extends HealthRecord> extends Request {
+  /// Creates a request to read a health record by its ID.
+  ///
+  /// ## Parameters
+  ///
+  /// - [dataType]: The type of health data to read
+  /// - [id]: The unique identifier of the record to read
+  ///
+  /// ## Throws
+  /// - [ArgumentError] if [id] is [HealthRecordId.none]
   @internal
-  const ReadRecordRequest({required this.dataType, required this.id});
+  factory ReadRecordRequest({
+    required HealthDataType<R, MeasurementUnit> dataType,
+    required HealthRecordId id,
+  }) {
+    require(
+      id != HealthRecordId.none,
+      'Record ID cannot be HealthRecordId.none',
+    );
+
+    return ReadRecordRequest._(dataType: dataType, id: id);
+  }
+
+  const ReadRecordRequest._({required this.dataType, required this.id});
 
   /// The type of health data to read.
   ///

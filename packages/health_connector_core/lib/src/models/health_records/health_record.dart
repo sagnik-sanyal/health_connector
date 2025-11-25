@@ -10,6 +10,7 @@ import 'package:health_connector_core/src/models/metadata/metadata.dart'
     show Metadata;
 import 'package:health_connector_core/src/utils/datetime.dart'
     show formatTimeRange;
+import 'package:health_connector_core/src/utils/validation.dart' show require;
 import 'package:meta/meta.dart' show immutable, internal;
 
 part 'instant_health_record.dart';
@@ -91,14 +92,11 @@ final class HealthRecordId {
   /// final badId = HealthRecordId(''); // Throws ArgumentError
   /// ```
   factory HealthRecordId(String value) {
-    if (value.isEmpty) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'HealthRecordId value cannot be empty. '
-            'Use HealthRecordId.none for new records.',
-      );
-    }
+    require(
+      value.isNotEmpty,
+      'HealthRecordId value cannot be empty. '
+      'Use HealthRecordId.none for new records.',
+    );
 
     return HealthRecordId._(value);
   }

@@ -67,7 +67,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'getHealthPlatformStatus',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect platform status retrieved',
         context: {
           'health_platform_status': status.name,
@@ -117,7 +117,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'requestPermissions',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No permissions to request (empty list)',
       );
 
@@ -141,7 +141,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'requestPermissions',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect permissions requested successfully',
         context: {
           'granted_health_data_permissions': grantedHealthDataPermissions,
@@ -215,7 +215,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'getGrantedPermissions',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Granted Health Connect permissions retrieved',
         context: {
           'granted_health_data_permissions': grantedHealthDataPermissions,
@@ -267,7 +267,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'revokeAllPermissions',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'All Health Connect permissions revoked successfully',
       );
     } on PlatformException catch (e, st) {
@@ -328,7 +328,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'getFeatureStatus',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect feature status retrieved',
         context: {'feature': feature, 'status': status.name},
       );
@@ -376,7 +376,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
         HealthConnectorLogger.info(
           _tag,
           operation: 'readRecord',
-          phase: 'completed',
+          phase: 'succeeded',
           message: 'Health Connect record not found',
           context: {'request': request, 'response': null},
         );
@@ -390,7 +390,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'readRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect record read successfully',
         context: {'request': request, 'response': record},
       );
@@ -438,7 +438,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'readRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect records read successfully',
         context: {'request': request, 'response': response},
       );
@@ -484,7 +484,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'writeRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect record written successfully',
         context: {'record': record, 'assignedRecordId': assignedRecordId},
       );
@@ -526,7 +526,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'writeRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No records to write (empty list)',
       );
 
@@ -545,7 +545,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'writeRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect records written successfully',
         context: {'records': records, 'assignedRecordIds': recordIds},
       );
@@ -591,7 +591,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'updateRecord',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect record updated successfully',
         context: {'record': record},
       );
@@ -640,7 +640,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'aggregate',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect data aggregated successfully',
         context: {'request': request, 'response': response},
       );
@@ -697,7 +697,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'deleteRecords',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect records deleted successfully',
         context: {'request': request},
       );
@@ -743,7 +743,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.warning(
         _tag,
         operation: 'deleteRecordsByIds',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'No records to delete (empty IDs list)',
       );
 
@@ -761,7 +761,7 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorLogger.info(
         _tag,
         operation: 'deleteRecordsByIds',
-        phase: 'completed',
+        phase: 'succeeded',
         message: 'Health Connect records deleted successfully',
         context: {'request': request},
       );

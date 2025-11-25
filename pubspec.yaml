@@ -15,6 +15,7 @@ workspace:
   - packages/health_connector_hc_android/example
   - packages/health_connector_hk_ios
   - packages/health_connector_hk_ios/example
+  - examples/health_connector_toolbox
 
 dev_dependencies:
   melos: ^7.3.0

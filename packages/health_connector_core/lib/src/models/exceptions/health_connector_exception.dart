@@ -62,3 +62,4 @@ final class HealthConnectorException implements Exception {
     return buffer.toString();
   }
 }
+

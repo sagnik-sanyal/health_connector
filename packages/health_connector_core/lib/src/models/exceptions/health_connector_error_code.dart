@@ -91,3 +91,4 @@ enum HealthConnectorErrorCode {
   /// The error code string.
   final String code;
 }
+

@@ -1,7 +1,8 @@
 import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
-    show Since;
+    show Since, SupportedHealthPlatforms;
 import 'package:health_connector_core/src/models/exceptions/health_connector_exception.dart'
     show HealthConnectorException;
+import 'package:health_connector_core/src/models/health_platform.dart';
 
 /// Error codes for [HealthConnectorException].
 ///
@@ -11,11 +12,14 @@ enum HealthConnectorErrorCode {
   /// Unknown or unspecified error.
   unknown('UNKNOWN'),
 
-  /// Health Connect installation or update is required (Android only).
+  /// Health Connect installation or update is required.
   ///
   /// This error occurs when Health Connect is not installed on the device
   /// or requires an update to a newer version. This is specific to Android's
-  /// Health Connect and will never be thrown on iOS.
+  /// Health Connect and will never be thrown on other platforms.
+  @SupportedHealthPlatforms([
+    HealthPlatform.healthConnect,
+  ])
   installationOrUpdateRequired('INSTALLATION_OR_UPDATE_REQUIRED'),
 
   /// Health platform is unavailable on this device.

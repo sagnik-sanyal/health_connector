@@ -1,3 +1,5 @@
+import 'package:health_connector_core/health_connector_core.dart'
+    show HealthPlatform;
 import 'package:meta/meta.dart' show immutable;
 
 /// Annotation class marking the version where an API was added.
@@ -37,3 +39,54 @@ final class Since {
   /// Must be a semantic version (e.g., `1.4.2`, `2.0.0-dev`)
   final String version;
 }
+
+/// Annotation used to mark APIs that are supported only on
+/// specific health platforms.
+///
+/// Apply this annotation to methods, getters, classes, or other declarations
+/// that  are only available on certain [HealthPlatform]s.
+///
+/// When the annotated API is called on an unsupported platform,
+/// an error will be thrown at runtime.
+///
+/// ## Usage
+///
+/// ```
+/// @SupportedHealthPlatforms([HealthPlatform.android, HealthPlatform.ios])
+/// Future<List<HealthData>> readPermissions() async {
+///   // Implementation works on Android and iOS
+/// }
+///
+/// @SupportedHealthPlatforms([HealthPlatform.android])
+/// Future<void> getFeatureStatus() async {
+///   // Only available on Android
+/// }
+/// ```
+///
+/// ## Platform Validation
+///
+/// Before calling an annotated API, verify platform support to a
+/// void runtime errors:
+///
+/// ```
+/// if (currentPlatform == HealthPlatform.android) {
+///   await writeSamsungHealthData();
+/// }
+/// ```
+///
+/// See [HealthPlatform], which defines the supported health platforms.
+@Since('0.1.0')
+@immutable
+final class SupportedHealthPlatforms {
+  /// Creates an annotation that restricts API usage to the specified platforms.
+  ///
+  /// The [platforms] list must contain at least one [HealthPlatform] value.
+  const SupportedHealthPlatforms(this.platforms);
+
+  /// The list of health platforms on which this API is supported.
+  ///
+  /// If the API is invoked on a platform not in this list, an error
+  /// will be thrown.
+  final List<HealthPlatform> platforms;
+}
+

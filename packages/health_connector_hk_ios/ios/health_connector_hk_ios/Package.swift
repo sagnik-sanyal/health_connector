@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "health_connector_hk_ios",
     platforms: [
-        .iOS("13.0")
+        .iOS("15.0")
     ],
     products: [
         .library(name: "health-connector-hk-ios", targets: ["health_connector_hk_ios"])

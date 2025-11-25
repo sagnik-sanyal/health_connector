@@ -9,7 +9,6 @@ import HealthKit
  *
  * @property store The underlying HealthKit store instance
  */
-@available(iOS 15.0, *)
 internal class HealthConnectorClient {
 
     /**

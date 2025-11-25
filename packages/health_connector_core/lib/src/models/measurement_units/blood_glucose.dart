@@ -102,5 +102,8 @@ final class BloodGlucose extends MeasurementUnit
       _millimolesPerLiter.compareTo(other._millimolesPerLiter);
 
   @override
+  String get name => 'blood_glucose';
+
+  @override
   String toString() => '${_millimolesPerLiter.toStringAsFixed(2)} mmol/L';
 }

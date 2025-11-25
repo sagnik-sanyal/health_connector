@@ -25,6 +25,9 @@ final class HealthPlatformFeaturePermission extends Permission {
       feature.supportedHealthPlatforms;
 
   @override
+  String get name => feature.name;
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is HealthPlatformFeaturePermission &&
@@ -35,5 +38,5 @@ final class HealthPlatformFeaturePermission extends Permission {
   int get hashCode => feature.hashCode;
 
   @override
-  String toString() => 'HealthPlatformFeaturePermission(feature: $feature)';
+  String toString() => 'permission_$name';
 }

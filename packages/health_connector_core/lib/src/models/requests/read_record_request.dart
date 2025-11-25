@@ -43,5 +43,8 @@ final class ReadRecordRequest<R extends HealthRecord> extends Request {
 
   @override
   String toString() =>
-      'ReadRecordRequest(dataType: ${dataType.identifier}, id: ${id.value})';
+      'ReadRecordRequest('
+      'dataType: $dataType, '
+      'id: $id'
+      ')';
 }

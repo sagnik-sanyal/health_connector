@@ -37,3 +37,25 @@ enum PermissionStatus {
   /// Note: Write permissions on iOS can still return [granted] or [denied].
   unknown,
 }
+
+/// Extension methods for filtering [List<Permission>] by permission type.
+@Since('0.1.0')
+extension PermissionListExtension on List<Permission> {
+  /// Returns a list containing only [HealthDataPermission] instances.
+  ///
+  /// Filters the list to include only permissions that are instances of
+  /// [HealthDataPermission], excluding any [HealthPlatformFeaturePermission]
+  /// instances.
+  List<HealthDataPermission> get healthDataPermissions =>
+      whereType<HealthDataPermission>().toList();
+
+  /// Returns a list containing only
+  /// [HealthPlatformFeaturePermission] instances.
+  ///
+  /// Filters the list to include only permissions that are instances of
+  /// [HealthPlatformFeaturePermission], excluding any [HealthDataPermission]
+  /// instances.
+  List<HealthPlatformFeaturePermission> get featurePermissions =>
+      whereType<HealthPlatformFeaturePermission>()
+          .toList();
+}

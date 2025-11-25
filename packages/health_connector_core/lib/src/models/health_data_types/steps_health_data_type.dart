@@ -15,6 +15,9 @@ final class StepsHealthDataType extends HealthDataType<StepRecord, Numeric>
   String get identifier => 'steps';
 
   @override
+  String get name => identifier;
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is StepsHealthDataType &&
@@ -25,7 +28,7 @@ final class StepsHealthDataType extends HealthDataType<StepRecord, Numeric>
   int get hashCode => identifier.hashCode;
 
   @override
-  String toString() => 'StepsHealthDataType(identifier: $identifier)';
+  String toString() => 'steps_data_type';
 
   @override
   List<AggregationMetric> get supportedAggregationMetrics => [

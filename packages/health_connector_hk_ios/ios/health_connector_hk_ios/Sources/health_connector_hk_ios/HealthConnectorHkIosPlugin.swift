@@ -64,9 +64,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
      * - Parameter completion: Called with a `Result` containing the platform status
      */
     public func getHealthPlatformStatus(completion: @escaping (Result<HealthPlatformStatusDto, Error>) -> Void) {
-        NSLog("\(HealthConnectorHkIosPlugin.tag): Getting HealthKit status...")
         let statusDto = HealthConnectorClient.getHealthPlatformStatus()
-        NSLog("\(HealthConnectorHkIosPlugin.tag): HealthKit status DTO: \(statusDto)")
         completion(.success(statusDto))
     }
 
@@ -95,13 +93,8 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog(
-                    "\(HealthConnectorHkIosPlugin.tag): Requesting permission DTOs for: \(request.healthDataPermissions.map { "\($0.accessType)_\($0.healthDataType)" }.joined(separator: ", "))..."
-                )
-
                 // Request health data permissions from HealthKit
                 let healthDataResults = try await client.requestPermissions(healthDataPermissions: request.healthDataPermissions)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Health data permission request result DTOs: \(healthDataResults)")
 
                 // Construct the response
                 let response = PermissionsRequestResponseDto(
@@ -111,10 +104,26 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                 completion(.success(response))
 
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error requesting permissions: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "requestPermissions",
+                    phase: "failed",
+                    message: "Failed to request Health Connect permissions",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error requesting permissions: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "requestPermissions",
+                    phase: "failed",
+                    message: "Failed to request Health Connect permissions",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -143,17 +152,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Reading single record: dataType=\(request.dataType), id=\(request.recordId)")
-
                 let result = try await client.readRecord(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully read record")
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error reading record: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "readRecord",
+                    phase: "failed",
+                    message: "Failed to read Health Connect record",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error reading record: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "readRecord",
+                    phase: "failed",
+                    message: "Failed to read Health Connect record",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -182,20 +204,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog(
-                    "\(HealthConnectorHkIosPlugin.tag): Reading records: dataType=\(request.dataType), startTime=\(request.startTime), endTime=\(request.endTime), pageSize=\(request.pageSize)"
-                )
-
                 let result = try await client.readRecords(request: request)
-                let recordCount = result.stepsRecords?.count ?? result.weightRecords?.count ?? 0
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully read \(recordCount) records")
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error reading records: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "readRecords",
+                    phase: "failed",
+                    message: "Failed to read Health Connect records",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error reading records: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "readRecords",
+                    phase: "failed",
+                    message: "Failed to read Health Connect records",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -224,17 +256,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Writing single record: dataType=\(request.dataType)")
-
                 let result = try await client.writeRecord(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully wrote record with ID: \(result.recordId)")
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error writing record: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "writeRecord",
+                    phase: "failed",
+                    message: "Failed to write Health Connect record",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error writing record: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "writeRecord",
+                    phase: "failed",
+                    message: "Failed to write Health Connect record",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -263,19 +308,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                // Calculate total record count for logging
-                let recordCount = (request.stepsRecords?.count ?? 0) + (request.weightRecords?.count ?? 0)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Writing \(recordCount) records: dataTypes=\(request.dataTypes)")
-
                 let result = try await client.writeRecords(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully wrote \(result.recordIds.count) records")
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error writing records: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "writeRecords",
+                    phase: "failed",
+                    message: "Failed to write Health Connect records",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error writing records: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "writeRecords",
+                    phase: "failed",
+                    message: "Failed to write Health Connect records",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -304,17 +360,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Updating single record: dataType=\(request.dataType)")
-
                 let result = try await client.updateRecord(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully updated record with ID: \(result.recordId)")
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error updating record: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "updateRecord",
+                    phase: "failed",
+                    message: "Failed to update Health Connect record",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error updating record: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "updateRecord",
+                    phase: "failed",
+                    message: "Failed to update Health Connect record",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -343,21 +412,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog(
-                    "\(HealthConnectorHkIosPlugin.tag): Aggregating records: dataType=\(request.dataType), metric=\(request.aggregationMetric), startTime=\(request.startTime), endTime=\(request.endTime)"
-                )
-
                 let result = try await client.aggregate(request: request)
-                NSLog(
-                    "\(HealthConnectorHkIosPlugin.tag): Successfully aggregated records"
-                )
 
                 completion(.success(result))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error aggregating records: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "aggregate",
+                    phase: "failed",
+                    message: "Failed to aggregate Health Connect data",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error aggregating records: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "aggregate",
+                    phase: "failed",
+                    message: "Failed to aggregate Health Connect data",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -388,17 +466,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Deleting records by IDs: dataType=\(request.dataType), count=\(request.recordIds.count)")
-
                 try await client.deleteRecordsByIds(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully deleted records by IDs")
 
                 completion(.success(()))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error deleting records by IDs: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "deleteRecordsByIds",
+                    phase: "failed",
+                    message: "Failed to delete Health Connect records by IDs",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error deleting records by IDs: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "deleteRecordsByIds",
+                    phase: "failed",
+                    message: "Failed to delete Health Connect records by IDs",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription
@@ -427,17 +518,30 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     throw HealthConnectorErrors.healthPlatformUnavailable()
                 }
 
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Deleting records by time range: dataType=\(request.dataType), startTime=\(request.startTime), endTime=\(request.endTime)")
-
                 try await client.deleteRecordsByTimeRange(request: request)
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Successfully deleted records by time range")
 
                 completion(.success(()))
             } catch let error as HealthConnectorError {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Error deleting records by time range: \(error.code) - \(error.message ?? "no message")")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "deleteRecordsByTimeRange",
+                    phase: "failed",
+                    message: "Failed to delete Health Connect records by time range",
+                    context: [
+                        "error_code": String(describing: error.code),
+                        "error_message": error.message ?? "no message"
+                    ],
+                    exception: error
+                )
                 completion(.failure(error))
             } catch {
-                NSLog("\(HealthConnectorHkIosPlugin.tag): Unknown error deleting records by time range: \(error.localizedDescription)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorHkIosPlugin.tag,
+                    operation: "deleteRecordsByTimeRange",
+                    phase: "failed",
+                    message: "Failed to delete Health Connect records by time range",
+                    exception: error
+                )
                 let healthConnectorError = HealthConnectorErrors.unknown(
                     message: error.localizedDescription,
                     details: error.localizedDescription

@@ -103,5 +103,8 @@ final class Velocity extends MeasurementUnit implements Comparable<Velocity> {
       _metersPerSecond.compareTo(other._metersPerSecond);
 
   @override
+  String get name => 'velocity';
+
+  @override
   String toString() => '${_metersPerSecond.toStringAsFixed(2)} m/s';
 }

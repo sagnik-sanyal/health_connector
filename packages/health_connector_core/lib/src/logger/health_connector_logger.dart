@@ -1,50 +1,114 @@
 import 'dart:developer' show log;
 
-import 'package:meta/meta.dart' show internal, immutable;
+import 'package:meta/meta.dart' show internal;
 
 /// A singleton logger that wraps the `log` function from `dart:developer`.
 ///
-/// This logger provides a consistent logging interface with formatted messages
-/// across the plugin.
-///
-/// ## Usage
-///
-/// ```dart
-/// final logger = HealthConnectorLogger();
-/// logger.info('INIT', 'Plugin initialized');
-/// logger.error('API', 'Request failed', exception: e, stackTrace: st);
-/// ```
-///
-/// ## Log Format
-///
-/// Log messages are formatted as:
-/// `[{logger_name}][{level}][{tag}]: {datetime}: {message}`
-///
-/// Where logger_name, level, and tag are converted to uppercase.
-@immutable
-final class HealthConnectorLogger {
-  /// Returns the singleton instance of [HealthConnectorLogger], creating it if
-  /// necessary.
-  ///
-  /// ## Example
-  ///
-  /// ```dart
-  /// // Create logger
-  /// final logger = HealthConnectorLogger();
-  /// ```
-  factory HealthConnectorLogger() {
-    _instance ??= const HealthConnectorLogger._();
-    return _instance!;
-  }
-
-  /// Private constructor for creating a [HealthConnectorLogger] instance.
+/// This logger provides a consistent structured logging interface with
+/// formatted messages across the plugin. It supports structured logging with
+/// operation, phase, optional message, and context.
+abstract final class HealthConnectorLogger {
+  /// Private constructor to prevent instantiation.
   const HealthConnectorLogger._();
 
-  /// The singleton instance of [HealthConnectorLogger].
-  static HealthConnectorLogger? _instance;
+  /// Whether logging is enabled.
+  ///
+  /// When set to `false`, all logging methods will return immediately without
+  /// logging any messages. Defaults to `true`.
+  static bool _isEnabled = true;
 
-  /// The logger name in uppercase.
-  static const String _loggerName = 'HEALTH_CONNECTOR';
+  /// Gets whether logging is enabled.
+  ///
+  /// Returns `true` if logging is enabled, `false` otherwise.
+  @internal
+  static bool get isEnabled => _isEnabled;
+
+  /// Sets whether logging is enabled.
+  ///
+  /// When set to `false`, all logging methods will return immediately without
+  /// logging any messages.
+  ///
+  /// ## Parameters
+  ///
+  /// - [enabled]: Whether to enable logging.
+  @internal
+  static set isEnabled(bool enabled) {
+    _isEnabled = enabled;
+  }
+
+  /// Indentation for top-level fields.
+  static const String _indentLevel1 = '   ';
+
+  /// Indentation for nested fields (exception, context).
+  static const String _indentLevel2 = '     ';
+
+  /// Formats a structured log message in JSON-like format.
+  ///
+  /// Creates a formatted message with indentation, including
+  /// only non-null fields.
+  ///
+  /// ## Parameters
+  ///
+  /// - [operation]: The operation being performed (e.g., 'readRecords').
+  /// - [phase]: The phase of the operation (e.g., 'entry', 'completed').
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional map of contextual information.
+  /// - [exception]: Optional exception object.
+  /// - [stackTrace]: Optional stack trace.
+  ///
+  /// ## Returns
+  ///
+  /// A formatted string in JSON-like format with indentation.
+  static String _formatStructuredMessage({
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
+    Object? exception,
+    StackTrace? stackTrace,
+  }) {
+    final buffer = StringBuffer();
+    final fields = <String>[];
+
+    // Always include operation and phase
+    fields.add('${_indentLevel1}operation: $operation,');
+    fields.add('${_indentLevel1}phase: $phase,');
+
+    // Include message if provided
+    if (message != null) {
+      fields.add('${_indentLevel1}message: $message,');
+    }
+
+    // Include exception block if exception or stackTrace is provided
+    if (exception != null || stackTrace != null) {
+      final exceptionFields = <String>[];
+      if (exception != null) {
+        exceptionFields.add('${_indentLevel2}cause: $exception,');
+      }
+      if (stackTrace != null) {
+        exceptionFields.add('${_indentLevel2}stack_trace: $stackTrace,');
+      }
+      fields.add('${_indentLevel1}exception: {');
+      fields.addAll(exceptionFields);
+      fields.add('$_indentLevel1},');
+    }
+
+    // Include context if provided and not empty
+    if (context != null && context.isNotEmpty) {
+      fields.add('${_indentLevel1}context: {');
+      for (final entry in context.entries) {
+        fields.add('$_indentLevel2${entry.key}: ${entry.value},');
+      }
+      fields.add('$_indentLevel1},');
+    }
+
+    // Build the final message
+    buffer.writeln('{');
+    buffer.writeAll(fields, '\n');
+    buffer.write('\n}');
+
+    return buffer.toString();
+  }
 
   /// Logs an informational message.
   ///
@@ -54,25 +118,40 @@ final class HealthConnectorLogger {
   /// ## Parameters
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
-  /// - [message]: The log message to output.
+  /// - [operation]: The operation being performed.
+  /// - [phase]: The phase of the operation.
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
   /// - [stackTrace]: Optional stack trace to include in the log.
   ///
-  /// ## Example
+  /// ## Examples
   ///
   /// ```dart
-  /// logger.info('INIT', 'Plugin initialized successfully');
+  /// HealthConnectorLogger.info(
+  ///   'API',
+  ///   operation: 'readRecords',
+  ///   phase: 'completed',
+  ///   message: 'Successfully read records',
+  ///   context: {'recordCount': 42, 'duration': '123ms'},
+  /// );
   /// ```
-  void info(
-    String tag,
-    String message, {
+  static void info(
+    String tag, {
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
       LogLevel.info,
       tag,
-      message,
+      operation: operation,
+      phase: phase,
+      message: message,
+      context: context,
       exception: exception,
       stackTrace: stackTrace,
     );
@@ -86,25 +165,40 @@ final class HealthConnectorLogger {
   /// ## Parameters
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
-  /// - [message]: The log message to output.
+  /// - [operation]: The operation being performed.
+  /// - [phase]: The phase of the operation.
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
   /// - [stackTrace]: Optional stack trace to include in the log.
   ///
-  /// ## Example
+  /// ## Examples
   ///
   /// ```dart
-  /// logger.debug('CONFIG', 'Configuration loaded: $config');
+  /// HealthConnectorLogger.debug(
+  ///   'API',
+  ///   operation: 'readRecords',
+  ///   phase: 'entry',
+  ///   message: 'Starting to read records',
+  ///   context: {'dataType': 'StepsRecord', 'pageSize': 100},
+  /// );
   /// ```
-  void debug(
-    String tag,
-    String message, {
+  static void debug(
+    String tag, {
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
       LogLevel.debug,
       tag,
-      message,
+      operation: operation,
+      phase: phase,
+      message: message,
+      context: context,
       exception: exception,
       stackTrace: stackTrace,
     );
@@ -118,25 +212,40 @@ final class HealthConnectorLogger {
   /// ## Parameters
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
-  /// - [message]: The log message to output.
+  /// - [operation]: The operation being performed.
+  /// - [phase]: The phase of the operation.
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
   /// - [stackTrace]: Optional stack trace to include in the log.
   ///
-  /// ## Example
+  /// ## Examples
   ///
   /// ```dart
-  /// logger.warning('NETWORK', 'Network latency detected');
+  /// HealthConnectorLogger.warning(
+  ///   'API',
+  ///   operation: 'readRecords',
+  ///   phase: 'slow operation detected',
+  ///   message: 'Operation exceeded threshold',
+  ///   context: {'duration': '6234ms', 'threshold': '5000ms'},
+  /// );
   /// ```
-  void warning(
-    String tag,
-    String message, {
+  static void warning(
+    String tag, {
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
       LogLevel.warning,
       tag,
-      message,
+      operation: operation,
+      phase: phase,
+      message: message,
+      context: context,
       exception: exception,
       stackTrace: stackTrace,
     );
@@ -150,111 +259,169 @@ final class HealthConnectorLogger {
   /// ## Parameters
   ///
   /// - [tag]: A tag for categorizing the log entry (converted to uppercase).
-  /// - [message]: The log message to output.
+  /// - [operation]: The operation being performed.
+  /// - [phase]: The phase of the operation.
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object to include in the log.
   /// - [stackTrace]: Optional stack trace to include in the log.
   ///
-  /// ## Example
+  /// ## Examples
   ///
   /// ```dart
-  /// logger.error('DB', 'Failed to connect', exception: e, stackTrace: st);
+  /// HealthConnectorLogger.error(
+  ///   'API',
+  ///   operation: 'readRecords',
+  ///   phase: 'failed',
+  ///   message: 'Failed to read records',
+  ///   context: {'dataType': 'StepsRecord', 'duration': '123ms'},
+  ///   exception: e,
+  ///   stackTrace: st,
+  /// );
   /// ```
-  void error(
-    String tag,
-    String message, {
+  static void error(
+    String tag, {
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
     _log(
       LogLevel.error,
       tag,
-      message,
+      operation: operation,
+      phase: phase,
+      message: message,
+      context: context,
       exception: exception,
       stackTrace: stackTrace,
     );
   }
 
+  /// Formats a [DateTime] to the log format:
+  /// `day-month-year hour:minute:second.millisecond`.
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// final dt = DateTime(2025, 9, 22, 15, 35, 55, 678);
+  /// final formatted = HealthConnectorLogger._formatDateTime(dt);
+  /// print(formatted); // '22-09-2025 15:35:55.678'
+  /// ```
+  ///
+  /// ## Parameters
+  ///
+  /// - [dateTime]: The datetime to format.
+  ///
+  /// ## Returns
+  ///
+  /// A formatted string in the format
+  /// `day-month-year hour:minute:second.millisecond`.
+  static String _formatDateTime(DateTime dateTime) {
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year.toString();
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final second = dateTime.second.toString().padLeft(2, '0');
+    final millisecond = dateTime.millisecond.toString().padLeft(3, '0');
+
+    return '$day-$month-$year $hour:$minute:$second.$millisecond';
+  }
+
   /// Internal method that formats and logs the message.
   ///
-  /// Formats the message according to the specified format:
-  /// `[{logger_name}][{level}][{tag}]: {datetime}: {message}`
+  /// Handles all logging logic including enabled check, message formatting,
+  /// and output. Formats the message according to the specified format:
+  /// ```
+  /// [{datetime}][{level}]:
+  /// {
+  ///    operation: {operation},
+  ///    phase: {phase},
+  ///    message: {message},
+  ///    exception: {
+  ///      cause: {exception},
+  ///      stack_trace: {stackTrace},
+  ///    },
+  ///    context: {
+  ///      key1: value1,
+  ///    },
+  /// }
+  /// ```
   ///
   /// ## Parameters
   ///
   /// - [level]: The log level (DEBUG, INFO, WARNING, ERROR).
   /// - [tag]: The tag for categorizing the log entry.
-  /// - [message]: The log message.
+  /// - [operation]: The operation being performed.
+  /// - [phase]: The phase of the operation.
+  /// - [message]: Optional message to include in the log.
+  /// - [context]: Optional contextual information.
   /// - [exception]: Optional exception object.
   /// - [stackTrace]: Optional stack trace.
-  void _log(
+  static void _log(
     LogLevel level,
-    String tag,
-    String message, {
+    String tag, {
+    required String operation,
+    required String phase,
+    String? message,
+    Map<String, dynamic>? context,
     Object? exception,
     StackTrace? stackTrace,
   }) {
+    if (!_isEnabled) {
+      return;
+    }
+
+    final structuredMessage = _formatStructuredMessage(
+      operation: operation,
+      phase: phase,
+      message: message,
+      context: context,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
+
+    final now = DateTime.now();
+    final formattedDateTime = _formatDateTime(now);
     final formattedMessage =
-        '[$_loggerName][${level.name}][${tag.toUpperCase()}]: '
-        '${DateTime.now()}: $message';
-    final logLevel = _getLogLevel(level);
+        '[$formattedDateTime][${level.name}]: \n$structuredMessage';
 
     log(
       formattedMessage,
-      name: _loggerName,
-      level: logLevel,
-      error: exception,
-      stackTrace: stackTrace,
+      name: tag,
+      level: level.value,
     );
-  }
-
-  /// Maps log level enum to integer values for `developer.log`.
-  ///
-  /// ## Parameters
-  ///
-  /// - [level]: The log level enum (DEBUG, INFO, WARNING, ERROR).
-  ///
-  /// ## Returns
-  ///
-  /// The integer log level value:
-  /// - DEBUG: 500
-  /// - INFO: 800
-  /// - WARNING: 900
-  /// - ERROR: 1000
-  int _getLogLevel(LogLevel level) {
-    switch (level) {
-      case LogLevel.debug:
-        return 500;
-      case LogLevel.info:
-        return 800;
-      case LogLevel.warning:
-        return 900;
-      case LogLevel.error:
-        return 1000;
-    }
   }
 }
 
 /// Enum representing the different log levels.
 ///
 /// Each level has a [name] field that contains the string representation
-/// of the log level.
+/// of the log level and a [value] field that contains the integer value
+/// for `dart:developer.log`.
 @internal
 enum LogLevel {
   /// Debug level for detailed diagnostic information.
-  debug('DEBUG'),
+  debug('DEBUG', 500),
 
   /// Info level for general informational messages.
-  info('INFO'),
+  info('INFO', 800),
 
   /// Warning level for potential problems or unexpected behavior.
-  warning('WARNING'),
+  warning('WARNING', 900),
 
   /// Error level for serious problems.
-  error('ERROR');
+  error('ERROR', 1000);
 
   /// The string name of the log level.
   final String name;
 
-  /// Creates a [LogLevel] with the given [name].
-  const LogLevel(this.name);
+  /// The integer value for `dart:developer.log`.
+  final int value;
+
+  /// Creates a [LogLevel] with the given [name] and [value].
+  const LogLevel(this.name, this.value);
 }

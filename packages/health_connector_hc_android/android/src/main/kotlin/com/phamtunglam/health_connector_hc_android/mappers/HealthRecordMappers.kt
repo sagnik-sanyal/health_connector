@@ -60,4 +60,3 @@ internal fun WeightRecord.toDto(): WeightRecordDto {
         weight = weight.toDto()
     )
 }
-

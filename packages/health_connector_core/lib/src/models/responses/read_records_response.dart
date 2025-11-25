@@ -65,5 +65,6 @@ final class ReadRecordsResponse<R extends HealthRecord> extends Response {
   String toString() =>
       'ReadRecordsResponse<$R>('
       'records: $records, '
-      'hasMorePages: $hasMorePages)';
+      'hasMorePages: $hasMorePages'
+      ')';
 }

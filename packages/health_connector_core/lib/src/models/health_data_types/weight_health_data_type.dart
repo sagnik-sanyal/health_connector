@@ -17,6 +17,9 @@ final class WeightHealthDataType extends HealthDataType<WeightRecord, Mass>
   String get identifier => 'weight';
 
   @override
+  String get name => identifier;
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is WeightHealthDataType &&
@@ -27,7 +30,7 @@ final class WeightHealthDataType extends HealthDataType<WeightRecord, Mass>
   int get hashCode => identifier.hashCode;
 
   @override
-  String toString() => 'WeightHealthDataType(identifier: $identifier)';
+  String toString() => 'weight_data_type';
 
   @override
   List<AggregationMetric> get supportedAggregationMetrics => [

@@ -11,6 +11,9 @@ abstract interface class HealthPlatformData {
   /// The list of health platforms that support this data.
   List<HealthPlatform> get supportedHealthPlatforms;
 
+  /// The name of this data type, used for logging purposes.
+  String get name;
+
   @override
   @mustBeOverridden
   bool operator ==(Object other);
@@ -23,3 +26,4 @@ abstract interface class HealthPlatformData {
   @mustBeOverridden
   String toString();
 }
+

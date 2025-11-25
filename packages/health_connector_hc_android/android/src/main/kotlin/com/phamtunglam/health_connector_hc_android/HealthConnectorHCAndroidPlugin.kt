@@ -1,15 +1,14 @@
 package com.phamtunglam.health_connector_hc_android
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.ComponentActivity
 import com.phamtunglam.health_connector_hc_android.mappers.toError
-import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorErrorCodeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregateRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregateResponseDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByIdsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByTimeRangeRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorError
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorErrorCodeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorPlatformApi
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureStatusDto
@@ -26,6 +25,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordResponseDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordsResponseDto
+import com.phamtunglam.health_connector_hc_android.utils.HealthConnectorLogger
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -78,13 +78,19 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
         /**
          * Tag used for logging throughout the plugin.
          */
-        private val TAG = HealthConnectorHCAndroidPlugin::class.simpleName
+        private val TAG = HealthConnectorHCAndroidPlugin::class.simpleName ?: "HealthConnectorHCAndroidPlugin"
 
         /**
          * Global exception handler for coroutines to catch and log unhandled exceptions.
          */
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
-            Log.w(TAG, "Unhandled exception in coroutine scope.", e)
+            HealthConnectorLogger.warning(
+                tag = TAG,
+                operation = "coroutineExceptionHandler",
+                phase = "unhandled_exception",
+                message = "Unhandled exception in coroutine scope",
+                exception = e,
+            )
         }
     }
 
@@ -171,10 +177,7 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
      */
     override fun getHealthPlatformStatus(callback: (Result<HealthPlatformStatusDto>) -> Unit) {
         scope.launch {
-            Log.d(TAG, "Getting Health Connect SDK status...")
             val statusDto = HealthConnectorClient.getHealthPlatformStatus(context)
-            Log.d(TAG, "Health Connect SDK status DTO: $statusDto.")
-
             callback(Result.success(statusDto))
         }
     }
@@ -200,7 +203,12 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
 
                 val currentActivity = activity
                 if (currentActivity == null) {
-                    Log.e(TAG, "Activity is null. Cannot request permissions without activity context.")
+                    HealthConnectorLogger.error(
+                        tag = TAG,
+                        operation = "requestPermissions",
+                        phase = "failed",
+                        message = "Activity is null. Cannot request permissions without activity context",
+                    )
                     callback(
                         Result.failure(
                             HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(
@@ -211,21 +219,20 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     return@launch
                 }
 
-                val totalPermissions = request.healthDataPermissions.size + request.featurePermissions.size
-                Log.d(
-                    TAG,
-                    "Requesting $totalPermissions permissions (${request.healthDataPermissions.size} health data, ${request.featurePermissions.size} features)..."
-                )
-
                 val responseDto = client.requestPermissions(activity = currentActivity, request = request)
-                Log.d(
-                    TAG,
-                    "Permission request response: ${responseDto.healthDataPermissionResults.size} health data results, ${responseDto.featurePermissionResults.size} feature results."
-                )
-
                 callback(Result.success(responseDto))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error requesting permissions: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "requestPermissions",
+                    phase = "failed",
+                    message = "Failed to request Health Connect permissions",
+                    context = mapOf(
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -244,17 +251,20 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Getting granted permissions...")
-
                 val responseDto = client.getGrantedPermissions()
-                Log.d(
-                    TAG,
-                    "Granted permissions response: ${responseDto.healthDataPermissionResults.size} health data permissions, ${responseDto.featurePermissionResults.size} feature permissions."
-                )
-
                 callback(Result.success(responseDto))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error getting granted permissions: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "getGrantedPermissions",
+                    phase = "failed",
+                    message = "Failed to get granted Health Connect permissions",
+                    context = mapOf(
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -273,14 +283,20 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Revoking all permissions...")
-
                 client.revokeAllPermissions()
-                Log.d(TAG, "Successfully revoked all permissions.")
-
                 callback(Result.success(Unit))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error revoking all permissions: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "revokeAllPermissions",
+                    phase = "failed",
+                    message = "Failed to revoke all Health Connect permissions",
+                    context = mapOf(
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -303,14 +319,21 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Getting feature status for: $feature...")
-
                 val featureStatusDto = client.getFeatureStatus(context, feature)
-                Log.d(TAG, "Feature status for $feature: $featureStatusDto.")
-
                 callback(Result.success(featureStatusDto))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error getting feature status: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "getFeatureStatus",
+                    phase = "failed",
+                    message = "Failed to get Health Connect feature status",
+                    context = mapOf(
+                        "feature" to feature.toString(),
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -333,14 +356,22 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Reading single record: dataType=${request.dataType}, id=${request.recordId}")
-
                 val result = client.readRecord(request)
-                Log.d(TAG, "Successfully read record")
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error reading record: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "readRecord",
+                    phase = "failed",
+                    message = "Failed to read Health Connect record",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "recordId" to request.recordId,
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -363,17 +394,24 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(
-                    TAG,
-                    "Reading records: dataType=${request.dataType}, startTime=${request.startTime}, endTime=${request.endTime}, pageSize=${request.pageSize}"
-                )
-
                 val result = client.readRecords(request)
-                Log.d(TAG, "Successfully read ${result.stepsRecords?.size ?: result.weightRecords?.size ?: 0} records")
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error reading records: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "readRecords",
+                    phase = "failed",
+                    message = "Failed to read Health Connect records",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "startTime" to request.startTime,
+                        "endTime" to request.endTime,
+                        "pageSize" to request.pageSize,
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -396,14 +434,21 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Writing single record: dataType=${request.dataType}")
-
                 val result = client.writeRecord(request)
-                Log.d(TAG, "Successfully wrote record with ID: ${result.recordId}")
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error writing record: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "writeRecord",
+                    phase = "failed",
+                    message = "Failed to write Health Connect record",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -426,17 +471,22 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(
-                    TAG,
-                    "Writing ${request.stepsRecords?.size ?: request.weightRecords?.size ?: 0} records: dataTypes=${request.dataTypes}"
-                )
-
                 val result = client.writeRecords(request)
-                Log.d(TAG, "Successfully wrote ${result.recordIds.size} records")
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error writing records: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "writeRecords",
+                    phase = "failed",
+                    message = "Failed to write Health Connect records",
+                    context = mapOf(
+                        "dataTypes" to request.dataTypes.toString(),
+                        "recordsCount" to (request.stepsRecords?.size ?: request.weightRecords?.size ?: 0),
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -459,14 +509,21 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Updating single record: dataType=${request.dataType}")
-
                 val result = client.updateRecord(request)
-                Log.d(TAG, "Successfully updated record with ID: ${result.recordId}")
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error updating record: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "updateRecord",
+                    phase = "failed",
+                    message = "Failed to update Health Connect record",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             }
         }
@@ -489,18 +546,36 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(TAG, "Deleting ${request.recordIds.size} records by ID: dataType=${request.dataType}")
-
                 client.deleteRecordsByIds(request)
-
-                Log.d(TAG, "Successfully deleted ${request.recordIds.size} records by IDs")
 
                 callback(Result.success(Unit))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error deleting records by IDs: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "deleteRecordsByIds",
+                    phase = "failed",
+                    message = "Failed to delete Health Connect records by IDs",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "recordIdsCount" to request.recordIds.size,
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error deleting records by IDs", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "deleteRecordsByIds",
+                    phase = "failed",
+                    message = "Unexpected error deleting Health Connect records by IDs",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "recordIdsCount" to request.recordIds.size,
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }
@@ -523,22 +598,38 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(
-                    TAG,
-                    "Deleting records by time range: dataType=${request.dataType}, " +
-                            "startTime=${request.startTime}, endTime=${request.endTime}"
-                )
-
                 client.deleteRecordsByTimeRange(request)
-
-                Log.d(TAG, "Successfully deleted records by time range")
 
                 callback(Result.success(Unit))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error deleting records by time range: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "deleteRecordsByTimeRange",
+                    phase = "failed",
+                    message = "Failed to delete Health Connect records by time range",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "startTime" to request.startTime,
+                        "endTime" to request.endTime,
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error deleting records by time range", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "deleteRecordsByTimeRange",
+                    phase = "failed",
+                    message = "Unexpected error deleting Health Connect records by time range",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "startTime" to request.startTime,
+                        "endTime" to request.endTime,
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }
@@ -561,23 +652,39 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     healthClient = it
                 }
 
-                Log.d(
-                    TAG,
-                    "Aggregating records: dataType=${request.dataType}, metric=${request.aggregationMetric}, startTime=${request.startTime}, endTime=${request.endTime}"
-                )
-
                 val result = client.aggregate(request)
-                Log.d(
-                    TAG,
-                    "Successfully aggregated records: $result"
-                )
-
                 callback(Result.success(result))
             } catch (e: HealthConnectorError) {
-                Log.e(TAG, "Error aggregating records: ${e.code} - ${e.message}", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "aggregate",
+                    phase = "failed",
+                    message = "Failed to aggregate Health Connect data",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "aggregationMetric" to request.aggregationMetric.toString(),
+                        "startTime" to request.startTime,
+                        "endTime" to request.endTime,
+                        "error_code" to e.code,
+                        "error_message" to (e.message ?: "Unknown error"),
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(e))
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error aggregating records", e)
+                HealthConnectorLogger.error(
+                    tag = TAG,
+                    operation = "aggregate",
+                    phase = "failed",
+                    message = "Unexpected error aggregating Health Connect data",
+                    context = mapOf(
+                        "dataType" to request.dataType.toString(),
+                        "aggregationMetric" to request.aggregationMetric.toString(),
+                        "startTime" to request.startTime,
+                        "endTime" to request.endTime,
+                    ),
+                    exception = e,
+                )
                 callback(Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }

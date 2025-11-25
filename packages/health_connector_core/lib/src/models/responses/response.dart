@@ -1,6 +1,6 @@
 import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
     show Since;
-import 'package:meta/meta.dart' show immutable, internal;
+import 'package:meta/meta.dart' show immutable, internal, mustBeOverridden;
 
 /// Base abstract class for all response types.
 ///
@@ -20,4 +20,8 @@ import 'package:meta/meta.dart' show immutable, internal;
 abstract class Response {
   /// Creates a base response.
   const Response();
+
+  @override
+  @mustBeOverridden
+  String toString();
 }

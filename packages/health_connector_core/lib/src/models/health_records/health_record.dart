@@ -8,6 +8,8 @@ import 'package:health_connector_core/src/models/measurement_units/measurement_u
     show Mass, Numeric;
 import 'package:health_connector_core/src/models/metadata/metadata.dart'
     show Metadata;
+import 'package:health_connector_core/src/utils/datetime.dart'
+    show formatTimeRange;
 import 'package:meta/meta.dart' show immutable, internal;
 
 part 'instant_health_record.dart';
@@ -139,5 +141,5 @@ final class HealthRecordId {
   int get hashCode => value.hashCode;
 
   @override
-  String toString() => 'HealthRecordId($value)';
+  String toString() => value;
 }

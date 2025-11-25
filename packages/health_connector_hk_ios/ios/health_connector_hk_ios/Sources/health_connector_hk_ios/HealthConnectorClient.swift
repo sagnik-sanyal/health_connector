@@ -90,7 +90,12 @@ internal class HealthConnectorClient {
      */
     static func getOrCreate() throws -> HealthConnectorClient {
         guard HKHealthStore.isHealthDataAvailable() else {
-            NSLog("\(tag): HealthKit is not available on this device")
+            HealthConnectorLogger.error(
+                tag: tag,
+                operation: "getOrCreate",
+                phase: "failed",
+                message: "HealthKit is not available on this device"
+            )
             throw HealthConnectorErrors.healthPlatformUnavailable(
                 message: nil,
                 details: nil
@@ -107,13 +112,26 @@ internal class HealthConnectorClient {
      * - Returns: The current platform status as a `HealthPlatformStatusDto`
      */
     static func getHealthPlatformStatus() -> HealthPlatformStatusDto {
-        NSLog("\(tag): Getting HealthKit availability status...")
+        HealthConnectorLogger.debug(
+            tag: tag,
+            operation: "getHealthPlatformStatus",
+            phase: "entry",
+            message: "Getting HealthKit availability status"
+        )
 
         let isAvailable = HKHealthStore.isHealthDataAvailable()
-        NSLog("\(tag): HealthKit available: \(isAvailable)")
-
+        
         let statusDto = HealthPlatformStatusDto.fromHealthKitAvailability(isAvailable)
-        NSLog("\(tag): HealthKit status DTO: \(statusDto)")
+        HealthConnectorLogger.info(
+            tag: tag,
+            operation: "getHealthPlatformStatus",
+            phase: "completed",
+            message: "HealthKit platform status retrieved",
+            context: [
+                "isAvailable": isAvailable,
+                "statusDto": statusDto
+            ]
+        )
 
         return statusDto
     }
@@ -136,8 +154,14 @@ internal class HealthConnectorClient {
      */
     func requestPermissions(healthDataPermissions: [HealthDataPermissionDto]) async throws -> [HealthDataPermissionRequestResultDto] {
         do {
-            NSLog(
-                "\(HealthConnectorClient.tag): Requesting permission DTOs for: \(healthDataPermissions.map { "\($0.accessType)_\($0.healthDataType)" }.joined(separator: ", "))..."
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "requestPermissions",
+                phase: "entry",
+                message: "Requesting Health Connect permissions",
+                context: [
+                    "requested_health_data_permissions": healthDataPermissions
+                ]
             )
 
             // Separate permissions into read and write sets
@@ -157,12 +181,8 @@ internal class HealthConnectorClient {
                 }
             }
 
-            NSLog("\(HealthConnectorClient.tag): Requesting HealthKit authorization for \(typesToRead.count) read types and \(typesToWrite.count) write types...")
-
             // Request authorization from HealthKit
             try await store.requestAuthorization(toShare: typesToWrite, read: typesToRead)
-
-            NSLog("\(HealthConnectorClient.tag): HealthKit authorization request completed")
 
             // Create permission request results by checking authorization status
             let results = healthDataPermissions.map { permissionDto -> HealthDataPermissionRequestResultDto in
@@ -195,7 +215,15 @@ internal class HealthConnectorClient {
                 return HealthDataPermissionRequestResultDto(permission: permissionDto, status: status)
             }
 
-            NSLog("\(HealthConnectorClient.tag): Permission request result DTOs: \(results)")
+            HealthConnectorLogger.info(
+                tag: HealthConnectorClient.tag,
+                operation: "requestPermissions",
+                phase: "completed",
+                message: "Health Connect permissions requested successfully",
+                context: [
+                    "granted_health_data_permissions": results
+                ]
+            )
 
             return results
 
@@ -203,19 +231,35 @@ internal class HealthConnectorClient {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            let permissionsCount = healthDataPermissions.count
-            NSLog("\(HealthConnectorClient.tag): HealthKit error during permission request: \(error.localizedDescription)")
             let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "requestPermissions",
+                phase: "failed",
+                message: "Failed to request Health Connect permissions",
+                context: [
+                    "requested_permissions": healthDataPermissions
+                ],
+                exception: error
+            )
             // Create new error with enhanced context
             throw HealthConnectorErrors.unknown(
-                message: "Failed to request permissions (total: \(permissionsCount)): \(baseError.message ?? "Unknown error")",
+                message: "Failed to process \(healthDataPermissions): \(baseError.message ?? "Unknown error")",
                 details: baseError.details
             )
         } catch {
-            let permissionsCount = healthDataPermissions.count
-            NSLog("\(HealthConnectorClient.tag): Unknown error during permission request: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "requestPermissions",
+                phase: "failed",
+                message: "Failed to request Health Connect permissions",
+                context: [
+                    "requested_permissions": healthDataPermissions
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to request permissions (total: \(permissionsCount)): \(error.localizedDescription)",
+                message: "Failed to process \(healthDataPermissions): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -234,14 +278,31 @@ internal class HealthConnectorClient {
      */
     func readRecord(request: ReadRecordRequestDto) async throws -> ReadRecordResponseDto? {
         do {
-            NSLog("\(HealthConnectorClient.tag): Reading single record: dataType=\(request.dataType), id=\(request.recordId)")
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecord",
+                phase: "entry",
+                message: "Reading Health Connect record",
+                context: [
+                    "request": request
+                ]
+            )
 
             // Convert data type to HealthKit quantity type
             let quantityType = request.dataType.toHealthKitQuantityType()
             
             // Create UUID from record ID string
             guard let recordUUID = UUID(uuidString: request.recordId) else {
-                NSLog("\(HealthConnectorClient.tag): Invalid record ID format: \(request.recordId)")
+                HealthConnectorLogger.error(
+                    tag: HealthConnectorClient.tag,
+                    operation: "readRecord",
+                    phase: "failed",
+                    message: "Invalid record ID format",
+                    context: [
+                        "dataType": String(describing: request.dataType),
+                        "recordId": request.recordId
+                    ]
+                )
                 throw HealthConnectorErrors.invalidArgument(
                     message: "Invalid record ID format: \(request.recordId)",
                     details: "Record ID must be a valid UUID string"
@@ -252,7 +313,7 @@ internal class HealthConnectorClient {
             let predicate = HKQuery.predicateForObject(with: recordUUID)
 
             // Use async continuation to bridge the callback-based API
-            return try await withCheckedThrowingContinuation { continuation in
+            let responseDto = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<ReadRecordResponseDto?, Error>) in
                 let query = HKSampleQuery(
                     sampleType: quantityType,
                     predicate: predicate,
@@ -300,22 +361,53 @@ internal class HealthConnectorClient {
 
                 self.store.execute(query)
             }
+
+            HealthConnectorLogger.info(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecord",
+                phase: "completed",
+                message: "Health Connect record read successfully",
+                context: [
+                    "request": request,
+                    "response": responseDto
+                ]
+            )
+
+            return responseDto
         } catch let error as HealthConnectorError {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while reading record: \(error.localizedDescription)")
             let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecord",
+                phase: "failed",
+                message: "Failed to read Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             // Create new error with enhanced context, preserving the error code
             throw HealthConnectorError(
                 code: baseError.code,
-                message: "Failed to read record (dataType=\(request.dataType), recordId=\(request.recordId)): \(baseError.message ?? "Unknown error")",
+                message: "Failed to process \(request): \(baseError.message ?? "Unknown error")",
                 details: baseError.details
             )
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to read record: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecord",
+                phase: "failed",
+                message: "Failed to read Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to read record (dataType=\(request.dataType), recordId=\(request.recordId)): \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -361,8 +453,14 @@ internal class HealthConnectorClient {
      */
     func readRecords(request: ReadRecordsRequestDto) async throws -> ReadRecordsResponseDto {
         do {
-            NSLog(
-                "\(HealthConnectorClient.tag): Reading records: dataType=\(request.dataType), startTime=\(request.startTime), endTime=\(request.endTime), pageSize=\(request.pageSize), dataOriginPackageNames=\(request.dataOriginPackageNames.count) sources"
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecords",
+                phase: "entry",
+                message: "Reading Health Connect records",
+                context: [
+                    "request": request
+                ]
             )
 
             // Validate time range
@@ -384,14 +482,40 @@ internal class HealthConnectorClient {
                     // Validate that adjusted startTime is still before endTime
                     if effectiveStartTime >= request.endTime {
                         // Invalid pagination token, return empty result
-                        NSLog("\(HealthConnectorClient.tag): Invalid pageToken: adjusted startTime (\(effectiveStartTime)) >= endTime (\(request.endTime))")
+                        HealthConnectorLogger.warning(
+                            tag: HealthConnectorClient.tag,
+                            operation: "readRecords",
+                            phase: "completed",
+                            message: "Invalid pageToken: adjusted startTime >= endTime",
+                            context: [
+                                "adjustedStartTime": effectiveStartTime,
+                                "endTime": request.endTime
+                            ]
+                        )
                         return createEmptyResponse(for: request.dataType)
                     }
                     
-                    NSLog("\(HealthConnectorClient.tag): Using pageToken for pagination: original startTime=\(request.startTime), adjusted startTime=\(effectiveStartTime)")
+                    HealthConnectorLogger.debug(
+                        tag: HealthConnectorClient.tag,
+                        operation: "readRecords",
+                        phase: "pagination",
+                        message: "Using pageToken for pagination",
+                        context: [
+                            "originalStartTime": request.startTime,
+                            "adjustedStartTime": effectiveStartTime
+                        ]
+                    )
                 } else {
                     // Invalid pageToken format, log warning but continue with original startTime
-                    NSLog("\(HealthConnectorClient.tag): Invalid pageToken format: '\(pageToken)', using original startTime")
+                    HealthConnectorLogger.warning(
+                        tag: HealthConnectorClient.tag,
+                        operation: "readRecords",
+                        phase: "pagination",
+                        message: "Invalid pageToken format, using original startTime",
+                        context: [
+                            "pageToken": pageToken
+                        ]
+                    )
                 }
             }
 
@@ -415,7 +539,15 @@ internal class HealthConnectorClient {
                 
                 if sources.isEmpty {
                     // No sources found for the given bundle identifiers, return empty result
-                    NSLog("\(HealthConnectorClient.tag): No sources found for bundle identifiers: \(request.dataOriginPackageNames)")
+                    HealthConnectorLogger.warning(
+                        tag: HealthConnectorClient.tag,
+                        operation: "readRecords",
+                        phase: "completed",
+                        message: "No sources found for bundle identifiers",
+                        context: [
+                            "bundleIdentifiers": request.dataOriginPackageNames
+                        ]
+                    )
                     return createEmptyResponse(for: request.dataType)
                 }
                 
@@ -435,7 +567,7 @@ internal class HealthConnectorClient {
             }
 
             // Use async continuation to bridge the callback-based API
-            return try await withCheckedThrowingContinuation { continuation in
+            let responseDto = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<ReadRecordsResponseDto, Error>) in
                 let query = HKSampleQuery(
                     sampleType: quantityType,
                     predicate: predicate,
@@ -463,18 +595,17 @@ internal class HealthConnectorClient {
                     switch request.dataType {
                     case .steps:
                         let stepRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toStepRecordDto() }
-                        
+
                         // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
                         let nextPageToken: String?
                         if stepRecords.count == request.pageSize, let lastRecord = stepRecords.last {
                             // Encode last record's endTime as nextPageToken
                             nextPageToken = String(lastRecord.endTime)
-                            NSLog("\(HealthConnectorClient.tag): Generated nextPageToken for steps: \(nextPageToken ?? "nil") (last record endTime: \(lastRecord.endTime))")
                         } else {
                             // Fewer than pageSize records means no more pages
                             nextPageToken = nil
                         }
-                        
+
                         responseDto = ReadRecordsResponseDto(
                             dataType: .steps,
                             nextPageToken: nextPageToken,
@@ -484,18 +615,17 @@ internal class HealthConnectorClient {
 
                     case .weight:
                         let weightRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toWeightRecordDto() }
-                        
+
                         // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
                         let nextPageToken: String?
                         if weightRecords.count == request.pageSize, let lastRecord = weightRecords.last {
                             // Encode last record's time as nextPageToken
                             nextPageToken = String(lastRecord.time)
-                            NSLog("\(HealthConnectorClient.tag): Generated nextPageToken for weight: \(nextPageToken ?? "nil") (last record time: \(lastRecord.time))")
                         } else {
                             // Fewer than pageSize records means no more pages
                             nextPageToken = nil
                         }
-                        
+
                         responseDto = ReadRecordsResponseDto(
                             dataType: .weight,
                             nextPageToken: nextPageToken,
@@ -509,16 +639,48 @@ internal class HealthConnectorClient {
 
                 self.store.execute(query)
             }
+            
+            HealthConnectorLogger.info(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecords",
+                phase: "completed",
+                message: "Health Connect records read successfully",
+                context: [
+                    "request": request,
+                    "response": responseDto
+                ]
+            )
+            
+            return responseDto
         } catch let error as HealthConnectorError {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while reading records: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecords",
+                phase: "failed",
+                message: "Failed to read Health Connect records",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to read records: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "readRecords",
+                phase: "failed",
+                message: "Failed to read Health Connect records",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to read records: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -609,7 +771,15 @@ internal class HealthConnectorClient {
      */
     func writeRecord(request: WriteRecordRequestDto) async throws -> WriteRecordResponseDto {
         do {
-            NSLog("\(HealthConnectorClient.tag): Writing single record: dataType=\(request.dataType)")
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecord",
+                phase: "entry",
+                message: "Writing Health Connect record",
+                context: [
+                    "request": request
+                ]
+            )
 
             // Extract typed record from request DTO and convert to HealthKit sample
             let sample: HKSample
@@ -637,7 +807,6 @@ internal class HealthConnectorClient {
             return try await withCheckedThrowingContinuation { continuation in
                 store.save(sample) { success, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write record: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -653,10 +822,19 @@ internal class HealthConnectorClient {
 
                     if success {
                         let recordId = sample.uuid.uuidString
-                        NSLog("\(HealthConnectorClient.tag): Successfully wrote record with ID: \(recordId)")
-                        continuation.resume(returning: WriteRecordResponseDto(recordId: recordId))
+                        let responseDto = WriteRecordResponseDto(recordId: recordId)
+                        HealthConnectorLogger.info(
+                            tag: HealthConnectorClient.tag,
+                            operation: "writeRecord",
+                            phase: "completed",
+                            message: "Health Connect record written successfully",
+                            context: [
+                                "request": request,
+                                "assignedRecordId": recordId
+                            ]
+                        )
+                        continuation.resume(returning: responseDto)
                     } else {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write record: HealthKit save returned false")
                         continuation.resume(
                             throwing: HealthConnectorErrors.unknown(
                                 message: "Failed to write record",
@@ -670,12 +848,31 @@ internal class HealthConnectorClient {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while writing record: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecord",
+                phase: "failed",
+                message: "Failed to write Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to write record: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecord",
+                phase: "failed",
+                message: "Failed to write Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to write record: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -702,7 +899,15 @@ internal class HealthConnectorClient {
      */
     func updateRecord(request: UpdateRecordRequestDto) async throws -> UpdateRecordResponseDto {
         do {
-            NSLog("\(HealthConnectorClient.tag): Updating single record: dataType=\(request.dataType)")
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "updateRecord",
+                phase: "entry",
+                message: "Updating Health Connect record",
+                context: [
+                    "request": request
+                ]
+            )
 
             // Validate record ID
             let recordId: String
@@ -820,7 +1025,6 @@ internal class HealthConnectorClient {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 store.delete(existingSample) { success, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to delete existing record: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -835,7 +1039,6 @@ internal class HealthConnectorClient {
                     }
 
                     if !success {
-                        NSLog("\(HealthConnectorClient.tag): Failed to delete existing record: HealthKit delete returned false")
                         continuation.resume(
                             throwing: HealthConnectorErrors.unknown(
                                 message: "Failed to delete existing record",
@@ -853,7 +1056,6 @@ internal class HealthConnectorClient {
             let newRecordId = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
                 store.save(newSample) { success, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write new record after delete: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -869,10 +1071,17 @@ internal class HealthConnectorClient {
 
                     if success {
                         let newRecordId = newSample.uuid.uuidString
-                        NSLog("\(HealthConnectorClient.tag): Successfully updated record: old ID=\(recordId), new ID=\(newRecordId)")
+                        HealthConnectorLogger.info(
+                            tag: HealthConnectorClient.tag,
+                            operation: "updateRecord",
+                            phase: "completed",
+                            message: "Health Connect record updated successfully",
+                            context: [
+                                "request": request
+                            ]
+                        )
                         continuation.resume(returning: newRecordId)
                     } else {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write new record: HealthKit save returned false")
                         continuation.resume(
                             throwing: HealthConnectorErrors.unknown(
                                 message: "Failed to write new record after delete",
@@ -888,12 +1097,31 @@ internal class HealthConnectorClient {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while updating record: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "updateRecord",
+                phase: "failed",
+                message: "Failed to update Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to update record: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "updateRecord",
+                phase: "failed",
+                message: "Failed to update Health Connect record",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to update record: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -912,7 +1140,15 @@ internal class HealthConnectorClient {
      */
     func writeRecords(request: WriteRecordsRequestDto) async throws -> WriteRecordsResponseDto {
         do {
-            NSLog("\(HealthConnectorClient.tag): Writing records: dataTypes=\(request.dataTypes)")
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecords",
+                phase: "entry",
+                message: "Writing Health Connect records",
+                context: [
+                    "request": request
+                ]
+            )
 
             // Extract typed records from request DTO and convert to HealthKit samples
             var samples: [HKSample] = []
@@ -945,7 +1181,6 @@ internal class HealthConnectorClient {
             return try await withCheckedThrowingContinuation { continuation in
                 store.save(samples) { success, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write records: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -961,10 +1196,19 @@ internal class HealthConnectorClient {
 
                     if success {
                         let recordIds = samples.map { $0.uuid.uuidString }
-                        NSLog("\(HealthConnectorClient.tag): Successfully wrote \(recordIds.count) records")
-                        continuation.resume(returning: WriteRecordsResponseDto(recordIds: recordIds))
+                        let responseDto = WriteRecordsResponseDto(recordIds: recordIds)
+                        HealthConnectorLogger.info(
+                            tag: HealthConnectorClient.tag,
+                            operation: "writeRecords",
+                            phase: "completed",
+                            message: "Health Connect records written successfully",
+                            context: [
+                                "request": request,
+                                "assignedRecordIds": recordIds
+                            ]
+                        )
+                        continuation.resume(returning: responseDto)
                     } else {
-                        NSLog("\(HealthConnectorClient.tag): Failed to write records: HealthKit save returned false")
                         continuation.resume(
                             throwing: HealthConnectorErrors.unknown(
                                 message: "Failed to write records",
@@ -978,12 +1222,31 @@ internal class HealthConnectorClient {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while writing records: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecords",
+                phase: "failed",
+                message: "Failed to write Health Connect records",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to write records: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "writeRecords",
+                phase: "failed",
+                message: "Failed to write Health Connect records",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to write records: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -1004,8 +1267,14 @@ internal class HealthConnectorClient {
      */
     func aggregate(request: AggregateRequestDto) async throws -> AggregateResponseDto {
         do {
-            NSLog(
-                "\(HealthConnectorClient.tag): Aggregating records: dataType=\(request.dataType), metric=\(request.aggregationMetric), startTime=\(request.startTime), endTime=\(request.endTime)"
+            HealthConnectorLogger.debug(
+                tag: HealthConnectorClient.tag,
+                operation: "aggregate",
+                phase: "entry",
+                message: "Aggregating Health Connect data",
+                context: [
+                    "request": request
+                ]
             )
 
             // Validate time range
@@ -1032,22 +1301,54 @@ internal class HealthConnectorClient {
             )
 
             // Use HKStatisticsQuery for supported metrics (validation ensures only supported metrics reach here)
-            return try await aggregateWithStatisticsQuery(
+            let responseDto = try await aggregateWithStatisticsQuery(
                 quantityType: quantityType,
                 predicate: predicate,
                 metric: request.aggregationMetric,
                 dataType: request.dataType
             )
+            
+            HealthConnectorLogger.info(
+                tag: HealthConnectorClient.tag,
+                operation: "aggregate",
+                phase: "completed",
+                message: "Health Connect data aggregated successfully",
+                context: [
+                    "request": request,
+                    "response": responseDto
+                ]
+            )
+            
+            return responseDto
         } catch let error as HealthConnectorError {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error during aggregation: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "aggregate",
+                phase: "failed",
+                message: "Failed to aggregate Health Connect data",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to aggregate records: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "aggregate",
+                phase: "failed",
+                message: "Failed to aggregate Health Connect data",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to aggregate records: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -1184,7 +1485,15 @@ internal class HealthConnectorClient {
      * - Throws: `HealthConnectorError` with code `UNKNOWN` if deletion fails
      */
     func deleteRecordsByTimeRange(request: DeleteRecordsByTimeRangeRequestDto) async throws {
-        NSLog("\(HealthConnectorClient.tag): Deleting records by time range: dataType=\(request.dataType)")
+        HealthConnectorLogger.debug(
+            tag: HealthConnectorClient.tag,
+            operation: "deleteRecordsByTimeRange",
+            phase: "entry",
+            message: "Deleting Health Connect records by time range",
+            context: [
+                "request": request
+            ]
+        )
 
         do {
             // Validate time range
@@ -1210,7 +1519,6 @@ internal class HealthConnectorClient {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 store.deleteObjects(of: sampleType, predicate: predicate) { success, count, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to delete records: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -1225,10 +1533,17 @@ internal class HealthConnectorClient {
                     }
 
                     if success {
-                        NSLog("\(HealthConnectorClient.tag): Successfully deleted \(count) records")
+                        HealthConnectorLogger.info(
+                            tag: HealthConnectorClient.tag,
+                            operation: "deleteRecordsByTimeRange",
+                            phase: "completed",
+                            message: "Health Connect records deleted successfully",
+                            context: [
+                                "request": request
+                            ]
+                        )
                         continuation.resume(returning: ())
                     } else {
-                        NSLog("\(HealthConnectorClient.tag): Failed to delete records: HealthKit delete returned false")
                         continuation.resume(
                             throwing: HealthConnectorErrors.unknown(
                                 message: "Failed to delete records",
@@ -1242,12 +1557,31 @@ internal class HealthConnectorClient {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while deleting records: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "deleteRecordsByTimeRange",
+                phase: "failed",
+                message: "Failed to delete Health Connect records by time range",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to delete records: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "deleteRecordsByTimeRange",
+                phase: "failed",
+                message: "Failed to delete Health Connect records by time range",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to delete records: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }
@@ -1265,7 +1599,15 @@ internal class HealthConnectorClient {
      * - Throws: `HealthConnectorError` with code `UNKNOWN` if deletion fails
      */
     func deleteRecordsByIds(request: DeleteRecordsByIdsRequestDto) async throws {
-        NSLog("\(HealthConnectorClient.tag): Deleting \(request.recordIds.count) records by ID: dataType=\(request.dataType)")
+        HealthConnectorLogger.debug(
+            tag: HealthConnectorClient.tag,
+            operation: "deleteRecordsByIds",
+            phase: "entry",
+            message: "Deleting Health Connect records by IDs",
+            context: [
+                "request": request
+            ]
+        )
 
         do {
             let sampleType = try request.dataType.toHealthKitSampleType()
@@ -1290,7 +1632,6 @@ internal class HealthConnectorClient {
                     sortDescriptors: nil
                 ) { query, samples, error in
                     if let error = error {
-                        NSLog("\(HealthConnectorClient.tag): Failed to query records for deletion: \(error.localizedDescription)")
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                         } else {
@@ -1305,7 +1646,6 @@ internal class HealthConnectorClient {
                     }
 
                     guard let samples = samples else {
-                        NSLog("\(HealthConnectorClient.tag): No samples found for deletion")
                         continuation.resume(returning: [])
                         return
                     }
@@ -1321,7 +1661,6 @@ internal class HealthConnectorClient {
                 try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                     store.delete(samples) { success, error in
                         if let error = error {
-                            NSLog("\(HealthConnectorClient.tag): Failed to delete records: \(error.localizedDescription)")
                             if let nsError = error as NSError? {
                                 continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
                             } else {
@@ -1336,10 +1675,17 @@ internal class HealthConnectorClient {
                         }
 
                         if success {
-                            NSLog("\(HealthConnectorClient.tag): Successfully deleted \(samples.count) records")
+                            HealthConnectorLogger.info(
+                                tag: HealthConnectorClient.tag,
+                                operation: "deleteRecordsByIds",
+                                phase: "completed",
+                                message: "Health Connect records deleted successfully",
+                                context: [
+                                    "request": request
+                                ]
+                            )
                             continuation.resume(returning: ())
                         } else {
-                            NSLog("\(HealthConnectorClient.tag): Failed to delete records: HealthKit delete returned false")
                             continuation.resume(
                                 throwing: HealthConnectorErrors.unknown(
                                     message: "Failed to delete records",
@@ -1350,18 +1696,42 @@ internal class HealthConnectorClient {
                     }
                 }
             } else {
-                NSLog("\(HealthConnectorClient.tag): No records found to delete")
+                HealthConnectorLogger.warning(
+                    tag: HealthConnectorClient.tag,
+                    operation: "deleteRecordsByIds",
+                    phase: "completed",
+                    message: "No records to delete (empty IDs list)"
+                )
             }
         } catch let error as HealthConnectorError {
             // Re-throw HealthConnectorError as-is
             throw error
         } catch let error as NSError {
-            NSLog("\(HealthConnectorClient.tag): HealthKit error while deleting records: \(error.localizedDescription)")
-            throw HealthConnectorClient.mapHealthKitError(error)
+            let baseError = HealthConnectorClient.mapHealthKitError(error)
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "deleteRecordsByIds",
+                phase: "failed",
+                message: "Failed to delete Health Connect records by IDs",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
+            throw baseError
         } catch {
-            NSLog("\(HealthConnectorClient.tag): Failed to delete records: \(error.localizedDescription)")
+            HealthConnectorLogger.error(
+                tag: HealthConnectorClient.tag,
+                operation: "deleteRecordsByIds",
+                phase: "failed",
+                message: "Failed to delete Health Connect records by IDs",
+                context: [
+                    "request": request
+                ],
+                exception: error
+            )
             throw HealthConnectorErrors.unknown(
-                message: "Failed to delete records: \(error.localizedDescription)",
+                message: "Failed to process \(request): \(error.localizedDescription)",
                 details: error.localizedDescription
             )
         }

@@ -157,5 +157,8 @@ final class Length extends MeasurementUnit implements Comparable<Length> {
   int compareTo(Length other) => _meters.compareTo(other._meters);
 
   @override
+  String get name => 'length';
+
+  @override
   String toString() => '${_meters.toStringAsFixed(3)} m';
 }

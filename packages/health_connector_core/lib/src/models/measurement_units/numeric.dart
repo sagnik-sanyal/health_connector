@@ -78,5 +78,8 @@ final class Numeric extends MeasurementUnit implements Comparable<Numeric> {
   }
 
   @override
+  String get name => 'numeric';
+
+  @override
   String toString() => value.toString();
 }

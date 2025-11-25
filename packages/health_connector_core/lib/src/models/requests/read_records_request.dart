@@ -15,6 +15,8 @@ import 'package:health_connector_core/src/models/requests/request.dart'
 import 'package:health_connector_core/src/models/responses/read_records_response.dart'
     show ReadRecordsResponse;
 import 'package:health_connector_core/src/utils/collection.dart';
+import 'package:health_connector_core/src/utils/datetime.dart'
+    show formatTimeRange;
 import 'package:health_connector_core/src/utils/validation.dart'
     show requireEndTimeAfterStartTime, require;
 import 'package:meta/meta.dart' show immutable, internal;
@@ -159,10 +161,10 @@ final class ReadRecordsRequest<R extends HealthRecord> extends Request {
   @override
   String toString() =>
       'ReadRecordsRequest('
-      'dataType: ${dataType.identifier}, '
-      'startTime: $startTime, '
-      'endTime: $endTime, '
+      'dataType: $dataType, '
+      'time_range: ${formatTimeRange(startTime: startTime, endTime: endTime)}, '
       'pageSize: $pageSize, '
-      'pageToken: ${pageToken != null ? "present" : "null"}, '
-      'dataOrigins: ${dataOrigins.length})';
+      'pageToken: ${pageToken ?? "none"}, '
+      'dataOrigins: $dataOrigins'
+      ')';
 }

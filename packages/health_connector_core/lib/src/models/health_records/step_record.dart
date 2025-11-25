@@ -71,8 +71,15 @@ final class StepRecord extends IntervalHealthRecord {
 
   @override
   String toString() =>
-      'StepRecord(id: $id, count: ${count.value}, '
-      'startTime: $startTime, endTime: $endTime, duration: $duration)';
+      'StepRecord('
+      'id: $id, '
+      'count: ${count.value}, '
+      'time_range: ${formatTimeRange(startTime: startTime, endTime: endTime)}, '
+      'duration: $duration'
+      ')';
+
+  @override
+  String get name => 'step_record';
 
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;

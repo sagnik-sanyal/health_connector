@@ -22,6 +22,9 @@ final class HealthDataPermission extends Permission {
       dataType.supportedHealthPlatforms;
 
   @override
+  String get name => '${dataType.name}_${accessType.name}';
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is HealthDataPermission &&
@@ -33,8 +36,7 @@ final class HealthDataPermission extends Permission {
   int get hashCode => dataType.hashCode ^ accessType.hashCode;
 
   @override
-  String toString() =>
-      'HealthDataPermission(dataType: $dataType, accessType: $accessType)';
+  String toString() => 'permission_$name';
 }
 
 /// Defines the type of access being requested for a permission.

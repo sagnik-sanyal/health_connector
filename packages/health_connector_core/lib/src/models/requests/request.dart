@@ -1,6 +1,6 @@
 import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
     show Since;
-import 'package:meta/meta.dart' show immutable, internal;
+import 'package:meta/meta.dart' show immutable, internal, mustBeOverridden;
 
 /// Base abstract class for all request types.
 ///
@@ -20,4 +20,8 @@ import 'package:meta/meta.dart' show immutable, internal;
 abstract class Request {
   /// Creates a base request.
   const Request();
+
+  @override
+  @mustBeOverridden
+  String toString();
 }

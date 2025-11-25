@@ -120,5 +120,8 @@ final class Temperature extends MeasurementUnit
   int compareTo(Temperature other) => _celsius.compareTo(other._celsius);
 
   @override
+  String get name => 'temperature';
+
+  @override
   String toString() => '${_celsius.toStringAsFixed(2)} °C';
 }

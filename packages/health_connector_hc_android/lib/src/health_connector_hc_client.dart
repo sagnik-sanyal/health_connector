@@ -6,10 +6,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthConnectorLogger,
         HealthConnectorPlatformClient,
-        HealthDataPermission,
         HealthDataType,
         HealthPlatformFeature,
-        HealthPlatformFeaturePermission,
         HealthPlatformFeatureStatus,
         HealthPlatformStatus,
         HealthRecord,
@@ -20,7 +18,9 @@ import 'package:health_connector_core/health_connector_core.dart'
         PermissionStatus,
         ReadRecordRequest,
         ReadRecordsRequest,
-        ReadRecordsResponse;
+        ReadRecordsResponse,
+        formatTimeRange,
+        PermissionListExtension;
 import 'package:health_connector_hc_android/src/mappers/mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show
@@ -38,9 +38,7 @@ import 'package:meta/meta.dart' show immutable;
 final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   const HealthConnectorHCClient();
 
-  static const String _tag = 'HealthConnectorHCClient';
-
-  static final _logger = HealthConnectorLogger();
+  static final String _tag = (HealthConnectorHCClient).toString();
 
   /// The Pigeon-generated platform API client for native communication.
   static final HealthConnectorPlatformApi _platformClient =
@@ -48,7 +46,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
   @override
   Future<HealthPlatformStatus> getHealthPlatformStatus() async {
-    _logger.debug(_tag, 'getHealthPlatformStatus: entry');
+    HealthConnectorLogger.debug(
+      _tag,
+      operation: 'getHealthPlatformStatus',
+      phase: 'entry',
+      message: 'Checking Health Connect platform status',
+    );
 
     try {
       final statusDto = await _platformClient.getHealthPlatformStatus();
@@ -61,16 +64,23 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
           HealthPlatformStatus.installationOrUpdateRequired,
       };
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'getHealthPlatformStatus: completed successfully, status=$status',
+        operation: 'getHealthPlatformStatus',
+        phase: 'completed',
+        message: 'Health Connect platform status retrieved',
+        context: {
+          'health_platform_status': status.name,
+        },
       );
 
       return status;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'getHealthPlatformStatus: failed',
+        operation: 'getHealthPlatformStatus',
+        phase: 'failed',
+        message: 'Failed to get Health Connect platform status',
         exception: e,
         stackTrace: st,
       );
@@ -89,24 +99,26 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   Future<List<PermissionRequestResult>> requestPermissions(
     List<Permission> permissions,
   ) async {
-    final permissionsCount = permissions.length;
-    final healthDataCount = permissions
-        .whereType<HealthDataPermission>()
-        .length;
-    final featureCount = permissions
-        .whereType<HealthPlatformFeaturePermission>()
-        .length;
+    final healthDataPermissions = permissions.healthDataPermissions;
+    final featurePermissions = permissions.featurePermissions;
 
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'requestPermissions: entry with total=$permissionsCount, '
-      'healthData=$healthDataCount, features=$featureCount',
+      operation: 'requestPermissions',
+      phase: 'entry',
+      message: 'Requesting Health Connect permissions',
+      context: {
+        'requested_health_data_permissions': healthDataPermissions,
+        'requested_feature_permissions': featurePermissions,
+      },
     );
 
     if (permissions.isEmpty) {
-      _logger.debug(
+      HealthConnectorLogger.warning(
         _tag,
-        'requestPermissions: empty permissions list, returning empty result',
+        operation: 'requestPermissions',
+        phase: 'completed',
+        message: 'No permissions to request (empty list)',
       );
 
       return [];
@@ -118,28 +130,45 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       final responseDto = await _platformClient.requestPermissions(requestDto);
 
       final results = responseDto.toDomain();
+      final grantedPermissions = results
+          .where((result) => result.status == PermissionStatus.granted)
+          .map((result) => result.permission)
+          .toList();
+      final grantedHealthDataPermissions =
+          grantedPermissions.healthDataPermissions;
+      final grantedFeaturePermissions = grantedPermissions.featurePermissions;
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'requestPermissions: completed successfully, '
-        '${results.length} result(s)',
+        operation: 'requestPermissions',
+        phase: 'completed',
+        message: 'Health Connect permissions requested successfully',
+        context: {
+          'granted_health_data_permissions': grantedHealthDataPermissions,
+          'granted_feature_permissions': grantedFeaturePermissions,
+        },
       );
 
       return results;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'requestPermissions: platform exception - total=$permissionsCount, '
-        'healthData=$healthDataCount, features=$featureCount',
+        operation: 'requestPermissions',
+        phase: 'failed',
+        message: 'Failed to request Health Connect permissions',
+        context: {
+          'requested_permissions': {
+            'health_data_permissions': healthDataPermissions,
+            'feature_permissions': featurePermissions,
+          },
+        },
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to request permissions (total: $permissionsCount, '
-        'health data: $healthDataCount, features: $featureCount): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to request permissions: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -162,7 +191,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   /// - [HealthConnectorException] if the platform request fails or
   ///   returns invalid data.
   Future<List<Permission>> getGrantedPermissions() async {
-    _logger.debug(_tag, 'getGrantedPermissions: entry');
+    HealthConnectorLogger.debug(
+      _tag,
+      operation: 'getGrantedPermissions',
+      phase: 'entry',
+      message: 'Getting granted Health Connect permissions',
+    );
 
     try {
       final responseDto = await _platformClient.getGrantedPermissions();
@@ -174,18 +208,28 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
           .where((result) => result.status == PermissionStatus.granted)
           .map((result) => result.permission)
           .toList();
+      final grantedHealthDataPermissions =
+          grantedPermissions.healthDataPermissions;
+      final grantedFeaturePermissions = grantedPermissions.featurePermissions;
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'getGrantedPermissions: completed successfully, '
-        '${grantedPermissions.length} granted permission(s)',
+        operation: 'getGrantedPermissions',
+        phase: 'completed',
+        message: 'Granted Health Connect permissions retrieved',
+        context: {
+          'granted_health_data_permissions': grantedHealthDataPermissions,
+          'granted_feature_permissions': grantedFeaturePermissions,
+        },
       );
 
       return grantedPermissions;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'getGrantedPermissions: platform exception',
+        operation: 'getGrantedPermissions',
+        phase: 'failed',
+        message: 'Failed to get granted Health Connect permissions',
         exception: e,
         stackTrace: st,
       );
@@ -210,16 +254,28 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   ///
   /// - [HealthConnectorException] if the platform request fails
   Future<void> revokeAllPermissions() async {
-    _logger.debug(_tag, 'revokeAllPermissions: entry');
+    HealthConnectorLogger.debug(
+      _tag,
+      operation: 'revokeAllPermissions',
+      phase: 'entry',
+      message: 'Revoking all Health Connect permissions',
+    );
 
     try {
       await _platformClient.revokeAllPermissions();
 
-      _logger.info(_tag, 'revokeAllPermissions: completed successfully');
-    } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.info(
         _tag,
-        'revokeAllPermissions: platform exception',
+        operation: 'revokeAllPermissions',
+        phase: 'completed',
+        message: 'All Health Connect permissions revoked successfully',
+      );
+    } on PlatformException catch (e, st) {
+      HealthConnectorLogger.error(
+        _tag,
+        operation: 'revokeAllPermissions',
+        phase: 'failed',
+        message: 'Failed to revoke all Health Connect permissions',
         exception: e,
         stackTrace: st,
       );
@@ -254,7 +310,13 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   Future<HealthPlatformFeatureStatus> getFeatureStatus(
     HealthPlatformFeature feature,
   ) async {
-    _logger.debug(_tag, 'getFeatureStatus: entry for feature=$feature');
+    HealthConnectorLogger.debug(
+      _tag,
+      operation: 'getFeatureStatus',
+      phase: 'entry',
+      message: 'Checking Health Connect feature status',
+      context: {'feature': feature},
+    );
 
     try {
       final featureDto = feature.toDto();
@@ -263,24 +325,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       final status = statusDto.toDomain();
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'getFeatureStatus: completed successfully, feature=$feature, '
-        'status=$status',
+        operation: 'getFeatureStatus',
+        phase: 'completed',
+        message: 'Health Connect feature status retrieved',
+        context: {'feature': feature, 'status': status.name},
       );
 
       return status;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'getFeatureStatus: platform exception for feature=$feature',
+        operation: 'getFeatureStatus',
+        phase: 'failed',
+        message: 'Failed to get Health Connect feature status',
+        context: {'feature': feature},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to get feature status for feature=$feature from platform: '
+        'Failed to get feature status for $feature: '
         '${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
@@ -292,10 +359,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   Future<R?> readRecord<R extends HealthRecord>(
     ReadRecordRequest<R> request,
   ) async {
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'readRecord: entry for dataType=${request.dataType.identifier}, '
-      'recordId=${request.id.value}',
+      operation: 'readRecord',
+      phase: 'entry',
+      message: 'Reading Health Connect record',
+      context: {'request': request},
     );
 
     try {
@@ -304,7 +373,13 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       final responseDto = await _platformClient.readRecord(requestDto);
 
       if (responseDto == null) {
-        _logger.info(_tag, 'readRecord: completed, record not found');
+        HealthConnectorLogger.info(
+          _tag,
+          operation: 'readRecord',
+          phase: 'completed',
+          message: 'Health Connect record not found',
+          context: {'request': request, 'response': null},
+        );
 
         return null; // Record not found
       }
@@ -312,22 +387,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       // Extract record based on data type using typed fields
       final record = responseDto.toDomain<R>(request.dataType);
 
-      _logger.info(_tag, 'readRecord: completed successfully, record found');
+      HealthConnectorLogger.info(
+        _tag,
+        operation: 'readRecord',
+        phase: 'completed',
+        message: 'Health Connect record read successfully',
+        context: {'request': request, 'response': record},
+      );
 
       return record;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'readRecord: platform exception for '
-        'dataType=${request.dataType.identifier}, recordId=${request.id.value}',
+        operation: 'readRecord',
+        phase: 'failed',
+        message: 'Failed to read Health Connect record',
+        context: {'request': request},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to read record (dataType=${request.dataType.identifier}, '
-        'recordId=${request.id.value}): ${e.message ?? 'Unknown error'}',
+        'Failed to process $request: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -338,16 +420,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   Future<ReadRecordsResponse<R>> readRecords<R extends HealthRecord>(
     ReadRecordsRequest<R> request,
   ) async {
-    final timeRange =
-        '${request.startTime.toIso8601String()} to '
-        '${request.endTime.toIso8601String()}';
-    final pageSize = request.pageSize;
-    final pageToken = request.pageToken ?? 'none';
-
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'readRecords: entry for dataType=${request.dataType.identifier}, '
-      'timeRange=$timeRange, pageSize=$pageSize, pageToken=$pageToken',
+      operation: 'readRecords',
+      phase: 'entry',
+      message: 'Reading Health Connect records',
+      context: {'request': request},
     );
 
     try {
@@ -357,28 +435,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       final response = responseDto.toDomain<R>(request);
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'readRecords: completed successfully, ${response.records.length} '
-        'record(s) found, hasMorePages=${response.hasMorePages}',
+        operation: 'readRecords',
+        phase: 'completed',
+        message: 'Health Connect records read successfully',
+        context: {'request': request, 'response': response},
       );
 
       return response;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'readRecords: platform exception for '
-        'dataType=${request.dataType.identifier}, '
-        'timeRange=$timeRange, pageSize=$pageSize, pageToken=$pageToken',
+        operation: 'readRecords',
+        phase: 'failed',
+        message: 'Failed to read Health Connect records',
+        context: {'request': request},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to read records (dataType=${request.dataType.identifier}, '
-        'timeRange=$timeRange, pageSize=$pageSize, pageToken=$pageToken): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to process $request: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -387,12 +466,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
   @override
   Future<HealthRecordId> writeRecord<R extends HealthRecord>(R record) async {
-    final recordType = record.runtimeType.toString();
-    final recordId = record.id.value;
-
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'writeRecord: entry for recordType=$recordType, recordId=$recordId',
+      operation: 'writeRecord',
+      phase: 'entry',
+      message: 'Writing Health Connect record',
+      context: {'record': record},
     );
 
     try {
@@ -402,26 +481,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       final assignedRecordId = responseDto.recordId.toHealthRecordId();
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'writeRecord: completed successfully, '
-        'assigned recordId=${assignedRecordId.value}',
+        operation: 'writeRecord',
+        phase: 'completed',
+        message: 'Health Connect record written successfully',
+        context: {'record': record, 'assignedRecordId': assignedRecordId},
       );
 
       return assignedRecordId;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'writeRecord: platform exception for recordType=$recordType, '
-        'recordId=$recordId',
+        operation: 'writeRecord',
+        phase: 'failed',
+        message: 'Failed to write Health Connect record',
+        context: {'record': record},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to write record (type=$recordType, id=$recordId): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to write $record: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -432,20 +514,20 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
   Future<List<HealthRecordId>> writeRecords<R extends HealthRecord>(
     List<R> records,
   ) async {
-    final recordsCount = records.length;
-    final recordType = records.isNotEmpty
-        ? records.first.runtimeType.toString()
-        : 'unknown';
-
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'writeRecords: entry with count=$recordsCount, recordType=$recordType',
+      operation: 'writeRecords',
+      phase: 'entry',
+      message: 'Writing Health Connect records',
+      context: {'records': records},
     );
 
     if (records.isEmpty) {
-      _logger.debug(
+      HealthConnectorLogger.warning(
         _tag,
-        'writeRecords: empty records list, returning empty result',
+        operation: 'writeRecords',
+        phase: 'completed',
+        message: 'No records to write (empty list)',
       );
 
       return [];
@@ -460,26 +542,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
           .map((id) => id.toHealthRecordId())
           .toList();
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'writeRecords: completed successfully, ${recordIds.length} '
-        'record(s) written',
+        operation: 'writeRecords',
+        phase: 'completed',
+        message: 'Health Connect records written successfully',
+        context: {'records': records, 'assignedRecordIds': recordIds},
       );
 
       return recordIds;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'writeRecords: platform exception for count=$recordsCount, '
-        'type=$recordType',
+        operation: 'writeRecords',
+        phase: 'failed',
+        message: 'Failed to write Health Connect records',
+        context: {'records': records},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to write records (count=$recordsCount, type=$recordType): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to write $records: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -488,12 +573,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
   @override
   Future<HealthRecordId> updateRecord<R extends HealthRecord>(R record) async {
-    final recordType = record.runtimeType.toString();
-    final recordId = record.id.value;
-
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'updateRecord: entry for recordType=$recordType, recordId=$recordId',
+      operation: 'updateRecord',
+      phase: 'entry',
+      message: 'Updating Health Connect record',
+      context: {'record': record},
     );
 
     try {
@@ -503,26 +588,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       final updatedRecordId = responseDto.recordId.toHealthRecordId();
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'updateRecord: completed successfully, '
-        'recordId=${updatedRecordId.value}',
+        operation: 'updateRecord',
+        phase: 'completed',
+        message: 'Health Connect record updated successfully',
+        context: {'record': record},
       );
 
       return updatedRecordId;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'updateRecord: platform exception for recordType=$recordType, '
-        'recordId=$recordId',
+        operation: 'updateRecord',
+        phase: 'failed',
+        message: 'Failed to update Health Connect record',
+        context: {'record': record},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to update record (type=$recordType, id=$recordId): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to update $record: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -534,14 +622,12 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
     R extends HealthRecord,
     U extends MeasurementUnit
   >(AggregateRequest<R, U> request) async {
-    final timeRange =
-        '${request.startTime.toIso8601String()} to '
-        '${request.endTime.toIso8601String()}';
-
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'aggregate: entry for dataType=${request.dataType.identifier}, '
-      'metric=${request.aggregationMetric.name}, timeRange=$timeRange',
+      operation: 'aggregate',
+      phase: 'entry',
+      message: 'Aggregating Health Connect data',
+      context: {'request': request},
     );
 
     try {
@@ -551,28 +637,29 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       final response = responseDto.toDomain<R, U>(request.dataType);
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'aggregate: completed successfully, value=${response.value}',
+        operation: 'aggregate',
+        phase: 'completed',
+        message: 'Health Connect data aggregated successfully',
+        context: {'request': request, 'response': response},
       );
 
       return response;
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'aggregate: platform exception for '
-        'dataType=${request.dataType.identifier}, '
-        'metric=${request.aggregationMetric.name}, timeRange=$timeRange',
+        operation: 'aggregate',
+        phase: 'failed',
+        message: 'Failed to aggregate Health Connect data',
+        context: {'request': request},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to perform aggregation '
-        '(dataType=${request.dataType.identifier}, '
-        'metric=${request.aggregationMetric.name}, timeRange=$timeRange): '
-        '${e.message ?? 'Unknown error'}',
+        'Failed to process $request: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -585,13 +672,17 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
     required DateTime startTime,
     required DateTime endTime,
   }) async {
-    final timeRange =
-        '${startTime.toIso8601String()} to ${endTime.toIso8601String()}';
+    final request = {
+      'dataType': dataType,
+      'timeRange': formatTimeRange(startTime: startTime, endTime: endTime),
+    };
 
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'deleteRecords: entry for dataType=${dataType.identifier}, '
-      'timeRange=$timeRange',
+      operation: 'deleteRecords',
+      phase: 'entry',
+      message: 'Deleting Health Connect records by time range',
+      context: {'request': request},
     );
 
     try {
@@ -603,25 +694,27 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       await _platformClient.deleteRecordsByTimeRange(requestDto);
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'deleteRecords: completed successfully for '
-        'dataType=${dataType.identifier}, timeRange=$timeRange',
+        operation: 'deleteRecords',
+        phase: 'completed',
+        message: 'Health Connect records deleted successfully',
+        context: {'request': request},
       );
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'deleteRecords: platform exception for '
-        'dataType=${dataType.identifier}, timeRange=$timeRange',
+        operation: 'deleteRecords',
+        phase: 'failed',
+        message: 'Failed to delete Health Connect records',
+        context: {'request': request},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to delete records by time range '
-        '(dataType=${dataType.identifier}, '
-        'timeRange=$timeRange): ${e.message ?? 'Unknown error'}',
+        'Failed to delete records by $request: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );
@@ -633,18 +726,25 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
     required HealthDataType<R, MeasurementUnit> dataType,
     required List<HealthRecordId> recordIds,
   }) async {
-    final idsCount = recordIds.length;
+    final request = {
+      'dataType': dataType,
+      'recordIds': recordIds,
+    };
 
-    _logger.debug(
+    HealthConnectorLogger.debug(
       _tag,
-      'deleteRecordsByIds: entry for dataType=${dataType.identifier}, '
-      'recordIdsCount=$idsCount',
+      operation: 'deleteRecordsByIds',
+      phase: 'entry',
+      message: 'Deleting Health Connect records by IDs',
+      context: {'request': request},
     );
 
     if (recordIds.isEmpty) {
-      _logger.debug(
+      HealthConnectorLogger.warning(
         _tag,
-        'deleteRecordsByIds: empty recordIds list, returning',
+        operation: 'deleteRecordsByIds',
+        phase: 'completed',
+        message: 'No records to delete (empty IDs list)',
       );
 
       return;
@@ -658,24 +758,27 @@ final class HealthConnectorHCClient implements HealthConnectorPlatformClient {
 
       await _platformClient.deleteRecordsByIds(requestDto);
 
-      _logger.info(
+      HealthConnectorLogger.info(
         _tag,
-        'deleteRecordsByIds: completed successfully for '
-        'dataType=${dataType.identifier}, recordIdsCount=$idsCount',
+        operation: 'deleteRecordsByIds',
+        phase: 'completed',
+        message: 'Health Connect records deleted successfully',
+        context: {'request': request},
       );
     } on PlatformException catch (e, st) {
-      _logger.error(
+      HealthConnectorLogger.error(
         _tag,
-        'deleteRecordsByIds: platform exception for '
-        'dataType=${dataType.identifier}, recordIdsCount=$idsCount',
+        operation: 'deleteRecordsByIds',
+        phase: 'failed',
+        message: 'Failed to delete Health Connect records by IDs',
+        context: {'request': request},
         exception: e,
         stackTrace: st,
       );
 
       throw HealthConnectorException(
         e.code.toHealthConnectorErrorCode(),
-        'Failed to delete records by IDs (dataType=${dataType.identifier}, '
-        'recordIdsCount=$idsCount): ${e.message ?? 'Unknown error'}',
+        'Failed to delete records by $request: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );

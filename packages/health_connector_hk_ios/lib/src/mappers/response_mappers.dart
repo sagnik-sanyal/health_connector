@@ -53,7 +53,7 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected stepsRecords but got null in '
-            'ReadRecordsResponseDto for dataType: ${dataType.identifier}',
+            'ReadRecordsResponseDto for dataType: $dataType',
           );
         }
         return stepsRecords.map((dto) => dto.toDomain()).cast<R>().toList();
@@ -64,7 +64,7 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected weightRecords but got null in '
-            'ReadRecordsResponseDto for dataType: ${dataType.identifier}',
+            'ReadRecordsResponseDto for dataType: $dataType',
           );
         }
         return weightRecords.map((dto) => dto.toDomain()).cast<R>().toList();
@@ -86,7 +86,7 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
       throw HealthConnectorException(
         HealthConnectorErrorCode.parsingError,
         'Cannot create AggregateResponse with null value for '
-        'dataType: ${dataType.identifier}',
+        'dataType: $dataType',
       );
     }
 
@@ -105,7 +105,7 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected doubleValue but got null in '
-            'AggregateResponseDto for dataType: ${dataType.identifier}',
+            'AggregateResponseDto for dataType: $dataType',
           );
         }
         return Numeric(value) as U;
@@ -116,7 +116,7 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected massValue but got null in '
-            'AggregateResponseDto for dataType: ${dataType.identifier}',
+            'AggregateResponseDto for dataType: $dataType',
           );
         }
         return value.toDomain() as U;
@@ -137,7 +137,7 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected stepsRecord but got null in '
-            'ReadRecordResponseDto for dataType: ${dataType.identifier}',
+            'ReadRecordResponseDto for dataType: $dataType',
           );
         }
         return record.toDomain() as R;
@@ -148,7 +148,7 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected weightRecord but got null in '
-            'ReadRecordResponseDto for dataType: ${dataType.identifier}',
+            'ReadRecordResponseDto for dataType: $dataType',
           );
         }
         return record.toDomain() as R;

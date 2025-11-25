@@ -10,6 +10,7 @@ import 'package:health_connector_core/src/models/requests/aggregation_metric.dar
     show AggregationMetric;
 import 'package:health_connector_core/src/models/requests/request.dart'
     show Request;
+import 'package:health_connector_core/src/utils/datetime.dart';
 import 'package:health_connector_core/src/utils/validation.dart'
     show requireEndTimeAfterStartTime;
 import 'package:meta/meta.dart' show immutable, internal;
@@ -45,7 +46,7 @@ final class AggregateRequest<R extends HealthRecord, U extends MeasurementUnit>
     // a `HealthDataType` exposes an aggregation method it doesn't support.
     assert(
       dataType.supportedAggregationMetrics.contains(aggregationMetric),
-      '${dataType.identifier} does not support '
+      '$dataType does not support '
       'aggregation with metric ${aggregationMetric.name}',
     );
 
@@ -109,8 +110,8 @@ final class AggregateRequest<R extends HealthRecord, U extends MeasurementUnit>
   @override
   String toString() =>
       'AggregateRequest('
-      'dataType: ${dataType.identifier}, '
-      'aggregationMetric: $aggregationMetric, '
-      'startTime: $startTime, '
-      'endTime: $endTime)';
+      'dataType: $dataType, '
+      'aggregationMetric: ${aggregationMetric.name}, '
+      'time_range: ${formatTimeRange(startTime: startTime, endTime: endTime)}'
+      ')';
 }

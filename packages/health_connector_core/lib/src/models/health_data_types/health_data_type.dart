@@ -1,3 +1,5 @@
+import 'package:health_connector_core/health_connector_core.dart'
+    show Permission;
 import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
     show Since;
 import 'package:health_connector_core/src/config/health_connector_config_constants.dart'
@@ -107,6 +109,9 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
 
   /// The list of aggregation metrics that support this health record.
   List<AggregationMetric> get supportedAggregationMetrics;
+
+  /// The list of permissions for this health record.
+  List<Permission> get permissions;
 
   /// Step count data type.
   ///

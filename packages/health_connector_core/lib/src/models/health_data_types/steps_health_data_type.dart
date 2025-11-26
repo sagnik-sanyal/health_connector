@@ -78,4 +78,7 @@ final class StepsHealthDataType extends HealthDataType<StepRecord, Numeric>
       endTime: endTime,
     );
   }
+
+  @override
+  List<Permission> get permissions => [readPermission, writePermission];
 }

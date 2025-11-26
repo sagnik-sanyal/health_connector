@@ -113,4 +113,7 @@ final class WeightHealthDataType extends HealthDataType<WeightRecord, Mass>
       endTime: endTime,
     );
   }
+
+  @override
+  List<Permission> get permissions => [readPermission, writePermission];
 }

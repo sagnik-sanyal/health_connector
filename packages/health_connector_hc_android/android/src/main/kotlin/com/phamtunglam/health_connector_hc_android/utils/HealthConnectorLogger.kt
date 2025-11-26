@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.utils
 
 import android.util.Log
+import com.phamtunglam.health_connector_hc_android.utils.HealthConnectorLogger.MAX_CACHED_INDENT_DEPTH
 import java.util.Locale
 
 /**
@@ -33,14 +34,101 @@ internal object HealthConnectorLogger {
     }
 
     /**
-     * Indentation for top-level fields.
+     * Base indentation unit (4 spaces).
      */
-    private const val INDENT_LEVEL_1 = "  "
+    private const val INDENTATION = "    "
 
     /**
-     * Indentation for nested fields (exception, context).
+     * Maximum depth for cached indentation strings.
      */
-    private const val INDENT_LEVEL_2 = "    "
+    private const val MAX_CACHED_INDENT_DEPTH = 10
+
+    /**
+     * Cached indentation strings for depths 0 to [MAX_CACHED_INDENT_DEPTH].
+     *
+     * Pre-computed to avoid repeated string concatenation during formatting.
+     */
+    private val indentCache: List<String> = (0..MAX_CACHED_INDENT_DEPTH).map { depth ->
+        INDENTATION.repeat(depth + 1)
+    }
+
+    /**
+     * Gets the indentation string for the given depth.
+     *
+     * Uses cached values for depths up to [MAX_CACHED_INDENT_DEPTH],
+     * otherwise computes the indentation string dynamically.
+     *
+     * @param depth The nesting depth (0 for top-level).
+     * @return The indentation string for the given depth.
+     */
+    private fun getIndent(depth: Int): String {
+        return if (depth <= MAX_CACHED_INDENT_DEPTH) {
+            indentCache[depth]
+        } else {
+            INDENTATION.repeat(depth + 1)
+        }
+    }
+
+    /**
+     * Recursively formats a value with proper indentation based on
+     * nesting depth, writing directly to the provided buffer.
+     *
+     * Handles maps, lists, and other types. Maps and lists are formatted with
+     * increasing indentation for each nesting level.
+     *
+     * @param buffer The StringBuilder to write the formatted value to.
+     * @param value The value to format (can be a map, list, or any other type).
+     * @param depth The current nesting depth (0 for top-level, increases with nesting).
+     */
+    private fun formatValueTo(buffer: StringBuilder, value: Any?, depth: Int) {
+        val currentIndent = getIndent(depth)
+        val nextIndent = getIndent(depth + 1)
+
+        // Handle maps
+        if (value is Map<*, *>) {
+            if (value.isEmpty()) {
+                buffer.append("{}")
+                return
+            }
+            buffer.append("{\n")
+            var isFirst = true
+            for ((key, mapValue) in value) {
+                if (!isFirst) {
+                    buffer.append("\n")
+                }
+                isFirst = false
+                buffer.append("$nextIndent$key: ")
+                formatValueTo(buffer, mapValue, depth + 1)
+                buffer.append(",")
+            }
+            buffer.append("\n$currentIndent}")
+            return
+        }
+
+        // Handle lists
+        if (value is List<*>) {
+            if (value.isEmpty()) {
+                buffer.append("[]")
+                return
+            }
+            buffer.append("[\n")
+            var isFirst = true
+            for (element in value) {
+                if (!isFirst) {
+                    buffer.append("\n")
+                }
+                isFirst = false
+                buffer.append(nextIndent)
+                formatValueTo(buffer, element, depth + 1)
+                buffer.append(",")
+            }
+            buffer.append("\n$currentIndent]")
+            return
+        }
+
+        // Handle other types - convert to string
+        buffer.append(value.toString())
+    }
 
     /**
      * Formats a structured log message in JSON-like format.
@@ -65,44 +153,44 @@ internal object HealthConnectorLogger {
         stackTrace: Array<StackTraceElement>? = null,
     ): String {
         val buffer = StringBuilder()
-        val fields = mutableListOf<String>()
 
-        // Always include operation and phase
-        fields.add("$INDENT_LEVEL_1 operation: $operation,")
-        fields.add("$INDENT_LEVEL_1 phase: $phase,")
+        // Always include operation
+        buffer.appendLine("{")
+        buffer.append("${getIndent(0)}operation: $operation,")
+
+        // Include phase if provided
+        buffer.append("\n${getIndent(0)}phase: $phase,")
 
         // Include message if provided
         if (message != null) {
-            fields.add("$INDENT_LEVEL_1 message: $message,")
+            buffer.append("\n${getIndent(0)}message: $message,")
         }
 
         // Include exception block if exception or stackTrace is provided
         if (exception != null || stackTrace != null) {
-            val exceptionFields = mutableListOf<String>()
+            buffer.append("\n${getIndent(0)}exception: {")
             if (exception != null) {
-                exceptionFields.add("$INDENT_LEVEL_2 cause: $exception,")
+                buffer.append("\n${getIndent(1)}cause: $exception,")
             }
             if (stackTrace != null) {
                 val stackTraceString = stackTrace.joinToString("\n") { it.toString() }
-                exceptionFields.add("$INDENT_LEVEL_2 stack_trace: $stackTraceString,")
+                buffer.append("\n${getIndent(1)}stack_trace: $stackTraceString,")
             }
-            fields.add("$INDENT_LEVEL_1 exception: {")
-            fields.addAll(exceptionFields)
-            fields.add("$INDENT_LEVEL_1},")
+            buffer.append("\n${getIndent(0)}},")
         }
 
         // Include context if provided and not empty
         if (context != null && context.isNotEmpty()) {
-            fields.add("$INDENT_LEVEL_1 context: {")
+            buffer.append("\n${getIndent(0)}context: {")
             for ((key, value) in context) {
-                fields.add("$INDENT_LEVEL_2$key: $value,")
+                buffer.append("\n")
+                buffer.append("${getIndent(1)}$key: ")
+                formatValueTo(buffer, value, 1)
+                buffer.append(",")
             }
-            fields.add("$INDENT_LEVEL_1},")
+            buffer.append("\n${getIndent(0)}},")
         }
 
-        // Build the final message
-        buffer.appendLine("{")
-        buffer.append(fields.joinToString("\n"))
         buffer.append("\n}")
 
         return buffer.toString()
@@ -356,4 +444,3 @@ internal object HealthConnectorLogger {
         ERROR,
     }
 }
-

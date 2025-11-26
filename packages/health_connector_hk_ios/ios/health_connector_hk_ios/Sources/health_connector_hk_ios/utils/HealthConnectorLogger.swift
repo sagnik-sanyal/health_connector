@@ -13,7 +13,7 @@ internal enum HealthConnectorLogger {
      * OSLog subsystem identifier for Health Connector iOS plugin.
      */
     private static let subsystem = "com.phamtunglam.health_connector_hk_ios"
-    
+
     /**
      * Whether logging is enabled.
      *
@@ -21,7 +21,7 @@ internal enum HealthConnectorLogger {
      * logging any messages. Defaults to `true`.
      */
     private static var _isEnabled: Bool = true
-    
+
     /**
      * Whether logging is enabled.
      *
@@ -32,7 +32,7 @@ internal enum HealthConnectorLogger {
         get { _isEnabled }
         set { _isEnabled = newValue }
     }
-    
+
     /**
      * Sets whether logging is enabled.
      *
@@ -44,17 +44,46 @@ internal enum HealthConnectorLogger {
     static func setEnabled(_ enabled: Bool) {
         isEnabled = enabled
     }
-    
+
     /**
-     * Indentation for top-level fields.
+     * Base indentation unit (4 spaces).
      */
-    private static let indentLevel1 = "   "
-    
+    private static let indentation = "    "
+
     /**
-     * Indentation for nested fields (exception, context).
+     * Maximum depth for cached indentation strings.
      */
-    private static let indentLevel2 = "     "
-    
+    private static let maxCachedIndentDepth = 10
+
+    /**
+     * Cached indentation strings for depths 0 to [maxCachedIndentDepth].
+     *
+     * Pre-computed to avoid repeated string concatenation during formatting.
+     */
+    private static let indentCache: [String] = {
+        var cache: [String] = []
+        for depth in 0...maxCachedIndentDepth {
+            cache.append(String(repeating: indentation, count: depth + 1))
+        }
+        return cache
+    }()
+
+    /**
+     * Gets the indentation string for the given depth.
+     *
+     * Uses cached values for depths up to [maxCachedIndentDepth],
+     * otherwise computes the indentation string dynamically.
+     *
+     * - Parameter depth: The nesting depth (0 for top-level).
+     * - Returns: The indentation string for the given depth.
+     */
+    private static func getIndent(depth: Int) -> String {
+        if depth <= maxCachedIndentDepth {
+            return indentCache[depth]
+        }
+        return String(repeating: indentation, count: depth + 1)
+    }
+
     /**
      * Date formatter for timestamps: day-month-year hour:minute:second.millisecond
      */
@@ -65,7 +94,69 @@ internal enum HealthConnectorLogger {
         formatter.timeZone = TimeZone.current
         return formatter
     }()
-    
+
+    /**
+     * Recursively formats a value with proper indentation based on
+     * nesting depth, writing directly to the provided buffer.
+     *
+     * Handles dictionaries, arrays, and other types. Dictionaries and arrays are formatted with
+     * increasing indentation for each nesting level.
+     *
+     * - Parameters:
+     *   - buffer: The string buffer to write the formatted value to (inout).
+     *   - value: The value to format (can be a dictionary, array, or any other type).
+     *   - depth: The current nesting depth (0 for top-level, increases with nesting).
+     */
+    private static func formatValueTo(_ buffer: inout String, value: Any?, depth: Int) {
+        let currentIndent = getIndent(depth: depth)
+        let nextIndent = getIndent(depth: depth + 1)
+
+        // Handle dictionaries
+        if let dict = value as? [String: Any?] {
+            if dict.isEmpty {
+                buffer += "{}"
+                return
+            }
+            buffer += "{\n"
+            var isFirst = true
+            for (key, dictValue) in dict {
+                if !isFirst {
+                    buffer += "\n"
+                }
+                isFirst = false
+                buffer += "\(nextIndent)\(key): "
+                formatValueTo(&buffer, value: dictValue, depth: depth + 1)
+                buffer += ","
+            }
+            buffer += "\n\(currentIndent)}"
+            return
+        }
+
+        // Handle arrays
+        if let array = value as? [Any?] {
+            if array.isEmpty {
+                buffer += "[]"
+                return
+            }
+            buffer += "[\n"
+            var isFirst = true
+            for element in array {
+                if !isFirst {
+                    buffer += "\n"
+                }
+                isFirst = false
+                buffer += nextIndent
+                formatValueTo(&buffer, value: element, depth: depth + 1)
+                buffer += ","
+            }
+            buffer += "\n\(currentIndent)]"
+            return
+        }
+
+        // Handle other types - convert to string
+        buffer += String(describing: value ?? "null")
+    }
+
     /**
      * Formats a structured log message in JSON-like format.
      *
@@ -82,51 +173,56 @@ internal enum HealthConnectorLogger {
      * - Returns: A formatted string in JSON-like format with indentation.
      */
     private static func formatStructuredMessage(
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil,
-        stackTrace: String? = nil
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil,
+    stackTrace: String? = nil
     ) -> String {
-        var fields: [String] = []
-        
-        // Always include operation and phase
-        fields.append("\(indentLevel1)operation: \(operation),")
-        fields.append("\(indentLevel1)phase: \(phase),")
-        
+        var buffer = ""
+
+        // Always include operation
+        buffer += "{\n"
+        buffer += "\(getIndent(depth: 0))operation: \(operation),"
+
+        // Include phase if provided
+        buffer += "\n\(getIndent(depth: 0))phase: \(phase),"
+
         // Include message if provided
         if let message = message {
-            fields.append("\(indentLevel1)message: \(message),")
+            buffer += "\n\(getIndent(depth: 0))message: \(message),"
         }
-        
+
         // Include exception block if exception or stackTrace is provided
         if exception != nil || stackTrace != nil {
-            var exceptionFields: [String] = []
+            buffer += "\n\(getIndent(depth: 0))exception: {"
             if let exception = exception {
-                exceptionFields.append("\(indentLevel2)cause: \(String(describing: exception)),")
+                buffer += "\n\(getIndent(depth: 1))cause: \(String(describing: exception)),"
             }
             if let stackTrace = stackTrace {
-                exceptionFields.append("\(indentLevel2)stack_trace: \(stackTrace),")
+                buffer += "\n\(getIndent(depth: 1))stack_trace: \(stackTrace),"
             }
-            fields.append("\(indentLevel1)exception: {")
-            fields.append(contentsOf: exceptionFields)
-            fields.append("\(indentLevel1)},")
+            buffer += "\n\(getIndent(depth: 0))},"
         }
-        
+
         // Include context if provided and not empty
         if let context = context, !context.isEmpty {
-            fields.append("\(indentLevel1)context: {")
+            buffer += "\n\(getIndent(depth: 0))context: {"
             for (key, value) in context {
-                fields.append("\(indentLevel2)\(key): \(String(describing: value)),")
+                buffer += "\n"
+                buffer += "\(getIndent(depth: 1))\(key): "
+                formatValueTo(&buffer, value: value, depth: 1)
+                buffer += ","
             }
-            fields.append("\(indentLevel1)},")
+            buffer += "\n\(getIndent(depth: 0))},"
         }
-        
-        // Build the final message
-        return "{\n" + fields.joined(separator: "\n") + "\n}"
+
+        buffer += "\n}"
+
+        return buffer
     }
-    
+
     /**
      * Formats a Date to the log format:
      * `day-month-year hour:minute:second.millisecond`.
@@ -138,7 +234,7 @@ internal enum HealthConnectorLogger {
     private static func formatDateTime(_ date: Date) -> String {
         return dateFormatter.string(from: date)
     }
-    
+
     /**
      * Internal method that formats and logs the message.
      *
@@ -170,18 +266,18 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object.
      */
     private static func log(
-        level: OSLogType,
-        tag: String,
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil
+    level: OSLogType,
+    tag: String,
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil
     ) {
         guard isEnabled else {
             return
         }
-        
+
         // Extract stack trace from exception if available
         let stackTrace: String?
         if exception != nil {
@@ -189,7 +285,7 @@ internal enum HealthConnectorLogger {
         } else {
             stackTrace = nil
         }
-        
+
         let structuredMessage = formatStructuredMessage(
             operation: operation,
             phase: phase,
@@ -198,15 +294,15 @@ internal enum HealthConnectorLogger {
             exception: exception,
             stackTrace: stackTrace
         )
-        
+
         let now = Date()
         let formattedDateTime = formatDateTime(now)
         let levelName = levelName(for: level)
         let formattedMessage = "[\(formattedDateTime)][\(levelName)]: \n\(structuredMessage)"
-        
+
         let uppercaseTag = tag.uppercased()
         let logger = Logger(subsystem: subsystem, category: uppercaseTag)
-        
+
         // Use OSLog with appropriate level
         switch level {
         case .debug:
@@ -221,7 +317,7 @@ internal enum HealthConnectorLogger {
             logger.log("\(formattedMessage)")
         }
     }
-    
+
     /**
      * Gets the string name for a log level.
      *
@@ -242,7 +338,7 @@ internal enum HealthConnectorLogger {
             return "UNKNOWN"
         }
     }
-    
+
     /**
      * Logs a debug message.
      *
@@ -258,12 +354,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func debug(
-        tag: String,
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil
+    tag: String,
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil
     ) {
         log(
             level: .debug,
@@ -275,7 +371,7 @@ internal enum HealthConnectorLogger {
             exception: exception
         )
     }
-    
+
     /**
      * Logs an informational message.
      *
@@ -291,12 +387,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func info(
-        tag: String,
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil
+    tag: String,
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil
     ) {
         log(
             level: .info,
@@ -308,7 +404,7 @@ internal enum HealthConnectorLogger {
             exception: exception
         )
     }
-    
+
     /**
      * Logs a warning message.
      *
@@ -324,12 +420,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func warning(
-        tag: String,
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil
+    tag: String,
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil
     ) {
         log(
             level: .default,
@@ -341,7 +437,7 @@ internal enum HealthConnectorLogger {
             exception: exception
         )
     }
-    
+
     /**
      * Logs an error message.
      *
@@ -357,12 +453,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func error(
-        tag: String,
-        operation: String,
-        phase: String,
-        message: String? = nil,
-        context: [String: Any?]? = nil,
-        exception: Error? = nil
+    tag: String,
+    operation: String,
+    phase: String,
+    message: String? = nil,
+    context: [String: Any?]? = nil,
+    exception: Error? = nil
     ) {
         log(
             level: .error,
@@ -375,5 +471,3 @@ internal enum HealthConnectorLogger {
         )
     }
 }
-
-

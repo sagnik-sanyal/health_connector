@@ -89,5 +89,3 @@ final class SupportedHealthPlatforms {
   /// will be thrown.
   final List<HealthPlatform> platforms;
 }
-
-

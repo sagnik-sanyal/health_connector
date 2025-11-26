@@ -31,8 +31,6 @@ bool _deepEquals(Object? a, Object? b) {
   }
   return a == b;
 }
-
-
 /// Aggregation metric types for health data queries.
 enum AggregationMetricDto {
   /// Average (mean) value across all data points.
@@ -2032,8 +2030,6 @@ class UpdateRecordResponseDto {
   int get hashCode => Object.hashAll(_toList())
 ;
 }
-
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override

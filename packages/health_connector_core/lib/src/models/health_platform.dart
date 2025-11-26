@@ -33,5 +33,3 @@ enum HealthPlatformStatus {
   /// Health platform is available and functional on the device.
   available,
 }
-
-

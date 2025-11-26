@@ -76,8 +76,8 @@ final class PermissionsChangeNotifier extends ChangeNotifier {
 
   /// Loads the availability status of health platform features.
   ///
-  /// Updates [featureStatuses] with the current status of background reading
-  /// and history reading features.
+  /// Updates [featureStatuses] with the current status of all available
+  /// health platform features.
   Future<void> loadFeatureStatuses() async {
     notify(() {
       _isPageLoading = true;
@@ -85,18 +85,13 @@ final class PermissionsChangeNotifier extends ChangeNotifier {
     });
 
     try {
-      final backgroundStatus = await _healthConnector.getFeatureStatus(
-        HealthPlatformFeature.readHealthDataInBackground,
-      );
-      final historyStatus = await _healthConnector.getFeatureStatus(
-        HealthPlatformFeature.readHealthDataHistory,
-      );
+      final statuses = <HealthPlatformFeature, HealthPlatformFeatureStatus>{};
+      for (final feature in HealthPlatformFeature.values) {
+        statuses[feature] = await _healthConnector.getFeatureStatus(feature);
+      }
 
       notify(() {
-        _featureStatuses = {
-          HealthPlatformFeature.readHealthDataInBackground: backgroundStatus,
-          HealthPlatformFeature.readHealthDataHistory: historyStatus,
-        };
+        _featureStatuses = statuses;
         _isPageLoading = false;
       });
     } on HealthConnectorException catch (e) {

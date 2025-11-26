@@ -3,6 +3,8 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         AggregationMetric,
         DeviceType,
+        HealthDataPermission,
+        HealthDataPermissionAccessType,
         HealthDataType,
         HealthPlatform,
         HealthPlatformFeature,
@@ -52,6 +54,27 @@ extension PermissionStatusUI on PermissionStatus {
       PermissionStatus.denied => AppTexts.denied,
       PermissionStatus.unknown => AppTexts.unknown,
     };
+  }
+}
+
+/// Extension on [HealthDataPermissionAccessType] to provide UI-related properties.
+extension HealthDataPermissionAccessTypeUI on HealthDataPermissionAccessType {
+  /// Returns the display name for this access type.
+  String get displayName {
+    return switch (this) {
+      HealthDataPermissionAccessType.read => 'Read',
+      HealthDataPermissionAccessType.write => 'Write',
+    };
+  }
+}
+
+/// Extension on [HealthDataPermission] to provide UI-related properties.
+extension HealthDataPermissionUI on HealthDataPermission {
+  /// Returns the display name for this permission.
+  ///
+  /// Combines the data type display name with the access type (e.g., "Steps - Read").
+  String get displayName {
+    return '${dataType.displayName} - ${accessType.displayName}';
   }
 }
 

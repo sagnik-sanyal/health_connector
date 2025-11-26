@@ -4,6 +4,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         HealthConnectorErrorCode,
         HealthConnectorException,
+        HealthDataPermission,
         HealthDataType,
         HealthPlatform,
         HealthPlatformFeature,
@@ -11,6 +12,7 @@ import 'package:health_connector_core/health_connector_core.dart'
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/theme/app_colors.dart';
+import 'package:health_connector_toolbox/src/common/utils/health_connector_model_ui_extensions.dart';
 import 'package:health_connector_toolbox/src/common/utils/show_snack_bar.dart';
 import 'package:health_connector_toolbox/src/common/widgets/loading_indicator.dart';
 import 'package:health_connector_toolbox/src/common/widgets/loading_overlay.dart';
@@ -22,9 +24,9 @@ import 'package:provider/provider.dart'
 
 /// Page for managing health data permissions.
 ///
-/// Displays data type permissions (read/write for steps and weight) and
-/// feature permissions (background reading, history reading). Allows users
-/// to select and request multiple permissions at once.
+/// Dynamically displays all available data type permissions (read/write for
+/// all health data types) and feature permissions (all platform features).
+/// Allows users to select and request multiple permissions at once.
 @immutable
 final class PermissionsPage extends StatelessWidget {
   const PermissionsPage({super.key});
@@ -142,61 +144,24 @@ final class PermissionsPage extends StatelessWidget {
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                PermissionTile(
-                  permission: HealthDataType.steps.readPermission,
-                  displayName: AppTexts.stepsRead,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthDataType.steps.readPermission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthDataType.steps.readPermission,
-                  ),
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthDataType.steps.readPermission,
-                    isSelected: value,
-                  ),
-                ),
-                PermissionTile(
-                  permission: HealthDataType.steps.writePermission,
-                  displayName: AppTexts.stepsWrite,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthDataType.steps.writePermission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthDataType.steps.writePermission,
-                  ),
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthDataType.steps.writePermission,
-                    isSelected: value,
-                  ),
-                ),
-                PermissionTile(
-                  permission: HealthDataType.weight.readPermission,
-                  displayName: AppTexts.weightRead,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthDataType.weight.readPermission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthDataType.weight.readPermission,
-                  ),
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthDataType.weight.readPermission,
-                    isSelected: value,
-                  ),
-                ),
-                PermissionTile(
-                  permission: HealthDataType.weight.writePermission,
-                  displayName: AppTexts.weightWrite,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthDataType.weight.writePermission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthDataType.weight.writePermission,
-                  ),
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthDataType.weight.writePermission,
-                    isSelected: value,
-                  ),
+                ...HealthDataType.values.expand(
+                  (dataType) => dataType.permissions
+                      .whereType<HealthDataPermission>()
+                      .map(
+                        (permission) => PermissionTile(
+                          permission: permission,
+                          displayName: permission.displayName,
+                          isSelected: notifier.isPermissionSelected(permission),
+                          permissionStatus: notifier.getPermissionStatus(
+                            permission,
+                          ),
+                          onChanged: (value) =>
+                              notifier.togglePermissionSelection(
+                                permission,
+                                isSelected: value,
+                              ),
+                        ),
+                      ),
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -206,36 +171,20 @@ final class PermissionsPage extends StatelessWidget {
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                FeatureTile(
-                  feature: HealthPlatformFeature.readHealthDataInBackground,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthPlatformFeature.readHealthDataInBackground.permission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthPlatformFeature.readHealthDataInBackground.permission,
-                  ),
-                  featureStatus:
-                      notifier.featureStatuses[HealthPlatformFeature
-                          .readHealthDataInBackground],
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthPlatformFeature.readHealthDataInBackground.permission,
-                    isSelected: value ?? false,
-                  ),
-                ),
-                FeatureTile(
-                  feature: HealthPlatformFeature.readHealthDataHistory,
-                  isSelected: notifier.isPermissionSelected(
-                    HealthPlatformFeature.readHealthDataHistory.permission,
-                  ),
-                  permissionStatus: notifier.getPermissionStatus(
-                    HealthPlatformFeature.readHealthDataHistory.permission,
-                  ),
-                  featureStatus:
-                      notifier.featureStatuses[HealthPlatformFeature
-                          .readHealthDataHistory],
-                  onChanged: (value) => notifier.togglePermissionSelection(
-                    HealthPlatformFeature.readHealthDataHistory.permission,
-                    isSelected: value ?? false,
+                ...HealthPlatformFeature.values.map(
+                  (feature) => FeatureTile(
+                    feature: feature,
+                    isSelected: notifier.isPermissionSelected(
+                      feature.permission,
+                    ),
+                    permissionStatus: notifier.getPermissionStatus(
+                      feature.permission,
+                    ),
+                    featureStatus: notifier.featureStatuses[feature],
+                    onChanged: (value) => notifier.togglePermissionSelection(
+                      feature.permission,
+                      isSelected: value ?? false,
+                    ),
                   ),
                 ),
               ],

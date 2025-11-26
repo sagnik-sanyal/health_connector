@@ -4,6 +4,7 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
+import androidx.health.connect.client.records.HeightRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
@@ -55,6 +56,13 @@ internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
             }
         }
 
+        HealthDataTypeDto.HEIGHT -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(HeightRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(HeightRecord::class)
+            }
+        }
+
         HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
             when (this.accessType) {
                 PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(WheelchairPushesRecord::class)
@@ -100,6 +108,7 @@ internal fun String.toHealthDataPermissionDto(): HealthDataPermissionDto? {
         "WEIGHT" -> HealthDataTypeDto.WEIGHT
         "DISTANCE" -> HealthDataTypeDto.DISTANCE
         "FLOORS_CLIMBED" -> HealthDataTypeDto.FLOORS_CLIMBED
+        "HEIGHT" -> HealthDataTypeDto.HEIGHT
         "WHEELCHAIR_PUSHES" -> HealthDataTypeDto.WHEELCHAIR_PUSHES
         else -> return null // Unknown data type, skip it
     }

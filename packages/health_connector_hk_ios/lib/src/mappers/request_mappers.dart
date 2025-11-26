@@ -5,6 +5,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
+        HeightRecord,
         MeasurementUnit,
         ReadRecordRequest,
         ReadRecordsRequest,
@@ -97,6 +98,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.steps,
           stepsRecord: record.toDto(),
         );
+      case final HeightRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.height,
+          heightRecord: record.toDto(),
+        );
       case final WeightRecord record:
         return WriteRecordRequestDto(
           dataType: HealthDataTypeDto.weight,
@@ -136,6 +142,11 @@ extension HealthRecordToUpdateRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.steps,
           stepsRecord: record.toDto(),
         );
+      case final HeightRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.height,
+          heightRecord: record.toDto(),
+        );
       case final WeightRecord record:
         return UpdateRecordRequestDto(
           dataType: HealthDataTypeDto.weight,
@@ -162,6 +173,7 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
     final activeCaloriesBurnedRecords = <ActiveCaloriesBurnedRecord>[];
     final distanceRecords = <DistanceRecord>[];
     final floorsClimbedRecords = <FloorsClimbedRecord>[];
+    final heightRecords = <HeightRecord>[];
     final stepRecords = <StepRecord>[];
     final weightRecords = <WeightRecord>[];
     final wheelchairPushesRecords = <WheelchairPushesRecord>[];
@@ -183,6 +195,11 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
           floorsClimbedRecords.add(floorsClimbedRecord);
           if (!dataTypes.contains(HealthDataTypeDto.floorsClimbed)) {
             dataTypes.add(HealthDataTypeDto.floorsClimbed);
+          }
+        case final HeightRecord heightRecord:
+          heightRecords.add(heightRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.height)) {
+            dataTypes.add(HealthDataTypeDto.height);
           }
         case final StepRecord stepRecord:
           stepRecords.add(stepRecord);
@@ -213,6 +230,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
       floorsClimbedRecords: floorsClimbedRecords.isEmpty
           ? null
           : floorsClimbedRecords.map((r) => r.toDto()).toList(),
+      heightRecords: heightRecords.isEmpty
+          ? null
+          : heightRecords.map((r) => r.toDto()).toList(),
       stepsRecords: stepRecords.isEmpty
           ? null
           : stepRecords.map((r) => r.toDto()).toList(),

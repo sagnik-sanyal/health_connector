@@ -340,8 +340,10 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: activeCaloriesBurnedRecord,
                                 distanceRecord: nil,
                                 floorsClimbedRecord: nil,
+                                heightRecord: nil,
                                 stepsRecord: nil,
-                                weightRecord: nil
+                                weightRecord: nil,
+                                wheelchairPushesRecord: nil
                             )
                         } else {
                             responseDto = nil
@@ -354,8 +356,10 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: distanceRecord,
                                 floorsClimbedRecord: nil,
+                                heightRecord: nil,
                                 stepsRecord: nil,
-                                weightRecord: nil
+                                weightRecord: nil,
+                                wheelchairPushesRecord: nil
                             )
                         } else {
                             responseDto = nil
@@ -368,8 +372,10 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 floorsClimbedRecord: floorsClimbedRecord,
+                                heightRecord: nil,
                                 stepsRecord: nil,
-                                weightRecord: nil
+                                weightRecord: nil,
+                                wheelchairPushesRecord: nil
                             )
                         } else {
                             responseDto = nil
@@ -382,8 +388,10 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 floorsClimbedRecord: nil,
+                                heightRecord: nil,
                                 stepsRecord: stepRecord,
-                                weightRecord: nil
+                                weightRecord: nil,
+                                wheelchairPushesRecord: nil
                             )
                         } else {
                             responseDto = nil
@@ -396,8 +404,25 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 floorsClimbedRecord: nil,
+                                heightRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: weightRecord,
+                                wheelchairPushesRecord: nil
+                            )
+                        } else {
+                            responseDto = nil
+                        }
+
+                    case .height:
+                        if let heightRecord = sample.toHeightRecordDto() {
+                            responseDto = ReadRecordResponseDto(
+                                dataType: .height,
+                                activeCaloriesBurnedRecord: nil,
+                                distanceRecord: nil,
+                                floorsClimbedRecord: nil,
+                                heightRecord: heightRecord,
+                                stepsRecord: nil,
+                                weightRecord: nil,
                                 wheelchairPushesRecord: nil
                             )
                         } else {
@@ -411,6 +436,7 @@ internal class HealthConnectorClient {
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 floorsClimbedRecord: nil,
+                                heightRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: nil,
                                 wheelchairPushesRecord: wheelchairPushesRecord
@@ -675,9 +701,11 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: activeCaloriesBurnedRecords,
                             distanceRecords: nil,
                             floorsClimbedRecords: nil,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
-                            weightRecords: nil
+                            weightRecords: nil,
+                            wheelchairPushesRecords: nil
                         )
 
                     case .distance:
@@ -698,9 +726,11 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: distanceRecords,
                             floorsClimbedRecords: nil,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
-                            weightRecords: nil
+                            weightRecords: nil,
+                            wheelchairPushesRecords: nil
                         )
 
                     case .floorsClimbed:
@@ -721,9 +751,11 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             floorsClimbedRecords: floorsClimbedRecords,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
-                            weightRecords: nil
+                            weightRecords: nil,
+                            wheelchairPushesRecords: nil
                         )
 
                     case .steps:
@@ -744,9 +776,11 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             floorsClimbedRecords: nil,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: stepRecords,
-                            weightRecords: nil
+                            weightRecords: nil,
+                            wheelchairPushesRecords: nil
                         )
 
                     case .weight:
@@ -767,9 +801,35 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             floorsClimbedRecords: nil,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: weightRecords,
+                            wheelchairPushesRecords: nil
+                        )
+
+                    case .height:
+                        let heightRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toHeightRecordDto() }
+
+                        // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
+                        let nextPageToken: String?
+                        if heightRecords.count == request.pageSize, let lastRecord = heightRecords.last {
+                            // Encode last record's time as nextPageToken
+                            nextPageToken = String(lastRecord.time)
+                        } else {
+                            // Fewer than pageSize records means no more pages
+                            nextPageToken = nil
+                        }
+
+                        responseDto = ReadRecordsResponseDto(
+                            dataType: .height,
+                            activeCaloriesBurnedRecords: nil,
+                            distanceRecords: nil,
+                            floorsClimbedRecords: nil,
+                            heightRecords: heightRecords,
+                            nextPageToken: nextPageToken,
+                            stepsRecords: nil,
+                            weightRecords: nil,
                             wheelchairPushesRecords: nil
                         )
 
@@ -791,6 +851,7 @@ internal class HealthConnectorClient {
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             floorsClimbedRecords: nil,
+                            heightRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: nil,
@@ -909,9 +970,11 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: [],
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
-                weightRecords: nil
+                weightRecords: nil,
+                wheelchairPushesRecords: nil
             )
         case .distance:
             return ReadRecordsResponseDto(
@@ -919,9 +982,11 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: [],
                 floorsClimbedRecords: nil,
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
-                weightRecords: nil
+                weightRecords: nil,
+                wheelchairPushesRecords: nil
             )
         case .floorsClimbed:
             return ReadRecordsResponseDto(
@@ -929,9 +994,23 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 floorsClimbedRecords: [],
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
-                weightRecords: nil
+                weightRecords: nil,
+                wheelchairPushesRecords: nil
+            )
+        case .height:
+            return ReadRecordsResponseDto(
+                dataType: .height,
+                activeCaloriesBurnedRecords: nil,
+                distanceRecords: nil,
+                floorsClimbedRecords: nil,
+                heightRecords: [],
+                nextPageToken: nil,
+                stepsRecords: nil,
+                weightRecords: nil,
+                wheelchairPushesRecords: nil
             )
         case .steps:
             return ReadRecordsResponseDto(
@@ -939,9 +1018,11 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: [],
-                weightRecords: nil
+                weightRecords: nil,
+                wheelchairPushesRecords: nil
             )
         case .weight:
             return ReadRecordsResponseDto(
@@ -949,6 +1030,7 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: [],
@@ -960,6 +1042,7 @@ internal class HealthConnectorClient {
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
+                heightRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1040,6 +1123,15 @@ internal class HealthConnectorClient {
                     )
                 }
                 sample = try weightRecord.toHealthKit()
+
+            case .height:
+                guard let heightRecord = request.heightRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "heightRecord must not be nil for HEIGHT type",
+                        details: nil
+                    )
+                }
+                sample = try heightRecord.toHealthKit()
 
             case .wheelchairPushes:
                 guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
@@ -1245,6 +1337,23 @@ internal class HealthConnectorClient {
                     )
                 }
 
+            case .height:
+                guard let heightRecord = request.heightRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "heightRecord must not be nil for HEIGHT type",
+                        details: nil
+                    )
+                }
+                recordId = heightRecord.id
+
+                // Validate record ID is not empty or "none"
+                if recordId.isEmpty || recordId == "none" {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
+                        details: "Record ID: \(recordId)"
+                    )
+                }
+
             case .wheelchairPushes:
                 guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -1365,6 +1474,16 @@ internal class HealthConnectorClient {
                 }
                 // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
                 newSample = try weightRecord.toHealthKit()
+
+            case .height:
+                guard let heightRecord = request.heightRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "heightRecord must not be nil for HEIGHT type",
+                        details: nil
+                    )
+                }
+                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
+                newSample = try heightRecord.toHealthKit()
 
             case .wheelchairPushes:
                 guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
@@ -1560,6 +1679,16 @@ internal class HealthConnectorClient {
                     }
                     let weightSamples = try weightRecords.map { try $0.toHealthKit() }
                     samples.append(contentsOf: weightSamples)
+
+                case .height:
+                    guard let heightRecords = request.heightRecords else {
+                        throw HealthConnectorErrors.invalidArgument(
+                            message: "heightRecords must not be nil for HEIGHT type",
+                            details: nil
+                        )
+                    }
+                    let heightSamples = try heightRecords.map { try $0.toHealthKit() }
+                    samples.append(contentsOf: heightSamples)
 
                 case .wheelchairPushes:
                     guard let wheelchairPushesRecords = request.wheelchairPushesRecords else {
@@ -1899,6 +2028,45 @@ internal class HealthConnectorClient {
                         wheelchairPushesValue: nil
                     )
 
+                case .height:
+                    // For height, we use discreteAverage, discreteMin, or discreteMax
+                    let heightQuantity: HKQuantity?
+                    switch metric {
+                    case .avg:
+                        heightQuantity = statistics.averageQuantity()
+                    case .min:
+                        heightQuantity = statistics.minimumQuantity()
+                    case .max:
+                        heightQuantity = statistics.maximumQuantity()
+                    default:
+                        heightQuantity = nil
+                    }
+
+                    guard let quantity = heightQuantity else {
+                    let emptyResponse = AggregateResponseDto(
+                        aggregationMetric: metric,
+                        dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
+                        doubleValue: nil,
+                        lengthValue: nil,
+                        massValue: nil,
+                        wheelchairPushesValue: nil
+                    )
+                        continuation.resume(returning: emptyResponse)
+                        return
+                    }
+
+                    let lengthDto = quantity.toLengthDto()
+                    response = AggregateResponseDto(
+                        aggregationMetric: metric,
+                        dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
+                        doubleValue: nil,
+                        lengthValue: lengthDto,
+                        massValue: nil,
+                        wheelchairPushesValue: nil
+                    )
+
                 case .distance:
                     // For distance, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
@@ -1933,6 +2101,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil,
                             wheelchairPushesValue: nil
                         )
@@ -1945,6 +2114,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: floorsCount,
+                        lengthValue: nil,
                         massValue: nil,
                         wheelchairPushesValue: nil
                     )
@@ -1957,6 +2127,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil,
                             wheelchairPushesValue: nil
                         )
@@ -1970,6 +2141,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
+                        lengthValue: nil,
                         massValue: nil,
                         wheelchairPushesValue: numericDto
                     )

@@ -27,6 +27,7 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         FloorsClimbedRecord,
         HealthRecord,
         HealthRecordId,
+        HeightRecord,
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
@@ -47,6 +48,7 @@ import 'package:meta/meta.dart' show immutable, internal;
 part 'active_calories_burned_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
+part 'height_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
 part 'wheelchair_pushes_health_data_type.dart';
@@ -144,6 +146,12 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// existing weight data and writing new weight measurements.
   static const weight = WeightHealthDataType();
 
+  /// Body height data type.
+  ///
+  /// Represents the user's body height measurements. Supports both reading
+  /// existing height data and writing new height measurements.
+  static const height = HeightHealthDataType();
+
   /// Active calories burned data type.
   ///
   /// Represents the amount of energy (calories) burned during physical activity
@@ -176,6 +184,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
     activeCaloriesBurned,
     distance,
     floorsClimbed,
+    height,
     steps,
     weight,
     wheelchairPushes,

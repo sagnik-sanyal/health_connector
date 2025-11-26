@@ -4,6 +4,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecordId,
+        HeightRecord,
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
@@ -14,6 +15,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         ActiveCaloriesBurnedRecordDto,
         DistanceRecordDto,
         FloorsClimbedRecordDto,
+        HeightRecordDto,
         StepRecordDto,
         WeightRecordDto,
         WheelchairPushesRecordDto;
@@ -189,6 +191,34 @@ extension WeightRecordDtoToDomain on WeightRecordDto {
       zoneOffsetSeconds: zoneOffsetSeconds,
       metadata: metadata.toDomain(),
       weight: weight.toDomain(),
+    );
+  }
+}
+
+/// Converts [HeightRecord] to [HeightRecordDto].
+@internal
+extension HeightRecordDtoMapper on HeightRecord {
+  HeightRecordDto toDto() {
+    return HeightRecordDto(
+      id: id.toDto(),
+      time: time.millisecondsSinceEpoch,
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      height: height.toDto(),
+    );
+  }
+}
+
+/// Converts [HeightRecordDto] to [HeightRecord].
+@internal
+extension HeightRecordDtoToDomain on HeightRecordDto {
+  HeightRecord toDomain() {
+    return HeightRecord(
+      id: id.toHealthRecordId(),
+      time: DateTime.fromMillisecondsSinceEpoch(time),
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      height: height.toDomain(),
     );
   }
 }

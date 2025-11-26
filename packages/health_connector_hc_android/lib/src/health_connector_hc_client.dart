@@ -4,7 +4,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateRequest,
         AggregateResponse,
         HealthConnectorException,
-        HealthConnectorLogger,
         HealthConnectorPlatformClient,
         HealthDataType,
         HealthPlatformFeature,
@@ -21,6 +20,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsResponse,
         formatTimeRange,
         PermissionListExtension;
+import 'package:health_connector_logger/health_connector_logger.dart'
+    show HealthConnectorLogger;
 import 'package:health_connector_hc_android/src/mappers/mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show

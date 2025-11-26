@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   health_connector_core:
     path: ../health_connector_core
+  health_connector_logger:
+    path: ../health_connector_logger
   meta: ^1.16.0
 
 dev_dependencies:

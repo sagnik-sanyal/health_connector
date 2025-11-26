@@ -1,0 +1,16 @@
+name: health_connector_logger
+resolution: workspace
+description: Structured logging utility for Health Connector packages
+version: 0.1.0
+repository: https://github.com/fam-tung-lam/health_connector/tree/main/packages/health_connector_logger
+
+environment:
+  sdk: ^3.9.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  health_connector_lint: ^0.1.1
+
+license: Apache-2.0
+

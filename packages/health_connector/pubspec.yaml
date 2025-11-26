@@ -18,6 +18,8 @@ dependencies:
     path: ../health_connector_hc_android
   health_connector_hk_ios:
     path: ../health_connector_hk_ios
+  health_connector_logger:
+    path: ../health_connector_logger
   meta: ^1.16.0
 
 dev_dependencies:

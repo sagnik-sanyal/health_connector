@@ -15,11 +15,38 @@ abstract final class HealthConnectorLogger {
   /// logging any messages. Defaults to `true`.
   static bool isEnabled = true;
 
-  /// Indentation for top-level fields.
-  static const String _indentLevel1 = '   ';
+  /// Base indentation unit (4 spaces).
+  static const String _indentation = '    ';
 
-  /// Indentation for nested fields (exception, context).
-  static const String _indentLevel2 = '     ';
+  /// Maximum depth for cached indentation strings.
+  static const int _maxCachedIndentDepth = 10;
+
+  /// Cached indentation strings for depths 0 to [_maxCachedIndentDepth].
+  ///
+  /// Pre-computed to avoid repeated string multiplication during formatting.
+  static final List<String> _indentCache = List.generate(
+    _maxCachedIndentDepth + 1,
+    (depth) => _indentation * (depth + 1),
+  );
+
+  /// Gets the indentation string for the given depth.
+  ///
+  /// Uses cached values for depths up to [_maxCachedIndentDepth],
+  /// otherwise computes the indentation string dynamically.
+  ///
+  /// ## Parameters
+  ///
+  /// - [depth]: The nesting depth (0 for top-level).
+  ///
+  /// ## Returns
+  ///
+  /// The indentation string for the given depth.
+  static String _getIndent(int depth) {
+    if (depth <= _maxCachedIndentDepth) {
+      return _indentCache[depth];
+    }
+    return _indentation * (depth + 1);
+  }
 
   /// Formats a structured log message in JSON-like format.
   ///
@@ -47,47 +74,45 @@ abstract final class HealthConnectorLogger {
     StackTrace? stackTrace,
   }) {
     final buffer = StringBuffer();
-    final fields = <String>[];
 
     // Always include operation
-    fields.add('${_indentLevel1}operation: $operation,');
+    buffer.writeln('{');
+    buffer.write('${_getIndent(0)}operation: $operation,');
 
     // Include phase if provided
     if (phase != null) {
-      fields.add('${_indentLevel1}phase: $phase,');
+      buffer.write('\n${_getIndent(0)}phase: $phase,');
     }
 
     // Include message if provided
     if (message != null) {
-      fields.add('${_indentLevel1}message: $message,');
+      buffer.write('\n${_getIndent(0)}message: $message,');
     }
 
     // Include exception block if exception or stackTrace is provided
     if (exception != null || stackTrace != null) {
-      final exceptionFields = <String>[];
+      buffer.write('\n${_getIndent(0)}exception: {');
       if (exception != null) {
-        exceptionFields.add('${_indentLevel2}cause: $exception,');
+        buffer.write('\n${_getIndent(1)}cause: $exception,');
       }
       if (stackTrace != null) {
-        exceptionFields.add('${_indentLevel2}stack_trace: $stackTrace,');
+        buffer.write('\n${_getIndent(1)}stack_trace: $stackTrace,');
       }
-      fields.add('${_indentLevel1}exception: {');
-      fields.addAll(exceptionFields);
-      fields.add('$_indentLevel1},');
+      buffer.write('\n${_getIndent(0)}},');
     }
 
     // Include context if provided and not empty
     if (context != null && context.isNotEmpty) {
-      fields.add('${_indentLevel1}context: {');
+      buffer.write('\n${_getIndent(0)}context: {');
       for (final entry in context.entries) {
-        fields.add('$_indentLevel2${entry.key}: ${entry.value},');
+        buffer.write('\n');
+        buffer.write('${_getIndent(1)}${entry.key}: ');
+        _formatValueTo(buffer, entry.value, 1);
+        buffer.write(',');
       }
-      fields.add('$_indentLevel1},');
+      buffer.write('\n${_getIndent(0)}},');
     }
 
-    // Build the final message
-    buffer.writeln('{');
-    buffer.writeAll(fields, '\n');
     buffer.write('\n}');
 
     return buffer.toString();
@@ -303,15 +328,83 @@ abstract final class HealthConnectorLogger {
   /// A formatted string in the format
   /// `day-month-year hour:minute:second.millisecond`.
   static String _formatDateTime(DateTime dateTime) {
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year.toString();
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    final second = dateTime.second.toString().padLeft(2, '0');
-    final millisecond = dateTime.millisecond.toString().padLeft(3, '0');
+    final buffer = StringBuffer();
+    buffer.write(dateTime.day.toString().padLeft(2, '0'));
+    buffer.write('-');
+    buffer.write(dateTime.month.toString().padLeft(2, '0'));
+    buffer.write('-');
+    buffer.write(dateTime.year.toString());
+    buffer.write(' ');
+    buffer.write(dateTime.hour.toString().padLeft(2, '0'));
+    buffer.write(':');
+    buffer.write(dateTime.minute.toString().padLeft(2, '0'));
+    buffer.write(':');
+    buffer.write(dateTime.second.toString().padLeft(2, '0'));
+    buffer.write('.');
+    buffer.write(dateTime.millisecond.toString().padLeft(3, '0'));
+    return buffer.toString();
+  }
 
-    return '$day-$month-$year $hour:$minute:$second.$millisecond';
+  /// Recursively formats a value with proper indentation based on
+  /// nesting depth, writing directly to the provided buffer.
+  ///
+  /// Handles maps, lists, and other types. Maps and lists are formatted with
+  /// increasing indentation for each nesting level.
+  ///
+  /// ## Parameters
+  ///
+  /// - [buffer]: The StringBuffer to write the formatted value to.
+  /// - [value]: The value to format (can be a map, list, or any other type).
+  /// - [depth]: The current nesting depth (0 for top-level,
+  ///   increases with nesting).
+  static void _formatValueTo(StringBuffer buffer, dynamic value, int depth) {
+    final currentIndent = _getIndent(depth);
+    final nextIndent = _getIndent(depth + 1);
+
+    // Handle maps
+    if (value is Map) {
+      if (value.isEmpty) {
+        buffer.write('{}');
+        return;
+      }
+      buffer.write('{\n');
+      var isFirst = true;
+      for (final entry in value.entries) {
+        if (!isFirst) {
+          buffer.write('\n');
+        }
+        isFirst = false;
+        buffer.write('$nextIndent${entry.key}: ');
+        _formatValueTo(buffer, entry.value, depth + 1);
+        buffer.write(',');
+      }
+      buffer.write('\n$currentIndent}');
+      return;
+    }
+
+    // Handle lists
+    if (value is List) {
+      if (value.isEmpty) {
+        buffer.write('[]');
+        return;
+      }
+      buffer.write('[\n');
+      var isFirst = true;
+      for (final element in value) {
+        if (!isFirst) {
+          buffer.write('\n');
+        }
+        isFirst = false;
+        buffer.write(nextIndent);
+        _formatValueTo(buffer, element, depth + 1);
+        buffer.write(',');
+      }
+      buffer.write('\n$currentIndent]');
+      return;
+    }
+
+    // Handle other types - convert to string
+    buffer.write(value.toString());
   }
 
   /// Internal method that formats and logs the message.
@@ -354,10 +447,6 @@ abstract final class HealthConnectorLogger {
     Object? exception,
     StackTrace? stackTrace,
   }) {
-    if (!isEnabled) {
-      return;
-    }
-
     final structuredMessage = _formatStructuredMessage(
       operation: operation,
       phase: phase,

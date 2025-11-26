@@ -7,7 +7,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateResponse,
         HealthConnectorException,
         HealthConnectorErrorCode,
-        HealthConnectorLogger,
         HealthConnectorPlatformClient,
         HealthDataType,
         HealthPlatform,
@@ -28,6 +27,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         SupportedHealthPlatforms,
         require,
         requireEndTimeAfterStartTime;
+import 'package:health_connector_logger/health_connector_logger.dart'
+    show HealthConnectorLogger;
 import 'package:health_connector_hc_android/health_connector_hc_android.dart'
     show HealthConnectorHCClient;
 import 'package:meta/meta.dart' show immutable;

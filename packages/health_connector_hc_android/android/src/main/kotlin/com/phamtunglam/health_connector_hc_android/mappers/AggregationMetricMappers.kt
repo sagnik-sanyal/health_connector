@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregationMetricDto
@@ -22,7 +23,7 @@ internal fun AggregationMetricDto.toHealthConnectMetric(dataType: HealthDataType
                 AggregationMetricDto.AVG,
                 AggregationMetricDto.MIN,
                 AggregationMetricDto.MAX,
-                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for steps in Health Connect.")
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
             }
         }
 
@@ -32,7 +33,17 @@ internal fun AggregationMetricDto.toHealthConnectMetric(dataType: HealthDataType
                 AggregationMetricDto.MIN -> WeightRecord.WEIGHT_MIN
                 AggregationMetricDto.MAX -> WeightRecord.WEIGHT_MAX
                 AggregationMetricDto.SUM,
-                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for weight in Health Connect.")
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
+            }
+        }
+
+        HealthDataTypeDto.DISTANCE -> {
+            when (this) {
+                AggregationMetricDto.SUM -> DistanceRecord.DISTANCE_TOTAL
+                AggregationMetricDto.AVG,
+                AggregationMetricDto.MIN,
+                AggregationMetricDto.MAX,
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
             }
         }
     }

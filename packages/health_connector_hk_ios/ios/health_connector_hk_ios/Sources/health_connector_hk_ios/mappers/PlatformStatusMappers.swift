@@ -3,6 +3,7 @@ import Foundation
 /**
  * Extension to convert `HealthPlatformStatusDto` to HealthKit status representation.
  */
+
 extension HealthPlatformStatusDto {
     /**
      * Converts a HealthKit availability boolean to a `HealthPlatformStatusDto`.
@@ -12,14 +13,15 @@ extension HealthPlatformStatusDto {
      * - `true` → `.available`
      * - `false` → `.notAvailable`
      *
-     * Note: The `.installationOrUpdateRequired` status is specific to Android Health Connect
-     * and is not applicable to iOS HealthKit.
+     * Note: iOS HealthKit only supports two states (available/not available), unlike
+     * Android Health Connect which has additional installation/update states.
      *
      * - Parameter isAvailable: Whether HealthKit is available on the device.
      * - Returns: The corresponding `HealthPlatformStatusDto`.
      */
+
     static func fromHealthKitAvailability(_ isAvailable: Bool) -> HealthPlatformStatusDto {
-        return isAvailable ? .available : .notAvailable
+        return isAvailable ? .available: .notAvailable
     }
 }
 

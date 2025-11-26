@@ -1,9 +1,9 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show HealthRecordId, StepRecord, WeightRecord;
+    show DistanceRecord, HealthRecordId, StepRecord, WeightRecord;
 import 'package:health_connector_hk_ios/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/metadata_mappers.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
-    show StepRecordDto, WeightRecordDto;
+    show DistanceRecordDto, StepRecordDto, WeightRecordDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthRecordId] to [String] for DTO transfer.
@@ -20,6 +20,38 @@ extension StringToHealthRecordId on String {
       return HealthRecordId.none;
     }
     return HealthRecordId(this);
+  }
+}
+
+/// Converts [DistanceRecord] to [DistanceRecordDto].
+@internal
+extension DistanceRecordDtoMapper on DistanceRecord {
+  DistanceRecordDto toDto() {
+    return DistanceRecordDto(
+      id: id.toDto(),
+      startTime: startTime.millisecondsSinceEpoch,
+      endTime: endTime.millisecondsSinceEpoch,
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      distance: distance.toDto(),
+    );
+  }
+}
+
+/// Converts [DistanceRecordDto] to [DistanceRecord].
+@internal
+extension DistanceRecordDtoToDomain on DistanceRecordDto {
+  DistanceRecord toDomain() {
+    return DistanceRecord(
+      id: id.toHealthRecordId(),
+      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
+      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      distance: distance.toDomain(),
+    );
   }
 }
 

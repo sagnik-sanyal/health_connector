@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataPermissionDto
@@ -27,6 +28,13 @@ internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
             when (this.accessType) {
                 PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(WeightRecord::class)
                 PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(WeightRecord::class)
+            }
+        }
+
+        HealthDataTypeDto.DISTANCE -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(DistanceRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(DistanceRecord::class)
             }
         }
     }

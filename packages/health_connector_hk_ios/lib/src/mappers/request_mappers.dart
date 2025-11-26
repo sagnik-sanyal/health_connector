@@ -1,10 +1,11 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
-        HealthRecord,
         AggregateRequest,
+        DistanceRecord,
+        HealthRecord,
+        MeasurementUnit,
         ReadRecordRequest,
         ReadRecordsRequest,
-        MeasurementUnit,
         StepRecord,
         WeightRecord;
 import 'package:health_connector_hk_ios/src/mappers/aggregation_metric_mappers.dart';
@@ -73,6 +74,11 @@ extension AggregateRequestDtoMapper<
 extension HealthRecordToWriteRequestDto on HealthRecord {
   WriteRecordRequestDto toWriteRecordRequestDto() {
     switch (this) {
+      case final DistanceRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.distance,
+          distanceRecord: record.toDto(),
+        );
       case final StepRecord record:
         return WriteRecordRequestDto(
           dataType: HealthDataTypeDto.steps,
@@ -92,6 +98,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
 extension HealthRecordToUpdateRequestDto on HealthRecord {
   UpdateRecordRequestDto toUpdateRecordRequestDto() {
     switch (this) {
+      case final DistanceRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.distance,
+          distanceRecord: record.toDto(),
+        );
       case final StepRecord record:
         return UpdateRecordRequestDto(
           dataType: HealthDataTypeDto.steps,
@@ -115,12 +126,18 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
     }
 
     // Group records by type
+    final distanceRecords = <DistanceRecord>[];
     final stepRecords = <StepRecord>[];
     final weightRecords = <WeightRecord>[];
     final dataTypes = <HealthDataTypeDto>[];
 
     for (final record in this) {
       switch (record) {
+        case final DistanceRecord distanceRecord:
+          distanceRecords.add(distanceRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.distance)) {
+            dataTypes.add(HealthDataTypeDto.distance);
+          }
         case final StepRecord stepRecord:
           stepRecords.add(stepRecord);
           if (!dataTypes.contains(HealthDataTypeDto.steps)) {
@@ -136,6 +153,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
 
     return WriteRecordsRequestDto(
       dataTypes: dataTypes,
+      distanceRecords: distanceRecords.isEmpty
+          ? null
+          : distanceRecords.map((r) => r.toDto()).toList(),
       stepsRecords: stepRecords.isEmpty
           ? null
           : stepRecords.map((r) => r.toDto()).toList(),

@@ -5,7 +5,7 @@ import 'package:health_connector_core/src/models/health_platform.dart'
 import 'package:health_connector_core/src/models/health_platform_data.dart'
     show HealthPlatformData;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Mass, Numeric;
+    show Length, Mass, Numeric;
 import 'package:health_connector_core/src/models/metadata/metadata.dart'
     show Metadata;
 import 'package:health_connector_core/src/utils/datetime.dart'
@@ -13,6 +13,7 @@ import 'package:health_connector_core/src/utils/datetime.dart'
 import 'package:health_connector_core/src/utils/validation.dart' show require;
 import 'package:meta/meta.dart' show immutable, internal;
 
+part 'distance_record.dart';
 part 'instant_health_record.dart';
 part 'interval_health_record.dart';
 part 'series_health_record.dart';

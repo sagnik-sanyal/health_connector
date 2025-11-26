@@ -3,6 +3,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
+        DistanceHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
         HealthRecord,
@@ -47,6 +48,17 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
     HealthDataType<R, MeasurementUnit> dataType,
   ) {
     switch (dataType) {
+      case DistanceHealthDataType _:
+        final distanceRecords = responseDto.distanceRecords;
+        if (distanceRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected distanceRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return distanceRecords.map((dto) => dto.toDomain()).cast<R>().toList();
+
       case StepsHealthDataType _:
         final stepsRecords = responseDto.stepsRecords;
         if (stepsRecords == null) {
@@ -99,6 +111,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
     U extends MeasurementUnit
   >(HealthDataType<R, U> dataType) {
     switch (dataType) {
+      case DistanceHealthDataType _:
+        final value = lengthValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected lengthValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
+
       case StepsHealthDataType _:
         final value = doubleValue;
         if (value == null) {
@@ -131,6 +154,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
     HealthDataType<R, MeasurementUnit> dataType,
   ) {
     switch (dataType) {
+      case DistanceHealthDataType _:
+        final record = distanceRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected distanceRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
       case StepsHealthDataType _:
         final record = stepsRecord;
         if (record == null) {

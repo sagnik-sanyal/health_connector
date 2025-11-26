@@ -1,7 +1,7 @@
-import 'package:health_connector_core/health_connector_core.dart'
-    show Permission;
 import 'package:health_connector_annotation/health_connector_annotation.dart'
     show Since;
+import 'package:health_connector_core/health_connector_core.dart'
+    show Permission;
 import 'package:health_connector_core/src/config/health_connector_config_constants.dart'
     show HealthConnectorConfigConstants;
 import 'package:health_connector_core/src/models/health_data_types/avg_aggregateable_health_data_type.dart'
@@ -21,9 +21,9 @@ import 'package:health_connector_core/src/models/health_platform.dart'
 import 'package:health_connector_core/src/models/health_platform_data.dart'
     show HealthPlatformData;
 import 'package:health_connector_core/src/models/health_records/health_record.dart'
-    show HealthRecord, HealthRecordId, StepRecord, WeightRecord;
+    show DistanceRecord, HealthRecord, HealthRecordId, StepRecord, WeightRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show MeasurementUnit, Numeric, Mass, Energy;
+    show Energy, Length, Mass, MeasurementUnit, Numeric;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
     show HealthDataPermission, HealthDataPermissionAccessType;
 import 'package:health_connector_core/src/models/requests/aggregate_request.dart'
@@ -36,6 +36,7 @@ import 'package:health_connector_core/src/models/requests/read_records_request.d
     show ReadRecordsRequest;
 import 'package:meta/meta.dart' show immutable, internal;
 
+part 'distance_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
 
@@ -113,6 +114,13 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// The list of permissions for this health record.
   List<Permission> get permissions;
 
+  /// Distance data type.
+  ///
+  /// Represents the distance traveled during activities such as walking,
+  /// running, or cycling. Supports both reading existing distance data
+  /// and writing new distance measurements.
+  static const distance = DistanceHealthDataType();
+
   /// Step count data type.
   ///
   /// Represents the number of steps taken by the user. Supports both reading
@@ -130,6 +138,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// This list contains all data types currently supported by the plugin.
   /// As new data types are added, they will automatically appear in this list.
   static const List<HealthDataType<HealthRecord, MeasurementUnit>> values = [
+    distance,
     steps,
     weight,
   ];

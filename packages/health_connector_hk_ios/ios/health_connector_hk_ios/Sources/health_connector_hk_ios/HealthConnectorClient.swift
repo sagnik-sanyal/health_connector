@@ -333,10 +333,23 @@ internal class HealthConnectorClient {
                     // Convert SDK sample to DTO using typed mappers
                     let responseDto: ReadRecordResponseDto?
                     switch request.dataType {
+                    case .distance:
+                        if let distanceRecord = sample.toDistanceRecordDto() {
+                            responseDto = ReadRecordResponseDto(
+                                dataType: .distance,
+                                distanceRecord: distanceRecord,
+                                stepsRecord: nil,
+                                weightRecord: nil
+                            )
+                        } else {
+                            responseDto = nil
+                        }
+
                     case .steps:
                         if let stepRecord = sample.toStepRecordDto() {
                             responseDto = ReadRecordResponseDto(
                                 dataType: .steps,
+                                distanceRecord: nil,
                                 stepsRecord: stepRecord,
                                 weightRecord: nil
                             )
@@ -348,6 +361,7 @@ internal class HealthConnectorClient {
                         if let weightRecord = sample.toWeightRecordDto() {
                             responseDto = ReadRecordResponseDto(
                                 dataType: .weight,
+                                distanceRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: weightRecord
                             )
@@ -593,6 +607,27 @@ internal class HealthConnectorClient {
                     // Convert SDK samples to DTOs using typed mappers
                     let responseDto: ReadRecordsResponseDto
                     switch request.dataType {
+                    case .distance:
+                        let distanceRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toDistanceRecordDto() }
+
+                        // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
+                        let nextPageToken: String?
+                        if distanceRecords.count == request.pageSize, let lastRecord = distanceRecords.last {
+                            // Encode last record's endTime as nextPageToken
+                            nextPageToken = String(lastRecord.endTime)
+                        } else {
+                            // Fewer than pageSize records means no more pages
+                            nextPageToken = nil
+                        }
+
+                        responseDto = ReadRecordsResponseDto(
+                            dataType: .distance,
+                            distanceRecords: distanceRecords,
+                            nextPageToken: nextPageToken,
+                            stepsRecords: nil,
+                            weightRecords: nil
+                        )
+
                     case .steps:
                         let stepRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toStepRecordDto() }
 
@@ -608,6 +643,7 @@ internal class HealthConnectorClient {
 
                         responseDto = ReadRecordsResponseDto(
                             dataType: .steps,
+                            distanceRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: stepRecords,
                             weightRecords: nil
@@ -628,6 +664,7 @@ internal class HealthConnectorClient {
 
                         responseDto = ReadRecordsResponseDto(
                             dataType: .weight,
+                            distanceRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: weightRecords
@@ -739,9 +776,18 @@ internal class HealthConnectorClient {
      */
     private func createEmptyResponse(for dataType: HealthDataTypeDto) -> ReadRecordsResponseDto {
         switch dataType {
+        case .distance:
+            return ReadRecordsResponseDto(
+                dataType: .distance,
+                distanceRecords: [],
+                nextPageToken: nil,
+                stepsRecords: nil,
+                weightRecords: nil
+            )
         case .steps:
             return ReadRecordsResponseDto(
                 dataType: .steps,
+                distanceRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: [],
                 weightRecords: nil
@@ -749,6 +795,7 @@ internal class HealthConnectorClient {
         case .weight:
             return ReadRecordsResponseDto(
                 dataType: .weight,
+                distanceRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: []
@@ -784,6 +831,15 @@ internal class HealthConnectorClient {
             // Extract typed record from request DTO and convert to HealthKit sample
             let sample: HKSample
             switch request.dataType {
+            case .distance:
+                guard let distanceRecord = request.distanceRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "distanceRecord must not be nil for DISTANCE type",
+                        details: nil
+                    )
+                }
+                sample = try distanceRecord.toHealthKit()
+
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -912,6 +968,23 @@ internal class HealthConnectorClient {
             // Validate record ID
             let recordId: String
             switch request.dataType {
+            case .distance:
+                guard let distanceRecord = request.distanceRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "distanceRecord must not be nil for DISTANCE type",
+                        details: nil
+                    )
+                }
+                recordId = distanceRecord.id
+
+                // Validate record ID is not empty or "none"
+                if recordId.isEmpty || recordId == "none" {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
+                        details: "Record ID: \(recordId)"
+                    )
+                }
+
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -920,7 +993,7 @@ internal class HealthConnectorClient {
                     )
                 }
                 recordId = stepsRecord.id
-                
+
                 // Validate record ID is not empty or "none"
                 if recordId.isEmpty || recordId == "none" {
                     throw HealthConnectorErrors.invalidArgument(
@@ -937,7 +1010,7 @@ internal class HealthConnectorClient {
                     )
                 }
                 recordId = weightRecord.id
-                
+
                 // Validate record ID is not empty or "none"
                 if recordId.isEmpty || recordId == "none" {
                     throw HealthConnectorErrors.invalidArgument(

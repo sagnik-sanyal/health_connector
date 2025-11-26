@@ -3,6 +3,7 @@ package com.phamtunglam.health_connector_hc_android
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -10,6 +11,7 @@ import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
 import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.mappers.toError
@@ -293,10 +295,21 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert SDK record to DTO using typed mappers
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.DISTANCE -> {
+                    val record = response.record as DistanceRecord
+                    ReadRecordResponseDto(
+                        dataType = HealthDataTypeDto.DISTANCE,
+                        distanceRecord = record.toDto(),
+                        stepsRecord = null,
+                        weightRecord = null
+                    )
+                }
+
                 HealthDataTypeDto.STEPS -> {
                     val record = response.record as StepsRecord
                     ReadRecordResponseDto(
                         dataType = HealthDataTypeDto.STEPS,
+                        distanceRecord = null,
                         stepsRecord = record.toDto(),
                         weightRecord = null
                     )
@@ -306,6 +319,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     val record = response.record as WeightRecord
                     ReadRecordResponseDto(
                         dataType = HealthDataTypeDto.WEIGHT,
+                        distanceRecord = null,
                         stepsRecord = null,
                         weightRecord = record.toDto()
                     )
@@ -395,11 +409,24 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert SDK records to DTOs using typed mappers
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.DISTANCE -> {
+                    val distanceRecords = response.records.map { (it as DistanceRecord).toDto() }
+
+                    ReadRecordsResponseDto(
+                        dataType = HealthDataTypeDto.DISTANCE,
+                        distanceRecords = distanceRecords,
+                        stepsRecords = null,
+                        weightRecords = null,
+                        nextPageToken = nextPageToken
+                    )
+                }
+
                 HealthDataTypeDto.STEPS -> {
                     val stepRecords = response.records.map { (it as StepsRecord).toDto() }
 
                     ReadRecordsResponseDto(
                         dataType = HealthDataTypeDto.STEPS,
+                        distanceRecords = null,
                         stepsRecords = stepRecords,
                         weightRecords = null,
                         nextPageToken = nextPageToken
@@ -411,6 +438,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
                     ReadRecordsResponseDto(
                         dataType = HealthDataTypeDto.WEIGHT,
+                        distanceRecords = null,
                         stepsRecords = null,
                         weightRecords = weightRecords,
                         nextPageToken = nextPageToken
@@ -477,6 +505,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Extract typed record from request DTO
             val record: Record = when (request.dataType) {
+                HealthDataTypeDto.DISTANCE -> {
+                    requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
+                    request.distanceRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.STEPS -> {
                     requireNotNull(request.stepsRecord) { "stepsRecord must not be null for STEPS type" }
                     request.stepsRecord.toHealthConnect()
@@ -552,6 +585,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             // Extract typed records from request DTO
             val records = request.dataTypes.map { dataTypeDto ->
                 when (dataTypeDto) {
+                    HealthDataTypeDto.DISTANCE -> {
+                        requireNotNull(request.distanceRecords) { "distanceRecords must not be null for DISTANCE type" }
+                        request.distanceRecords.map { it.toHealthConnect() }
+                    }
+
                     HealthDataTypeDto.STEPS -> {
                         requireNotNull(request.stepsRecords) { "stepsRecords must not be null for STEPS type" }
                         request.stepsRecords.map { it.toHealthConnect() }
@@ -628,6 +666,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Extract typed record from request DTO
             val record = when (request.dataType) {
+                HealthDataTypeDto.DISTANCE -> {
+                    requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
+                    val distanceRecord = request.distanceRecord
+                    // Validate record ID is not empty or "none"
+                    if (distanceRecord.id.isEmpty() || distanceRecord.id == "none") {
+                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                        )
+                    }
+                    distanceRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.STEPS -> {
                     requireNotNull(request.stepsRecord) { "stepsRecord must not be null for STEPS type" }
                     val stepsRecord = request.stepsRecord
@@ -753,6 +803,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert result to DTO based on data type
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.DISTANCE -> {
+                    val length = aggregatedValue?.let { it as? Length }
+                    val lengthDto = length?.toDto()
+                    AggregateResponseDto(
+                        aggregationMetric = request.aggregationMetric,
+                        dataType = request.dataType,
+                        doubleValue = null,
+                        massValue = null,
+                        lengthValue = lengthDto
+                    )
+                }
+
                 HealthDataTypeDto.STEPS -> {
                     val stepCount = aggregatedValue?.let { it as? Long } ?: 0L
                     val numericDto = stepCount.toNumericDto()
@@ -760,7 +822,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         doubleValue = numericDto.value,
-                        massValue = null
+                        massValue = null,
+                        lengthValue = null
                     )
                 }
 
@@ -771,7 +834,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         doubleValue = null,
-                        massValue = massDto
+                        massValue = massDto,
+                        lengthValue = null
                     )
                 }
             }

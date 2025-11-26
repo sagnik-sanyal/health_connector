@@ -1,5 +1,6 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
+import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -14,6 +15,7 @@ import kotlin.reflect.KClass
  */
 internal fun HealthDataTypeDto.toHealthConnectRecordClass(): KClass<out Record> {
     return when (this) {
+        HealthDataTypeDto.DISTANCE -> DistanceRecord::class
         HealthDataTypeDto.STEPS -> StepsRecord::class
         HealthDataTypeDto.WEIGHT -> WeightRecord::class
     }

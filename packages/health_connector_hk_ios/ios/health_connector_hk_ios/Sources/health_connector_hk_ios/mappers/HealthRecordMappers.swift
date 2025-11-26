@@ -1,6 +1,66 @@
 import Foundation
 import HealthKit
 
+// ==================== DISTANCE RECORD MAPPERS ====================
+
+extension DistanceRecordDto {
+    /**
+     * Converts this DTO to a HealthKit `HKQuantitySample`.
+     *
+     * - Throws: An error if the quantity type cannot be created.
+     */
+
+    func toHealthKit() throws -> HKQuantitySample {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning) else {
+            throw NSError(
+                domain: "HealthConnectorError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to create distance quantity type"]
+            )
+        }
+
+        let quantity = distance.toHealthKit()
+        let startDate = Date(timeIntervalSince1970: TimeInterval(startTime) / 1000.0)
+        let endDate = Date(timeIntervalSince1970: TimeInterval(endTime) / 1000.0)
+
+        return HKQuantitySample(
+            type: type,
+            quantity: quantity,
+            start: startDate,
+            end: endDate,
+            device: metadata.toHealthKitDevice(),
+            metadata: metadata.toHealthKitMetadata()
+        )
+    }
+}
+
+extension HKQuantitySample {
+    /**
+     * Converts this HealthKit sample to a `DistanceRecordDto`.
+     *
+     * Returns `nil` if this sample is not a distance walking/running sample.
+     */
+
+    func toDistanceRecordDto() -> DistanceRecordDto? {
+        guard quantityType.identifier == HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue else {
+            return nil
+        }
+
+        return DistanceRecordDto(
+            distance: quantity.toLengthDto(),
+            endTime: Int64(endDate.timeIntervalSince1970 * 1000),
+            id: uuid.uuidString,
+            metadata: (metadata ?? [:]).toMetadataDto(
+                source: sourceRevision.source,
+                device: device
+            ),
+            startTime: Int64(startDate.timeIntervalSince1970 * 1000),
+            endZoneOffsetSeconds: nil, // HealthKit doesn't store zone offsets
+            startZoneOffsetSeconds: nil
+        )
+    }
+}
+
 // ==================== STEP RECORD MAPPERS ====================
 
 extension StepRecordDto {
@@ -9,6 +69,7 @@ extension StepRecordDto {
      *
      * - Throws: An error if the quantity type cannot be created.
      */
+
     func toHealthKit() throws -> HKQuantitySample {
         guard let type = HKQuantityType.quantityType(forIdentifier: .stepCount) else {
             throw NSError(
@@ -39,6 +100,7 @@ extension HKQuantitySample {
      *
      * Returns `nil` if this sample is not a step count sample.
      */
+
     func toStepRecordDto() -> StepRecordDto? {
         guard quantityType.identifier == HKQuantityTypeIdentifier.stepCount.rawValue else {
             return nil
@@ -69,6 +131,7 @@ extension WeightRecordDto {
      *
      * - Throws: An error if the quantity type cannot be created.
      */
+
     func toHealthKit() throws -> HKQuantitySample {
         guard let type = HKQuantityType.quantityType(forIdentifier: .bodyMass) else {
             throw NSError(
@@ -98,6 +161,7 @@ extension HKQuantitySample {
      *
      * Returns `nil` if this sample is not a body mass sample.
      */
+
     func toWeightRecordDto() -> WeightRecordDto? {
         guard quantityType.identifier == HKQuantityTypeIdentifier.bodyMass.rawValue else {
             return nil

@@ -97,6 +97,9 @@ enum HealthConnectorErrorCodeDto {
 
 /// Represents a health data type.
 enum HealthDataTypeDto {
+  /// Distance traveled data.
+  distance,
+
   /// Step count data.
   steps,
 
@@ -430,6 +433,47 @@ class PermissionsRequestResponseDto {
 // HEALTH RECORD DTOs
 // ============================================================================
 
+/// Represents a distance record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.DistanceRecord`
+/// - Domain: `DistanceRecord`
+class DistanceRecordDto {
+  DistanceRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.distance,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Distance traveled during the interval.
+  final LengthDto distance;
+
+  /// End time in milliseconds since epoch (UTC).
+  final int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  final int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  final int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  final int? startZoneOffsetSeconds;
+}
+
 /// Represents a step count record for platform transfer.
 class StepRecordDto {
   StepRecordDto({
@@ -533,6 +577,7 @@ class AggregateResponseDto {
     required this.dataType,
     required this.aggregationMetric,
     this.doubleValue,
+    this.lengthValue,
     this.massValue,
   });
 
@@ -546,6 +591,9 @@ class AggregateResponseDto {
   ///
   /// Used for primitive numeric types like steps and count operations.
   final double? doubleValue;
+
+  /// Length aggregated value (non-null when dataType == DISTANCE).
+  final LengthDto? lengthValue;
 
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   final MassDto? massValue;
@@ -607,12 +655,16 @@ class ReadRecordRequestDto {
 class ReadRecordResponseDto {
   ReadRecordResponseDto({
     required this.dataType,
+    this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
   });
 
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
+
+  /// Distance record (non-null when dataType == DISTANCE).
+  final DistanceRecordDto? distanceRecord;
 
   /// Step count record (non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
@@ -662,6 +714,7 @@ class ReadRecordsRequestDto {
 class ReadRecordsResponseDto {
   ReadRecordsResponseDto({
     required this.dataType,
+    this.distanceRecords,
     this.stepsRecords,
     this.weightRecords,
     this.nextPageToken,
@@ -669,6 +722,9 @@ class ReadRecordsResponseDto {
 
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
+
+  /// List of distance records (non-null when dataType == DISTANCE).
+  final List<DistanceRecordDto>? distanceRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   final String? nextPageToken;
@@ -691,12 +747,16 @@ class ReadRecordsResponseDto {
 class WriteRecordRequestDto {
   WriteRecordRequestDto({
     required this.dataType,
+    this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
   });
 
   /// The type of health data being written.
   final HealthDataTypeDto dataType;
+
+  /// Distance record (only non-null when dataType == DISTANCE).
+  final DistanceRecordDto? distanceRecord;
 
   /// Step count record (only non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
@@ -723,6 +783,7 @@ class WriteRecordResponseDto {
 class WriteRecordsRequestDto {
   WriteRecordsRequestDto({
     required this.dataTypes,
+    this.distanceRecords,
     this.stepsRecords,
     this.weightRecords,
   });
@@ -732,6 +793,9 @@ class WriteRecordsRequestDto {
   /// This list indicates which record type lists contain data.
   /// Each data type in this list corresponds to a non-null list field.
   final List<HealthDataTypeDto> dataTypes;
+
+  /// List of distance records (non-null when dataTypes contains DISTANCE).
+  final List<DistanceRecordDto>? distanceRecords;
 
   /// List of step records (non-null when dataTypes contains STEPS).
   final List<StepRecordDto>? stepsRecords;
@@ -763,12 +827,17 @@ class WriteRecordsResponseDto {
 class UpdateRecordRequestDto {
   UpdateRecordRequestDto({
     required this.dataType,
+    this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
   });
 
   /// The type of health data being updated.
   final HealthDataTypeDto dataType;
+
+  /// Distance record (only non-null when dataType == DISTANCE).
+  /// The record must have a valid existing ID.
+  final DistanceRecordDto? distanceRecord;
 
   /// Step count record (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.
@@ -786,6 +855,8 @@ class UpdateRecordResponseDto {
   UpdateRecordResponseDto({required this.recordId});
 
   /// Platform-assigned unique identifier for the updated record.
+  ///
+  /// On Health Connect, this will be the same as the input record ID.
   final String recordId;
 }
 
@@ -795,9 +866,11 @@ class UpdateRecordResponseDto {
 
 /// The main API for communicating with the health platform.
 ///
-/// This API is implemented on iOS and called from Dart.
+/// This API is implemented on Android and called from Dart.
 @HostApi()
 abstract class HealthConnectorPlatformApi {
+  // ==================== AGGREGATE OPERATIONS ====================
+
   /// Performs an aggregation query on health records.
   ///
   /// ## Parameters
@@ -817,6 +890,8 @@ abstract class HealthConnectorPlatformApi {
   /// - PlatformException with code `UNKNOWN` for other errors.
   @async
   AggregateResponseDto aggregate(AggregateRequestDto request);
+
+  // ==================== DELETE OPERATIONS ====================
 
   /// Deletes specific records by their IDs.
   ///

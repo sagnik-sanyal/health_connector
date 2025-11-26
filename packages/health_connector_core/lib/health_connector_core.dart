@@ -1,5 +1,3 @@
-// Annotations
-export 'src/annotations/health_connector_annotations.dart';
 // Config
 export 'src/config/health_connector_config_constants.dart';
 // Core client interface

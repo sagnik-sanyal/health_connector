@@ -9,8 +9,9 @@ environment:
 workspace:
   - packages/health_connector
   - packages/health_connector/example
-  - packages/health_connector_lint
+  - packages/health_connector_annotation
   - packages/health_connector_core
+  - packages/health_connector_lint
   - packages/health_connector_logger
   - packages/health_connector_hc_android
   - packages/health_connector_hc_android/example

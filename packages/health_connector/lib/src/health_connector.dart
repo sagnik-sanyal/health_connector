@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
 
 import 'package:health_connector/src/health_connector_config.dart';
+import 'package:health_connector_annotation/health_connector_annotation.dart'
+    show SupportedHealthPlatforms;
 import 'package:health_connector_core/health_connector_core.dart'
     show
         AggregateRequest,
@@ -24,7 +26,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordRequest,
         ReadRecordsRequest,
         ReadRecordsResponse,
-        SupportedHealthPlatforms,
         require,
         requireEndTimeAfterStartTime;
 import 'package:health_connector_logger/health_connector_logger.dart'

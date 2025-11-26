@@ -1,0 +1,20 @@
+name: health_connector_annotation
+resolution: workspace
+description: Annotations for health_connector packages
+version: 0.1.0
+publish_to: none
+homepage: https://github.com/fam-tung-lam/health_connector/tree/main/packages/health_connector_annotation
+repository: https://github.com/fam-tung-lam/health_connector/tree/main/packages/health_connector_annotation
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  health_connector_core:
+    path: ../health_connector_core
+  meta: ^1.16.0
+
+dev_dependencies:
+  health_connector_lint: ^0.1.1
+
+license: Apache-2.0

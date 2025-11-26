@@ -1,4 +1,4 @@
-import 'package:health_connector_core/src/annotations/health_connector_annotations.dart'
+import 'package:health_connector_annotation/health_connector_annotation.dart'
     show Since;
 
 /// Defines the type of aggregation to perform on health data.

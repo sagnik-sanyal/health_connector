@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+import 'package:health_connector_core/health_connector_core.dart'
+    show
+        HealthDataType,
+        Mass,
+        MeasurementUnit,
+        Numeric,
+        StepsHealthDataType,
+        WeightHealthDataType;
+import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
+import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
+
+/// A widget that renders the appropriate value input field based on the health data type.
+///
+/// This widget handles the data-type-specific input requirements:
+/// - Integer input for step count (Numeric)
+/// - Decimal input for weight (Mass in kg)
+@immutable
+final class HealthValueField extends StatefulWidget {
+  const HealthValueField({
+    required this.dataType,
+    required this.onChanged,
+    super.key,
+    this.validator,
+  });
+
+  /// The health data type that determines which input field to render.
+  final HealthDataType dataType;
+
+  /// Callback when the value changes.
+  ///
+  /// Provides a [MeasurementUnit] object (e.g., [Numeric], [Mass]) or null
+  /// if the input is invalid or empty.
+  final ValueChanged<MeasurementUnit?> onChanged;
+
+  /// Validator for the value field.
+  final String? Function(MeasurementUnit?)? validator;
+
+  @override
+  State<HealthValueField> createState() => _HealthValueFieldState();
+}
+
+class _HealthValueFieldState extends State<HealthValueField> {
+  late final TextEditingController _controller;
+  MeasurementUnit? _value;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _value = null;
+      } else {
+        _value = switch (widget.dataType) {
+          StepsHealthDataType() => _parseNumeric(value),
+          WeightHealthDataType() => _parseMass(value),
+        };
+      }
+    });
+    widget.onChanged(_value);
+  }
+
+  Numeric? _parseNumeric(String value) {
+    final count = int.tryParse(value);
+    if (count != null && count >= 0) {
+      return Numeric(count);
+    }
+    return null;
+  }
+
+  Mass? _parseMass(String value) {
+    final weightValue = double.tryParse(value);
+    if (weightValue != null && weightValue > 0) {
+      return Mass.kilograms(weightValue);
+    }
+    return null;
+  }
+
+  String? _validate(String? value) {
+    if (value == null || value.isEmpty) {
+      return switch (widget.dataType) {
+        StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
+        WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+      };
+    }
+
+    final parsed = switch (widget.dataType) {
+      StepsHealthDataType() => int.tryParse(value),
+      WeightHealthDataType() => double.tryParse(value),
+    };
+
+    if (parsed == null) {
+      return AppTexts.pleaseEnterValidNumber;
+    }
+
+    if (widget.dataType is StepsHealthDataType) {
+      if (parsed as int < 0) {
+        return AppTexts.countMustBeNonNegative;
+      }
+    } else if (widget.dataType is WeightHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.weightMustBeGreaterThanZero;
+      }
+    }
+
+    if (_value == null) {
+      return switch (widget.dataType) {
+        StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
+        WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+      };
+    }
+
+    if (widget.validator != null) {
+      return widget.validator!(_value);
+    }
+
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (widget.dataType) {
+      StepsHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.stepCount,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.numbers),
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      WeightHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.weightValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.monitorWeight),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+    };
+  }
+}

@@ -5,53 +5,152 @@ import 'package:health_connector_core/health_connector_core.dart'
         Device,
         HealthConnectorErrorCode,
         HealthConnectorException,
+        HealthDataType,
+        MeasurementUnit,
         Metadata,
-        Numeric,
         RecordingMethod,
-        StepRecord;
-import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
+        StepsHealthDataType,
+        WeightHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
-import 'package:health_connector_toolbox/src/common/pages/start_date_time_with_duration_page_state.dart';
 import 'package:health_connector_toolbox/src/common/utils/show_snack_bar.dart';
 import 'package:health_connector_toolbox/src/common/widgets/date_time_picker_row.dart';
 import 'package:health_connector_toolbox/src/common/widgets/loading_overlay.dart';
+import 'package:health_connector_toolbox/src/features/write_health_record/models/health_record_form_config.dart';
 import 'package:health_connector_toolbox/src/features/write_health_record/widgets/duration_picker_field.dart';
+import 'package:health_connector_toolbox/src/features/write_health_record/widgets/health_value_field.dart';
 import 'package:health_connector_toolbox/src/features/write_health_record/widgets/metadata_form_fields.dart';
 import 'package:health_connector_toolbox/src/features/write_health_record/write_health_record_change_notifier.dart';
 import 'package:provider/provider.dart' show Provider;
 
-/// Page for writing step count records.
+/// Unified page for writing health records.
 ///
-/// Allows users to enter step count, select start time and duration, and
-/// specify recording method and device type. Validates input and writes
-/// the record to the health platform.
+/// This page dynamically renders the appropriate form fields based on the
+/// provided [HealthDataType]. It handles both interval-based records (e.g., steps)
+/// and instant-based records (e.g., weight).
 @immutable
-final class WriteStepsRecordPage extends StatefulWidget {
-  const WriteStepsRecordPage({super.key});
+final class WriteHealthRecordFormPage extends StatefulWidget {
+  const WriteHealthRecordFormPage({
+    required this.dataType,
+    super.key,
+  });
+
+  /// The health data type that determines which form fields to render.
+  final HealthDataType dataType;
 
   @override
-  State<WriteStepsRecordPage> createState() => _WriteStepsRecordPageState();
+  State<WriteHealthRecordFormPage> createState() =>
+      _WriteHealthRecordFormPageState();
 }
 
-class _WriteStepsRecordPageState
-    extends StartDateTimeWithDurationPageState<WriteStepsRecordPage> {
+class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
   late final WriteHealthRecordChangeNotifier _notifier =
       Provider.of<WriteHealthRecordChangeNotifier>(
         context,
         listen: false,
       );
 
+  late final HealthRecordFormConfig _config =
+      HealthRecordFormConfig.fromDataType(widget.dataType);
+
   final _formKey = GlobalKey<FormState>();
-  final _countController = TextEditingController();
   RecordingMethod _recordingMethod = RecordingMethod.unknown;
   Device? _device;
-  Numeric? _stepsCount;
+  MeasurementUnit? _value;
   bool _isWriting = false;
 
+  // Use different state mixins based on whether duration is needed
+  DateTime? _startDate;
+  TimeOfDay? _startTime;
+  TimeOfDay? _duration;
+
+  DateTime? get startDateTime {
+    if (_startDate == null || _startTime == null) {
+      return null;
+    }
+    return DateTime(
+      _startDate!.year,
+      _startDate!.month,
+      _startDate!.day,
+      _startTime!.hour,
+      _startTime!.minute,
+    );
+  }
+
+  DateTime? get endDateTime {
+    if (!_config.needsDuration) {
+      return null;
+    }
+    final start = startDateTime;
+    if (start == null || _duration == null) {
+      return null;
+    }
+    final durationMinutes = _duration!.hour * 60 + _duration!.minute;
+    if (durationMinutes == 0) {
+      return null;
+    }
+    return start.add(Duration(minutes: durationMinutes));
+  }
+
   @override
-  void dispose() {
-    _countController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    if (_config.needsDuration) {
+      // For interval records, set start time to 30 minutes ago
+      final nowMinus30Min = DateTime.now().subtract(
+        const Duration(minutes: 30),
+      );
+      _startDate = DateTime(
+        nowMinus30Min.year,
+        nowMinus30Min.month,
+        nowMinus30Min.day,
+      );
+      _startTime = TimeOfDay(
+        hour: nowMinus30Min.hour,
+        minute: nowMinus30Min.minute,
+      );
+      _duration = const TimeOfDay(hour: 0, minute: 30);
+    } else {
+      // For instant records, set to current time
+      final now = DateTime.now();
+      _startDate = DateTime(now.year, now.month, now.day);
+      _startTime = TimeOfDay.fromDateTime(now);
+    }
+  }
+
+  void setDate(DateTime? date) {
+    setState(() {
+      _startDate = date;
+    });
+  }
+
+  void setTime(TimeOfDay? time) {
+    setState(() {
+      _startTime = time;
+    });
+  }
+
+  void setDuration(TimeOfDay? duration) {
+    setState(() {
+      _duration = duration;
+    });
+  }
+
+  String? _durationValidator(TimeOfDay? value) {
+    if (value == null) {
+      return '${AppTexts.pleaseSelect} Duration';
+    }
+    final durationMinutes = value.hour * 60 + value.minute;
+    if (durationMinutes == 0) {
+      return 'Duration must be greater than 0';
+    }
+    if (startDateTime == null) {
+      return AppTexts.pleaseSelectDateTime;
+    }
+    final end = endDateTime;
+    if (end == null) {
+      return 'Failed to calculate end time';
+    }
+    return null;
   }
 
   Future<void> _submitRecord() async {
@@ -66,13 +165,23 @@ class _WriteStepsRecordPageState
       return;
     }
 
+    // Validate required fields
+    if (startDateTime == null) {
+      return;
+    }
+    if (_config.needsDuration && endDateTime == null) {
+      return;
+    }
+    if (_value == null) {
+      return;
+    }
+
     setState(() {
       _isWriting = true;
     });
 
     try {
-      // Use a simple package name - in production this should come from
-      // app config
+      // Use a simple package name - in production this should come from app config
       const dataOrigin = DataOrigin('com.example.health_connector_toolbox');
       final metadata = switch (_recordingMethod) {
         RecordingMethod.manualEntry => Metadata.manualEntry(
@@ -92,10 +201,10 @@ class _WriteStepsRecordPageState
         ),
       };
 
-      final record = StepRecord(
-        startTime: startDateTime!,
-        endTime: endDateTime!,
-        count: _stepsCount!,
+      final record = _config.buildRecord(
+        startDateTime: startDateTime!,
+        endDateTime: endDateTime,
+        value: _value!,
         metadata: metadata,
       );
 
@@ -118,10 +227,7 @@ class _WriteStepsRecordPageState
         return;
       }
 
-      final message =
-          e.code == HealthConnectorErrorCode.unsupportedHealthPlatformApi
-          ? AppTexts.writePermissionDeniedSteps
-          : e.message;
+      final message = _getErrorMessage(e);
       showAppSnackBar(context, SnackBarType.error, message);
     } on Exception catch (e) {
       if (!mounted) {
@@ -142,13 +248,30 @@ class _WriteStepsRecordPageState
     }
   }
 
+  String _getErrorMessage(HealthConnectorException e) {
+    if (e.code == HealthConnectorErrorCode.unsupportedHealthPlatformApi) {
+      return switch (widget.dataType) {
+        StepsHealthDataType() => AppTexts.writePermissionDeniedSteps,
+        WeightHealthDataType() => AppTexts.writePermissionDeniedWeight,
+      };
+    }
+    return e.message;
+  }
+
   @override
   Widget build(BuildContext context) {
     return LoadingOverlay(
       isLoading: _isWriting,
       message: AppTexts.save,
       child: Scaffold(
-        appBar: AppBar(title: const Text(AppTexts.insertSteps)),
+        appBar: AppBar(
+          title: Text(
+            switch (widget.dataType) {
+              StepsHealthDataType() => AppTexts.insertSteps,
+              WeightHealthDataType() => AppTexts.insertWeight,
+            },
+          ),
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -157,56 +280,27 @@ class _WriteStepsRecordPageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 DateTimePickerRow(
-                  startDate: startDate,
-                  startTime: startTime,
+                  startDate: _startDate,
+                  startTime: _startTime,
                   onDateChanged: setDate,
                   onTimeChanged: setTime,
                 ),
-                const SizedBox(height: 16),
-                DurationPickerField(
-                  label: 'Duration (HH:MM)',
-                  initialValue: duration,
-                  onChanged: setDuration,
-                  validator: durationValidator,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _countController,
-                  decoration: const InputDecoration(
-                    labelText: AppTexts.stepCount,
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(AppIcons.numbers),
+                if (_config.needsDuration) ...[
+                  const SizedBox(height: 16),
+                  DurationPickerField(
+                    label: 'Duration (HH:MM)',
+                    initialValue: _duration,
+                    onChanged: setDuration,
+                    validator: _durationValidator,
                   ),
-                  keyboardType: TextInputType.number,
+                ],
+                const SizedBox(height: 16),
+                HealthValueField(
+                  dataType: widget.dataType,
                   onChanged: (value) {
                     setState(() {
-                      if (value.isEmpty) {
-                        _stepsCount = null;
-                      } else {
-                        final count = int.tryParse(value);
-                        if (count != null && count >= 0) {
-                          _stepsCount = Numeric(count);
-                        } else {
-                          _stepsCount = null;
-                        }
-                      }
+                      _value = value;
                     });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppTexts.pleaseEnterStepCount;
-                    }
-                    final count = int.tryParse(value);
-                    if (count == null) {
-                      return AppTexts.pleaseEnterValidNumber;
-                    }
-                    if (count < 0) {
-                      return AppTexts.countMustBeNonNegative;
-                    }
-                    if (_stepsCount == null) {
-                      return AppTexts.pleaseEnterStepCount;
-                    }
-                    return null;
                   },
                 ),
                 const SizedBox(height: 16),

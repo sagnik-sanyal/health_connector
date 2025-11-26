@@ -3,6 +3,7 @@ package com.phamtunglam.health_connector_hc_android
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
@@ -11,6 +12,7 @@ import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
 import com.phamtunglam.health_connector_hc_android.mappers.toDto
@@ -295,10 +297,22 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert SDK record to DTO using typed mappers
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                    val record = response.record as ActiveCaloriesBurnedRecord
+                    ReadRecordResponseDto(
+                        dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
+                        activeCaloriesBurnedRecord = record.toDto(),
+                        distanceRecord = null,
+                        stepsRecord = null,
+                        weightRecord = null
+                    )
+                }
+
                 HealthDataTypeDto.DISTANCE -> {
                     val record = response.record as DistanceRecord
                     ReadRecordResponseDto(
                         dataType = HealthDataTypeDto.DISTANCE,
+                        activeCaloriesBurnedRecord = null,
                         distanceRecord = record.toDto(),
                         stepsRecord = null,
                         weightRecord = null
@@ -309,6 +323,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     val record = response.record as StepsRecord
                     ReadRecordResponseDto(
                         dataType = HealthDataTypeDto.STEPS,
+                        activeCaloriesBurnedRecord = null,
                         distanceRecord = null,
                         stepsRecord = record.toDto(),
                         weightRecord = null
@@ -319,6 +334,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     val record = response.record as WeightRecord
                     ReadRecordResponseDto(
                         dataType = HealthDataTypeDto.WEIGHT,
+                        activeCaloriesBurnedRecord = null,
                         distanceRecord = null,
                         stepsRecord = null,
                         weightRecord = record.toDto()
@@ -409,11 +425,25 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert SDK records to DTOs using typed mappers
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                    val activeCaloriesBurnedRecords = response.records.map { (it as ActiveCaloriesBurnedRecord).toDto() }
+
+                    ReadRecordsResponseDto(
+                        dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
+                        activeCaloriesBurnedRecords = activeCaloriesBurnedRecords,
+                        distanceRecords = null,
+                        stepsRecords = null,
+                        weightRecords = null,
+                        nextPageToken = nextPageToken
+                    )
+                }
+
                 HealthDataTypeDto.DISTANCE -> {
                     val distanceRecords = response.records.map { (it as DistanceRecord).toDto() }
 
                     ReadRecordsResponseDto(
                         dataType = HealthDataTypeDto.DISTANCE,
+                        activeCaloriesBurnedRecords = null,
                         distanceRecords = distanceRecords,
                         stepsRecords = null,
                         weightRecords = null,
@@ -426,6 +456,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
                     ReadRecordsResponseDto(
                         dataType = HealthDataTypeDto.STEPS,
+                        activeCaloriesBurnedRecords = null,
                         distanceRecords = null,
                         stepsRecords = stepRecords,
                         weightRecords = null,
@@ -438,6 +469,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
                     ReadRecordsResponseDto(
                         dataType = HealthDataTypeDto.WEIGHT,
+                        activeCaloriesBurnedRecords = null,
                         distanceRecords = null,
                         stepsRecords = null,
                         weightRecords = weightRecords,
@@ -505,6 +537,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Extract typed record from request DTO
             val record: Record = when (request.dataType) {
+                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                    requireNotNull(request.activeCaloriesBurnedRecord) { "activeCaloriesBurnedRecord must not be null for ACTIVE_CALORIES_BURNED type" }
+                    request.activeCaloriesBurnedRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.DISTANCE -> {
                     requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
                     request.distanceRecord.toHealthConnect()
@@ -585,6 +622,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             // Extract typed records from request DTO
             val records = request.dataTypes.map { dataTypeDto ->
                 when (dataTypeDto) {
+                    HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                        requireNotNull(request.activeCaloriesBurnedRecords) { "activeCaloriesBurnedRecords must not be null for ACTIVE_CALORIES_BURNED type" }
+                        request.activeCaloriesBurnedRecords.map { it.toHealthConnect() }
+                    }
+
                     HealthDataTypeDto.DISTANCE -> {
                         requireNotNull(request.distanceRecords) { "distanceRecords must not be null for DISTANCE type" }
                         request.distanceRecords.map { it.toHealthConnect() }
@@ -666,6 +708,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Extract typed record from request DTO
             val record = when (request.dataType) {
+                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                    requireNotNull(request.activeCaloriesBurnedRecord) { "activeCaloriesBurnedRecord must not be null for ACTIVE_CALORIES_BURNED type" }
+                    val activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord
+                    // Validate record ID is not empty or "none"
+                    if (activeCaloriesBurnedRecord.id.isEmpty() || activeCaloriesBurnedRecord.id == "none") {
+                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                        )
+                    }
+                    activeCaloriesBurnedRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.DISTANCE -> {
                     requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
                     val distanceRecord = request.distanceRecord
@@ -803,12 +857,26 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Convert result to DTO based on data type
             val responseDto = when (request.dataType) {
+                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+                    val energy = aggregatedValue?.let { it as? Energy }
+                    val energyDto = energy?.toDto()
+                    AggregateResponseDto(
+                        aggregationMetric = request.aggregationMetric,
+                        dataType = request.dataType,
+                        activeCaloriesBurnedValue = energyDto,
+                        doubleValue = null,
+                        massValue = null,
+                        lengthValue = null
+                    )
+                }
+
                 HealthDataTypeDto.DISTANCE -> {
                     val length = aggregatedValue?.let { it as? Length }
                     val lengthDto = length?.toDto()
                     AggregateResponseDto(
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
                         doubleValue = null,
                         massValue = null,
                         lengthValue = lengthDto
@@ -821,6 +889,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     AggregateResponseDto(
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
                         doubleValue = numericDto.value,
                         massValue = null,
                         lengthValue = null
@@ -833,6 +902,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     AggregateResponseDto(
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
                         doubleValue = null,
                         massValue = massDto,
                         lengthValue = null

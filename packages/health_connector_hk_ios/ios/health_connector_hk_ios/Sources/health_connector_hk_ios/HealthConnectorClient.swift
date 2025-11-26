@@ -333,10 +333,24 @@ internal class HealthConnectorClient {
                     // Convert SDK sample to DTO using typed mappers
                     let responseDto: ReadRecordResponseDto?
                     switch request.dataType {
+                    case .activeCaloriesBurned:
+                        if let activeCaloriesBurnedRecord = sample.toActiveCaloriesBurnedRecordDto() {
+                            responseDto = ReadRecordResponseDto(
+                                dataType: .activeCaloriesBurned,
+                                activeCaloriesBurnedRecord: activeCaloriesBurnedRecord,
+                                distanceRecord: nil,
+                                stepsRecord: nil,
+                                weightRecord: nil
+                            )
+                        } else {
+                            responseDto = nil
+                        }
+
                     case .distance:
                         if let distanceRecord = sample.toDistanceRecordDto() {
                             responseDto = ReadRecordResponseDto(
                                 dataType: .distance,
+                                activeCaloriesBurnedRecord: nil,
                                 distanceRecord: distanceRecord,
                                 stepsRecord: nil,
                                 weightRecord: nil
@@ -349,6 +363,7 @@ internal class HealthConnectorClient {
                         if let stepRecord = sample.toStepRecordDto() {
                             responseDto = ReadRecordResponseDto(
                                 dataType: .steps,
+                                activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 stepsRecord: stepRecord,
                                 weightRecord: nil
@@ -361,6 +376,7 @@ internal class HealthConnectorClient {
                         if let weightRecord = sample.toWeightRecordDto() {
                             responseDto = ReadRecordResponseDto(
                                 dataType: .weight,
+                                activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: weightRecord
@@ -607,6 +623,28 @@ internal class HealthConnectorClient {
                     // Convert SDK samples to DTOs using typed mappers
                     let responseDto: ReadRecordsResponseDto
                     switch request.dataType {
+                    case .activeCaloriesBurned:
+                        let activeCaloriesBurnedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toActiveCaloriesBurnedRecordDto() }
+
+                        // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
+                        let nextPageToken: String?
+                        if activeCaloriesBurnedRecords.count == request.pageSize, let lastRecord = activeCaloriesBurnedRecords.last {
+                            // Encode last record's endTime as nextPageToken
+                            nextPageToken = String(lastRecord.endTime)
+                        } else {
+                            // Fewer than pageSize records means no more pages
+                            nextPageToken = nil
+                        }
+
+                        responseDto = ReadRecordsResponseDto(
+                            dataType: .activeCaloriesBurned,
+                            activeCaloriesBurnedRecords: activeCaloriesBurnedRecords,
+                            distanceRecords: nil,
+                            nextPageToken: nextPageToken,
+                            stepsRecords: nil,
+                            weightRecords: nil
+                        )
+
                     case .distance:
                         let distanceRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toDistanceRecordDto() }
 
@@ -622,6 +660,7 @@ internal class HealthConnectorClient {
 
                         responseDto = ReadRecordsResponseDto(
                             dataType: .distance,
+                            activeCaloriesBurnedRecords: nil,
                             distanceRecords: distanceRecords,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
@@ -643,6 +682,7 @@ internal class HealthConnectorClient {
 
                         responseDto = ReadRecordsResponseDto(
                             dataType: .steps,
+                            activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: stepRecords,
@@ -664,6 +704,7 @@ internal class HealthConnectorClient {
 
                         responseDto = ReadRecordsResponseDto(
                             dataType: .weight,
+                            activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
@@ -776,9 +817,19 @@ internal class HealthConnectorClient {
      */
     private func createEmptyResponse(for dataType: HealthDataTypeDto) -> ReadRecordsResponseDto {
         switch dataType {
+        case .activeCaloriesBurned:
+            return ReadRecordsResponseDto(
+                dataType: .activeCaloriesBurned,
+                activeCaloriesBurnedRecords: [],
+                distanceRecords: nil,
+                nextPageToken: nil,
+                stepsRecords: nil,
+                weightRecords: nil
+            )
         case .distance:
             return ReadRecordsResponseDto(
                 dataType: .distance,
+                activeCaloriesBurnedRecords: nil,
                 distanceRecords: [],
                 nextPageToken: nil,
                 stepsRecords: nil,
@@ -787,6 +838,7 @@ internal class HealthConnectorClient {
         case .steps:
             return ReadRecordsResponseDto(
                 dataType: .steps,
+                activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: [],
@@ -795,6 +847,7 @@ internal class HealthConnectorClient {
         case .weight:
             return ReadRecordsResponseDto(
                 dataType: .weight,
+                activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
@@ -831,6 +884,15 @@ internal class HealthConnectorClient {
             // Extract typed record from request DTO and convert to HealthKit sample
             let sample: HKSample
             switch request.dataType {
+            case .activeCaloriesBurned:
+                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
+                        details: nil
+                    )
+                }
+                sample = try activeCaloriesBurnedRecord.toHealthKit()
+
             case .distance:
                 guard let distanceRecord = request.distanceRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -968,6 +1030,23 @@ internal class HealthConnectorClient {
             // Validate record ID
             let recordId: String
             switch request.dataType {
+            case .activeCaloriesBurned:
+                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
+                        details: nil
+                    )
+                }
+                recordId = activeCaloriesBurnedRecord.id
+
+                // Validate record ID is not empty or "none"
+                if recordId.isEmpty || recordId == "none" {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
+                        details: "Record ID: \(recordId)"
+                    )
+                }
+
             case .distance:
                 guard let distanceRecord = request.distanceRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -1073,6 +1152,26 @@ internal class HealthConnectorClient {
             // Step 2: Extract typed record from request DTO and convert to HealthKit sample
             let newSample: HKSample
             switch request.dataType {
+            case .activeCaloriesBurned:
+                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
+                        details: nil
+                    )
+                }
+                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
+                newSample = try activeCaloriesBurnedRecord.toHealthKit()
+
+            case .distance:
+                guard let distanceRecord = request.distanceRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "distanceRecord must not be nil for DISTANCE type",
+                        details: nil
+                    )
+                }
+                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
+                newSample = try distanceRecord.toHealthKit()
+
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -1228,6 +1327,26 @@ internal class HealthConnectorClient {
 
             for dataTypeDto in request.dataTypes {
                 switch dataTypeDto {
+                case .activeCaloriesBurned:
+                    guard let activeCaloriesBurnedRecords = request.activeCaloriesBurnedRecords else {
+                        throw HealthConnectorErrors.invalidArgument(
+                            message: "activeCaloriesBurnedRecords must not be nil for ACTIVE_CALORIES_BURNED type",
+                            details: nil
+                        )
+                    }
+                    let activeCaloriesBurnedSamples = try activeCaloriesBurnedRecords.map { try $0.toHealthKit() }
+                    samples.append(contentsOf: activeCaloriesBurnedSamples)
+
+                case .distance:
+                    guard let distanceRecords = request.distanceRecords else {
+                        throw HealthConnectorErrors.invalidArgument(
+                            message: "distanceRecords must not be nil for DISTANCE type",
+                            details: nil
+                        )
+                    }
+                    let distanceSamples = try distanceRecords.map { try $0.toHealthKit() }
+                    samples.append(contentsOf: distanceSamples)
+
                 case .steps:
                     guard let stepsRecords = request.stepsRecords else {
                         throw HealthConnectorErrors.invalidArgument(
@@ -1470,6 +1589,7 @@ internal class HealthConnectorClient {
                     let response = AggregateResponseDto(
                         aggregationMetric: metric,
                         dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
                         massValue: nil
                     )
@@ -1481,12 +1601,35 @@ internal class HealthConnectorClient {
                 let response: AggregateResponseDto
 
                 switch dataType {
+                case .activeCaloriesBurned:
+                    // For active calories burned, we use cumulativeSum which returns sumQuantity
+                    guard let sumQuantity = statistics.sumQuantity() else {
+                        let emptyResponse = AggregateResponseDto(
+                            aggregationMetric: metric,
+                            dataType: dataType,
+                            activeCaloriesBurnedValue: nil,
+                            doubleValue: nil,
+                            massValue: nil
+                        )
+                        continuation.resume(returning: emptyResponse)
+                        return
+                    }
+                    let energyDto = sumQuantity.toEnergyDto()
+                    response = AggregateResponseDto(
+                        aggregationMetric: metric,
+                        dataType: dataType,
+                        activeCaloriesBurnedValue: energyDto,
+                        doubleValue: nil,
+                        massValue: nil
+                    )
+
                 case .steps:
                     // For steps, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
                         let emptyResponse = AggregateResponseDto(
                             aggregationMetric: metric,
                             dataType: dataType,
+                            activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
                             massValue: nil
                         )
@@ -1498,6 +1641,7 @@ internal class HealthConnectorClient {
                     response = AggregateResponseDto(
                         aggregationMetric: metric,
                         dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
                         doubleValue: numericDto.value,
                         massValue: nil
                     )
@@ -1520,6 +1664,7 @@ internal class HealthConnectorClient {
                         let emptyResponse = AggregateResponseDto(
                             aggregationMetric: metric,
                             dataType: dataType,
+                            activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
                             massValue: nil
                         )
@@ -1531,8 +1676,32 @@ internal class HealthConnectorClient {
                     response = AggregateResponseDto(
                         aggregationMetric: metric,
                         dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
                         massValue: massDto
+                    )
+
+                case .distance:
+                    // For distance, we use cumulativeSum which returns sumQuantity
+                    guard let sumQuantity = statistics.sumQuantity() else {
+                        let emptyResponse = AggregateResponseDto(
+                            aggregationMetric: metric,
+                            dataType: dataType,
+                            activeCaloriesBurnedValue: nil,
+                            doubleValue: nil,
+                            massValue: nil
+                        )
+                        continuation.resume(returning: emptyResponse)
+                        return
+                    }
+                    let lengthDto = sumQuantity.toLengthDto()
+                    response = AggregateResponseDto(
+                        aggregationMetric: metric,
+                        dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
+                        doubleValue: nil,
+                        massValue: nil,
+                        lengthValue: lengthDto
                     )
                 }
 

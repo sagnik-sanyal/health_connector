@@ -20,6 +20,16 @@ extension AggregationMetricDto {
      */
     func toHealthKitStatisticsOptions(dataType: HealthDataTypeDto) -> HKStatisticsOptions {
         switch dataType {
+        case .activeCaloriesBurned:
+            switch self {
+            case .sum:
+                return .cumulativeSum
+            case .avg, .min, .max, .count:
+                // These require reading individual records and calculating
+                // HealthKit doesn't provide direct aggregation for these on active calories burned
+                return []
+            }
+
         case .steps:
             switch self {
             case .sum:
@@ -42,6 +52,16 @@ extension AggregationMetricDto {
                 // SUM not meaningful for weight, COUNT requires reading records
                 return []
             }
+
+        case .distance:
+            switch self {
+            case .sum:
+                return .cumulativeSum
+            case .avg, .min, .max, .count:
+                // These require reading individual records and calculating
+                // HealthKit doesn't provide direct aggregation for these on distance
+                return []
+            }
         }
     }
 
@@ -56,6 +76,15 @@ extension AggregationMetricDto {
      */
     func validateForDataType(_ dataType: HealthDataTypeDto) throws {
         switch dataType {
+        case .activeCaloriesBurned:
+            // Only SUM is supported for active calories burned (matches Android Health Connect behavior)
+            if self != .sum {
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for activeCaloriesBurned in HealthKit",
+                    details: "\(metricName) not directly supported for activeCaloriesBurned in HealthKit."
+                )
+            }
         case .steps:
             // Only SUM is supported for steps (matches Android Health Connect behavior)
             if self != .sum {
@@ -75,6 +104,15 @@ extension AggregationMetricDto {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "\(metricName) not directly supported for weight in HealthKit",
                     details: "\(metricName) not directly supported for weight in HealthKit."
+                )
+            }
+        case .distance:
+            // Only SUM is supported for distance (matches Android Health Connect behavior)
+            if self != .sum {
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for distance in HealthKit",
+                    details: "\(metricName) not directly supported for distance in HealthKit."
                 )
             }
         }

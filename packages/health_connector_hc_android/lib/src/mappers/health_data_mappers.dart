@@ -1,5 +1,6 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
         HealthDataType,
         HealthRecord,
@@ -15,6 +16,8 @@ import 'package:meta/meta.dart' show internal;
 extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
   HealthDataType<HealthRecord, MeasurementUnit> toDomain() {
     switch (this) {
+      case HealthDataTypeDto.activeCaloriesBurned:
+        return HealthDataType.activeCaloriesBurned;
       case HealthDataTypeDto.distance:
         return HealthDataType.distance;
       case HealthDataTypeDto.steps:
@@ -30,6 +33,8 @@ extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
 extension HealthDataTypeToDto on HealthDataType<HealthRecord, MeasurementUnit> {
   HealthDataTypeDto toDto() {
     switch (this) {
+      case ActiveCaloriesBurnedHealthDataType _:
+        return HealthDataTypeDto.activeCaloriesBurned;
       case DistanceHealthDataType _:
         return HealthDataTypeDto.distance;
       case StepsHealthDataType _:

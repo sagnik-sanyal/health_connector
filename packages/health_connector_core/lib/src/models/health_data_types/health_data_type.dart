@@ -21,7 +21,13 @@ import 'package:health_connector_core/src/models/health_platform.dart'
 import 'package:health_connector_core/src/models/health_platform_data.dart'
     show HealthPlatformData;
 import 'package:health_connector_core/src/models/health_records/health_record.dart'
-    show DistanceRecord, HealthRecord, HealthRecordId, StepRecord, WeightRecord;
+    show
+        ActiveCaloriesBurnedRecord,
+        DistanceRecord,
+        HealthRecord,
+        HealthRecordId,
+        StepRecord,
+        WeightRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
     show Energy, Length, Mass, MeasurementUnit, Numeric;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
@@ -36,6 +42,7 @@ import 'package:health_connector_core/src/models/requests/read_records_request.d
     show ReadRecordsRequest;
 import 'package:meta/meta.dart' show immutable, internal;
 
+part 'active_calories_burned_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
@@ -133,11 +140,20 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// existing weight data and writing new weight measurements.
   static const weight = WeightHealthDataType();
 
+  /// Active calories burned data type.
+  ///
+  /// Represents the amount of energy (calories) burned during physical activity
+  /// over a time interval. Active calories are those burned through exercise
+  /// and movement, excluding basal metabolic rate. Supports both reading
+  /// existing active calories data and writing new measurements.
+  static const activeCaloriesBurned = ActiveCaloriesBurnedHealthDataType();
+
   /// Returns a list of all available health data types.
   ///
   /// This list contains all data types currently supported by the plugin.
   /// As new data types are added, they will automatically appear in this list.
   static const List<HealthDataType<HealthRecord, MeasurementUnit>> values = [
+    activeCaloriesBurned,
     distance,
     steps,
     weight,

@@ -1,5 +1,6 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedRecord,
         AggregateRequest,
         DistanceRecord,
         HealthRecord,
@@ -74,6 +75,11 @@ extension AggregateRequestDtoMapper<
 extension HealthRecordToWriteRequestDto on HealthRecord {
   WriteRecordRequestDto toWriteRecordRequestDto() {
     switch (this) {
+      case final ActiveCaloriesBurnedRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.activeCaloriesBurned,
+          activeCaloriesBurnedRecord: record.toDto(),
+        );
       case final DistanceRecord record:
         return WriteRecordRequestDto(
           dataType: HealthDataTypeDto.distance,
@@ -98,6 +104,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
 extension HealthRecordToUpdateRequestDto on HealthRecord {
   UpdateRecordRequestDto toUpdateRecordRequestDto() {
     switch (this) {
+      case final ActiveCaloriesBurnedRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.activeCaloriesBurned,
+          activeCaloriesBurnedRecord: record.toDto(),
+        );
       case final DistanceRecord record:
         return UpdateRecordRequestDto(
           dataType: HealthDataTypeDto.distance,
@@ -126,6 +137,7 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
     }
 
     // Group records by type
+    final activeCaloriesBurnedRecords = <ActiveCaloriesBurnedRecord>[];
     final distanceRecords = <DistanceRecord>[];
     final stepRecords = <StepRecord>[];
     final weightRecords = <WeightRecord>[];
@@ -133,6 +145,11 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
 
     for (final record in this) {
       switch (record) {
+        case final ActiveCaloriesBurnedRecord activeCaloriesBurnedRecord:
+          activeCaloriesBurnedRecords.add(activeCaloriesBurnedRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.activeCaloriesBurned)) {
+            dataTypes.add(HealthDataTypeDto.activeCaloriesBurned);
+          }
         case final DistanceRecord distanceRecord:
           distanceRecords.add(distanceRecord);
           if (!dataTypes.contains(HealthDataTypeDto.distance)) {
@@ -153,6 +170,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
 
     return WriteRecordsRequestDto(
       dataTypes: dataTypes,
+      activeCaloriesBurnedRecords: activeCaloriesBurnedRecords.isEmpty
+          ? null
+          : activeCaloriesBurnedRecords.map((r) => r.toDto()).toList(),
       distanceRecords: distanceRecords.isEmpty
           ? null
           : distanceRecords.map((r) => r.toDto()).toList(),

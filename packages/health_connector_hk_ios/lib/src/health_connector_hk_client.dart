@@ -138,8 +138,9 @@ final class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       try {
         final requestDto = healthDataPermissions.toDto();
 
-        final responseDto =
-            await _platformClient.requestPermissions(requestDto);
+        final responseDto = await _platformClient.requestPermissions(
+          requestDto,
+        );
 
         final healthDataResults = responseDto.toDomain();
         results.addAll(healthDataResults);

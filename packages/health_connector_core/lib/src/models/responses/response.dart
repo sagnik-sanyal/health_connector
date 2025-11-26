@@ -25,4 +25,3 @@ abstract class Response {
   @mustBeOverridden
   String toString();
 }
-

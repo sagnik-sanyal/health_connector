@@ -151,6 +151,9 @@ enum HealthConnectorErrorCodeDto {
 
 /// Represents a health data type.
 enum HealthDataTypeDto {
+  /// Active calories burned data.
+  activeCaloriesBurned,
+
   /// Distance traveled data.
   distance,
 
@@ -504,6 +507,47 @@ class PermissionsRequestResponseDto {
 // HEALTH RECORD DTOs
 // ============================================================================
 
+/// Represents an active calories burned record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
+/// - Domain: `ActiveCaloriesBurnedRecord`
+class ActiveCaloriesBurnedRecordDto {
+  ActiveCaloriesBurnedRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.energy,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Energy (calories) burned during the interval.
+  final EnergyDto energy;
+
+  /// End time in milliseconds since epoch (UTC).
+  final int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  final int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  final int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  final int? startZoneOffsetSeconds;
+}
+
 /// Represents a distance record for platform transfer.
 ///
 /// Maps to:
@@ -647,6 +691,7 @@ class AggregateResponseDto {
   AggregateResponseDto({
     required this.dataType,
     required this.aggregationMetric,
+    this.activeCaloriesBurnedValue,
     this.doubleValue,
     this.lengthValue,
     this.massValue,
@@ -657,6 +702,9 @@ class AggregateResponseDto {
 
   /// The type of health data that was aggregated.
   final HealthDataTypeDto dataType;
+
+  /// Active calories burned aggregated value (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  final EnergyDto? activeCaloriesBurnedValue;
 
   /// Numeric aggregated value.
   ///
@@ -726,6 +774,7 @@ class ReadRecordRequestDto {
 class ReadRecordResponseDto {
   ReadRecordResponseDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -733,6 +782,9 @@ class ReadRecordResponseDto {
 
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
+
+  /// Active calories burned record (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
@@ -785,6 +837,7 @@ class ReadRecordsRequestDto {
 class ReadRecordsResponseDto {
   ReadRecordsResponseDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecords,
     this.distanceRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -793,6 +846,9 @@ class ReadRecordsResponseDto {
 
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
+
+  /// List of active calories burned records (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
   /// List of distance records (non-null when dataType == DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
@@ -818,6 +874,7 @@ class ReadRecordsResponseDto {
 class WriteRecordRequestDto {
   WriteRecordRequestDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -825,6 +882,9 @@ class WriteRecordRequestDto {
 
   /// The type of health data being written.
   final HealthDataTypeDto dataType;
+
+  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (only non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
@@ -854,6 +914,7 @@ class WriteRecordResponseDto {
 class WriteRecordsRequestDto {
   WriteRecordsRequestDto({
     required this.dataTypes,
+    this.activeCaloriesBurnedRecords,
     this.distanceRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -864,6 +925,9 @@ class WriteRecordsRequestDto {
   /// This list indicates which record type lists contain data.
   /// Each data type in this list corresponds to a non-null list field.
   final List<HealthDataTypeDto> dataTypes;
+
+  /// List of active calories burned records (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
+  final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
   /// List of distance records (non-null when dataTypes contains DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
@@ -898,6 +962,7 @@ class WriteRecordsResponseDto {
 class UpdateRecordRequestDto {
   UpdateRecordRequestDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -905,6 +970,10 @@ class UpdateRecordRequestDto {
 
   /// The type of health data being updated.
   final HealthDataTypeDto dataType;
+
+  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// The record must have a valid existing ID.
+  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (only non-null when dataType == DISTANCE).
   /// The record must have a valid existing ID.

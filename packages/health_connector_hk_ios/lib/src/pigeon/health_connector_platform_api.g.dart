@@ -135,6 +135,9 @@ enum HealthConnectorErrorCodeDto {
 
 /// Represents a health data type.
 enum HealthDataTypeDto {
+  /// Active calories burned data.
+  activeCaloriesBurned,
+
   /// Distance traveled data.
   distance,
 
@@ -1130,6 +1133,93 @@ class PermissionsRequestResponseDto {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Represents an active calories burned record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
+/// - Domain: `ActiveCaloriesBurnedRecord`
+class ActiveCaloriesBurnedRecordDto {
+  ActiveCaloriesBurnedRecordDto({
+    required this.energy,
+    required this.endTime,
+    required this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Energy (calories) burned during the interval.
+  EnergyDto energy;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  String id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      energy,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static ActiveCaloriesBurnedRecordDto decode(Object result) {
+    result as List<Object?>;
+    return ActiveCaloriesBurnedRecordDto(
+      energy: result[0]! as EnergyDto,
+      endTime: result[1]! as int,
+      id: result[2]! as String,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ActiveCaloriesBurnedRecordDto ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 /// Represents a distance record for platform transfer.
 ///
 /// Maps to:
@@ -1437,6 +1527,7 @@ class AggregateResponseDto {
   AggregateResponseDto({
     required this.aggregationMetric,
     required this.dataType,
+    this.activeCaloriesBurnedValue,
     this.doubleValue,
     this.lengthValue,
     this.massValue,
@@ -1447,6 +1538,9 @@ class AggregateResponseDto {
 
   /// The type of health data that was aggregated.
   HealthDataTypeDto dataType;
+
+  /// Active calories burned aggregated value (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  EnergyDto? activeCaloriesBurnedValue;
 
   /// Numeric aggregated value.
   ///
@@ -1463,6 +1557,7 @@ class AggregateResponseDto {
     return <Object?>[
       aggregationMetric,
       dataType,
+      activeCaloriesBurnedValue,
       doubleValue,
       lengthValue,
       massValue,
@@ -1478,9 +1573,10 @@ class AggregateResponseDto {
     return AggregateResponseDto(
       aggregationMetric: result[0]! as AggregationMetricDto,
       dataType: result[1]! as HealthDataTypeDto,
-      doubleValue: result[2] as double?,
-      lengthValue: result[3] as LengthDto?,
-      massValue: result[4] as MassDto?,
+      activeCaloriesBurnedValue: result[2] as EnergyDto?,
+      doubleValue: result[3] as double?,
+      lengthValue: result[4] as LengthDto?,
+      massValue: result[5] as MassDto?,
     );
   }
 
@@ -1663,6 +1759,7 @@ class ReadRecordRequestDto {
 class ReadRecordResponseDto {
   ReadRecordResponseDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -1670,6 +1767,9 @@ class ReadRecordResponseDto {
 
   /// The type of health data that was read.
   HealthDataTypeDto dataType;
+
+  /// Active calories burned record (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (non-null when dataType == DISTANCE).
   DistanceRecordDto? distanceRecord;
@@ -1683,6 +1783,7 @@ class ReadRecordResponseDto {
   List<Object?> _toList() {
     return <Object?>[
       dataType,
+      activeCaloriesBurnedRecord,
       distanceRecord,
       stepsRecord,
       weightRecord,
@@ -1697,9 +1798,10 @@ class ReadRecordResponseDto {
     result as List<Object?>;
     return ReadRecordResponseDto(
       dataType: result[0]! as HealthDataTypeDto,
-      distanceRecord: result[1] as DistanceRecordDto?,
-      stepsRecord: result[2] as StepRecordDto?,
-      weightRecord: result[3] as WeightRecordDto?,
+      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
+      distanceRecord: result[2] as DistanceRecordDto?,
+      stepsRecord: result[3] as StepRecordDto?,
+      weightRecord: result[4] as WeightRecordDto?,
     );
   }
 
@@ -1802,6 +1904,7 @@ class ReadRecordsRequestDto {
 class ReadRecordsResponseDto {
   ReadRecordsResponseDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecords,
     this.distanceRecords,
     this.nextPageToken,
     this.stepsRecords,
@@ -1810,6 +1913,9 @@ class ReadRecordsResponseDto {
 
   /// The type of health data that was read.
   HealthDataTypeDto dataType;
+
+  /// List of active calories burned records (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
   /// List of distance records (non-null when dataType == DISTANCE).
   List<DistanceRecordDto>? distanceRecords;
@@ -1826,6 +1932,7 @@ class ReadRecordsResponseDto {
   List<Object?> _toList() {
     return <Object?>[
       dataType,
+      activeCaloriesBurnedRecords,
       distanceRecords,
       nextPageToken,
       stepsRecords,
@@ -1841,10 +1948,12 @@ class ReadRecordsResponseDto {
     result as List<Object?>;
     return ReadRecordsResponseDto(
       dataType: result[0]! as HealthDataTypeDto,
-      distanceRecords: (result[1] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      nextPageToken: result[2] as String?,
-      stepsRecords: (result[3] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[4] as List<Object?>?)?.cast<WeightRecordDto>(),
+      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
+          ?.cast<ActiveCaloriesBurnedRecordDto>(),
+      distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
+      nextPageToken: result[3] as String?,
+      stepsRecords: (result[4] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[5] as List<Object?>?)?.cast<WeightRecordDto>(),
     );
   }
 
@@ -1872,6 +1981,7 @@ class ReadRecordsResponseDto {
 class WriteRecordRequestDto {
   WriteRecordRequestDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -1879,6 +1989,9 @@ class WriteRecordRequestDto {
 
   /// The type of health data being written.
   HealthDataTypeDto dataType;
+
+  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (only non-null when dataType == DISTANCE).
   DistanceRecordDto? distanceRecord;
@@ -1892,6 +2005,7 @@ class WriteRecordRequestDto {
   List<Object?> _toList() {
     return <Object?>[
       dataType,
+      activeCaloriesBurnedRecord,
       distanceRecord,
       stepsRecord,
       weightRecord,
@@ -1906,9 +2020,10 @@ class WriteRecordRequestDto {
     result as List<Object?>;
     return WriteRecordRequestDto(
       dataType: result[0]! as HealthDataTypeDto,
-      distanceRecord: result[1] as DistanceRecordDto?,
-      stepsRecord: result[2] as StepRecordDto?,
-      weightRecord: result[3] as WeightRecordDto?,
+      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
+      distanceRecord: result[2] as DistanceRecordDto?,
+      stepsRecord: result[3] as StepRecordDto?,
+      weightRecord: result[4] as WeightRecordDto?,
     );
   }
 
@@ -1980,6 +2095,7 @@ class WriteRecordResponseDto {
 class WriteRecordsRequestDto {
   WriteRecordsRequestDto({
     required this.dataTypes,
+    this.activeCaloriesBurnedRecords,
     this.distanceRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -1990,6 +2106,9 @@ class WriteRecordsRequestDto {
   /// This list indicates which record type lists contain data.
   /// Each data type in this list corresponds to a non-null list field.
   List<HealthDataTypeDto> dataTypes;
+
+  /// List of active calories burned records (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
+  List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
   /// List of distance records (non-null when dataTypes contains DISTANCE).
   List<DistanceRecordDto>? distanceRecords;
@@ -2003,6 +2122,7 @@ class WriteRecordsRequestDto {
   List<Object?> _toList() {
     return <Object?>[
       dataTypes,
+      activeCaloriesBurnedRecords,
       distanceRecords,
       stepsRecords,
       weightRecords,
@@ -2017,9 +2137,11 @@ class WriteRecordsRequestDto {
     result as List<Object?>;
     return WriteRecordsRequestDto(
       dataTypes: (result[0] as List<Object?>?)!.cast<HealthDataTypeDto>(),
-      distanceRecords: (result[1] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      stepsRecords: (result[2] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[3] as List<Object?>?)?.cast<WeightRecordDto>(),
+      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
+          ?.cast<ActiveCaloriesBurnedRecordDto>(),
+      distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
+      stepsRecords: (result[3] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[4] as List<Object?>?)?.cast<WeightRecordDto>(),
     );
   }
 
@@ -2094,6 +2216,7 @@ class WriteRecordsResponseDto {
 class UpdateRecordRequestDto {
   UpdateRecordRequestDto({
     required this.dataType,
+    this.activeCaloriesBurnedRecord,
     this.distanceRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -2101,6 +2224,10 @@ class UpdateRecordRequestDto {
 
   /// The type of health data being updated.
   HealthDataTypeDto dataType;
+
+  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// The record must have a valid existing ID.
+  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
   /// Distance record (only non-null when dataType == DISTANCE).
   /// The record must have a valid existing ID.
@@ -2117,6 +2244,7 @@ class UpdateRecordRequestDto {
   List<Object?> _toList() {
     return <Object?>[
       dataType,
+      activeCaloriesBurnedRecord,
       distanceRecord,
       stepsRecord,
       weightRecord,
@@ -2131,9 +2259,10 @@ class UpdateRecordRequestDto {
     result as List<Object?>;
     return UpdateRecordRequestDto(
       dataType: result[0]! as HealthDataTypeDto,
-      distanceRecord: result[1] as DistanceRecordDto?,
-      stepsRecord: result[2] as StepRecordDto?,
-      weightRecord: result[3] as WeightRecordDto?,
+      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
+      distanceRecord: result[2] as DistanceRecordDto?,
+      stepsRecord: result[3] as StepRecordDto?,
+      weightRecord: result[4] as WeightRecordDto?,
     );
   }
 
@@ -2201,7 +2330,6 @@ class UpdateRecordResponseDto {
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is int) {
@@ -2309,56 +2437,59 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PermissionsRequestResponseDto) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    } else if (value is DistanceRecordDto) {
+    } else if (value is ActiveCaloriesBurnedRecordDto) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    } else if (value is StepRecordDto) {
+    } else if (value is DistanceRecordDto) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    } else if (value is WeightRecordDto) {
+    } else if (value is StepRecordDto) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateRequestDto) {
+    } else if (value is WeightRecordDto) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateResponseDto) {
+    } else if (value is AggregateRequestDto) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByIdsRequestDto) {
+    } else if (value is AggregateResponseDto) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
+    } else if (value is DeleteRecordsByIdsRequestDto) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordRequestDto) {
+    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordResponseDto) {
+    } else if (value is ReadRecordRequestDto) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsRequestDto) {
+    } else if (value is ReadRecordResponseDto) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsResponseDto) {
+    } else if (value is ReadRecordsRequestDto) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordRequestDto) {
+    } else if (value is ReadRecordsResponseDto) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordResponseDto) {
+    } else if (value is WriteRecordRequestDto) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsRequestDto) {
+    } else if (value is WriteRecordResponseDto) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsResponseDto) {
+    } else if (value is WriteRecordsRequestDto) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordRequestDto) {
+    } else if (value is WriteRecordsResponseDto) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordResponseDto) {
+    } else if (value is UpdateRecordRequestDto) {
       buffer.putUint8(179);
+      writeValue(buffer, value.encode());
+    } else if (value is UpdateRecordResponseDto) {
+      buffer.putUint8(180);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2454,38 +2585,40 @@ class _PigeonCodec extends StandardMessageCodec {
       case 162:
         return PermissionsRequestResponseDto.decode(readValue(buffer)!);
       case 163:
-        return DistanceRecordDto.decode(readValue(buffer)!);
+        return ActiveCaloriesBurnedRecordDto.decode(readValue(buffer)!);
       case 164:
-        return StepRecordDto.decode(readValue(buffer)!);
+        return DistanceRecordDto.decode(readValue(buffer)!);
       case 165:
-        return WeightRecordDto.decode(readValue(buffer)!);
+        return StepRecordDto.decode(readValue(buffer)!);
       case 166:
-        return AggregateRequestDto.decode(readValue(buffer)!);
+        return WeightRecordDto.decode(readValue(buffer)!);
       case 167:
-        return AggregateResponseDto.decode(readValue(buffer)!);
+        return AggregateRequestDto.decode(readValue(buffer)!);
       case 168:
-        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
+        return AggregateResponseDto.decode(readValue(buffer)!);
       case 169:
-        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
       case 170:
-        return ReadRecordRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
       case 171:
-        return ReadRecordResponseDto.decode(readValue(buffer)!);
+        return ReadRecordRequestDto.decode(readValue(buffer)!);
       case 172:
-        return ReadRecordsRequestDto.decode(readValue(buffer)!);
+        return ReadRecordResponseDto.decode(readValue(buffer)!);
       case 173:
-        return ReadRecordsResponseDto.decode(readValue(buffer)!);
+        return ReadRecordsRequestDto.decode(readValue(buffer)!);
       case 174:
-        return WriteRecordRequestDto.decode(readValue(buffer)!);
+        return ReadRecordsResponseDto.decode(readValue(buffer)!);
       case 175:
-        return WriteRecordResponseDto.decode(readValue(buffer)!);
+        return WriteRecordRequestDto.decode(readValue(buffer)!);
       case 176:
-        return WriteRecordsRequestDto.decode(readValue(buffer)!);
+        return WriteRecordResponseDto.decode(readValue(buffer)!);
       case 177:
-        return WriteRecordsResponseDto.decode(readValue(buffer)!);
+        return WriteRecordsRequestDto.decode(readValue(buffer)!);
       case 178:
-        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+        return WriteRecordsResponseDto.decode(readValue(buffer)!);
       case 179:
+        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+      case 180:
         return UpdateRecordResponseDto.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

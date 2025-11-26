@@ -56,6 +56,5 @@ extension PermissionListExtension on List<Permission> {
   /// [HealthPlatformFeaturePermission], excluding any [HealthDataPermission]
   /// instances.
   List<HealthPlatformFeaturePermission> get featurePermissions =>
-      whereType<HealthPlatformFeaturePermission>()
-          .toList();
+      whereType<HealthPlatformFeaturePermission>().toList();
 }

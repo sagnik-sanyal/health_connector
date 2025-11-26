@@ -26,4 +26,3 @@ abstract interface class HealthPlatformData {
   @mustBeOverridden
   String toString();
 }
-

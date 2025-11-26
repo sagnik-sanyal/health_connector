@@ -1,5 +1,6 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -48,6 +49,21 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
     HealthDataType<R, MeasurementUnit> dataType,
   ) {
     switch (dataType) {
+      case ActiveCaloriesBurnedHealthDataType _:
+        final activeCaloriesBurnedRecords =
+            responseDto.activeCaloriesBurnedRecords;
+        if (activeCaloriesBurnedRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected activeCaloriesBurnedRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return activeCaloriesBurnedRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
+
       case DistanceHealthDataType _:
         final distanceRecords = responseDto.distanceRecords;
         if (distanceRecords == null) {
@@ -111,6 +127,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
     U extends MeasurementUnit
   >(HealthDataType<R, U> dataType) {
     switch (dataType) {
+      case ActiveCaloriesBurnedHealthDataType _:
+        final value = activeCaloriesBurnedValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected activeCaloriesBurnedValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
+
       case DistanceHealthDataType _:
         final value = lengthValue;
         if (value == null) {
@@ -154,6 +181,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
     HealthDataType<R, MeasurementUnit> dataType,
   ) {
     switch (dataType) {
+      case ActiveCaloriesBurnedHealthDataType _:
+        final record = activeCaloriesBurnedRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected activeCaloriesBurnedRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
       case DistanceHealthDataType _:
         final record = distanceRecord;
         if (record == null) {

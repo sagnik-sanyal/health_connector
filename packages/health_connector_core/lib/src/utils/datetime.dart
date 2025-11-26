@@ -15,4 +15,3 @@ String formatTimeRange({
 }) {
   return '${startTime.toIso8601String()} to ${endTime.toIso8601String()}';
 }
-

@@ -25,4 +25,3 @@ abstract class Request {
   @mustBeOverridden
   String toString();
 }
-

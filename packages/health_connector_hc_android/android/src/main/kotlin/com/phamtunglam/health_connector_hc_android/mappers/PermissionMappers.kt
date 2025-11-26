@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -17,6 +18,13 @@ import com.phamtunglam.health_connector_hc_android.pigeon.PermissionAccessTypeDt
  */
 internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
     return when (this.healthDataType) {
+        HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(ActiveCaloriesBurnedRecord::class)
+            }
+        }
+
         HealthDataTypeDto.STEPS -> {
             when (this.accessType) {
                 PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(StepsRecord::class)
@@ -71,8 +79,10 @@ internal fun String.toHealthDataPermissionDto(): HealthDataPermissionDto? {
     }
 
     val dataType = when (dataTypeStr) {
+        "ACTIVE_CALORIES_BURNED" -> HealthDataTypeDto.ACTIVE_CALORIES_BURNED
         "STEPS" -> HealthDataTypeDto.STEPS
         "WEIGHT" -> HealthDataTypeDto.WEIGHT
+        "DISTANCE" -> HealthDataTypeDto.DISTANCE
         else -> return null // Unknown data type, skip it
     }
 

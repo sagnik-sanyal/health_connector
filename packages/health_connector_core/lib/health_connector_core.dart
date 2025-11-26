@@ -13,8 +13,7 @@ export 'src/models/health_platform_data.dart';
 // Models - Health Platform Features
 export 'src/models/health_platform_features/health_platform_feature.dart';
 // Models - Health Records
-export 'src/models/health_records/health_record.dart'
-    hide SeriesHealthRecord, InstantHealthRecord, IntervalHealthRecord;
+export 'src/models/health_records/health_record.dart';
 // Models - Measurement Units
 export 'src/models/measurement_units/measurement_unit.dart';
 // Models - Metadata

@@ -14,7 +14,6 @@ part of 'health_record.dart';
 /// - Start and end dates are the same (point-in-time)
 /// - Timezone information less explicit (uses device timezone)
 @Since('0.1.0')
-@internal
 @immutable
 sealed class InstantHealthRecord extends HealthRecord {
   /// Creates an instant health record at the specified [time].

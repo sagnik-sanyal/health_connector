@@ -2,7 +2,6 @@ part of 'health_record.dart';
 
 /// A health record that spans a duration of time.
 @Since('0.1.0')
-@internal
 @immutable
 sealed class IntervalHealthRecord extends HealthRecord {
   /// Constructor for subclasses.

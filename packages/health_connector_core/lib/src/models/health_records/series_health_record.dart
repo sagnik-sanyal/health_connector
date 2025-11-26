@@ -15,7 +15,6 @@ part of 'health_record.dart';
 /// - Less direct support compared to Android
 /// - May require aggregation of individual samples
 @Since('0.1.0')
-@internal
 @immutable
 sealed class SeriesHealthRecord<T> extends IntervalHealthRecord {
   /// Constructor for subclasses.

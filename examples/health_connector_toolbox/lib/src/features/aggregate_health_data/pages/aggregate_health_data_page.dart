@@ -4,6 +4,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateRequest,
         AggregateResponse,
         AggregationMetric,
+        DistanceHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -88,6 +89,19 @@ class _AggregateHealthDataPageState
               );
             case AggregationMetric.sum:
             case AggregationMetric.count:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case DistanceHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.sum:
+              request = HealthDataType.distance.aggregateSum(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.count:
+            case AggregationMetric.avg:
+            case AggregationMetric.min:
+            case AggregationMetric.max:
               throw UnsupportedError('Unsupported metric: $_selectedMetric');
           }
       }

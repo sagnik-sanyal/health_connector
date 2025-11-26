@@ -70,6 +70,12 @@ abstract final class AppTexts {
   static const String weightKg = 'Weight (kg)';
   static const String weightLbs = 'Weight (lbs)';
   static const String weightGrams = 'Weight (g)';
+  static const String distance = 'Distance';
+  static const String distanceDescription =
+      'Distance traveled over a time interval';
+  static const String distanceValue = 'Distance Value (m)';
+  static const String distanceMeters = 'Distance (m)';
+  static const String distanceKm = 'Distance (km)';
 
   // ==========================================================================
   // Device Types
@@ -96,6 +102,7 @@ abstract final class AppTexts {
   // ==========================================================================
   static const String mass = 'Mass';
   static const String numeric = 'Numeric';
+  static const String length = 'Length';
 
   // ==========================================================================
   // Aggregation Metrics
@@ -127,6 +134,8 @@ abstract final class AppTexts {
   static const String stepsWrite = 'Steps - Write';
   static const String weightRead = 'Weight - Read';
   static const String weightWrite = 'Weight - Write';
+  static const String distanceRead = 'Distance - Read';
+  static const String distanceWrite = 'Distance - Write';
   static const String iosReadPermissionUnknownStatusNote =
       'Note: On iOS, read permissions may show as "unknown" status even after '
       'being granted due to privacy restrictions. '
@@ -162,6 +171,9 @@ abstract final class AppTexts {
   static const String writePermissionDeniedWeight =
       'Write permission denied or not supported. '
       'Please grant write permission for weight.';
+  static const String writePermissionDeniedDistance =
+      'Write permission denied or not supported. '
+      'Please grant write permission for distance.';
 
   // ==========================================================================
   // Validation Messages
@@ -178,12 +190,15 @@ abstract final class AppTexts {
       'Please select at least one permission';
   static const String pleaseEnterStepCount = 'Please enter step count';
   static const String pleaseEnterWeight = 'Please enter weight';
+  static const String pleaseEnterDistance = 'Please enter distance';
   static const String pleaseEnterValidNumber = 'Please enter a valid number';
   static const String endTimeMustBeAfterStartTime =
       'End time must be after start time';
   static const String countMustBeNonNegative = 'Count must be non-negative';
   static const String weightMustBeGreaterThanZero =
       'Weight must be greater than 0';
+  static const String distanceMustBeGreaterThanZero =
+      'Distance must be greater than 0';
   static const String pageSizeMustBeBetween1And10000 =
       'Page size must be between 1 and 10000';
 
@@ -193,6 +208,7 @@ abstract final class AppTexts {
   static const String insertHealthRecord = 'Insert Health Record';
   static const String insertSteps = 'Insert Steps';
   static const String insertWeight = 'Insert Weight';
+  static const String insertDistance = 'Insert Distance';
   static const String readHealthRecords = 'Read Health Records';
   static const String readAggregateData = 'Read Aggregate Data';
 

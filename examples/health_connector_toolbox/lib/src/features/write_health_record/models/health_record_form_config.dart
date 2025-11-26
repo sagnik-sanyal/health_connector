@@ -1,7 +1,10 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        DistanceHealthDataType,
+        DistanceRecord,
         HealthDataType,
         HealthRecord,
+        Length,
         Mass,
         MeasurementUnit,
         Metadata,
@@ -47,6 +50,7 @@ sealed class HealthRecordFormConfig {
     return switch (type) {
       StepsHealthDataType() => const StepsFormConfig(),
       WeightHealthDataType() => const WeightFormConfig(),
+      DistanceHealthDataType() => const DistanceFormConfig(),
     };
   }
 }
@@ -107,6 +111,39 @@ final class WeightFormConfig extends HealthRecordFormConfig {
     return WeightRecord(
       time: startDateTime,
       weight: massValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for distance records.
+///
+/// Distance is an interval-based record that requires:
+/// - Start time
+/// - End time (derived from start time + duration)
+/// - Distance value (length in meters)
+final class DistanceFormConfig extends HealthRecordFormConfig {
+  const DistanceFormConfig();
+
+  @override
+  bool get needsDuration => true;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    DateTime? endDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+  }) {
+    if (endDateTime == null) {
+      throw ArgumentError('endDateTime is required for distance records');
+    }
+    final lengthValue = value as Length;
+
+    return DistanceRecord(
+      startTime: startDateTime,
+      endTime: endDateTime,
+      distance: lengthValue,
       metadata: metadata,
     );
   }

@@ -11,11 +11,13 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthPlatformFeatureReadHealthDataHistory,
         HealthPlatformFeatureReadHealthDataInBackground,
         HealthPlatformFeatureStatus,
+        Length,
         Mass,
         MeasurementUnit,
         Numeric,
         PermissionStatus,
         RecordingMethod,
+        DistanceHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
@@ -91,6 +93,7 @@ extension HealthDataTypeUI on HealthDataType {
     return switch (this) {
       StepsHealthDataType() => AppTexts.steps,
       WeightHealthDataType() => AppTexts.weight,
+      DistanceHealthDataType() => AppTexts.distance,
     };
   }
 
@@ -102,6 +105,7 @@ extension HealthDataTypeUI on HealthDataType {
     return switch (this) {
       StepsHealthDataType() => AppTexts.stepsDescription,
       WeightHealthDataType() => AppTexts.weightDescription,
+      DistanceHealthDataType() => AppTexts.distanceDescription,
     };
   }
 
@@ -113,6 +117,7 @@ extension HealthDataTypeUI on HealthDataType {
     return switch (this) {
       StepsHealthDataType() => AppIcons.directionsWalk,
       WeightHealthDataType() => AppIcons.monitorWeight,
+      DistanceHealthDataType() => AppIcons.straighten,
     };
   }
 }
@@ -205,6 +210,7 @@ extension MeasurementUnitUI on MeasurementUnit {
     return switch (this) {
       Mass() => AppTexts.mass,
       Numeric() => AppTexts.numeric,
+      Length() => AppTexts.length,
       // Add other unit types as needed
       _ => toString(),
     };
@@ -215,6 +221,7 @@ extension MeasurementUnitUI on MeasurementUnit {
     return switch (this) {
       Mass() => AppIcons.mass,
       Numeric() => AppIcons.numeric,
+      Length() => AppIcons.length,
       // Add other unit types as needed
       _ => AppIcons.numbers,
     };

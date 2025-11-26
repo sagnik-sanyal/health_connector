@@ -3,6 +3,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         DataOrigin,
         Device,
+        DistanceHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -253,6 +254,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.writePermissionDeniedSteps,
         WeightHealthDataType() => AppTexts.writePermissionDeniedWeight,
+        DistanceHealthDataType() => AppTexts.writePermissionDeniedDistance,
       };
     }
     return e.message;
@@ -269,6 +271,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
             switch (widget.dataType) {
               StepsHealthDataType() => AppTexts.insertSteps,
               WeightHealthDataType() => AppTexts.insertWeight,
+              DistanceHealthDataType() => AppTexts.insertDistance,
             },
           ),
         ),

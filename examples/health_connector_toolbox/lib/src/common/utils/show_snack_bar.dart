@@ -55,4 +55,3 @@ Color _getBackgroundColor(SnackBarType type) {
       return AppColors.successDark;
   }
 }
-

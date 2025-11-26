@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        DistanceHealthDataType,
         HealthDataType,
+        Length,
         Mass,
         MeasurementUnit,
         Numeric,
@@ -15,6 +17,7 @@ import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 /// This widget handles the data-type-specific input requirements:
 /// - Integer input for step count (Numeric)
 /// - Decimal input for weight (Mass in kg)
+/// - Decimal input for distance (Length in meters)
 @immutable
 final class HealthValueField extends StatefulWidget {
   const HealthValueField({
@@ -64,6 +67,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         _value = switch (widget.dataType) {
           StepsHealthDataType() => _parseNumeric(value),
           WeightHealthDataType() => _parseMass(value),
+          DistanceHealthDataType() => _parseLength(value),
         };
       }
     });
@@ -86,17 +90,27 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
+  Length? _parseLength(String value) {
+    final distanceValue = double.tryParse(value);
+    if (distanceValue != null && distanceValue > 0) {
+      return Length.meters(distanceValue);
+    }
+    return null;
+  }
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+        DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
       };
     }
 
     final parsed = switch (widget.dataType) {
       StepsHealthDataType() => int.tryParse(value),
       WeightHealthDataType() => double.tryParse(value),
+      DistanceHealthDataType() => double.tryParse(value),
     };
 
     if (parsed == null) {
@@ -111,12 +125,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.weightMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is DistanceHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.distanceMustBeGreaterThanZero;
+      }
     }
 
     if (_value == null) {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+        DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
       };
     }
 
@@ -152,6 +171,18 @@ class _HealthValueFieldState extends State<HealthValueField> {
         onChanged: _onChanged,
         validator: _validate,
       ),
+      DistanceHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.distanceValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.straighten),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
     };
   }
 }
+

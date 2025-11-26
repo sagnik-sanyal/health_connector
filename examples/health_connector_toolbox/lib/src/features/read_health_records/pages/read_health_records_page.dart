@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        DistanceHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -82,6 +83,12 @@ class _ReadHealthRecordsPageState
           );
         case WeightHealthDataType():
           request = HealthDataType.weight.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case DistanceHealthDataType():
+          request = HealthDataType.distance.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

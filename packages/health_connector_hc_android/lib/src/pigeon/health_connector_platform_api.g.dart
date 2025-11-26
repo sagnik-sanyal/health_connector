@@ -192,6 +192,9 @@ enum HealthDataTypeDto {
   /// Distance traveled data.
   distance,
 
+  /// Floors climbed data.
+  floorsClimbed,
+
   /// Step count data.
   steps,
 
@@ -1406,6 +1409,92 @@ class DistanceRecordDto {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Represents a floors climbed record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.FloorsClimbedRecord`
+/// - Domain: `FloorsClimbedRecord`
+class FloorsClimbedRecordDto {
+  FloorsClimbedRecordDto({
+    required this.floors,
+    required this.endTime,
+    required this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Number of floors (flights of stairs) climbed during the interval.
+  NumericDto floors;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  String id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      floors,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static FloorsClimbedRecordDto decode(Object result) {
+    result as List<Object?>;
+    return FloorsClimbedRecordDto(
+      floors: result[0]! as NumericDto,
+      endTime: result[1]! as int,
+      id: result[2]! as String,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FloorsClimbedRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 /// Represents a step count record for platform transfer.
 class StepRecordDto {
   StepRecordDto({
@@ -1861,6 +1950,7 @@ class ReadRecordResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -1874,6 +1964,9 @@ class ReadRecordResponseDto {
   /// Distance record (non-null when dataType == DISTANCE).
   DistanceRecordDto? distanceRecord;
 
+  /// Floors climbed record (non-null when dataType == FLOORS_CLIMBED).
+  FloorsClimbedRecordDto? floorsClimbedRecord;
+
   /// Step count record (non-null when dataType == STEPS).
   StepRecordDto? stepsRecord;
 
@@ -1885,6 +1978,7 @@ class ReadRecordResponseDto {
       dataType,
       activeCaloriesBurnedRecord,
       distanceRecord,
+      floorsClimbedRecord,
       stepsRecord,
       weightRecord,
     ];
@@ -1900,8 +1994,9 @@ class ReadRecordResponseDto {
       dataType: result[0]! as HealthDataTypeDto,
       activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
       distanceRecord: result[2] as DistanceRecordDto?,
-      stepsRecord: result[3] as StepRecordDto?,
-      weightRecord: result[4] as WeightRecordDto?,
+      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
+      stepsRecord: result[4] as StepRecordDto?,
+      weightRecord: result[5] as WeightRecordDto?,
     );
   }
 
@@ -2006,6 +2101,7 @@ class ReadRecordsResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecords,
     this.distanceRecords,
+    this.floorsClimbedRecords,
     this.nextPageToken,
     this.stepsRecords,
     this.weightRecords,
@@ -2019,6 +2115,9 @@ class ReadRecordsResponseDto {
 
   /// List of distance records (non-null when dataType == DISTANCE).
   List<DistanceRecordDto>? distanceRecords;
+
+  /// List of floors climbed records (non-null when dataType == FLOORS_CLIMBED).
+  List<FloorsClimbedRecordDto>? floorsClimbedRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   String? nextPageToken;
@@ -2034,6 +2133,7 @@ class ReadRecordsResponseDto {
       dataType,
       activeCaloriesBurnedRecords,
       distanceRecords,
+      floorsClimbedRecords,
       nextPageToken,
       stepsRecords,
       weightRecords,
@@ -2051,9 +2151,11 @@ class ReadRecordsResponseDto {
       activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
           ?.cast<ActiveCaloriesBurnedRecordDto>(),
       distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      nextPageToken: result[3] as String?,
-      stepsRecords: (result[4] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[5] as List<Object?>?)?.cast<WeightRecordDto>(),
+      floorsClimbedRecords: (result[3] as List<Object?>?)
+          ?.cast<FloorsClimbedRecordDto>(),
+      nextPageToken: result[4] as String?,
+      stepsRecords: (result[5] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[6] as List<Object?>?)?.cast<WeightRecordDto>(),
     );
   }
 
@@ -2083,6 +2185,7 @@ class WriteRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -2096,6 +2199,9 @@ class WriteRecordRequestDto {
   /// Distance record (only non-null when dataType == DISTANCE).
   DistanceRecordDto? distanceRecord;
 
+  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  FloorsClimbedRecordDto? floorsClimbedRecord;
+
   /// Step count record (only non-null when dataType == STEPS).
   StepRecordDto? stepsRecord;
 
@@ -2107,6 +2213,7 @@ class WriteRecordRequestDto {
       dataType,
       activeCaloriesBurnedRecord,
       distanceRecord,
+      floorsClimbedRecord,
       stepsRecord,
       weightRecord,
     ];
@@ -2122,8 +2229,9 @@ class WriteRecordRequestDto {
       dataType: result[0]! as HealthDataTypeDto,
       activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
       distanceRecord: result[2] as DistanceRecordDto?,
-      stepsRecord: result[3] as StepRecordDto?,
-      weightRecord: result[4] as WeightRecordDto?,
+      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
+      stepsRecord: result[4] as StepRecordDto?,
+      weightRecord: result[5] as WeightRecordDto?,
     );
   }
 
@@ -2197,6 +2305,7 @@ class WriteRecordsRequestDto {
     required this.dataTypes,
     this.activeCaloriesBurnedRecords,
     this.distanceRecords,
+    this.floorsClimbedRecords,
     this.stepsRecords,
     this.weightRecords,
   });
@@ -2213,6 +2322,9 @@ class WriteRecordsRequestDto {
   /// List of distance records (non-null when dataTypes contains DISTANCE).
   List<DistanceRecordDto>? distanceRecords;
 
+  /// List of floors climbed records (non-null when dataTypes contains FLOORS_CLIMBED).
+  List<FloorsClimbedRecordDto>? floorsClimbedRecords;
+
   /// List of step records (non-null when dataTypes contains STEPS).
   List<StepRecordDto>? stepsRecords;
 
@@ -2224,6 +2336,7 @@ class WriteRecordsRequestDto {
       dataTypes,
       activeCaloriesBurnedRecords,
       distanceRecords,
+      floorsClimbedRecords,
       stepsRecords,
       weightRecords,
     ];
@@ -2240,8 +2353,10 @@ class WriteRecordsRequestDto {
       activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
           ?.cast<ActiveCaloriesBurnedRecordDto>(),
       distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      stepsRecords: (result[3] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[4] as List<Object?>?)?.cast<WeightRecordDto>(),
+      floorsClimbedRecords: (result[3] as List<Object?>?)
+          ?.cast<FloorsClimbedRecordDto>(),
+      stepsRecords: (result[4] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[5] as List<Object?>?)?.cast<WeightRecordDto>(),
     );
   }
 
@@ -2318,6 +2433,7 @@ class UpdateRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -2333,6 +2449,10 @@ class UpdateRecordRequestDto {
   /// The record must have a valid existing ID.
   DistanceRecordDto? distanceRecord;
 
+  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  /// The record must have a valid existing ID.
+  FloorsClimbedRecordDto? floorsClimbedRecord;
+
   /// Step count record (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.
   StepRecordDto? stepsRecord;
@@ -2346,6 +2466,7 @@ class UpdateRecordRequestDto {
       dataType,
       activeCaloriesBurnedRecord,
       distanceRecord,
+      floorsClimbedRecord,
       stepsRecord,
       weightRecord,
     ];
@@ -2361,8 +2482,9 @@ class UpdateRecordRequestDto {
       dataType: result[0]! as HealthDataTypeDto,
       activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
       distanceRecord: result[2] as DistanceRecordDto?,
-      stepsRecord: result[3] as StepRecordDto?,
-      weightRecord: result[4] as WeightRecordDto?,
+      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
+      stepsRecord: result[4] as StepRecordDto?,
+      weightRecord: result[5] as WeightRecordDto?,
     );
   }
 
@@ -2555,53 +2677,56 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is DistanceRecordDto) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is StepRecordDto) {
+    } else if (value is FloorsClimbedRecordDto) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is WeightRecordDto) {
+    } else if (value is StepRecordDto) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateRequestDto) {
+    } else if (value is WeightRecordDto) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateResponseDto) {
+    } else if (value is AggregateRequestDto) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByIdsRequestDto) {
+    } else if (value is AggregateResponseDto) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
+    } else if (value is DeleteRecordsByIdsRequestDto) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordRequestDto) {
+    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordResponseDto) {
+    } else if (value is ReadRecordRequestDto) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsRequestDto) {
+    } else if (value is ReadRecordResponseDto) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsResponseDto) {
+    } else if (value is ReadRecordsRequestDto) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordRequestDto) {
+    } else if (value is ReadRecordsResponseDto) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordResponseDto) {
+    } else if (value is WriteRecordRequestDto) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsRequestDto) {
+    } else if (value is WriteRecordResponseDto) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsResponseDto) {
+    } else if (value is WriteRecordsRequestDto) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordRequestDto) {
+    } else if (value is WriteRecordsResponseDto) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordResponseDto) {
+    } else if (value is UpdateRecordRequestDto) {
       buffer.putUint8(184);
+      writeValue(buffer, value.encode());
+    } else if (value is UpdateRecordResponseDto) {
+      buffer.putUint8(185);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2716,36 +2841,38 @@ class _PigeonCodec extends StandardMessageCodec {
       case 168:
         return DistanceRecordDto.decode(readValue(buffer)!);
       case 169:
-        return StepRecordDto.decode(readValue(buffer)!);
+        return FloorsClimbedRecordDto.decode(readValue(buffer)!);
       case 170:
-        return WeightRecordDto.decode(readValue(buffer)!);
+        return StepRecordDto.decode(readValue(buffer)!);
       case 171:
-        return AggregateRequestDto.decode(readValue(buffer)!);
+        return WeightRecordDto.decode(readValue(buffer)!);
       case 172:
-        return AggregateResponseDto.decode(readValue(buffer)!);
+        return AggregateRequestDto.decode(readValue(buffer)!);
       case 173:
-        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
+        return AggregateResponseDto.decode(readValue(buffer)!);
       case 174:
-        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
       case 175:
-        return ReadRecordRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
       case 176:
-        return ReadRecordResponseDto.decode(readValue(buffer)!);
+        return ReadRecordRequestDto.decode(readValue(buffer)!);
       case 177:
-        return ReadRecordsRequestDto.decode(readValue(buffer)!);
+        return ReadRecordResponseDto.decode(readValue(buffer)!);
       case 178:
-        return ReadRecordsResponseDto.decode(readValue(buffer)!);
+        return ReadRecordsRequestDto.decode(readValue(buffer)!);
       case 179:
-        return WriteRecordRequestDto.decode(readValue(buffer)!);
+        return ReadRecordsResponseDto.decode(readValue(buffer)!);
       case 180:
-        return WriteRecordResponseDto.decode(readValue(buffer)!);
+        return WriteRecordRequestDto.decode(readValue(buffer)!);
       case 181:
-        return WriteRecordsRequestDto.decode(readValue(buffer)!);
+        return WriteRecordResponseDto.decode(readValue(buffer)!);
       case 182:
-        return WriteRecordsResponseDto.decode(readValue(buffer)!);
+        return WriteRecordsRequestDto.decode(readValue(buffer)!);
       case 183:
-        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+        return WriteRecordsResponseDto.decode(readValue(buffer)!);
       case 184:
+        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+      case 185:
         return UpdateRecordResponseDto.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

@@ -2,10 +2,12 @@ package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.StepRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WeightRecordDto
 import java.time.Instant
@@ -66,6 +68,35 @@ internal fun DistanceRecord.toDto(): DistanceRecordDto {
         endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         distance = distance.toDto()
+    )
+}
+
+/**
+ * Converts a [FloorsClimbedRecordDto] to a Health Connect [FloorsClimbedRecord] object.
+ */
+internal fun FloorsClimbedRecordDto.toHealthConnect(): FloorsClimbedRecord {
+    return FloorsClimbedRecord(
+        floors = floors.value,
+        startTime = Instant.ofEpochMilli(startTime),
+        endTime = Instant.ofEpochMilli(endTime),
+        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [FloorsClimbedRecord] object to a [FloorsClimbedRecordDto].
+ */
+internal fun FloorsClimbedRecord.toDto(): FloorsClimbedRecordDto {
+    return FloorsClimbedRecordDto(
+        id = metadata.id,
+        startTime = startTime.toEpochMilli(),
+        endTime = endTime.toEpochMilli(),
+        startZoneOffsetSeconds = startZoneOffset?.totalSeconds?.toLong(),
+        endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        floors = floors.toNumericDto()
     )
 }
 

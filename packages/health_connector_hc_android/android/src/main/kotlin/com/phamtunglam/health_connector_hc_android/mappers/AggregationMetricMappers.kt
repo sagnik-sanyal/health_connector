@@ -3,6 +3,7 @@ package com.phamtunglam.health_connector_hc_android.mappers
 import androidx.health.connect.client.aggregate.AggregateMetric
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregationMetricDto
@@ -51,6 +52,16 @@ internal fun AggregationMetricDto.toHealthConnectMetric(dataType: HealthDataType
         HealthDataTypeDto.DISTANCE -> {
             when (this) {
                 AggregationMetricDto.SUM -> DistanceRecord.DISTANCE_TOTAL
+                AggregationMetricDto.AVG,
+                AggregationMetricDto.MIN,
+                AggregationMetricDto.MAX,
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
+            }
+        }
+
+        HealthDataTypeDto.FLOORS_CLIMBED -> {
+            when (this) {
+                AggregationMetricDto.SUM -> FloorsClimbedRecord.FLOORS_CLIMBED_TOTAL
                 AggregationMetricDto.AVG,
                 AggregationMetricDto.MIN,
                 AggregationMetricDto.MAX,

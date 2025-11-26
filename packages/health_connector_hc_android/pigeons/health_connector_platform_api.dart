@@ -157,6 +157,9 @@ enum HealthDataTypeDto {
   /// Distance traveled data.
   distance,
 
+  /// Floors climbed data.
+  floorsClimbed,
+
   /// Step count data.
   steps,
 
@@ -589,6 +592,47 @@ class DistanceRecordDto {
   final int? startZoneOffsetSeconds;
 }
 
+/// Represents a floors climbed record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.FloorsClimbedRecord`
+/// - Domain: `FloorsClimbedRecord`
+class FloorsClimbedRecordDto {
+  FloorsClimbedRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.floors,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Number of floors (flights of stairs) climbed during the interval.
+  final NumericDto floors;
+
+  /// End time in milliseconds since epoch (UTC).
+  final int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  final int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  final int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  final int? startZoneOffsetSeconds;
+}
+
 /// Represents a step count record for platform transfer.
 class StepRecordDto {
   StepRecordDto({
@@ -776,6 +820,7 @@ class ReadRecordResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -788,6 +833,9 @@ class ReadRecordResponseDto {
 
   /// Distance record (non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
+
+  /// Floors climbed record (non-null when dataType == FLOORS_CLIMBED).
+  final FloorsClimbedRecordDto? floorsClimbedRecord;
 
   /// Step count record (non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
@@ -839,6 +887,7 @@ class ReadRecordsResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecords,
     this.distanceRecords,
+    this.floorsClimbedRecords,
     this.stepsRecords,
     this.weightRecords,
     this.nextPageToken,
@@ -852,6 +901,9 @@ class ReadRecordsResponseDto {
 
   /// List of distance records (non-null when dataType == DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
+
+  /// List of floors climbed records (non-null when dataType == FLOORS_CLIMBED).
+  final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   final String? nextPageToken;
@@ -876,6 +928,7 @@ class WriteRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -888,6 +941,9 @@ class WriteRecordRequestDto {
 
   /// Distance record (only non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
+
+  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  final FloorsClimbedRecordDto? floorsClimbedRecord;
 
   /// Step count record (only non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
@@ -916,6 +972,7 @@ class WriteRecordsRequestDto {
     required this.dataTypes,
     this.activeCaloriesBurnedRecords,
     this.distanceRecords,
+    this.floorsClimbedRecords,
     this.stepsRecords,
     this.weightRecords,
   });
@@ -931,6 +988,9 @@ class WriteRecordsRequestDto {
 
   /// List of distance records (non-null when dataTypes contains DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
+
+  /// List of floors climbed records (non-null when dataTypes contains FLOORS_CLIMBED).
+  final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
 
   /// List of step records (non-null when dataTypes contains STEPS).
   final List<StepRecordDto>? stepsRecords;
@@ -964,6 +1024,7 @@ class UpdateRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.distanceRecord,
+    this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
   });
@@ -978,6 +1039,10 @@ class UpdateRecordRequestDto {
   /// Distance record (only non-null when dataType == DISTANCE).
   /// The record must have a valid existing ID.
   final DistanceRecordDto? distanceRecord;
+
+  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  /// The record must have a valid existing ID.
+  final FloorsClimbedRecordDto? floorsClimbedRecord;
 
   /// Step count record (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.

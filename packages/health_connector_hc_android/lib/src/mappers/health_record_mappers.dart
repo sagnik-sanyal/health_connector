@@ -2,6 +2,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
         DistanceRecord,
+        FloorsClimbedRecord,
         HealthRecordId,
         StepRecord,
         WeightRecord;
@@ -11,6 +12,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
     show
         ActiveCaloriesBurnedRecordDto,
         DistanceRecordDto,
+        FloorsClimbedRecordDto,
         StepRecordDto,
         WeightRecordDto;
 import 'package:meta/meta.dart' show internal;
@@ -93,6 +95,38 @@ extension DistanceRecordDtoToDomain on DistanceRecordDto {
       endZoneOffsetSeconds: endZoneOffsetSeconds,
       metadata: metadata.toDomain(),
       distance: distance.toDomain(),
+    );
+  }
+}
+
+/// Converts [FloorsClimbedRecord] to [FloorsClimbedRecordDto].
+@internal
+extension FloorsClimbedRecordDtoMapper on FloorsClimbedRecord {
+  FloorsClimbedRecordDto toDto() {
+    return FloorsClimbedRecordDto(
+      id: id.toDto(),
+      startTime: startTime.millisecondsSinceEpoch,
+      endTime: endTime.millisecondsSinceEpoch,
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      floors: floors.toDto(),
+    );
+  }
+}
+
+/// Converts [FloorsClimbedRecordDto] to [FloorsClimbedRecord].
+@internal
+extension FloorsClimbedRecordDtoToDomain on FloorsClimbedRecordDto {
+  FloorsClimbedRecord toDomain() {
+    return FloorsClimbedRecord(
+      id: id.toHealthRecordId(),
+      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
+      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      floors: floors.toDomain(),
     );
   }
 }

@@ -339,6 +339,7 @@ internal class HealthConnectorClient {
                                 dataType: .activeCaloriesBurned,
                                 activeCaloriesBurnedRecord: activeCaloriesBurnedRecord,
                                 distanceRecord: nil,
+                                floorsClimbedRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: nil
                             )
@@ -352,6 +353,21 @@ internal class HealthConnectorClient {
                                 dataType: .distance,
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: distanceRecord,
+                                floorsClimbedRecord: nil,
+                                stepsRecord: nil,
+                                weightRecord: nil
+                            )
+                        } else {
+                            responseDto = nil
+                        }
+
+                    case .floorsClimbed:
+                        if let floorsClimbedRecord = sample.toFloorsClimbedRecordDto() {
+                            responseDto = ReadRecordResponseDto(
+                                dataType: .floorsClimbed,
+                                activeCaloriesBurnedRecord: nil,
+                                distanceRecord: nil,
+                                floorsClimbedRecord: floorsClimbedRecord,
                                 stepsRecord: nil,
                                 weightRecord: nil
                             )
@@ -365,6 +381,7 @@ internal class HealthConnectorClient {
                                 dataType: .steps,
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
+                                floorsClimbedRecord: nil,
                                 stepsRecord: stepRecord,
                                 weightRecord: nil
                             )
@@ -378,6 +395,7 @@ internal class HealthConnectorClient {
                                 dataType: .weight,
                                 activeCaloriesBurnedRecord: nil,
                                 distanceRecord: nil,
+                                floorsClimbedRecord: nil,
                                 stepsRecord: nil,
                                 weightRecord: weightRecord
                             )
@@ -640,6 +658,7 @@ internal class HealthConnectorClient {
                             dataType: .activeCaloriesBurned,
                             activeCaloriesBurnedRecords: activeCaloriesBurnedRecords,
                             distanceRecords: nil,
+                            floorsClimbedRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: nil
@@ -662,6 +681,30 @@ internal class HealthConnectorClient {
                             dataType: .distance,
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: distanceRecords,
+                            floorsClimbedRecords: nil,
+                            nextPageToken: nextPageToken,
+                            stepsRecords: nil,
+                            weightRecords: nil
+                        )
+
+                    case .floorsClimbed:
+                        let floorsClimbedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toFloorsClimbedRecordDto() }
+
+                        // Generate nextPageToken if we got exactly pageSize records (indicating more may exist)
+                        let nextPageToken: String?
+                        if floorsClimbedRecords.count == request.pageSize, let lastRecord = floorsClimbedRecords.last {
+                            // Encode last record's endTime as nextPageToken
+                            nextPageToken = String(lastRecord.endTime)
+                        } else {
+                            // Fewer than pageSize records means no more pages
+                            nextPageToken = nil
+                        }
+
+                        responseDto = ReadRecordsResponseDto(
+                            dataType: .floorsClimbed,
+                            activeCaloriesBurnedRecords: nil,
+                            distanceRecords: nil,
+                            floorsClimbedRecords: floorsClimbedRecords,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: nil
@@ -684,6 +727,7 @@ internal class HealthConnectorClient {
                             dataType: .steps,
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
+                            floorsClimbedRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: stepRecords,
                             weightRecords: nil
@@ -706,6 +750,7 @@ internal class HealthConnectorClient {
                             dataType: .weight,
                             activeCaloriesBurnedRecords: nil,
                             distanceRecords: nil,
+                            floorsClimbedRecords: nil,
                             nextPageToken: nextPageToken,
                             stepsRecords: nil,
                             weightRecords: weightRecords
@@ -822,6 +867,7 @@ internal class HealthConnectorClient {
                 dataType: .activeCaloriesBurned,
                 activeCaloriesBurnedRecords: [],
                 distanceRecords: nil,
+                floorsClimbedRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil
@@ -831,6 +877,17 @@ internal class HealthConnectorClient {
                 dataType: .distance,
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: [],
+                floorsClimbedRecords: nil,
+                nextPageToken: nil,
+                stepsRecords: nil,
+                weightRecords: nil
+            )
+        case .floorsClimbed:
+            return ReadRecordsResponseDto(
+                dataType: .floorsClimbed,
+                activeCaloriesBurnedRecords: nil,
+                distanceRecords: nil,
+                floorsClimbedRecords: [],
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil
@@ -840,6 +897,7 @@ internal class HealthConnectorClient {
                 dataType: .steps,
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
+                floorsClimbedRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: [],
                 weightRecords: nil
@@ -849,6 +907,7 @@ internal class HealthConnectorClient {
                 dataType: .weight,
                 activeCaloriesBurnedRecords: nil,
                 distanceRecords: nil,
+                floorsClimbedRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: []
@@ -901,6 +960,15 @@ internal class HealthConnectorClient {
                     )
                 }
                 sample = try distanceRecord.toHealthKit()
+
+            case .floorsClimbed:
+                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
+                        details: nil
+                    )
+                }
+                sample = try floorsClimbedRecord.toHealthKit()
 
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
@@ -1064,6 +1132,23 @@ internal class HealthConnectorClient {
                     )
                 }
 
+            case .floorsClimbed:
+                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
+                        details: nil
+                    )
+                }
+                recordId = floorsClimbedRecord.id
+
+                // Validate record ID is not empty or "none"
+                if recordId.isEmpty || recordId == "none" {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
+                        details: "Record ID: \(recordId)"
+                    )
+                }
+
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
                     throw HealthConnectorErrors.invalidArgument(
@@ -1171,6 +1256,16 @@ internal class HealthConnectorClient {
                 }
                 // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
                 newSample = try distanceRecord.toHealthKit()
+
+            case .floorsClimbed:
+                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
+                        details: nil
+                    )
+                }
+                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
+                newSample = try floorsClimbedRecord.toHealthKit()
 
             case .steps:
                 guard let stepsRecord = request.stepsRecord else {
@@ -1346,6 +1441,16 @@ internal class HealthConnectorClient {
                     }
                     let distanceSamples = try distanceRecords.map { try $0.toHealthKit() }
                     samples.append(contentsOf: distanceSamples)
+
+                case .floorsClimbed:
+                    guard let floorsClimbedRecords = request.floorsClimbedRecords else {
+                        throw HealthConnectorErrors.invalidArgument(
+                            message: "floorsClimbedRecords must not be nil for FLOORS_CLIMBED type",
+                            details: nil
+                        )
+                    }
+                    let floorsClimbedSamples = try floorsClimbedRecords.map { try $0.toHealthKit() }
+                    samples.append(contentsOf: floorsClimbedSamples)
 
                 case .steps:
                     guard let stepsRecords = request.stepsRecords else {
@@ -1709,6 +1814,28 @@ internal class HealthConnectorClient {
                         activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
                         lengthValue: lengthDto,
+                        massValue: nil
+                    )
+
+                case .floorsClimbed:
+                    // For floors climbed, we use cumulativeSum which returns sumQuantity
+                    guard let sumQuantity = statistics.sumQuantity() else {
+                        let emptyResponse = AggregateResponseDto(
+                            aggregationMetric: metric,
+                            dataType: dataType,
+                            activeCaloriesBurnedValue: nil,
+                            doubleValue: nil,
+                            massValue: nil
+                        )
+                        continuation.resume(returning: emptyResponse)
+                        return
+                    }
+                    let floorsCount = sumQuantity.doubleValue(for: .count())
+                    response = AggregateResponseDto(
+                        aggregationMetric: metric,
+                        dataType: dataType,
+                        activeCaloriesBurnedValue: nil,
+                        doubleValue: floorsCount,
                         massValue: nil
                     )
                 }

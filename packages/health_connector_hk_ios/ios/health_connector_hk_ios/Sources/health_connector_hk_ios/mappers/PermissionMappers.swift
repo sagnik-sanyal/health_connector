@@ -28,6 +28,8 @@ extension HealthDataPermissionDto {
             return HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         case .distance:
             return HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+        case .floorsClimbed:
+            return HKQuantityType.quantityType(forIdentifier: .flightsClimbed)!
         case .steps:
             return HKQuantityType.quantityType(forIdentifier: .stepCount)!
         case .weight:

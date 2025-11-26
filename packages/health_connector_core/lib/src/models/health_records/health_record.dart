@@ -15,6 +15,7 @@ import 'package:meta/meta.dart' show immutable, internal;
 
 part 'active_calories_burned_record.dart';
 part 'distance_record.dart';
+part 'floors_climbed_record.dart';
 part 'instant_health_record.dart';
 part 'interval_health_record.dart';
 part 'series_health_record.dart';

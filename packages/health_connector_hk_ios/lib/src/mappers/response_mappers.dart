@@ -5,6 +5,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthDataType,
         DistanceHealthDataType,
+        FloorsClimbedHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
         HealthRecord,
@@ -74,6 +75,20 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           );
         }
         return distanceRecords.map((dto) => dto.toDomain()).cast<R>().toList();
+
+      case FloorsClimbedHealthDataType _:
+        final floorsClimbedRecords = responseDto.floorsClimbedRecords;
+        if (floorsClimbedRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected floorsClimbedRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return floorsClimbedRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
 
       case StepsHealthDataType _:
         final stepsRecords = responseDto.stepsRecords;
@@ -149,6 +164,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
         }
         return value.toDomain() as U;
 
+      case FloorsClimbedHealthDataType _:
+        final value = doubleValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected doubleValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return Numeric(value) as U;
+
       case StepsHealthDataType _:
         final value = doubleValue;
         if (value == null) {
@@ -198,6 +224,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected distanceRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case FloorsClimbedHealthDataType _:
+        final record = floorsClimbedRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected floorsClimbedRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

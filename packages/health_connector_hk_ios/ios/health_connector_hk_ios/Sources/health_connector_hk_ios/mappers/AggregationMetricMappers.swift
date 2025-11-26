@@ -62,6 +62,16 @@ extension AggregationMetricDto {
                 // HealthKit doesn't provide direct aggregation for these on distance
                 return []
             }
+
+        case .floorsClimbed:
+            switch self {
+            case .sum:
+                return .cumulativeSum
+            case .avg, .min, .max, .count:
+                // These require reading individual records and calculating
+                // HealthKit doesn't provide direct aggregation for these on floors climbed
+                return []
+            }
         }
     }
 
@@ -113,6 +123,15 @@ extension AggregationMetricDto {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "\(metricName) not directly supported for distance in HealthKit",
                     details: "\(metricName) not directly supported for distance in HealthKit."
+                )
+            }
+        case .floorsClimbed:
+            // Only SUM is supported for floors climbed (matches Android Health Connect behavior)
+            if self != .sum {
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for floorsClimbed in HealthKit",
+                    details: "\(metricName) not directly supported for floorsClimbed in HealthKit."
                 )
             }
         }

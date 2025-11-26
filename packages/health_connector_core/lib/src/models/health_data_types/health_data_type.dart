@@ -24,6 +24,7 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
     show
         ActiveCaloriesBurnedRecord,
         DistanceRecord,
+        FloorsClimbedRecord,
         HealthRecord,
         HealthRecordId,
         StepRecord,
@@ -44,6 +45,7 @@ import 'package:meta/meta.dart' show immutable, internal;
 
 part 'active_calories_burned_health_data_type.dart';
 part 'distance_health_data_type.dart';
+part 'floors_climbed_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
 
@@ -148,6 +150,14 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// existing active calories data and writing new measurements.
   static const activeCaloriesBurned = ActiveCaloriesBurnedHealthDataType();
 
+  /// Floors climbed data type.
+  ///
+  /// Represents the number of floors (flights of stairs) climbed during
+  /// a time interval. A floor is typically defined as a vertical distance
+  /// of approximately 3 meters (10 feet). Supports both reading existing
+  /// floors climbed data and writing new measurements.
+  static const floorsClimbed = FloorsClimbedHealthDataType();
+
   /// Returns a list of all available health data types.
   ///
   /// This list contains all data types currently supported by the plugin.
@@ -155,6 +165,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   static const List<HealthDataType<HealthRecord, MeasurementUnit>> values = [
     activeCaloriesBurned,
     distance,
+    floorsClimbed,
     steps,
     weight,
   ];

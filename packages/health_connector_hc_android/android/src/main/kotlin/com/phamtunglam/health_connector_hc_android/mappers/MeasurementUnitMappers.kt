@@ -256,3 +256,15 @@ internal fun Long.toNumericDto(): NumericDto {
     )
 }
 
+/**
+ * Converts a numeric value (Double for floors climbed) to a [NumericDto].
+ *
+ * Uses numeric unit for consistency.
+ */
+internal fun Double.toNumericDto(): NumericDto {
+    return NumericDto(
+        value = this,
+        unit = NumericUnitDto.NUMERIC
+    )
+}
+

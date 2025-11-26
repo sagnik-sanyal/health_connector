@@ -9,18 +9,6 @@ import HealthKit
  * providing access to health and fitness data stored on the device. It implements both
  * `FlutterPlugin` for lifecycle management and `HealthConnectorPlatformApi` for platform API communication.
  *
- * **Minimum iOS Version: 15.0**
- *
- * This plugin requires iOS 15.0+ for native Swift concurrency support. While Swift's async/await,
- * Task, and withCheckedThrowingContinuation features can be back-deployed to iOS 13.0 with Xcode 13.2+,
- * we've chosen iOS 15.0 as the minimum to ensure:
- * - Native Swift concurrency runtime without back-deployment shims
- * - Simpler deployment without reliance on compatibility layers
- * - Potentially smaller binary sizes
- *
- * **Note**: HealthKit APIs used (HKHealthStore, HKSampleQuery, etc.) have been available since iOS 8.0.
- * The iOS 15.0 requirement is a deliberate design choice for native concurrency support, not a HealthKit limitation.
- *
  * ## Threading
  *
  * All HealthKit operations are executed asynchronously using Swift's async/await to prevent

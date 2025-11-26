@@ -1,16 +1,27 @@
-# health_connector_hc_android_example
+# Example
 
-Demonstrates how to use the health_connector_hc_android plugin.
+Example app demonstrating the Android-specific `HealthConnectorHCClient` API for Health Connect.
 
-## Getting Started
+## What It Demonstrates
 
-This project is a starting point for a Flutter application.
+This example showcases all public API methods of the `HealthConnectorHCClient` class:
 
-A few resources to get you started if this is your first Flutter project:
+- **Platform Status** - Check Health Connect availability
+- **Permissions** - Request, query, and revoke health data permissions
+- **Feature Status** - Check Health Connect feature availability
+- **Read Operations** - Read single records and paginated record lists
+- **Write Operations** - Write single and multiple records
+- **Update Operations** - Update existing health records
+- **Aggregation** - Aggregate health data over time ranges
+- **Delete Operations** - Delete records by time range or IDs
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Running the Example
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd packages/health_connector_hc_android/example
+flutter run
+```
+
+## Learn More
+
+For detailed documentation, see the [package README](../../README.md).

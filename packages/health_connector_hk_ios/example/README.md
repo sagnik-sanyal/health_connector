@@ -1,16 +1,55 @@
-# health_connector_hk_ios_example
+# Example
 
-Demonstrates how to use the health_connector_hk_ios plugin.
+Example app demonstrating the iOS-specific `HealthConnectorHKClient` API for HealthKit.
 
-## Getting Started
+## What It Demonstrates
 
-This project is a starting point for a Flutter application.
+This example showcases all public API methods of the `HealthConnectorHKClient` class:
 
-A few resources to get you started if this is your first Flutter project:
+- **Platform Status** - Check HealthKit availability
+- **Permissions** - Request health data permissions
+- **Feature Status** - Check HealthKit feature availability
+- **Read Operations** - Read single records and paginated record lists
+- **Write Operations** - Write single and multiple records
+- **Update Operations** - Update existing health records
+- **Aggregation** - Aggregate health data over time ranges
+- **Delete Operations** - Delete records by time range or IDs
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+#### Health Platform Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+On iOS HealthKit, all health platform features are available and granted by default. Unlike Android 
+Health Connect, HealthKit does not require separate feature permissions for capabilities like 
+background data reading or historical data access.
+
+When using the plugin:
+- `getFeatureStatus()` always returns `HealthPlatformFeatureStatus.available` for all features
+- Requesting feature permissions always returns `PermissionStatus.granted`
+
+```dart
+// Feature status check - always returns available on iOS
+final status = await client.getFeatureStatus(
+  HealthPlatformFeature.readHealthDataInBackground,
+);
+// status == HealthPlatformFeatureStatus.available
+
+// Feature permission request - always returns granted on iOS
+final results = await client.requestPermissions([
+  HealthPlatformFeature.readHealthDataInBackground,
+  HealthPlatformFeature.readHealthDataHistory,
+]);
+// All results have PermissionStatus.granted
+```
+
+> **Note:** This behavior differs from Android Health Connect, where these features require 
+> explicit user consent and may not be available on all devices.
+
+## Running the Example
+
+```bash
+cd packages/health_connector_hk_ios/example
+flutter run
+```
+
+## Learn More
+
+For detailed documentation, see the [package README](../../README.md).

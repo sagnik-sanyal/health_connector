@@ -7,10 +7,7 @@ final class LeanBodyMassHealthDataType
     extends HealthDataType<LeanBodyMassRecord, Mass>
     implements
         ReadableHealthDataType<LeanBodyMassRecord>,
-        WriteableHealthDataType,
-        AvgAggregatableHealthDataType<LeanBodyMassRecord, Mass>,
-        MinAggregatableHealthDataType<LeanBodyMassRecord, Mass>,
-        MaxAggregatableHealthDataType<LeanBodyMassRecord, Mass> {
+        WriteableHealthDataType {
   @internal
   const LeanBodyMassHealthDataType();
 
@@ -34,11 +31,7 @@ final class LeanBodyMassHealthDataType
   String toString() => 'lean_body_mass_data_type';
 
   @override
-  List<AggregationMetric> get supportedAggregationMetrics => [
-    AggregationMetric.avg,
-    AggregationMetric.min,
-    AggregationMetric.max,
-  ];
+  List<AggregationMetric> get supportedAggregationMetrics => [];
 
   // ReadableHealthDataType implementation
   @override
@@ -72,48 +65,6 @@ final class LeanBodyMassHealthDataType
     dataType: this,
     accessType: HealthDataPermissionAccessType.write,
   );
-
-  // AvgAggregatableHealthDataType implementation
-  @override
-  AggregateRequest<LeanBodyMassRecord, Mass> aggregateAverage({
-    required DateTime startTime,
-    required DateTime endTime,
-  }) {
-    return AggregateRequest(
-      dataType: this,
-      aggregationMetric: AggregationMetric.avg,
-      startTime: startTime,
-      endTime: endTime,
-    );
-  }
-
-  // MinAggregatableHealthDataType implementation
-  @override
-  AggregateRequest<LeanBodyMassRecord, Mass> aggregateMin({
-    required DateTime startTime,
-    required DateTime endTime,
-  }) {
-    return AggregateRequest(
-      dataType: this,
-      aggregationMetric: AggregationMetric.min,
-      startTime: startTime,
-      endTime: endTime,
-    );
-  }
-
-  // MaxAggregatableHealthDataType implementation
-  @override
-  AggregateRequest<LeanBodyMassRecord, Mass> aggregateMax({
-    required DateTime startTime,
-    required DateTime endTime,
-  }) {
-    return AggregateRequest(
-      dataType: this,
-      aggregationMetric: AggregationMetric.max,
-      startTime: startTime,
-      endTime: endTime,
-    );
-  }
 
   @override
   List<Permission> get permissions => [readPermission, writePermission];

@@ -124,47 +124,13 @@ class _AggregateHealthDataPageState
             'Body fat percentage does not support aggregation',
           );
         case BodyTemperatureHealthDataType():
-          switch (_selectedMetric!) {
-            case AggregationMetric.avg:
-              request = HealthDataType.bodyTemperature.aggregateAverage(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.min:
-              request = HealthDataType.bodyTemperature.aggregateMin(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.max:
-              request = HealthDataType.bodyTemperature.aggregateMax(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.sum:
-            case AggregationMetric.count:
-              throw UnsupportedError('Unsupported metric: $_selectedMetric');
-          }
+          throw UnsupportedError(
+            'Body temperature does not support aggregation',
+          );
         case LeanBodyMassHealthDataType():
-          switch (_selectedMetric!) {
-            case AggregationMetric.avg:
-              request = HealthDataType.leanBodyMass.aggregateAverage(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.min:
-              request = HealthDataType.leanBodyMass.aggregateMin(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.max:
-              request = HealthDataType.leanBodyMass.aggregateMax(
-                startTime: startDateTime!,
-                endTime: endDateTime!,
-              );
-            case AggregationMetric.sum:
-            case AggregationMetric.count:
-              throw UnsupportedError('Unsupported metric: $_selectedMetric');
-          }
+          throw UnsupportedError(
+            'Lean body mass does not support aggregation',
+          );
         case DistanceHealthDataType():
           switch (_selectedMetric!) {
             case AggregationMetric.sum:

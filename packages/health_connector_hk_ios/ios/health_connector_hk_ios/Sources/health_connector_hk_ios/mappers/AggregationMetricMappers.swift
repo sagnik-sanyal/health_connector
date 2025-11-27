@@ -17,8 +17,9 @@ extension AggregationMetricDto {
      * - Parameter dataType: The health data type for which to get aggregation options
      * - Returns: The appropriate `HKStatisticsOptions` for the aggregation metric.
      *            Returns empty options ([]) if the metric requires reading records instead.
+     * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if the data type does not support aggregation
      */
-    func toHealthKitStatisticsOptions(dataType: HealthDataTypeDto) -> HKStatisticsOptions {
+    func toHealthKitStatisticsOptions(dataType: HealthDataTypeDto) throws -> HKStatisticsOptions {
         switch dataType {
         case .activeCaloriesBurned:
             switch self {
@@ -79,19 +80,6 @@ extension AggregationMetricDto {
                 return []
             }
 
-        case .bodyTemperature:
-            switch self {
-            case .avg:
-                return .discreteAverage
-            case .min:
-                return .discreteMin
-            case .max:
-                return .discreteMax
-            case .sum, .count:
-                // SUM not meaningful for body temperature, COUNT requires reading records
-                return []
-            }
-
         case .distance:
             switch self {
             case .sum:
@@ -121,6 +109,18 @@ extension AggregationMetricDto {
                 // HealthKit doesn't provide direct aggregation for these on wheelchair pushes
                 return []
             }
+        case .leanBodyMass:
+            // Lean body mass does not support aggregation
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Lean body mass does not support aggregation",
+                details: "Lean body mass does not support aggregation operations."
+            )
+        case .bodyTemperature:
+            // Body temperature does not support aggregation
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Body temperature does not support aggregation",
+                details: "Body temperature does not support aggregation operations."
+            )
         }
     }
 
@@ -189,18 +189,6 @@ extension AggregationMetricDto {
                     details: "\(metricName) not directly supported for bodyFatPercentage in HealthKit."
                 )
             }
-        case .bodyTemperature:
-            // Only AVG, MIN, MAX are supported for body temperature (matches Android Health Connect behavior)
-            switch self {
-            case .avg, .min, .max:
-                break // These are supported
-            case .sum, .count:
-                let metricName = String(describing: self)
-                throw HealthConnectorErrors.invalidArgument(
-                    message: "\(metricName) not directly supported for bodyTemperature in HealthKit",
-                    details: "\(metricName) not directly supported for bodyTemperature in HealthKit."
-                )
-            }
         case .distance:
             // Only SUM is supported for distance (matches Android Health Connect behavior)
             if self != .sum {
@@ -228,6 +216,18 @@ extension AggregationMetricDto {
                     details: "\(metricName) not directly supported for wheelchairPushes in HealthKit."
                 )
             }
+        case .leanBodyMass:
+            // Lean body mass does not support aggregation
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Lean body mass does not support aggregation",
+                details: "Lean body mass does not support aggregation operations."
+            )
+        case .bodyTemperature:
+            // Body temperature does not support aggregation
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Body temperature does not support aggregation",
+                details: "Body temperature does not support aggregation operations."
+            )
         }
     }
 }

@@ -1138,6 +1138,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1152,6 +1153,7 @@ internal class HealthConnectorClient {
                 distanceRecords: [],
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1166,6 +1168,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: [],
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1180,6 +1183,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: [],
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1194,6 +1198,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1208,6 +1213,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
@@ -1222,6 +1228,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: [],
                 weightRecords: nil,
@@ -1236,6 +1243,7 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: [],
@@ -1250,12 +1258,28 @@ internal class HealthConnectorClient {
                 distanceRecords: nil,
                 floorsClimbedRecords: nil,
                 heightRecords: nil,
+                leanBodyMassRecords: nil,
                 nextPageToken: nil,
                 stepsRecords: nil,
                 weightRecords: nil,
                 bodyFatPercentageRecords: nil,
                 bodyTemperatureRecords: nil,
                 wheelchairPushesRecords: []
+            )
+        case .leanBodyMass:
+            return ReadRecordsResponseDto(
+                dataType: .leanBodyMass,
+                activeCaloriesBurnedRecords: nil,
+                distanceRecords: nil,
+                floorsClimbedRecords: nil,
+                heightRecords: nil,
+                leanBodyMassRecords: [],
+                nextPageToken: nil,
+                stepsRecords: nil,
+                weightRecords: nil,
+                bodyFatPercentageRecords: nil,
+                bodyTemperatureRecords: nil,
+                wheelchairPushesRecords: nil
             )
         }
     }
@@ -1801,6 +1825,16 @@ internal class HealthConnectorClient {
                 }
                 // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
                 newSample = try wheelchairPushesRecord.toHealthKit()
+
+            case .leanBodyMass:
+                guard let leanBodyMassRecord = request.leanBodyMassRecord else {
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "leanBodyMassRecord must not be nil for LEAN_BODY_MASS type",
+                        details: nil
+                    )
+                }
+                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
+                newSample = try leanBodyMassRecord.toHealthKit()
             }
 
             // Step 3: Delete the old sample
@@ -2232,7 +2266,7 @@ internal class HealthConnectorClient {
         metric: AggregationMetricDto,
         dataType: HealthDataTypeDto
     ) async throws -> AggregateResponseDto {
-        let options = metric.toHealthKitStatisticsOptions(dataType: dataType)
+        let options = try metric.toHealthKitStatisticsOptions(dataType: dataType)
 
         return try await withCheckedThrowingContinuation { continuation in
             let query = HKStatisticsQuery(
@@ -2263,8 +2297,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                     continuation.resume(returning: response)
@@ -2285,8 +2319,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2300,8 +2334,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2315,8 +2349,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2331,8 +2365,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: numericDto.value,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2358,8 +2392,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2374,8 +2408,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: massDto,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2401,8 +2435,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2417,8 +2451,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: lengthDto,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2444,8 +2478,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2460,8 +2494,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: massDto,
                         massValue: nil,
+                        leanBodyMassValue: massDto,
                         wheelchairPushesValue: nil
                     )
 
@@ -2475,8 +2509,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                         continuation.resume(returning: emptyResponse)
@@ -2491,6 +2525,7 @@ internal class HealthConnectorClient {
                         doubleValue: nil,
                         lengthValue: lengthDto,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2504,8 +2539,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -2520,6 +2555,7 @@ internal class HealthConnectorClient {
                         doubleValue: floorsCount,
                         lengthValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2533,8 +2569,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -2550,6 +2586,7 @@ internal class HealthConnectorClient {
                         doubleValue: nil,
                         lengthValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: numericDto
                     )
 
@@ -2576,6 +2613,7 @@ internal class HealthConnectorClient {
                             doubleValue: nil,
                             lengthValue: nil,
                             massValue: nil,
+                            leanBodyMassValue: nil,
                             wheelchairPushesValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -2591,6 +2629,7 @@ internal class HealthConnectorClient {
                         doubleValue: nil,
                         lengthValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
 
@@ -2603,8 +2642,8 @@ internal class HealthConnectorClient {
                         bodyTemperatureValue: nil,
                         doubleValue: nil,
                         lengthValue: nil,
-                        leanBodyMassValue: nil,
                         massValue: nil,
+                        leanBodyMassValue: nil,
                         wheelchairPushesValue: nil
                     )
                     continuation.resume(returning: emptyResponse)

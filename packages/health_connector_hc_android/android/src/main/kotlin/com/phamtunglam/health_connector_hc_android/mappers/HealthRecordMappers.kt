@@ -6,6 +6,7 @@ import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
+import androidx.health.connect.client.records.LeanBodyMassRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
@@ -17,6 +18,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.BodyTemperatureRecordD
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeightRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.LeanBodyMassRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.StepRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WeightRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WheelchairPushesRecordDto
@@ -161,6 +163,31 @@ internal fun WeightRecord.toDto(): WeightRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         weight = weight.toDto()
+    )
+}
+
+/**
+ * Converts a [LeanBodyMassRecordDto] to a Health Connect [LeanBodyMassRecord] object.
+ */
+internal fun LeanBodyMassRecordDto.toHealthConnect(): LeanBodyMassRecord {
+    return LeanBodyMassRecord(
+        mass = mass.toHealthConnect(),
+        time = Instant.ofEpochMilli(time),
+        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [LeanBodyMassRecord] object to a [LeanBodyMassRecordDto].
+ */
+internal fun LeanBodyMassRecord.toDto(): LeanBodyMassRecordDto {
+    return LeanBodyMassRecordDto(
+        id = metadata.id,
+        time = time.toEpochMilli(),
+        zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        mass = mass.toDto()
     )
 }
 

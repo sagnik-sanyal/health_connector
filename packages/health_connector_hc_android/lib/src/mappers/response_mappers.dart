@@ -9,6 +9,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
         WheelchairPushesHealthDataType,
@@ -106,6 +107,20 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           );
         }
         return heightRecords.map((dto) => dto.toDomain()).cast<R>().toList();
+
+      case LeanBodyMassHealthDataType _:
+        final leanBodyMassRecords = responseDto.leanBodyMassRecords;
+        if (leanBodyMassRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected leanBodyMassRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return leanBodyMassRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
 
       case BodyFatPercentageHealthDataType _:
         final bodyFatPercentageRecords = responseDto.bodyFatPercentageRecords;
@@ -284,6 +299,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
         }
         return value.toDomain() as U;
 
+      case LeanBodyMassHealthDataType _:
+        final value = leanBodyMassValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected leanBodyMassValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
+
       case WheelchairPushesHealthDataType _:
         final value = wheelchairPushesValue;
         if (value == null) {
@@ -344,6 +370,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected heightRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case LeanBodyMassHealthDataType _:
+        final record = leanBodyMassRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected leanBodyMassRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

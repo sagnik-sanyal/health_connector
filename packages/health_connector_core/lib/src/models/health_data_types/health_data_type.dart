@@ -30,6 +30,7 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         HealthRecord,
         HealthRecordId,
         HeightRecord,
+        LeanBodyMassRecord,
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
@@ -53,6 +54,7 @@ part 'body_temperature_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
 part 'height_health_data_type.dart';
+part 'lean_body_mass_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
 part 'wheelchair_pushes_health_data_type.dart';
@@ -194,6 +196,14 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// wheelchair pushes data and writing new measurements.
   static const wheelchairPushes = WheelchairPushesHealthDataType();
 
+  /// Lean body mass data type.
+  ///
+  /// Represents the user's lean body mass measurements. Lean body mass
+  /// is the total weight of the body minus the weight of body fat.
+  /// Supports both reading existing lean body mass data and writing
+  /// new measurements.
+  static const leanBodyMass = LeanBodyMassHealthDataType();
+
   /// Returns a list of all available health data types.
   ///
   /// This list contains all data types currently supported by the plugin.
@@ -205,6 +215,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
     distance,
     floorsClimbed,
     height,
+    leanBodyMass,
     steps,
     weight,
     wheelchairPushes,

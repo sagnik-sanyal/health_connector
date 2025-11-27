@@ -8,6 +8,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthDataType,
         HealthRecord,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         MeasurementUnit,
         StepsHealthDataType,
         WeightHealthDataType,
@@ -29,6 +30,8 @@ extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
         return HealthDataType.floorsClimbed;
       case HealthDataTypeDto.height:
         return HealthDataType.height;
+      case HealthDataTypeDto.leanBodyMass:
+        return HealthDataType.leanBodyMass;
       case HealthDataTypeDto.bodyFatPercentage:
         return HealthDataType.bodyFatPercentage;
       case HealthDataTypeDto.bodyTemperature:
@@ -56,6 +59,8 @@ extension HealthDataTypeToDto on HealthDataType<HealthRecord, MeasurementUnit> {
         return HealthDataTypeDto.floorsClimbed;
       case HeightHealthDataType _:
         return HealthDataTypeDto.height;
+      case LeanBodyMassHealthDataType _:
+        return HealthDataTypeDto.leanBodyMass;
       case BodyFatPercentageHealthDataType _:
         return HealthDataTypeDto.bodyFatPercentage;
       case BodyTemperatureHealthDataType _:

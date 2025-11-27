@@ -237,8 +237,10 @@ public enum HealthDataTypeDto: Int {
   case bodyFatPercentage = 6
   /// Body temperature data.
   case bodyTemperature = 7
+  /// Lean body mass data.
+  case leanBodyMass = 8
   /// Wheelchair pushes data.
-  case wheelchairPushes = 8
+  case wheelchairPushes = 9
 }
 
 /// Represents the status of the health platform on the device.
@@ -1306,6 +1308,61 @@ public struct WeightRecordDto: Hashable {
   }
 }
 
+/// DTO for lean body mass health data.
+///
+/// Maps to:
+/// - HealthKit: `HKQuantityTypeIdentifier.leanBodyMass`
+/// - Domain: `LeanBodyMassRecord`
+///
+/// Generated class from Pigeon that represents data sent in messages.
+public struct LeanBodyMassRecordDto: Hashable {
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  var id: String
+  /// Metadata about this record.
+  var metadata: MetadataDto
+  /// Measurement time in milliseconds since epoch (UTC).
+  var time: Int64
+  /// Lean body mass measurement.
+  var mass: MassDto
+  /// Timezone offset in seconds for measurement time (optional).
+  var zoneOffsetSeconds: Int64? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> LeanBodyMassRecordDto? {
+    let id = pigeonVar_list[0] as! String
+    let metadata = pigeonVar_list[1] as! MetadataDto
+    let time = pigeonVar_list[2] as! Int64
+    let mass = pigeonVar_list[3] as! MassDto
+    let zoneOffsetSeconds: Int64? = nilOrValue(pigeonVar_list[4])
+
+    return LeanBodyMassRecordDto(
+      id: id,
+      metadata: metadata,
+      time: time,
+      mass: mass,
+      zoneOffsetSeconds: zoneOffsetSeconds
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      id,
+      metadata,
+      time,
+      mass,
+      zoneOffsetSeconds,
+    ]
+  }
+  public static func == (lhs: LeanBodyMassRecordDto, rhs: LeanBodyMassRecordDto) -> Bool {
+    return deepEqualsHealthConnectorPlatformApi(lhs.toList(), rhs.toList())  }
+  public func hash(into hasher: inout Hasher) {
+    deepHashHealthConnectorPlatformApi(value: toList(), hasher: &hasher)
+  }
+}
+
 /// DTO for body height health data.
 ///
 /// Maps to:
@@ -1540,6 +1597,9 @@ public struct AggregateResponseDto: Hashable {
   var lengthValue: LengthDto? = nil
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   var massValue: MassDto? = nil
+  /// Lean body mass aggregated value
+  /// (non-null when dataType == LEAN_BODY_MASS and aggregationMetric is avg/min/max).
+  var leanBodyMassValue: MassDto? = nil
   /// Wheelchair pushes aggregated value
   /// (non-null when dataType == WHEELCHAIR_PUSHES).
   var wheelchairPushesValue: NumericDto? = nil
@@ -1554,7 +1614,8 @@ public struct AggregateResponseDto: Hashable {
     let doubleValue: Double? = nilOrValue(pigeonVar_list[4])
     let lengthValue: LengthDto? = nilOrValue(pigeonVar_list[5])
     let massValue: MassDto? = nilOrValue(pigeonVar_list[6])
-    let wheelchairPushesValue: NumericDto? = nilOrValue(pigeonVar_list[7])
+    let leanBodyMassValue: MassDto? = nilOrValue(pigeonVar_list[7])
+    let wheelchairPushesValue: NumericDto? = nilOrValue(pigeonVar_list[8])
 
     return AggregateResponseDto(
       aggregationMetric: aggregationMetric,
@@ -1564,6 +1625,7 @@ public struct AggregateResponseDto: Hashable {
       doubleValue: doubleValue,
       lengthValue: lengthValue,
       massValue: massValue,
+      leanBodyMassValue: leanBodyMassValue,
       wheelchairPushesValue: wheelchairPushesValue
     )
   }
@@ -1576,6 +1638,7 @@ public struct AggregateResponseDto: Hashable {
       doubleValue,
       lengthValue,
       massValue,
+      leanBodyMassValue,
       wheelchairPushesValue,
     ]
   }
@@ -1711,6 +1774,9 @@ public struct ReadRecordResponseDto: Hashable {
   /// Height record
   /// (non-null when dataType == HEIGHT).
   var heightRecord: HeightRecordDto? = nil
+  /// Lean body mass record
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  var leanBodyMassRecord: LeanBodyMassRecordDto? = nil
   /// Step count record
   /// (non-null when dataType == STEPS).
   var stepsRecord: StepRecordDto? = nil
@@ -1735,11 +1801,12 @@ public struct ReadRecordResponseDto: Hashable {
     let distanceRecord: DistanceRecordDto? = nilOrValue(pigeonVar_list[2])
     let floorsClimbedRecord: FloorsClimbedRecordDto? = nilOrValue(pigeonVar_list[3])
     let heightRecord: HeightRecordDto? = nilOrValue(pigeonVar_list[4])
-    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[5])
-    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[6])
-    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[7])
-    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[8])
-    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[9])
+    let leanBodyMassRecord: LeanBodyMassRecordDto? = nilOrValue(pigeonVar_list[5])
+    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[6])
+    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[7])
+    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[8])
+    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[9])
+    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[10])
 
     return ReadRecordResponseDto(
       dataType: dataType,
@@ -1747,6 +1814,7 @@ public struct ReadRecordResponseDto: Hashable {
       distanceRecord: distanceRecord,
       floorsClimbedRecord: floorsClimbedRecord,
       heightRecord: heightRecord,
+      leanBodyMassRecord: leanBodyMassRecord,
       stepsRecord: stepsRecord,
       weightRecord: weightRecord,
       bodyFatPercentageRecord: bodyFatPercentageRecord,
@@ -1761,6 +1829,7 @@ public struct ReadRecordResponseDto: Hashable {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -1851,6 +1920,9 @@ public struct ReadRecordsResponseDto: Hashable {
   /// List of height records
   /// (non-null when dataType == HEIGHT).
   var heightRecords: [HeightRecordDto]? = nil
+  /// List of lean body mass records
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  var leanBodyMassRecords: [LeanBodyMassRecordDto]? = nil
   /// Token for fetching next page, null if no more pages exist.
   var nextPageToken: String? = nil
   /// List of step records
@@ -1877,12 +1949,13 @@ public struct ReadRecordsResponseDto: Hashable {
     let distanceRecords: [DistanceRecordDto]? = nilOrValue(pigeonVar_list[2])
     let floorsClimbedRecords: [FloorsClimbedRecordDto]? = nilOrValue(pigeonVar_list[3])
     let heightRecords: [HeightRecordDto]? = nilOrValue(pigeonVar_list[4])
-    let nextPageToken: String? = nilOrValue(pigeonVar_list[5])
-    let stepsRecords: [StepRecordDto]? = nilOrValue(pigeonVar_list[6])
-    let weightRecords: [WeightRecordDto]? = nilOrValue(pigeonVar_list[7])
-    let bodyFatPercentageRecords: [BodyFatPercentageRecordDto]? = nilOrValue(pigeonVar_list[8])
-    let bodyTemperatureRecords: [BodyTemperatureRecordDto]? = nilOrValue(pigeonVar_list[9])
-    let wheelchairPushesRecords: [WheelchairPushesRecordDto]? = nilOrValue(pigeonVar_list[10])
+    let leanBodyMassRecords: [LeanBodyMassRecordDto]? = nilOrValue(pigeonVar_list[5])
+    let nextPageToken: String? = nilOrValue(pigeonVar_list[6])
+    let stepsRecords: [StepRecordDto]? = nilOrValue(pigeonVar_list[7])
+    let weightRecords: [WeightRecordDto]? = nilOrValue(pigeonVar_list[8])
+    let bodyFatPercentageRecords: [BodyFatPercentageRecordDto]? = nilOrValue(pigeonVar_list[9])
+    let bodyTemperatureRecords: [BodyTemperatureRecordDto]? = nilOrValue(pigeonVar_list[10])
+    let wheelchairPushesRecords: [WheelchairPushesRecordDto]? = nilOrValue(pigeonVar_list[11])
 
     return ReadRecordsResponseDto(
       dataType: dataType,
@@ -1890,6 +1963,7 @@ public struct ReadRecordsResponseDto: Hashable {
       distanceRecords: distanceRecords,
       floorsClimbedRecords: floorsClimbedRecords,
       heightRecords: heightRecords,
+      leanBodyMassRecords: leanBodyMassRecords,
       nextPageToken: nextPageToken,
       stepsRecords: stepsRecords,
       weightRecords: weightRecords,
@@ -1905,6 +1979,7 @@ public struct ReadRecordsResponseDto: Hashable {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      leanBodyMassRecords,
       nextPageToken,
       stepsRecords,
       weightRecords,
@@ -1941,6 +2016,9 @@ public struct WriteRecordRequestDto: Hashable {
   /// Height record
   /// (only non-null when dataType == HEIGHT).
   var heightRecord: HeightRecordDto? = nil
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  var leanBodyMassRecord: LeanBodyMassRecordDto? = nil
   /// Step count record
   /// (only non-null when dataType == STEPS).
   var stepsRecord: StepRecordDto? = nil
@@ -1965,11 +2043,12 @@ public struct WriteRecordRequestDto: Hashable {
     let distanceRecord: DistanceRecordDto? = nilOrValue(pigeonVar_list[2])
     let floorsClimbedRecord: FloorsClimbedRecordDto? = nilOrValue(pigeonVar_list[3])
     let heightRecord: HeightRecordDto? = nilOrValue(pigeonVar_list[4])
-    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[5])
-    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[6])
-    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[7])
-    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[8])
-    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[9])
+    let leanBodyMassRecord: LeanBodyMassRecordDto? = nilOrValue(pigeonVar_list[5])
+    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[6])
+    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[7])
+    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[8])
+    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[9])
+    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[10])
 
     return WriteRecordRequestDto(
       dataType: dataType,
@@ -1977,6 +2056,7 @@ public struct WriteRecordRequestDto: Hashable {
       distanceRecord: distanceRecord,
       floorsClimbedRecord: floorsClimbedRecord,
       heightRecord: heightRecord,
+      leanBodyMassRecord: leanBodyMassRecord,
       stepsRecord: stepsRecord,
       weightRecord: weightRecord,
       bodyFatPercentageRecord: bodyFatPercentageRecord,
@@ -1991,6 +2071,7 @@ public struct WriteRecordRequestDto: Hashable {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -2058,6 +2139,9 @@ public struct WriteRecordsRequestDto: Hashable {
   /// List of height records
   /// (non-null when dataTypes contains HEIGHT).
   var heightRecords: [HeightRecordDto]? = nil
+  /// List of lean body mass records
+  /// (non-null when dataTypes contains LEAN_BODY_MASS).
+  var leanBodyMassRecords: [LeanBodyMassRecordDto]? = nil
   /// List of step records
   /// (non-null when dataTypes contains STEPS).
   var stepsRecords: [StepRecordDto]? = nil
@@ -2082,11 +2166,12 @@ public struct WriteRecordsRequestDto: Hashable {
     let distanceRecords: [DistanceRecordDto]? = nilOrValue(pigeonVar_list[2])
     let floorsClimbedRecords: [FloorsClimbedRecordDto]? = nilOrValue(pigeonVar_list[3])
     let heightRecords: [HeightRecordDto]? = nilOrValue(pigeonVar_list[4])
-    let stepsRecords: [StepRecordDto]? = nilOrValue(pigeonVar_list[5])
-    let weightRecords: [WeightRecordDto]? = nilOrValue(pigeonVar_list[6])
-    let bodyFatPercentageRecords: [BodyFatPercentageRecordDto]? = nilOrValue(pigeonVar_list[7])
-    let bodyTemperatureRecords: [BodyTemperatureRecordDto]? = nilOrValue(pigeonVar_list[8])
-    let wheelchairPushesRecords: [WheelchairPushesRecordDto]? = nilOrValue(pigeonVar_list[9])
+    let leanBodyMassRecords: [LeanBodyMassRecordDto]? = nilOrValue(pigeonVar_list[5])
+    let stepsRecords: [StepRecordDto]? = nilOrValue(pigeonVar_list[6])
+    let weightRecords: [WeightRecordDto]? = nilOrValue(pigeonVar_list[7])
+    let bodyFatPercentageRecords: [BodyFatPercentageRecordDto]? = nilOrValue(pigeonVar_list[8])
+    let bodyTemperatureRecords: [BodyTemperatureRecordDto]? = nilOrValue(pigeonVar_list[9])
+    let wheelchairPushesRecords: [WheelchairPushesRecordDto]? = nilOrValue(pigeonVar_list[10])
 
     return WriteRecordsRequestDto(
       dataTypes: dataTypes,
@@ -2094,6 +2179,7 @@ public struct WriteRecordsRequestDto: Hashable {
       distanceRecords: distanceRecords,
       floorsClimbedRecords: floorsClimbedRecords,
       heightRecords: heightRecords,
+      leanBodyMassRecords: leanBodyMassRecords,
       stepsRecords: stepsRecords,
       weightRecords: weightRecords,
       bodyFatPercentageRecords: bodyFatPercentageRecords,
@@ -2108,6 +2194,7 @@ public struct WriteRecordsRequestDto: Hashable {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      leanBodyMassRecords,
       stepsRecords,
       weightRecords,
       bodyFatPercentageRecords,
@@ -2179,6 +2266,10 @@ public struct UpdateRecordRequestDto: Hashable {
   /// (only non-null when dataType == HEIGHT).
   /// The record must have a valid existing ID.
   var heightRecord: HeightRecordDto? = nil
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  /// The record must have a valid existing ID.
+  var leanBodyMassRecord: LeanBodyMassRecordDto? = nil
   /// Step count record
   /// (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.
@@ -2208,11 +2299,12 @@ public struct UpdateRecordRequestDto: Hashable {
     let distanceRecord: DistanceRecordDto? = nilOrValue(pigeonVar_list[2])
     let floorsClimbedRecord: FloorsClimbedRecordDto? = nilOrValue(pigeonVar_list[3])
     let heightRecord: HeightRecordDto? = nilOrValue(pigeonVar_list[4])
-    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[5])
-    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[6])
-    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[7])
-    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[8])
-    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[9])
+    let leanBodyMassRecord: LeanBodyMassRecordDto? = nilOrValue(pigeonVar_list[5])
+    let stepsRecord: StepRecordDto? = nilOrValue(pigeonVar_list[6])
+    let weightRecord: WeightRecordDto? = nilOrValue(pigeonVar_list[7])
+    let bodyFatPercentageRecord: BodyFatPercentageRecordDto? = nilOrValue(pigeonVar_list[8])
+    let bodyTemperatureRecord: BodyTemperatureRecordDto? = nilOrValue(pigeonVar_list[9])
+    let wheelchairPushesRecord: WheelchairPushesRecordDto? = nilOrValue(pigeonVar_list[10])
 
     return UpdateRecordRequestDto(
       dataType: dataType,
@@ -2220,6 +2312,7 @@ public struct UpdateRecordRequestDto: Hashable {
       distanceRecord: distanceRecord,
       floorsClimbedRecord: floorsClimbedRecord,
       heightRecord: heightRecord,
+      leanBodyMassRecord: leanBodyMassRecord,
       stepsRecord: stepsRecord,
       weightRecord: weightRecord,
       bodyFatPercentageRecord: bodyFatPercentageRecord,
@@ -2234,6 +2327,7 @@ public struct UpdateRecordRequestDto: Hashable {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -2430,38 +2524,40 @@ private class HealthConnectorPlatformApiPigeonCodecReader: FlutterStandardReader
     case 168:
       return WeightRecordDto.fromList(self.readValue() as! [Any?])
     case 169:
-      return HeightRecordDto.fromList(self.readValue() as! [Any?])
+      return LeanBodyMassRecordDto.fromList(self.readValue() as! [Any?])
     case 170:
-      return BodyFatPercentageRecordDto.fromList(self.readValue() as! [Any?])
+      return HeightRecordDto.fromList(self.readValue() as! [Any?])
     case 171:
-      return BodyTemperatureRecordDto.fromList(self.readValue() as! [Any?])
+      return BodyFatPercentageRecordDto.fromList(self.readValue() as! [Any?])
     case 172:
-      return AggregateRequestDto.fromList(self.readValue() as! [Any?])
+      return BodyTemperatureRecordDto.fromList(self.readValue() as! [Any?])
     case 173:
-      return AggregateResponseDto.fromList(self.readValue() as! [Any?])
+      return AggregateRequestDto.fromList(self.readValue() as! [Any?])
     case 174:
-      return DeleteRecordsByIdsRequestDto.fromList(self.readValue() as! [Any?])
+      return AggregateResponseDto.fromList(self.readValue() as! [Any?])
     case 175:
-      return DeleteRecordsByTimeRangeRequestDto.fromList(self.readValue() as! [Any?])
+      return DeleteRecordsByIdsRequestDto.fromList(self.readValue() as! [Any?])
     case 176:
-      return ReadRecordRequestDto.fromList(self.readValue() as! [Any?])
+      return DeleteRecordsByTimeRangeRequestDto.fromList(self.readValue() as! [Any?])
     case 177:
-      return ReadRecordResponseDto.fromList(self.readValue() as! [Any?])
+      return ReadRecordRequestDto.fromList(self.readValue() as! [Any?])
     case 178:
-      return ReadRecordsRequestDto.fromList(self.readValue() as! [Any?])
+      return ReadRecordResponseDto.fromList(self.readValue() as! [Any?])
     case 179:
-      return ReadRecordsResponseDto.fromList(self.readValue() as! [Any?])
+      return ReadRecordsRequestDto.fromList(self.readValue() as! [Any?])
     case 180:
-      return WriteRecordRequestDto.fromList(self.readValue() as! [Any?])
+      return ReadRecordsResponseDto.fromList(self.readValue() as! [Any?])
     case 181:
-      return WriteRecordResponseDto.fromList(self.readValue() as! [Any?])
+      return WriteRecordRequestDto.fromList(self.readValue() as! [Any?])
     case 182:
-      return WriteRecordsRequestDto.fromList(self.readValue() as! [Any?])
+      return WriteRecordResponseDto.fromList(self.readValue() as! [Any?])
     case 183:
-      return WriteRecordsResponseDto.fromList(self.readValue() as! [Any?])
+      return WriteRecordsRequestDto.fromList(self.readValue() as! [Any?])
     case 184:
-      return UpdateRecordRequestDto.fromList(self.readValue() as! [Any?])
+      return WriteRecordsResponseDto.fromList(self.readValue() as! [Any?])
     case 185:
+      return UpdateRecordRequestDto.fromList(self.readValue() as! [Any?])
+    case 186:
       return UpdateRecordResponseDto.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -2591,56 +2687,59 @@ private class HealthConnectorPlatformApiPigeonCodecWriter: FlutterStandardWriter
     } else if let value = value as? WeightRecordDto {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? HeightRecordDto {
+    } else if let value = value as? LeanBodyMassRecordDto {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? BodyFatPercentageRecordDto {
+    } else if let value = value as? HeightRecordDto {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? BodyTemperatureRecordDto {
+    } else if let value = value as? BodyFatPercentageRecordDto {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? AggregateRequestDto {
+    } else if let value = value as? BodyTemperatureRecordDto {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? AggregateResponseDto {
+    } else if let value = value as? AggregateRequestDto {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? DeleteRecordsByIdsRequestDto {
+    } else if let value = value as? AggregateResponseDto {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? DeleteRecordsByTimeRangeRequestDto {
+    } else if let value = value as? DeleteRecordsByIdsRequestDto {
       super.writeByte(175)
       super.writeValue(value.toList())
-    } else if let value = value as? ReadRecordRequestDto {
+    } else if let value = value as? DeleteRecordsByTimeRangeRequestDto {
       super.writeByte(176)
       super.writeValue(value.toList())
-    } else if let value = value as? ReadRecordResponseDto {
+    } else if let value = value as? ReadRecordRequestDto {
       super.writeByte(177)
       super.writeValue(value.toList())
-    } else if let value = value as? ReadRecordsRequestDto {
+    } else if let value = value as? ReadRecordResponseDto {
       super.writeByte(178)
       super.writeValue(value.toList())
-    } else if let value = value as? ReadRecordsResponseDto {
+    } else if let value = value as? ReadRecordsRequestDto {
       super.writeByte(179)
       super.writeValue(value.toList())
-    } else if let value = value as? WriteRecordRequestDto {
+    } else if let value = value as? ReadRecordsResponseDto {
       super.writeByte(180)
       super.writeValue(value.toList())
-    } else if let value = value as? WriteRecordResponseDto {
+    } else if let value = value as? WriteRecordRequestDto {
       super.writeByte(181)
       super.writeValue(value.toList())
-    } else if let value = value as? WriteRecordsRequestDto {
+    } else if let value = value as? WriteRecordResponseDto {
       super.writeByte(182)
       super.writeValue(value.toList())
-    } else if let value = value as? WriteRecordsResponseDto {
+    } else if let value = value as? WriteRecordsRequestDto {
       super.writeByte(183)
       super.writeValue(value.toList())
-    } else if let value = value as? UpdateRecordRequestDto {
+    } else if let value = value as? WriteRecordsResponseDto {
       super.writeByte(184)
       super.writeValue(value.toList())
-    } else if let value = value as? UpdateRecordResponseDto {
+    } else if let value = value as? UpdateRecordRequestDto {
       super.writeByte(185)
+      super.writeValue(value.toList())
+    } else if let value = value as? UpdateRecordResponseDto {
+      super.writeByte(186)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

@@ -29,20 +29,24 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
-
 
 /// Aggregation metric types for health data queries.
 enum AggregationMetricDto {
@@ -50,12 +54,16 @@ enum AggregationMetricDto {
   ///
   /// Meaningful for both cumulative and measurement data types.
   avg,
+
   /// Count of data points (records) in the dataset.
   count,
+
   /// Maximum value in the dataset.
   max,
+
   /// Minimum value in the dataset.
   min,
+
   /// Sum of all values in the time range.
   ///
   /// Only meaningful for cumulative data types (e.g., steps, distance).
@@ -93,8 +101,10 @@ enum EnergyUnitDto {
 enum HealthConnectorErrorCodeDto {
   /// Health platform is unavailable on this device.
   healthPlatformUnavailable,
+
   /// Invalid platform configuration detected.
   invalidPlatformConfiguration,
+
   /// Invalid argument or input validation error.
   ///
   /// This error occurs when invalid input is provided to a method, such as:
@@ -103,11 +113,14 @@ enum HealthConnectorErrorCodeDto {
   /// - Invalid record data (e.g., negative values where not allowed)
   /// - Invalid pagination parameters
   invalidArgument,
+
   /// Attempted to use platform APIs that are not supported on
   /// the current health platform.
   unsupportedHealthPlatformApi,
+
   /// Unknown or unspecified error.
   unknown,
+
   /// Security/permission error occurred.
   ///
   /// This error occurs when a request is made without proper permissions
@@ -124,20 +137,31 @@ enum HealthConnectorErrorCodeDto {
 enum HealthDataTypeDto {
   /// Active calories burned data.
   activeCaloriesBurned,
+
   /// Distance traveled data.
   distance,
+
   /// Floors climbed data.
   floorsClimbed,
+
   /// Step count data.
   steps,
+
   /// Body weight data.
   weight,
+
   /// Body height data.
   height,
+
   /// Body fat percentage data.
   bodyFatPercentage,
+
   /// Body temperature data.
   bodyTemperature,
+
+  /// Lean body mass data.
+  leanBodyMass,
+
   /// Wheelchair pushes data.
   wheelchairPushes,
 }
@@ -146,6 +170,7 @@ enum HealthDataTypeDto {
 enum HealthPlatformStatusDto {
   /// The health platform is available and ready to use.
   available,
+
   /// The health platform is not available on this device.
   notAvailable,
 }
@@ -179,6 +204,7 @@ enum NumericUnitDto {
 enum PermissionAccessTypeDto {
   /// Read access to health data.
   read,
+
   /// Write access to health data.
   write,
 }
@@ -187,8 +213,10 @@ enum PermissionAccessTypeDto {
 enum PermissionStatusDto {
   /// Permission has been explicitly denied by the user.
   denied,
+
   /// Permission has been explicitly granted by the user.
   granted,
+
   /// The permission status cannot be determined.
   unknown,
 }
@@ -208,10 +236,13 @@ enum PowerUnitDto {
 enum RecordingMethodDto {
   /// Data was recorded during an active user-initiated session.
   activelyRecorded,
+
   /// Data was automatically recorded by a device in the background.
   automaticallyRecorded,
+
   /// Data was manually entered by the user.
   manualEntry,
+
   /// The recording method is unknown or unspecified.
   unknown,
 }
@@ -258,7 +289,8 @@ class BloodGlucoseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BloodGlucoseDto decode(Object result) {
     result as List<Object?>;
@@ -282,8 +314,7 @@ class BloodGlucoseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents an energy measurement for platform transfer.
@@ -307,7 +338,8 @@ class EnergyDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EnergyDto decode(Object result) {
     result as List<Object?>;
@@ -331,8 +363,7 @@ class EnergyDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a length measurement for platform transfer.
@@ -356,7 +387,8 @@ class LengthDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static LengthDto decode(Object result) {
     result as List<Object?>;
@@ -380,8 +412,7 @@ class LengthDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a mass measurement for platform transfer.
@@ -405,7 +436,8 @@ class MassDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MassDto decode(Object result) {
     result as List<Object?>;
@@ -429,8 +461,7 @@ class MassDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a numeric measurement for platform transfer.
@@ -457,7 +488,8 @@ class NumericDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NumericDto decode(Object result) {
     result as List<Object?>;
@@ -481,8 +513,7 @@ class NumericDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a power measurement for platform transfer.
@@ -506,7 +537,8 @@ class PowerDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PowerDto decode(Object result) {
     result as List<Object?>;
@@ -530,8 +562,7 @@ class PowerDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a pressure measurement for platform transfer.
@@ -555,7 +586,8 @@ class PressureDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PressureDto decode(Object result) {
     result as List<Object?>;
@@ -579,8 +611,7 @@ class PressureDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a temperature measurement for platform transfer.
@@ -604,7 +635,8 @@ class TemperatureDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static TemperatureDto decode(Object result) {
     result as List<Object?>;
@@ -628,8 +660,7 @@ class TemperatureDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a velocity measurement for platform transfer.
@@ -653,7 +684,8 @@ class VelocityDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static VelocityDto decode(Object result) {
     result as List<Object?>;
@@ -677,8 +709,7 @@ class VelocityDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a volume measurement for platform transfer.
@@ -702,7 +733,8 @@ class VolumeDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static VolumeDto decode(Object result) {
     result as List<Object?>;
@@ -726,8 +758,7 @@ class VolumeDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents data origin (source application) for health records.
@@ -746,7 +777,8 @@ class DataOriginDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DataOriginDto decode(Object result) {
     result as List<Object?>;
@@ -769,8 +801,7 @@ class DataOriginDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents device information for health data recording.
@@ -824,7 +855,8 @@ class DeviceDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DeviceDto decode(Object result) {
     result as List<Object?>;
@@ -854,8 +886,7 @@ class DeviceDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents metadata for a health record.
@@ -901,7 +932,8 @@ class MetadataDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MetadataDto decode(Object result) {
     result as List<Object?>;
@@ -928,8 +960,7 @@ class MetadataDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a permission request for accessing specific health data.
@@ -953,7 +984,8 @@ class HealthDataPermissionDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static HealthDataPermissionDto decode(Object result) {
     result as List<Object?>;
@@ -977,8 +1009,7 @@ class HealthDataPermissionDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents the result of a health data permission request.
@@ -1002,7 +1033,8 @@ class HealthDataPermissionRequestResultDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static HealthDataPermissionRequestResultDto decode(Object result) {
     result as List<Object?>;
@@ -1015,7 +1047,8 @@ class HealthDataPermissionRequestResultDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! HealthDataPermissionRequestResultDto || other.runtimeType != runtimeType) {
+    if (other is! HealthDataPermissionRequestResultDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1026,8 +1059,7 @@ class HealthDataPermissionRequestResultDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a permissions request.
@@ -1046,12 +1078,14 @@ class PermissionsRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PermissionsRequestDto decode(Object result) {
     result as List<Object?>;
     return PermissionsRequestDto(
-      healthDataPermissions: (result[0] as List<Object?>?)!.cast<HealthDataPermissionDto>(),
+      healthDataPermissions: (result[0] as List<Object?>?)!
+          .cast<HealthDataPermissionDto>(),
     );
   }
 
@@ -1069,8 +1103,7 @@ class PermissionsRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents the response from a permissions request.
@@ -1089,19 +1122,22 @@ class PermissionsRequestResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PermissionsRequestResponseDto decode(Object result) {
     result as List<Object?>;
     return PermissionsRequestResponseDto(
-      healthDataPermissionResults: (result[0] as List<Object?>?)!.cast<HealthDataPermissionRequestResultDto>(),
+      healthDataPermissionResults: (result[0] as List<Object?>?)!
+          .cast<HealthDataPermissionRequestResultDto>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PermissionsRequestResponseDto || other.runtimeType != runtimeType) {
+    if (other is! PermissionsRequestResponseDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1112,8 +1148,7 @@ class PermissionsRequestResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents an active calories burned record for platform transfer.
@@ -1170,7 +1205,8 @@ class ActiveCaloriesBurnedRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ActiveCaloriesBurnedRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1188,7 +1224,8 @@ class ActiveCaloriesBurnedRecordDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! ActiveCaloriesBurnedRecordDto || other.runtimeType != runtimeType) {
+    if (other is! ActiveCaloriesBurnedRecordDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1199,8 +1236,7 @@ class ActiveCaloriesBurnedRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a distance record for platform transfer.
@@ -1256,7 +1292,8 @@ class DistanceRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DistanceRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1285,8 +1322,7 @@ class DistanceRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a floors climbed record for platform transfer.
@@ -1342,7 +1378,8 @@ class FloorsClimbedRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FloorsClimbedRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1371,8 +1408,7 @@ class FloorsClimbedRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a wheelchair pushes record for platform transfer.
@@ -1424,7 +1460,8 @@ class WheelchairPushesRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WheelchairPushesRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1442,7 +1479,8 @@ class WheelchairPushesRecordDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! WheelchairPushesRecordDto || other.runtimeType != runtimeType) {
+    if (other is! WheelchairPushesRecordDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1453,8 +1491,7 @@ class WheelchairPushesRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a step count record for platform transfer.
@@ -1506,7 +1543,8 @@ class StepRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static StepRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1535,8 +1573,7 @@ class StepRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Represents a weight record for platform transfer.
@@ -1578,7 +1615,8 @@ class WeightRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WeightRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1605,8 +1643,81 @@ class WeightRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// DTO for lean body mass health data.
+///
+/// Maps to:
+/// - HealthKit: `HKQuantityTypeIdentifier.leanBodyMass`
+/// - Domain: `LeanBodyMassRecord`
+class LeanBodyMassRecordDto {
+  LeanBodyMassRecordDto({
+    required this.id,
+    required this.metadata,
+    required this.time,
+    required this.mass,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  String id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Lean body mass measurement.
+  MassDto mass;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      mass,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static LeanBodyMassRecordDto decode(Object result) {
+    result as List<Object?>;
+    return LeanBodyMassRecordDto(
+      id: result[0]! as String,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      mass: result[3]! as MassDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! LeanBodyMassRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// DTO for body height health data.
@@ -1652,7 +1763,8 @@ class HeightRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static HeightRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1679,8 +1791,7 @@ class HeightRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// DTO for body fat percentage health data.
@@ -1726,7 +1837,8 @@ class BodyFatPercentageRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BodyFatPercentageRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1742,7 +1854,8 @@ class BodyFatPercentageRecordDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! BodyFatPercentageRecordDto || other.runtimeType != runtimeType) {
+    if (other is! BodyFatPercentageRecordDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1753,8 +1866,7 @@ class BodyFatPercentageRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// DTO for body temperature health data.
@@ -1800,7 +1912,8 @@ class BodyTemperatureRecordDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BodyTemperatureRecordDto decode(Object result) {
     result as List<Object?>;
@@ -1816,7 +1929,8 @@ class BodyTemperatureRecordDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! BodyTemperatureRecordDto || other.runtimeType != runtimeType) {
+    if (other is! BodyTemperatureRecordDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1827,8 +1941,7 @@ class BodyTemperatureRecordDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to perform aggregation on health records.
@@ -1862,7 +1975,8 @@ class AggregateRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AggregateRequestDto decode(Object result) {
     result as List<Object?>;
@@ -1888,8 +2002,7 @@ class AggregateRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response containing aggregated value.
@@ -1905,6 +2018,7 @@ class AggregateResponseDto {
     this.doubleValue,
     this.lengthValue,
     this.massValue,
+    this.leanBodyMassValue,
     this.wheelchairPushesValue,
   });
 
@@ -1934,6 +2048,10 @@ class AggregateResponseDto {
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   MassDto? massValue;
 
+  /// Lean body mass aggregated value
+  /// (non-null when dataType == LEAN_BODY_MASS and aggregationMetric is avg/min/max).
+  MassDto? leanBodyMassValue;
+
   /// Wheelchair pushes aggregated value
   /// (non-null when dataType == WHEELCHAIR_PUSHES).
   NumericDto? wheelchairPushesValue;
@@ -1947,12 +2065,14 @@ class AggregateResponseDto {
       doubleValue,
       lengthValue,
       massValue,
+      leanBodyMassValue,
       wheelchairPushesValue,
     ];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AggregateResponseDto decode(Object result) {
     result as List<Object?>;
@@ -1964,7 +2084,8 @@ class AggregateResponseDto {
       doubleValue: result[4] as double?,
       lengthValue: result[5] as LengthDto?,
       massValue: result[6] as MassDto?,
-      wheelchairPushesValue: result[7] as NumericDto?,
+      leanBodyMassValue: result[7] as MassDto?,
+      wheelchairPushesValue: result[8] as NumericDto?,
     );
   }
 
@@ -1982,8 +2103,7 @@ class AggregateResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to delete specific records by their IDs.
@@ -2007,7 +2127,8 @@ class DeleteRecordsByIdsRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DeleteRecordsByIdsRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2020,7 +2141,8 @@ class DeleteRecordsByIdsRequestDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! DeleteRecordsByIdsRequestDto || other.runtimeType != runtimeType) {
+    if (other is! DeleteRecordsByIdsRequestDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2031,8 +2153,7 @@ class DeleteRecordsByIdsRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to delete records by time range.
@@ -2061,7 +2182,8 @@ class DeleteRecordsByTimeRangeRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DeleteRecordsByTimeRangeRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2075,7 +2197,8 @@ class DeleteRecordsByTimeRangeRequestDto {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! DeleteRecordsByTimeRangeRequestDto || other.runtimeType != runtimeType) {
+    if (other is! DeleteRecordsByTimeRangeRequestDto ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2086,8 +2209,7 @@ class DeleteRecordsByTimeRangeRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to read a single health record by ID.
@@ -2111,7 +2233,8 @@ class ReadRecordRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ReadRecordRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2135,8 +2258,7 @@ class ReadRecordRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response containing a single health record.
@@ -2150,6 +2272,7 @@ class ReadRecordResponseDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.bodyFatPercentageRecord,
@@ -2175,6 +2298,10 @@ class ReadRecordResponseDto {
   /// Height record
   /// (non-null when dataType == HEIGHT).
   HeightRecordDto? heightRecord;
+
+  /// Lean body mass record
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  LeanBodyMassRecordDto? leanBodyMassRecord;
 
   /// Step count record
   /// (non-null when dataType == STEPS).
@@ -2203,6 +2330,7 @@ class ReadRecordResponseDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -2212,7 +2340,8 @@ class ReadRecordResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ReadRecordResponseDto decode(Object result) {
     result as List<Object?>;
@@ -2222,11 +2351,12 @@ class ReadRecordResponseDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      stepsRecord: result[5] as StepRecordDto?,
-      weightRecord: result[6] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[7] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[8] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[9] as WheelchairPushesRecordDto?,
+      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
+      stepsRecord: result[6] as StepRecordDto?,
+      weightRecord: result[7] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -2244,8 +2374,7 @@ class ReadRecordResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to read multiple health records within a time range.
@@ -2291,7 +2420,8 @@ class ReadRecordsRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ReadRecordsRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2319,8 +2449,7 @@ class ReadRecordsRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response containing paginated health records.
@@ -2334,6 +2463,7 @@ class ReadRecordsResponseDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.leanBodyMassRecords,
     this.nextPageToken,
     this.stepsRecords,
     this.weightRecords,
@@ -2360,6 +2490,10 @@ class ReadRecordsResponseDto {
   /// List of height records
   /// (non-null when dataType == HEIGHT).
   List<HeightRecordDto>? heightRecords;
+
+  /// List of lean body mass records
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  List<LeanBodyMassRecordDto>? leanBodyMassRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   String? nextPageToken;
@@ -2391,6 +2525,7 @@ class ReadRecordsResponseDto {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      leanBodyMassRecords,
       nextPageToken,
       stepsRecords,
       weightRecords,
@@ -2401,22 +2536,30 @@ class ReadRecordsResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ReadRecordsResponseDto decode(Object result) {
     result as List<Object?>;
     return ReadRecordsResponseDto(
       dataType: result[0]! as HealthDataTypeDto,
-      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)?.cast<ActiveCaloriesBurnedRecordDto>(),
+      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
+          ?.cast<ActiveCaloriesBurnedRecordDto>(),
       distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      floorsClimbedRecords: (result[3] as List<Object?>?)?.cast<FloorsClimbedRecordDto>(),
+      floorsClimbedRecords: (result[3] as List<Object?>?)
+          ?.cast<FloorsClimbedRecordDto>(),
       heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      nextPageToken: result[5] as String?,
-      stepsRecords: (result[6] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[7] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[8] as List<Object?>?)?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[9] as List<Object?>?)?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[10] as List<Object?>?)?.cast<WheelchairPushesRecordDto>(),
+      leanBodyMassRecords: (result[5] as List<Object?>?)
+          ?.cast<LeanBodyMassRecordDto>(),
+      nextPageToken: result[6] as String?,
+      stepsRecords: (result[7] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[8] as List<Object?>?)?.cast<WeightRecordDto>(),
+      bodyFatPercentageRecords: (result[9] as List<Object?>?)
+          ?.cast<BodyFatPercentageRecordDto>(),
+      bodyTemperatureRecords: (result[10] as List<Object?>?)
+          ?.cast<BodyTemperatureRecordDto>(),
+      wheelchairPushesRecords: (result[11] as List<Object?>?)
+          ?.cast<WheelchairPushesRecordDto>(),
     );
   }
 
@@ -2434,8 +2577,7 @@ class ReadRecordsResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to write a single health record.
@@ -2449,6 +2591,7 @@ class WriteRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.bodyFatPercentageRecord,
@@ -2474,6 +2617,10 @@ class WriteRecordRequestDto {
   /// Height record
   /// (only non-null when dataType == HEIGHT).
   HeightRecordDto? heightRecord;
+
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  LeanBodyMassRecordDto? leanBodyMassRecord;
 
   /// Step count record
   /// (only non-null when dataType == STEPS).
@@ -2502,6 +2649,7 @@ class WriteRecordRequestDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -2511,7 +2659,8 @@ class WriteRecordRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WriteRecordRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2521,11 +2670,12 @@ class WriteRecordRequestDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      stepsRecord: result[5] as StepRecordDto?,
-      weightRecord: result[6] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[7] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[8] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[9] as WheelchairPushesRecordDto?,
+      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
+      stepsRecord: result[6] as StepRecordDto?,
+      weightRecord: result[7] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -2543,8 +2693,7 @@ class WriteRecordRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response after writing a single record.
@@ -2563,7 +2712,8 @@ class WriteRecordResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WriteRecordResponseDto decode(Object result) {
     result as List<Object?>;
@@ -2586,8 +2736,7 @@ class WriteRecordResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to write multiple health records atomically.
@@ -2602,6 +2751,7 @@ class WriteRecordsRequestDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
     this.bodyFatPercentageRecords,
@@ -2631,6 +2781,10 @@ class WriteRecordsRequestDto {
   /// (non-null when dataTypes contains HEIGHT).
   List<HeightRecordDto>? heightRecords;
 
+  /// List of lean body mass records
+  /// (non-null when dataTypes contains LEAN_BODY_MASS).
+  List<LeanBodyMassRecordDto>? leanBodyMassRecords;
+
   /// List of step records
   /// (non-null when dataTypes contains STEPS).
   List<StepRecordDto>? stepsRecords;
@@ -2658,6 +2812,7 @@ class WriteRecordsRequestDto {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      leanBodyMassRecords,
       stepsRecords,
       weightRecords,
       bodyFatPercentageRecords,
@@ -2667,21 +2822,29 @@ class WriteRecordsRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WriteRecordsRequestDto decode(Object result) {
     result as List<Object?>;
     return WriteRecordsRequestDto(
       dataTypes: (result[0] as List<Object?>?)!.cast<HealthDataTypeDto>(),
-      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)?.cast<ActiveCaloriesBurnedRecordDto>(),
+      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)
+          ?.cast<ActiveCaloriesBurnedRecordDto>(),
       distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      floorsClimbedRecords: (result[3] as List<Object?>?)?.cast<FloorsClimbedRecordDto>(),
+      floorsClimbedRecords: (result[3] as List<Object?>?)
+          ?.cast<FloorsClimbedRecordDto>(),
       heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      stepsRecords: (result[5] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[6] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[7] as List<Object?>?)?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[8] as List<Object?>?)?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[9] as List<Object?>?)?.cast<WheelchairPushesRecordDto>(),
+      leanBodyMassRecords: (result[5] as List<Object?>?)
+          ?.cast<LeanBodyMassRecordDto>(),
+      stepsRecords: (result[6] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[7] as List<Object?>?)?.cast<WeightRecordDto>(),
+      bodyFatPercentageRecords: (result[8] as List<Object?>?)
+          ?.cast<BodyFatPercentageRecordDto>(),
+      bodyTemperatureRecords: (result[9] as List<Object?>?)
+          ?.cast<BodyTemperatureRecordDto>(),
+      wheelchairPushesRecords: (result[10] as List<Object?>?)
+          ?.cast<WheelchairPushesRecordDto>(),
     );
   }
 
@@ -2699,8 +2862,7 @@ class WriteRecordsRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response after writing multiple records.
@@ -2721,7 +2883,8 @@ class WriteRecordsResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static WriteRecordsResponseDto decode(Object result) {
     result as List<Object?>;
@@ -2744,8 +2907,7 @@ class WriteRecordsResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Request to update a single health record.
@@ -2761,6 +2923,7 @@ class UpdateRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.bodyFatPercentageRecord,
@@ -2791,6 +2954,11 @@ class UpdateRecordRequestDto {
   /// The record must have a valid existing ID.
   HeightRecordDto? heightRecord;
 
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  /// The record must have a valid existing ID.
+  LeanBodyMassRecordDto? leanBodyMassRecord;
+
   /// Step count record
   /// (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.
@@ -2823,6 +2991,7 @@ class UpdateRecordRequestDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      leanBodyMassRecord,
       stepsRecord,
       weightRecord,
       bodyFatPercentageRecord,
@@ -2832,7 +3001,8 @@ class UpdateRecordRequestDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static UpdateRecordRequestDto decode(Object result) {
     result as List<Object?>;
@@ -2842,11 +3012,12 @@ class UpdateRecordRequestDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      stepsRecord: result[5] as StepRecordDto?,
-      weightRecord: result[6] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[7] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[8] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[9] as WheelchairPushesRecordDto?,
+      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
+      stepsRecord: result[6] as StepRecordDto?,
+      weightRecord: result[7] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -2864,8 +3035,7 @@ class UpdateRecordRequestDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Response after updating a single record.
@@ -2886,7 +3056,8 @@ class UpdateRecordResponseDto {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static UpdateRecordResponseDto decode(Object result) {
     result as List<Object?>;
@@ -2909,10 +3080,8 @@ class UpdateRecordResponseDto {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -2921,176 +3090,179 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is AggregationMetricDto) {
+    } else if (value is AggregationMetricDto) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is BloodGlucoseUnitDto) {
+    } else if (value is BloodGlucoseUnitDto) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is EnergyUnitDto) {
+    } else if (value is EnergyUnitDto) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is HealthConnectorErrorCodeDto) {
+    } else if (value is HealthConnectorErrorCodeDto) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is HealthDataTypeDto) {
+    } else if (value is HealthDataTypeDto) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is HealthPlatformStatusDto) {
+    } else if (value is HealthPlatformStatusDto) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is LengthUnitDto) {
+    } else if (value is LengthUnitDto) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is MassUnitDto) {
+    } else if (value is MassUnitDto) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is NumericUnitDto) {
+    } else if (value is NumericUnitDto) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PermissionAccessTypeDto) {
+    } else if (value is PermissionAccessTypeDto) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PermissionStatusDto) {
+    } else if (value is PermissionStatusDto) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is PressureUnitDto) {
+    } else if (value is PressureUnitDto) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    }    else if (value is PowerUnitDto) {
+    } else if (value is PowerUnitDto) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    }    else if (value is RecordingMethodDto) {
+    } else if (value is RecordingMethodDto) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    }    else if (value is TemperatureUnitDto) {
+    } else if (value is TemperatureUnitDto) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is VelocityUnitDto) {
+    } else if (value is VelocityUnitDto) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is VolumeUnitDto) {
+    } else if (value is VolumeUnitDto) {
       buffer.putUint8(145);
       writeValue(buffer, value.index);
-    }    else if (value is BloodGlucoseDto) {
+    } else if (value is BloodGlucoseDto) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is EnergyDto) {
+    } else if (value is EnergyDto) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is LengthDto) {
+    } else if (value is LengthDto) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is MassDto) {
+    } else if (value is MassDto) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is NumericDto) {
+    } else if (value is NumericDto) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PowerDto) {
+    } else if (value is PowerDto) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PressureDto) {
+    } else if (value is PressureDto) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is TemperatureDto) {
+    } else if (value is TemperatureDto) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is VelocityDto) {
+    } else if (value is VelocityDto) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is VolumeDto) {
+    } else if (value is VolumeDto) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is DataOriginDto) {
+    } else if (value is DataOriginDto) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is DeviceDto) {
+    } else if (value is DeviceDto) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is MetadataDto) {
+    } else if (value is MetadataDto) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is HealthDataPermissionDto) {
+    } else if (value is HealthDataPermissionDto) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is HealthDataPermissionRequestResultDto) {
+    } else if (value is HealthDataPermissionRequestResultDto) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PermissionsRequestDto) {
+    } else if (value is PermissionsRequestDto) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PermissionsRequestResponseDto) {
+    } else if (value is PermissionsRequestResponseDto) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is ActiveCaloriesBurnedRecordDto) {
+    } else if (value is ActiveCaloriesBurnedRecordDto) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is DistanceRecordDto) {
+    } else if (value is DistanceRecordDto) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is FloorsClimbedRecordDto) {
+    } else if (value is FloorsClimbedRecordDto) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is WheelchairPushesRecordDto) {
+    } else if (value is WheelchairPushesRecordDto) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is StepRecordDto) {
+    } else if (value is StepRecordDto) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is WeightRecordDto) {
+    } else if (value is WeightRecordDto) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is HeightRecordDto) {
+    } else if (value is LeanBodyMassRecordDto) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is BodyFatPercentageRecordDto) {
+    } else if (value is HeightRecordDto) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is BodyTemperatureRecordDto) {
+    } else if (value is BodyFatPercentageRecordDto) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is AggregateRequestDto) {
+    } else if (value is BodyTemperatureRecordDto) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is AggregateResponseDto) {
+    } else if (value is AggregateRequestDto) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is DeleteRecordsByIdsRequestDto) {
+    } else if (value is AggregateResponseDto) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is DeleteRecordsByTimeRangeRequestDto) {
+    } else if (value is DeleteRecordsByIdsRequestDto) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is ReadRecordRequestDto) {
+    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is ReadRecordResponseDto) {
+    } else if (value is ReadRecordRequestDto) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is ReadRecordsRequestDto) {
+    } else if (value is ReadRecordResponseDto) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    }    else if (value is ReadRecordsResponseDto) {
+    } else if (value is ReadRecordsRequestDto) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    }    else if (value is WriteRecordRequestDto) {
+    } else if (value is ReadRecordsResponseDto) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    }    else if (value is WriteRecordResponseDto) {
+    } else if (value is WriteRecordRequestDto) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    }    else if (value is WriteRecordsRequestDto) {
+    } else if (value is WriteRecordResponseDto) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    }    else if (value is WriteRecordsResponseDto) {
+    } else if (value is WriteRecordsRequestDto) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    }    else if (value is UpdateRecordRequestDto) {
+    } else if (value is WriteRecordsResponseDto) {
       buffer.putUint8(184);
       writeValue(buffer, value.encode());
-    }    else if (value is UpdateRecordResponseDto) {
+    } else if (value is UpdateRecordRequestDto) {
       buffer.putUint8(185);
+      writeValue(buffer, value.encode());
+    } else if (value is UpdateRecordResponseDto) {
+      buffer.putUint8(186);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -3100,136 +3272,138 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AggregationMetricDto.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : BloodGlucoseUnitDto.values[value];
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : EnergyUnitDto.values[value];
-      case 132: 
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : HealthConnectorErrorCodeDto.values[value];
-      case 133: 
+      case 133:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : HealthDataTypeDto.values[value];
-      case 134: 
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : HealthPlatformStatusDto.values[value];
-      case 135: 
+      case 135:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : LengthUnitDto.values[value];
-      case 136: 
+      case 136:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MassUnitDto.values[value];
-      case 137: 
+      case 137:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NumericUnitDto.values[value];
-      case 138: 
+      case 138:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PermissionAccessTypeDto.values[value];
-      case 139: 
+      case 139:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PermissionStatusDto.values[value];
-      case 140: 
+      case 140:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PressureUnitDto.values[value];
-      case 141: 
+      case 141:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PowerUnitDto.values[value];
-      case 142: 
+      case 142:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : RecordingMethodDto.values[value];
-      case 143: 
+      case 143:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : TemperatureUnitDto.values[value];
-      case 144: 
+      case 144:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : VelocityUnitDto.values[value];
-      case 145: 
+      case 145:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : VolumeUnitDto.values[value];
-      case 146: 
+      case 146:
         return BloodGlucoseDto.decode(readValue(buffer)!);
-      case 147: 
+      case 147:
         return EnergyDto.decode(readValue(buffer)!);
-      case 148: 
+      case 148:
         return LengthDto.decode(readValue(buffer)!);
-      case 149: 
+      case 149:
         return MassDto.decode(readValue(buffer)!);
-      case 150: 
+      case 150:
         return NumericDto.decode(readValue(buffer)!);
-      case 151: 
+      case 151:
         return PowerDto.decode(readValue(buffer)!);
-      case 152: 
+      case 152:
         return PressureDto.decode(readValue(buffer)!);
-      case 153: 
+      case 153:
         return TemperatureDto.decode(readValue(buffer)!);
-      case 154: 
+      case 154:
         return VelocityDto.decode(readValue(buffer)!);
-      case 155: 
+      case 155:
         return VolumeDto.decode(readValue(buffer)!);
-      case 156: 
+      case 156:
         return DataOriginDto.decode(readValue(buffer)!);
-      case 157: 
+      case 157:
         return DeviceDto.decode(readValue(buffer)!);
-      case 158: 
+      case 158:
         return MetadataDto.decode(readValue(buffer)!);
-      case 159: 
+      case 159:
         return HealthDataPermissionDto.decode(readValue(buffer)!);
-      case 160: 
+      case 160:
         return HealthDataPermissionRequestResultDto.decode(readValue(buffer)!);
-      case 161: 
+      case 161:
         return PermissionsRequestDto.decode(readValue(buffer)!);
-      case 162: 
+      case 162:
         return PermissionsRequestResponseDto.decode(readValue(buffer)!);
-      case 163: 
+      case 163:
         return ActiveCaloriesBurnedRecordDto.decode(readValue(buffer)!);
-      case 164: 
+      case 164:
         return DistanceRecordDto.decode(readValue(buffer)!);
-      case 165: 
+      case 165:
         return FloorsClimbedRecordDto.decode(readValue(buffer)!);
-      case 166: 
+      case 166:
         return WheelchairPushesRecordDto.decode(readValue(buffer)!);
-      case 167: 
+      case 167:
         return StepRecordDto.decode(readValue(buffer)!);
-      case 168: 
+      case 168:
         return WeightRecordDto.decode(readValue(buffer)!);
-      case 169: 
+      case 169:
+        return LeanBodyMassRecordDto.decode(readValue(buffer)!);
+      case 170:
         return HeightRecordDto.decode(readValue(buffer)!);
-      case 170: 
+      case 171:
         return BodyFatPercentageRecordDto.decode(readValue(buffer)!);
-      case 171: 
+      case 172:
         return BodyTemperatureRecordDto.decode(readValue(buffer)!);
-      case 172: 
+      case 173:
         return AggregateRequestDto.decode(readValue(buffer)!);
-      case 173: 
+      case 174:
         return AggregateResponseDto.decode(readValue(buffer)!);
-      case 174: 
+      case 175:
         return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
-      case 175: 
+      case 176:
         return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
-      case 176: 
+      case 177:
         return ReadRecordRequestDto.decode(readValue(buffer)!);
-      case 177: 
+      case 178:
         return ReadRecordResponseDto.decode(readValue(buffer)!);
-      case 178: 
+      case 179:
         return ReadRecordsRequestDto.decode(readValue(buffer)!);
-      case 179: 
+      case 180:
         return ReadRecordsResponseDto.decode(readValue(buffer)!);
-      case 180: 
+      case 181:
         return WriteRecordRequestDto.decode(readValue(buffer)!);
-      case 181: 
+      case 182:
         return WriteRecordResponseDto.decode(readValue(buffer)!);
-      case 182: 
+      case 183:
         return WriteRecordsRequestDto.decode(readValue(buffer)!);
-      case 183: 
+      case 184:
         return WriteRecordsResponseDto.decode(readValue(buffer)!);
-      case 184: 
+      case 185:
         return UpdateRecordRequestDto.decode(readValue(buffer)!);
-      case 185: 
+      case 186:
         return UpdateRecordResponseDto.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3244,9 +3418,13 @@ class HealthConnectorPlatformApi {
   /// Constructor for [HealthConnectorPlatformApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HealthConnectorPlatformApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  HealthConnectorPlatformApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -3271,13 +3449,17 @@ class HealthConnectorPlatformApi {
   ///   aggregation not supported.
   /// - PlatformException with code `UNKNOWN` for other errors.
   Future<AggregateResponseDto> aggregate(AggregateRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.aggregate$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.aggregate$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3310,13 +3492,17 @@ class HealthConnectorPlatformApi {
   ///   write permission not granted.
   /// - PlatformException with code `UNKNOWN` for other errors.
   Future<void> deleteRecordsByIds(DeleteRecordsByIdsRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByIds$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByIds$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3343,14 +3529,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `PERMISSION_DENIED` if
   ///   write permission not granted.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<void> deleteRecordsByTimeRange(DeleteRecordsByTimeRangeRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByTimeRange$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<void> deleteRecordsByTimeRange(
+    DeleteRecordsByTimeRangeRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByTimeRange$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3371,12 +3563,14 @@ class HealthConnectorPlatformApi {
   /// Returns information about whether the health platform is available,
   /// installed, and ready to use.
   Future<HealthPlatformStatusDto> getHealthPlatformStatus() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.getHealthPlatformStatus$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.getHealthPlatformStatus$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -3405,14 +3599,20 @@ class HealthConnectorPlatformApi {
   /// Returns a response with results for each health data permission requested.
   ///
   /// Throws a PlatformException if the request fails.
-  Future<PermissionsRequestResponseDto> requestPermissions(PermissionsRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.requestPermissions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<PermissionsRequestResponseDto> requestPermissions(
+    PermissionsRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.requestPermissions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3452,14 +3652,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `PERMISSION_DENIED` if
   ///   read permission not granted.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<ReadRecordResponseDto?> readRecord(ReadRecordRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecord$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<ReadRecordResponseDto?> readRecord(
+    ReadRecordRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecord$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3495,14 +3701,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `PERMISSION_DENIED` if
   ///   read permission not granted.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<ReadRecordsResponseDto> readRecords(ReadRecordsRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecords$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<ReadRecordsResponseDto> readRecords(
+    ReadRecordsRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecords$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3543,14 +3755,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `INVALID_ARGUMENT` if
   ///   record data is invalid.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<WriteRecordResponseDto> writeRecord(WriteRecordRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecord$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<WriteRecordResponseDto> writeRecord(
+    WriteRecordRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecord$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3592,14 +3810,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `INVALID_ARGUMENT` if
   ///   any record data is invalid.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<WriteRecordsResponseDto> writeRecords(WriteRecordsRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecords$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<WriteRecordsResponseDto> writeRecords(
+    WriteRecordsRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecords$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3644,14 +3868,20 @@ class HealthConnectorPlatformApi {
   /// - PlatformException with code `INVALID_ARGUMENT` if
   ///   record ID is invalid or record data is invalid.
   /// - PlatformException with code `UNKNOWN` for other errors.
-  Future<UpdateRecordResponseDto> updateRecord(UpdateRecordRequestDto request) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.updateRecord$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
+  Future<UpdateRecordResponseDto> updateRecord(
+    UpdateRecordRequestDto request,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.updateRecord$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[request],
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

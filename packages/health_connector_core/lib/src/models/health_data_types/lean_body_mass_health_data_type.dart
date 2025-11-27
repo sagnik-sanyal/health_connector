@@ -1,21 +1,21 @@
 part of 'health_data_type.dart';
 
-/// Health data type for body temperature information.
+/// Health data type for lean body mass information.
 @Since('0.1.0')
 @immutable
-final class BodyTemperatureHealthDataType
-    extends HealthDataType<BodyTemperatureRecord, Temperature>
+final class LeanBodyMassHealthDataType
+    extends HealthDataType<LeanBodyMassRecord, Mass>
     implements
-        ReadableHealthDataType<BodyTemperatureRecord>,
+        ReadableHealthDataType<LeanBodyMassRecord>,
         WriteableHealthDataType,
-        AvgAggregatableHealthDataType<BodyTemperatureRecord, Temperature>,
-        MinAggregatableHealthDataType<BodyTemperatureRecord, Temperature>,
-        MaxAggregatableHealthDataType<BodyTemperatureRecord, Temperature> {
+        AvgAggregatableHealthDataType<LeanBodyMassRecord, Mass>,
+        MinAggregatableHealthDataType<LeanBodyMassRecord, Mass>,
+        MaxAggregatableHealthDataType<LeanBodyMassRecord, Mass> {
   @internal
-  const BodyTemperatureHealthDataType();
+  const LeanBodyMassHealthDataType();
 
   @override
-  String get identifier => 'bodyTemperature';
+  String get identifier => 'lean_body_mass';
 
   @override
   String get name => identifier;
@@ -23,7 +23,7 @@ final class BodyTemperatureHealthDataType
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BodyTemperatureHealthDataType &&
+      other is LeanBodyMassHealthDataType &&
           runtimeType == other.runtimeType &&
           identifier == other.identifier;
 
@@ -31,7 +31,7 @@ final class BodyTemperatureHealthDataType
   int get hashCode => identifier.hashCode;
 
   @override
-  String toString() => 'body_temperature_data_type';
+  String toString() => 'lean_body_mass_data_type';
 
   @override
   List<AggregationMetric> get supportedAggregationMetrics => [
@@ -48,12 +48,12 @@ final class BodyTemperatureHealthDataType
   );
 
   @override
-  ReadRecordRequest<BodyTemperatureRecord> readRecord(HealthRecordId id) {
+  ReadRecordRequest<LeanBodyMassRecord> readRecord(HealthRecordId id) {
     return ReadRecordRequest(dataType: this, id: id);
   }
 
   @override
-  ReadRecordsRequest<BodyTemperatureRecord> readRecords({
+  ReadRecordsRequest<LeanBodyMassRecord> readRecords({
     required DateTime startTime,
     required DateTime endTime,
     int pageSize = HealthConnectorConfigConstants.defaultPageSize,
@@ -75,7 +75,7 @@ final class BodyTemperatureHealthDataType
 
   // AvgAggregatableHealthDataType implementation
   @override
-  AggregateRequest<BodyTemperatureRecord, Temperature> aggregateAverage({
+  AggregateRequest<LeanBodyMassRecord, Mass> aggregateAverage({
     required DateTime startTime,
     required DateTime endTime,
   }) {
@@ -89,7 +89,7 @@ final class BodyTemperatureHealthDataType
 
   // MinAggregatableHealthDataType implementation
   @override
-  AggregateRequest<BodyTemperatureRecord, Temperature> aggregateMin({
+  AggregateRequest<LeanBodyMassRecord, Mass> aggregateMin({
     required DateTime startTime,
     required DateTime endTime,
   }) {
@@ -103,7 +103,7 @@ final class BodyTemperatureHealthDataType
 
   // MaxAggregatableHealthDataType implementation
   @override
-  AggregateRequest<BodyTemperatureRecord, Temperature> aggregateMax({
+  AggregateRequest<LeanBodyMassRecord, Mass> aggregateMax({
     required DateTime startTime,
     required DateTime endTime,
   }) {

@@ -9,6 +9,7 @@ import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
+import androidx.health.connect.client.records.LeanBodyMassRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -393,6 +394,24 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = record.toDto(),
+                        leanBodyMassRecord = null,
+                        stepsRecord = null,
+                        weightRecord = null,
+                        wheelchairPushesRecord = null
+                    )
+                }
+
+                HealthDataTypeDto.LEAN_BODY_MASS -> {
+                    val record = response.record as LeanBodyMassRecord
+                    ReadRecordResponseDto(
+                        dataType = HealthDataTypeDto.LEAN_BODY_MASS,
+                        activeCaloriesBurnedRecord = null,
+                        bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
+                        distanceRecord = null,
+                        floorsClimbedRecord = null,
+                        heightRecord = null,
+                        leanBodyMassRecord = record.toDto(),
                         stepsRecord = null,
                         weightRecord = null,
                         wheelchairPushesRecord = null
@@ -632,6 +651,26 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = heightRecords,
+                        leanBodyMassRecords = null,
+                        stepsRecords = null,
+                        weightRecords = null,
+                        wheelchairPushesRecords = null,
+                        nextPageToken = nextPageToken
+                    )
+                }
+
+                HealthDataTypeDto.LEAN_BODY_MASS -> {
+                    val leanBodyMassRecords = response.records.map { (it as LeanBodyMassRecord).toDto() }
+
+                    ReadRecordsResponseDto(
+                        dataType = HealthDataTypeDto.LEAN_BODY_MASS,
+                        activeCaloriesBurnedRecords = null,
+                        bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
+                        distanceRecords = null,
+                        floorsClimbedRecords = null,
+                        heightRecords = null,
+                        leanBodyMassRecords = leanBodyMassRecords,
                         stepsRecords = null,
                         weightRecords = null,
                         wheelchairPushesRecords = null,
@@ -793,6 +832,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     request.weightRecord.toHealthConnect()
                 }
 
+                HealthDataTypeDto.LEAN_BODY_MASS -> {
+                    requireNotNull(request.leanBodyMassRecord) { "leanBodyMassRecord must not be null for LEAN_BODY_MASS type" }
+                    request.leanBodyMassRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
                     requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
                     request.wheelchairPushesRecord.toHealthConnect()
@@ -901,6 +945,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     HealthDataTypeDto.WEIGHT -> {
                         requireNotNull(request.weightRecords) { "weightRecords must not be null for WEIGHT type" }
                         request.weightRecords.map { it.toHealthConnect() }
+                    }
+
+                    HealthDataTypeDto.LEAN_BODY_MASS -> {
+                        requireNotNull(request.leanBodyMassRecords) { "leanBodyMassRecords must not be null for LEAN_BODY_MASS type" }
+                        request.leanBodyMassRecords.map { it.toHealthConnect() }
                     }
 
                     HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
@@ -1070,6 +1119,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     weightRecord.toHealthConnect()
                 }
 
+                HealthDataTypeDto.LEAN_BODY_MASS -> {
+                    requireNotNull(request.leanBodyMassRecord) { "leanBodyMassRecord must not be null for LEAN_BODY_MASS type" }
+                    val leanBodyMassRecord = request.leanBodyMassRecord
+                    // Validate record ID is not empty or "none"
+                    if (leanBodyMassRecord.id.isEmpty() || leanBodyMassRecord.id == "none") {
+                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                        )
+                    }
+                    leanBodyMassRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
                     requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
                     val wheelchairPushesRecord = request.wheelchairPushesRecord
@@ -1192,6 +1253,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = energyDto,
                         bodyTemperatureValue = null,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
@@ -1207,6 +1269,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = lengthDto,
                         wheelchairPushesValue = null
@@ -1222,6 +1285,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = lengthDto,
                         wheelchairPushesValue = null
@@ -1236,6 +1300,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = floorsCount,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
@@ -1251,6 +1316,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = numericDto.value,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
@@ -1266,7 +1332,24 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = massDto,
+                        lengthValue = null,
+                        wheelchairPushesValue = null
+                    )
+                }
+
+                HealthDataTypeDto.LEAN_BODY_MASS -> {
+                    val mass = aggregatedValue?.let { it as? Mass }
+                    val massDto = mass?.toDto()
+                    AggregateResponseDto(
+                        aggregationMetric = request.aggregationMetric,
+                        dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
+                        doubleValue = null,
+                        leanBodyMassValue = massDto,
+                        massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
                     )
@@ -1281,6 +1364,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = temperatureDto,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
@@ -1296,6 +1380,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         bodyTemperatureValue = null,
                         doubleValue = null,
+                        leanBodyMassValue = null,
                         massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = numericDto

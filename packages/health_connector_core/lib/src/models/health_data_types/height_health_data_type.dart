@@ -117,4 +117,3 @@ final class HeightHealthDataType extends HealthDataType<HeightRecord, Length>
   @override
   List<Permission> get permissions => [readPermission, writePermission];
 }
-

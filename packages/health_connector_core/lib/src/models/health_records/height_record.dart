@@ -72,4 +72,3 @@ final class HeightRecord extends InstantHealthRecord {
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
 }
-

@@ -175,6 +175,9 @@ enum HealthDataTypeDto {
   /// Body temperature data.
   bodyTemperature,
 
+  /// Lean body mass data.
+  leanBodyMass,
+
   /// Wheelchair pushes data.
   wheelchairPushes,
 }
@@ -750,6 +753,39 @@ class WeightRecordDto {
   final int? zoneOffsetSeconds;
 }
 
+/// DTO for lean body mass health data.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.LeanBodyMassRecord`
+/// - Domain: `LeanBodyMassRecord`
+class LeanBodyMassRecordDto {
+  LeanBodyMassRecordDto({
+    required this.id,
+    required this.time,
+    required this.metadata,
+    required this.mass,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  final int time;
+
+  /// Lean body mass measurement.
+  final MassDto mass;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  final int? zoneOffsetSeconds;
+}
+
 /// DTO for body height health data.
 ///
 /// Maps to:
@@ -889,6 +925,7 @@ class AggregateResponseDto {
     this.bodyTemperatureValue,
     this.doubleValue,
     this.lengthValue,
+    this.leanBodyMassValue,
     this.massValue,
     this.wheelchairPushesValue,
   });
@@ -918,6 +955,10 @@ class AggregateResponseDto {
 
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   final MassDto? massValue;
+
+  /// Lean body mass aggregated value
+  /// (non-null when dataType == LEAN_BODY_MASS and aggregationMetric is avg/min/max).
+  final MassDto? leanBodyMassValue;
 
   /// Wheelchair pushes aggregated value
   /// (non-null when dataType == WHEELCHAIR_PUSHES).
@@ -986,6 +1027,7 @@ class ReadRecordResponseDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.wheelchairPushesRecord,
@@ -1009,6 +1051,10 @@ class ReadRecordResponseDto {
   /// Height record
   /// (non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
+
+  /// Lean body mass record
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  final LeanBodyMassRecordDto? leanBodyMassRecord;
 
   /// Step count record
   /// (non-null when dataType == STEPS).
@@ -1078,6 +1124,7 @@ class ReadRecordsResponseDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
     this.wheelchairPushesRecords,
@@ -1102,6 +1149,10 @@ class ReadRecordsResponseDto {
   /// List of height records
   /// (non-null when dataType == HEIGHT).
   final List<HeightRecordDto>? heightRecords;
+
+  /// List of lean body mass records
+  /// (non-null when dataType == LEAN_BODY_MASS).
+  final List<LeanBodyMassRecordDto>? leanBodyMassRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   final String? nextPageToken;
@@ -1144,6 +1195,7 @@ class WriteRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.wheelchairPushesRecord,
@@ -1167,6 +1219,10 @@ class WriteRecordRequestDto {
   /// Height record
   /// (only non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
+
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  final LeanBodyMassRecordDto? leanBodyMassRecord;
 
   /// Step count record
   /// (only non-null when dataType == STEPS).
@@ -1213,6 +1269,7 @@ class WriteRecordsRequestDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
     this.wheelchairPushesRecords,
@@ -1239,6 +1296,10 @@ class WriteRecordsRequestDto {
   /// List of height records
   /// (non-null when dataTypes contains HEIGHT).
   final List<HeightRecordDto>? heightRecords;
+
+  /// List of lean body mass records
+  /// (non-null when dataTypes contains LEAN_BODY_MASS).
+  final List<LeanBodyMassRecordDto>? leanBodyMassRecords;
 
   /// List of step records
   /// (non-null when dataTypes contains STEPS).
@@ -1290,6 +1351,7 @@ class UpdateRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
     this.wheelchairPushesRecord,
@@ -1317,6 +1379,11 @@ class UpdateRecordRequestDto {
   /// (only non-null when dataType == HEIGHT).
   /// The record must have a valid existing ID.
   final HeightRecordDto? heightRecord;
+
+  /// Lean body mass record
+  /// (only non-null when dataType == LEAN_BODY_MASS).
+  /// The record must have a valid existing ID.
+  final LeanBodyMassRecordDto? leanBodyMassRecord;
 
   /// Step count record
   /// (only non-null when dataType == STEPS).

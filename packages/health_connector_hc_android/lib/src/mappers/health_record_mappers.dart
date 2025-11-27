@@ -7,6 +7,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthRecordId,
         HeightRecord,
+        LeanBodyMassRecord,
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
@@ -21,6 +22,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
         DistanceRecordDto,
         FloorsClimbedRecordDto,
         HeightRecordDto,
+        LeanBodyMassRecordDto,
         StepRecordDto,
         WeightRecordDto,
         WheelchairPushesRecordDto;
@@ -196,6 +198,34 @@ extension WeightRecordDtoToDomain on WeightRecordDto {
       zoneOffsetSeconds: zoneOffsetSeconds,
       metadata: metadata.toDomain(),
       weight: weight.toDomain(),
+    );
+  }
+}
+
+/// Converts [LeanBodyMassRecord] to [LeanBodyMassRecordDto].
+@internal
+extension LeanBodyMassRecordDtoMapper on LeanBodyMassRecord {
+  LeanBodyMassRecordDto toDto() {
+    return LeanBodyMassRecordDto(
+      id: id.toDto(),
+      time: time.millisecondsSinceEpoch,
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      mass: mass.toDto(),
+    );
+  }
+}
+
+/// Converts [LeanBodyMassRecordDto] to [LeanBodyMassRecord].
+@internal
+extension LeanBodyMassRecordDtoToDomain on LeanBodyMassRecordDto {
+  LeanBodyMassRecord toDomain() {
+    return LeanBodyMassRecord(
+      id: id.toHealthRecordId(),
+      time: DateTime.fromMillisecondsSinceEpoch(time),
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      mass: mass.toDomain(),
     );
   }
 }

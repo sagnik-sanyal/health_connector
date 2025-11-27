@@ -72,4 +72,3 @@ final class BodyTemperatureRecord extends InstantHealthRecord {
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
 }
-

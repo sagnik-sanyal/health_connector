@@ -21,6 +21,7 @@ part 'floors_climbed_record.dart';
 part 'height_record.dart';
 part 'instant_health_record.dart';
 part 'interval_health_record.dart';
+part 'lean_body_mass_record.dart';
 part 'series_health_record.dart';
 part 'step_record.dart';
 part 'weight_record.dart';

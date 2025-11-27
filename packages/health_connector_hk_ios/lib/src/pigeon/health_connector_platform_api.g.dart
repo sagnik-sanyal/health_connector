@@ -164,6 +164,9 @@ enum HealthDataTypeDto {
 
   /// Wheelchair pushes data.
   wheelchairPushes,
+
+  /// Hydration (water intake) data.
+  hydration,
 }
 
 /// Represents the status of the health platform on the device.
@@ -1944,6 +1947,93 @@ class BodyTemperatureRecordDto {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Represents a hydration (water intake) record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect:
+///   `androidx.health.connect.client.records.HydrationRecord`
+/// - Domain: `HydrationRecord`
+class HydrationRecordDto {
+  HydrationRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.volume,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  String id;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Volume of water consumed during the interval.
+  VolumeDto volume;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      startTime,
+      endTime,
+      metadata,
+      volume,
+      startZoneOffsetSeconds,
+      endZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static HydrationRecordDto decode(Object result) {
+    result as List<Object?>;
+    return HydrationRecordDto(
+      id: result[0]! as String,
+      startTime: result[1]! as int,
+      endTime: result[2]! as int,
+      metadata: result[3]! as MetadataDto,
+      volume: result[4]! as VolumeDto,
+      startZoneOffsetSeconds: result[5] as int?,
+      endZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HydrationRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 /// Request to perform aggregation on health records.
 class AggregateRequestDto {
   AggregateRequestDto({
@@ -2016,6 +2106,7 @@ class AggregateResponseDto {
     this.activeCaloriesBurnedValue,
     this.bodyTemperatureValue,
     this.doubleValue,
+    this.hydrationValue,
     this.lengthValue,
     this.massValue,
     this.leanBodyMassValue,
@@ -2041,6 +2132,10 @@ class AggregateResponseDto {
   /// Used for primitive numeric types like steps and count operations.
   double? doubleValue;
 
+  /// Hydration aggregated value
+  /// (non-null when dataType == HYDRATION).
+  VolumeDto? hydrationValue;
+
   /// Length aggregated value
   /// (non-null when dataType == DISTANCE or dataType == HEIGHT).
   LengthDto? lengthValue;
@@ -2063,6 +2158,7 @@ class AggregateResponseDto {
       activeCaloriesBurnedValue,
       bodyTemperatureValue,
       doubleValue,
+      hydrationValue,
       lengthValue,
       massValue,
       leanBodyMassValue,
@@ -2082,10 +2178,11 @@ class AggregateResponseDto {
       activeCaloriesBurnedValue: result[2] as EnergyDto?,
       bodyTemperatureValue: result[3] as TemperatureDto?,
       doubleValue: result[4] as double?,
-      lengthValue: result[5] as LengthDto?,
-      massValue: result[6] as MassDto?,
-      leanBodyMassValue: result[7] as MassDto?,
-      wheelchairPushesValue: result[8] as NumericDto?,
+      hydrationValue: result[5] as VolumeDto?,
+      lengthValue: result[6] as LengthDto?,
+      massValue: result[7] as MassDto?,
+      leanBodyMassValue: result[8] as MassDto?,
+      wheelchairPushesValue: result[9] as NumericDto?,
     );
   }
 
@@ -2272,6 +2369,7 @@ class ReadRecordResponseDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -2298,6 +2396,10 @@ class ReadRecordResponseDto {
   /// Height record
   /// (non-null when dataType == HEIGHT).
   HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (non-null when dataType == HYDRATION).
+  HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (non-null when dataType == LEAN_BODY_MASS).
@@ -2330,6 +2432,7 @@ class ReadRecordResponseDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      hydrationRecord,
       leanBodyMassRecord,
       stepsRecord,
       weightRecord,
@@ -2351,12 +2454,13 @@ class ReadRecordResponseDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
-      stepsRecord: result[6] as StepRecordDto?,
-      weightRecord: result[7] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
+      hydrationRecord: result[5] as HydrationRecordDto?,
+      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
+      stepsRecord: result[7] as StepRecordDto?,
+      weightRecord: result[8] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -2463,6 +2567,7 @@ class ReadRecordsResponseDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.hydrationRecords,
     this.leanBodyMassRecords,
     this.nextPageToken,
     this.stepsRecords,
@@ -2490,6 +2595,10 @@ class ReadRecordsResponseDto {
   /// List of height records
   /// (non-null when dataType == HEIGHT).
   List<HeightRecordDto>? heightRecords;
+
+  /// List of hydration records
+  /// (non-null when dataType == HYDRATION).
+  List<HydrationRecordDto>? hydrationRecords;
 
   /// List of lean body mass records
   /// (non-null when dataType == LEAN_BODY_MASS).
@@ -2525,6 +2634,7 @@ class ReadRecordsResponseDto {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      hydrationRecords,
       leanBodyMassRecords,
       nextPageToken,
       stepsRecords,
@@ -2549,16 +2659,18 @@ class ReadRecordsResponseDto {
       floorsClimbedRecords: (result[3] as List<Object?>?)
           ?.cast<FloorsClimbedRecordDto>(),
       heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      leanBodyMassRecords: (result[5] as List<Object?>?)
+      hydrationRecords: (result[5] as List<Object?>?)
+          ?.cast<HydrationRecordDto>(),
+      leanBodyMassRecords: (result[6] as List<Object?>?)
           ?.cast<LeanBodyMassRecordDto>(),
-      nextPageToken: result[6] as String?,
-      stepsRecords: (result[7] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[8] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[9] as List<Object?>?)
+      nextPageToken: result[7] as String?,
+      stepsRecords: (result[8] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[9] as List<Object?>?)?.cast<WeightRecordDto>(),
+      bodyFatPercentageRecords: (result[10] as List<Object?>?)
           ?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[10] as List<Object?>?)
+      bodyTemperatureRecords: (result[11] as List<Object?>?)
           ?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[11] as List<Object?>?)
+      wheelchairPushesRecords: (result[12] as List<Object?>?)
           ?.cast<WheelchairPushesRecordDto>(),
     );
   }
@@ -2591,6 +2703,7 @@ class WriteRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -2617,6 +2730,10 @@ class WriteRecordRequestDto {
   /// Height record
   /// (only non-null when dataType == HEIGHT).
   HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (only non-null when dataType == HYDRATION).
+  HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (only non-null when dataType == LEAN_BODY_MASS).
@@ -2649,6 +2766,7 @@ class WriteRecordRequestDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      hydrationRecord,
       leanBodyMassRecord,
       stepsRecord,
       weightRecord,
@@ -2670,12 +2788,13 @@ class WriteRecordRequestDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
-      stepsRecord: result[6] as StepRecordDto?,
-      weightRecord: result[7] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
+      hydrationRecord: result[5] as HydrationRecordDto?,
+      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
+      stepsRecord: result[7] as StepRecordDto?,
+      weightRecord: result[8] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -2751,6 +2870,7 @@ class WriteRecordsRequestDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.hydrationRecords,
     this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -2780,6 +2900,10 @@ class WriteRecordsRequestDto {
   /// List of height records
   /// (non-null when dataTypes contains HEIGHT).
   List<HeightRecordDto>? heightRecords;
+
+  /// List of hydration records
+  /// (non-null when dataTypes contains HYDRATION).
+  List<HydrationRecordDto>? hydrationRecords;
 
   /// List of lean body mass records
   /// (non-null when dataTypes contains LEAN_BODY_MASS).
@@ -2812,6 +2936,7 @@ class WriteRecordsRequestDto {
       distanceRecords,
       floorsClimbedRecords,
       heightRecords,
+      hydrationRecords,
       leanBodyMassRecords,
       stepsRecords,
       weightRecords,
@@ -2835,15 +2960,17 @@ class WriteRecordsRequestDto {
       floorsClimbedRecords: (result[3] as List<Object?>?)
           ?.cast<FloorsClimbedRecordDto>(),
       heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      leanBodyMassRecords: (result[5] as List<Object?>?)
+      hydrationRecords: (result[5] as List<Object?>?)
+          ?.cast<HydrationRecordDto>(),
+      leanBodyMassRecords: (result[6] as List<Object?>?)
           ?.cast<LeanBodyMassRecordDto>(),
-      stepsRecords: (result[6] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[7] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[8] as List<Object?>?)
+      stepsRecords: (result[7] as List<Object?>?)?.cast<StepRecordDto>(),
+      weightRecords: (result[8] as List<Object?>?)?.cast<WeightRecordDto>(),
+      bodyFatPercentageRecords: (result[9] as List<Object?>?)
           ?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[9] as List<Object?>?)
+      bodyTemperatureRecords: (result[10] as List<Object?>?)
           ?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[10] as List<Object?>?)
+      wheelchairPushesRecords: (result[11] as List<Object?>?)
           ?.cast<WheelchairPushesRecordDto>(),
     );
   }
@@ -2923,6 +3050,7 @@ class UpdateRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -2953,6 +3081,11 @@ class UpdateRecordRequestDto {
   /// (only non-null when dataType == HEIGHT).
   /// The record must have a valid existing ID.
   HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (only non-null when dataType == HYDRATION).
+  /// The record must have a valid existing ID.
+  HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (only non-null when dataType == LEAN_BODY_MASS).
@@ -2991,6 +3124,7 @@ class UpdateRecordRequestDto {
       distanceRecord,
       floorsClimbedRecord,
       heightRecord,
+      hydrationRecord,
       leanBodyMassRecord,
       stepsRecord,
       weightRecord,
@@ -3012,12 +3146,13 @@ class UpdateRecordRequestDto {
       distanceRecord: result[2] as DistanceRecordDto?,
       floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
       heightRecord: result[4] as HeightRecordDto?,
-      leanBodyMassRecord: result[5] as LeanBodyMassRecordDto?,
-      stepsRecord: result[6] as StepRecordDto?,
-      weightRecord: result[7] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[8] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[9] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[10] as WheelchairPushesRecordDto?,
+      hydrationRecord: result[5] as HydrationRecordDto?,
+      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
+      stepsRecord: result[7] as StepRecordDto?,
+      weightRecord: result[8] as WeightRecordDto?,
+      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
+      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
+      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
     );
   }
 
@@ -3085,6 +3220,7 @@ class UpdateRecordResponseDto {
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is int) {
@@ -3222,47 +3358,50 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is BodyTemperatureRecordDto) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateRequestDto) {
+    } else if (value is HydrationRecordDto) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is AggregateResponseDto) {
+    } else if (value is AggregateRequestDto) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByIdsRequestDto) {
+    } else if (value is AggregateResponseDto) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
+    } else if (value is DeleteRecordsByIdsRequestDto) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordRequestDto) {
+    } else if (value is DeleteRecordsByTimeRangeRequestDto) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordResponseDto) {
+    } else if (value is ReadRecordRequestDto) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsRequestDto) {
+    } else if (value is ReadRecordResponseDto) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    } else if (value is ReadRecordsResponseDto) {
+    } else if (value is ReadRecordsRequestDto) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordRequestDto) {
+    } else if (value is ReadRecordsResponseDto) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordResponseDto) {
+    } else if (value is WriteRecordRequestDto) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsRequestDto) {
+    } else if (value is WriteRecordResponseDto) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    } else if (value is WriteRecordsResponseDto) {
+    } else if (value is WriteRecordsRequestDto) {
       buffer.putUint8(184);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordRequestDto) {
+    } else if (value is WriteRecordsResponseDto) {
       buffer.putUint8(185);
       writeValue(buffer, value.encode());
-    } else if (value is UpdateRecordResponseDto) {
+    } else if (value is UpdateRecordRequestDto) {
       buffer.putUint8(186);
+      writeValue(buffer, value.encode());
+    } else if (value is UpdateRecordResponseDto) {
+      buffer.putUint8(187);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -3378,32 +3517,34 @@ class _PigeonCodec extends StandardMessageCodec {
       case 172:
         return BodyTemperatureRecordDto.decode(readValue(buffer)!);
       case 173:
-        return AggregateRequestDto.decode(readValue(buffer)!);
+        return HydrationRecordDto.decode(readValue(buffer)!);
       case 174:
-        return AggregateResponseDto.decode(readValue(buffer)!);
+        return AggregateRequestDto.decode(readValue(buffer)!);
       case 175:
-        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
+        return AggregateResponseDto.decode(readValue(buffer)!);
       case 176:
-        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByIdsRequestDto.decode(readValue(buffer)!);
       case 177:
-        return ReadRecordRequestDto.decode(readValue(buffer)!);
+        return DeleteRecordsByTimeRangeRequestDto.decode(readValue(buffer)!);
       case 178:
-        return ReadRecordResponseDto.decode(readValue(buffer)!);
+        return ReadRecordRequestDto.decode(readValue(buffer)!);
       case 179:
-        return ReadRecordsRequestDto.decode(readValue(buffer)!);
+        return ReadRecordResponseDto.decode(readValue(buffer)!);
       case 180:
-        return ReadRecordsResponseDto.decode(readValue(buffer)!);
+        return ReadRecordsRequestDto.decode(readValue(buffer)!);
       case 181:
-        return WriteRecordRequestDto.decode(readValue(buffer)!);
+        return ReadRecordsResponseDto.decode(readValue(buffer)!);
       case 182:
-        return WriteRecordResponseDto.decode(readValue(buffer)!);
+        return WriteRecordRequestDto.decode(readValue(buffer)!);
       case 183:
-        return WriteRecordsRequestDto.decode(readValue(buffer)!);
+        return WriteRecordResponseDto.decode(readValue(buffer)!);
       case 184:
-        return WriteRecordsResponseDto.decode(readValue(buffer)!);
+        return WriteRecordsRequestDto.decode(readValue(buffer)!);
       case 185:
-        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+        return WriteRecordsResponseDto.decode(readValue(buffer)!);
       case 186:
+        return UpdateRecordRequestDto.decode(readValue(buffer)!);
+      case 187:
         return UpdateRecordResponseDto.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

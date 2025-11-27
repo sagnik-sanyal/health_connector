@@ -6,10 +6,12 @@ import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
+import androidx.health.connect.client.records.HydrationRecord
 import androidx.health.connect.client.records.LeanBodyMassRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
+import androidx.health.connect.client.units.Volume
 import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.Percentage
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
@@ -18,6 +20,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.BodyTemperatureRecordD
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeightRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.HydrationRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.LeanBodyMassRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.StepRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WeightRecordDto
@@ -292,6 +295,35 @@ internal fun WheelchairPushesRecord.toDto(): WheelchairPushesRecordDto {
         endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         pushes = count.toNumericDto()
+    )
+}
+
+/**
+ * Converts a [HydrationRecordDto] to a Health Connect [HydrationRecord] object.
+ */
+internal fun HydrationRecordDto.toHealthConnect(): HydrationRecord {
+    return HydrationRecord(
+        volume = volume.toHealthConnect(),
+        startTime = Instant.ofEpochMilli(startTime),
+        endTime = Instant.ofEpochMilli(endTime),
+        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [HydrationRecord] object to a [HydrationRecordDto].
+ */
+internal fun HydrationRecord.toDto(): HydrationRecordDto {
+    return HydrationRecordDto(
+        id = metadata.id,
+        startTime = startTime.toEpochMilli(),
+        endTime = endTime.toEpochMilli(),
+        startZoneOffsetSeconds = startZoneOffset?.totalSeconds?.toLong(),
+        endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        volume = volume.toDto()
     )
 }
 

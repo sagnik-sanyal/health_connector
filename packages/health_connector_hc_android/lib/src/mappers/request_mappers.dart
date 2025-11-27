@@ -8,6 +8,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthRecord,
         HeightRecord,
+        HydrationRecord,
         LeanBodyMassRecord,
         MeasurementUnit,
         ReadRecordRequest,
@@ -104,6 +105,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.height,
           heightRecord: record.toDto(),
         );
+      case final HydrationRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.hydration,
+          hydrationRecord: record.toDto(),
+        );
       case final LeanBodyMassRecord record:
         return WriteRecordRequestDto(
           dataType: HealthDataTypeDto.leanBodyMass,
@@ -163,6 +169,11 @@ extension HealthRecordToUpdateRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.height,
           heightRecord: record.toDto(),
         );
+      case final HydrationRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.hydration,
+          hydrationRecord: record.toDto(),
+        );
       case final LeanBodyMassRecord record:
         return UpdateRecordRequestDto(
           dataType: HealthDataTypeDto.leanBodyMass,
@@ -212,6 +223,7 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
     final distanceRecords = <DistanceRecord>[];
     final floorsClimbedRecords = <FloorsClimbedRecord>[];
     final heightRecords = <HeightRecord>[];
+    final hydrationRecords = <HydrationRecord>[];
     final leanBodyMassRecords = <LeanBodyMassRecord>[];
     final stepRecords = <StepRecord>[];
     final weightRecords = <WeightRecord>[];
@@ -239,6 +251,11 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
           heightRecords.add(heightRecord);
           if (!dataTypes.contains(HealthDataTypeDto.height)) {
             dataTypes.add(HealthDataTypeDto.height);
+          }
+        case final HydrationRecord hydrationRecord:
+          hydrationRecords.add(hydrationRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.hydration)) {
+            dataTypes.add(HealthDataTypeDto.hydration);
           }
         case final LeanBodyMassRecord leanBodyMassRecord:
           leanBodyMassRecords.add(leanBodyMassRecord);
@@ -293,6 +310,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
       heightRecords: heightRecords.isEmpty
           ? null
           : heightRecords.map((r) => r.toDto()).toList(),
+      hydrationRecords: hydrationRecords.isEmpty
+          ? null
+          : hydrationRecords.map((r) => r.toDto()).toList(),
       leanBodyMassRecords: leanBodyMassRecords.isEmpty
           ? null
           : leanBodyMassRecords.map((r) => r.toDto()).toList(),

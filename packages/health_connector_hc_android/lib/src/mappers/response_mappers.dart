@@ -9,6 +9,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HeightHealthDataType,
+        HydrationHealthDataType,
         LeanBodyMassHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
@@ -107,6 +108,17 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           );
         }
         return heightRecords.map((dto) => dto.toDomain()).cast<R>().toList();
+
+      case HydrationHealthDataType _:
+        final hydrationRecords = responseDto.hydrationRecords;
+        if (hydrationRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected hydrationRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return hydrationRecords.map((dto) => dto.toDomain()).cast<R>().toList();
 
       case LeanBodyMassHealthDataType _:
         final leanBodyMassRecords = responseDto.leanBodyMassRecords;
@@ -249,6 +261,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
         }
         return value.toDomain() as U;
 
+      case HydrationHealthDataType _:
+        final value = hydrationValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected hydrationValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
+
       case BodyFatPercentageHealthDataType _:
         throw const HealthConnectorException(
           HealthConnectorErrorCode.parsingError,
@@ -370,6 +393,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected heightRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case HydrationHealthDataType _:
+        final record = hydrationRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected hydrationRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

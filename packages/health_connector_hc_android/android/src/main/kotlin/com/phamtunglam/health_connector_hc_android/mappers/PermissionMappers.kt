@@ -7,6 +7,7 @@ import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
+import androidx.health.connect.client.records.HydrationRecord
 import androidx.health.connect.client.records.LeanBodyMassRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -63,6 +64,13 @@ internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
             when (this.accessType) {
                 PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(HeightRecord::class)
                 PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(HeightRecord::class)
+            }
+        }
+
+        HealthDataTypeDto.HYDRATION -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(HydrationRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(HydrationRecord::class)
             }
         }
 
@@ -133,6 +141,7 @@ internal fun String.toHealthDataPermissionDto(): HealthDataPermissionDto? {
         "DISTANCE" -> HealthDataTypeDto.DISTANCE
         "FLOORS_CLIMBED" -> HealthDataTypeDto.FLOORS_CLIMBED
         "HEIGHT" -> HealthDataTypeDto.HEIGHT
+        "HYDRATION" -> HealthDataTypeDto.HYDRATION
         "LEAN_BODY_MASS" -> HealthDataTypeDto.LEAN_BODY_MASS
         "BODY_FAT_PERCENTAGE" -> HealthDataTypeDto.BODY_FAT_PERCENTAGE
         "BODY_TEMPERATURE" -> HealthDataTypeDto.BODY_TEMPERATURE

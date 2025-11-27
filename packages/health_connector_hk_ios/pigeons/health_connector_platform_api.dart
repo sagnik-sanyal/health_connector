@@ -126,6 +126,9 @@ enum HealthDataTypeDto {
 
   /// Wheelchair pushes data.
   wheelchairPushes,
+
+  /// Hydration (water intake) data.
+  hydration,
 }
 
 /// Represents the status of the health platform on the device.
@@ -813,6 +816,48 @@ class BodyTemperatureRecordDto {
   final int? zoneOffsetSeconds;
 }
 
+/// Represents a hydration (water intake) record for platform transfer.
+///
+/// Maps to:
+/// - Health Connect:
+///   `androidx.health.connect.client.records.HydrationRecord`
+/// - Domain: `HydrationRecord`
+class HydrationRecordDto {
+  HydrationRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.volume,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Start time in milliseconds since epoch (UTC).
+  final int startTime;
+
+  /// End time in milliseconds since epoch (UTC).
+  final int endTime;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Volume of water consumed during the interval.
+  final VolumeDto volume;
+
+  /// Timezone offset in seconds for start time (optional).
+  final int? startZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for end time (optional).
+  final int? endZoneOffsetSeconds;
+}
+
 // ============================================================================
 // OPERATION REQUEST/RESPONSE DTOs
 // ============================================================================
@@ -852,6 +897,7 @@ class AggregateResponseDto {
     this.activeCaloriesBurnedValue,
     this.bodyTemperatureValue,
     this.doubleValue,
+    this.hydrationValue,
     this.lengthValue,
     this.leanBodyMassValue,
     this.massValue,
@@ -876,6 +922,10 @@ class AggregateResponseDto {
   ///
   /// Used for primitive numeric types like steps and count operations.
   final double? doubleValue;
+
+  /// Hydration aggregated value
+  /// (non-null when dataType == HYDRATION).
+  final VolumeDto? hydrationValue;
 
   /// Length aggregated value
   /// (non-null when dataType == DISTANCE or dataType == HEIGHT).
@@ -955,6 +1005,7 @@ class ReadRecordResponseDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -979,6 +1030,10 @@ class ReadRecordResponseDto {
   /// Height record
   /// (non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (non-null when dataType == HYDRATION).
+  final HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (non-null when dataType == LEAN_BODY_MASS).
@@ -1052,6 +1107,7 @@ class ReadRecordsResponseDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.hydrationRecords,
     this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -1077,6 +1133,10 @@ class ReadRecordsResponseDto {
   /// List of height records
   /// (non-null when dataType == HEIGHT).
   final List<HeightRecordDto>? heightRecords;
+
+  /// List of hydration records
+  /// (non-null when dataType == HYDRATION).
+  final List<HydrationRecordDto>? hydrationRecords;
 
   /// List of lean body mass records
   /// (non-null when dataType == LEAN_BODY_MASS).
@@ -1123,6 +1183,7 @@ class WriteRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -1147,6 +1208,10 @@ class WriteRecordRequestDto {
   /// Height record
   /// (only non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (only non-null when dataType == HYDRATION).
+  final HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (only non-null when dataType == LEAN_BODY_MASS).
@@ -1197,6 +1262,7 @@ class WriteRecordsRequestDto {
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
+    this.hydrationRecords,
     this.leanBodyMassRecords,
     this.stepsRecords,
     this.weightRecords,
@@ -1224,6 +1290,10 @@ class WriteRecordsRequestDto {
   /// List of height records
   /// (non-null when dataTypes contains HEIGHT).
   final List<HeightRecordDto>? heightRecords;
+
+  /// List of hydration records
+  /// (non-null when dataTypes contains HYDRATION).
+  final List<HydrationRecordDto>? hydrationRecords;
 
   /// List of lean body mass records
   /// (non-null when dataTypes contains LEAN_BODY_MASS).
@@ -1279,6 +1349,7 @@ class UpdateRecordRequestDto {
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
+    this.hydrationRecord,
     this.leanBodyMassRecord,
     this.stepsRecord,
     this.weightRecord,
@@ -1307,6 +1378,11 @@ class UpdateRecordRequestDto {
   /// (only non-null when dataType == HEIGHT).
   /// The record must have a valid existing ID.
   final HeightRecordDto? heightRecord;
+
+  /// Hydration record
+  /// (only non-null when dataType == HYDRATION).
+  /// The record must have a valid existing ID.
+  final HydrationRecordDto? hydrationRecord;
 
   /// Lean body mass record
   /// (only non-null when dataType == LEAN_BODY_MASS).

@@ -30,12 +30,13 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         HealthRecord,
         HealthRecordId,
         HeightRecord,
+        HydrationRecord,
         LeanBodyMassRecord,
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Energy, Length, Mass, MeasurementUnit, Numeric, Temperature;
+    show Energy, Length, Mass, MeasurementUnit, Numeric, Temperature, Volume;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
     show HealthDataPermission, HealthDataPermissionAccessType;
 import 'package:health_connector_core/src/models/requests/aggregate_request.dart'
@@ -54,6 +55,7 @@ part 'body_temperature_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
 part 'height_health_data_type.dart';
+part 'hydration_health_data_type.dart';
 part 'lean_body_mass_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
@@ -204,6 +206,14 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// new measurements.
   static const leanBodyMass = LeanBodyMassHealthDataType();
 
+  /// Hydration (water intake) data type.
+  ///
+  /// Represents the volume of water consumed over a time interval.
+  /// Tracks water consumption to help users monitor daily hydration levels
+  /// and maintain healthy fluid intake. Supports both reading existing
+  /// hydration data and writing new measurements.
+  static const hydration = HydrationHealthDataType();
+
   /// Returns a list of all available health data types.
   ///
   /// This list contains all data types currently supported by the plugin.
@@ -215,6 +225,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
     distance,
     floorsClimbed,
     height,
+    hydration,
     leanBodyMass,
     steps,
     weight,

@@ -109,6 +109,14 @@ extension AggregationMetricDto {
                 // HealthKit doesn't provide direct aggregation for these on wheelchair pushes
                 return []
             }
+        case .hydration:
+            switch self {
+            case .sum:
+                return .cumulativeSum
+            case .avg, .min, .max, .count:
+                // Only SUM is supported for hydration (matches Android Health Connect behavior)
+                return []
+            }
         case .leanBodyMass:
             // Lean body mass does not support aggregation
             throw HealthConnectorErrors.invalidArgument(
@@ -214,6 +222,15 @@ extension AggregationMetricDto {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "\(metricName) not directly supported for wheelchairPushes in HealthKit",
                     details: "\(metricName) not directly supported for wheelchairPushes in HealthKit."
+                )
+            }
+        case .hydration:
+            // Only SUM is supported for hydration (matches Android Health Connect behavior)
+            if self != .sum {
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for hydration in HealthKit",
+                    details: "\(metricName) not directly supported for hydration in HealthKit."
                 )
             }
         case .leanBodyMass:

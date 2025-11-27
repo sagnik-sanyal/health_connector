@@ -7,6 +7,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthRecordId,
         HeightRecord,
+        HydrationRecord,
         LeanBodyMassRecord,
         StepRecord,
         WeightRecord,
@@ -22,6 +23,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
         DistanceRecordDto,
         FloorsClimbedRecordDto,
         HeightRecordDto,
+        HydrationRecordDto,
         LeanBodyMassRecordDto,
         StepRecordDto,
         WeightRecordDto,
@@ -342,6 +344,38 @@ extension WheelchairPushesRecordDtoToDomain on WheelchairPushesRecordDto {
       endZoneOffsetSeconds: endZoneOffsetSeconds,
       metadata: metadata.toDomain(),
       pushes: pushes.toDomain(),
+    );
+  }
+}
+
+/// Converts [HydrationRecord] to [HydrationRecordDto].
+@internal
+extension HydrationRecordDtoMapper on HydrationRecord {
+  HydrationRecordDto toDto() {
+    return HydrationRecordDto(
+      id: id.toDto(),
+      startTime: startTime.millisecondsSinceEpoch,
+      endTime: endTime.millisecondsSinceEpoch,
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      volume: volume.toDto(),
+    );
+  }
+}
+
+/// Converts [HydrationRecordDto] to [HydrationRecord].
+@internal
+extension HydrationRecordDtoToDomain on HydrationRecordDto {
+  HydrationRecord toDomain() {
+    return HydrationRecord(
+      id: id.toHealthRecordId(),
+      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
+      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      volume: volume.toDomain(),
     );
   }
 }

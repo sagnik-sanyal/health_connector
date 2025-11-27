@@ -5,7 +5,7 @@ import 'package:health_connector_core/src/models/health_platform.dart'
 import 'package:health_connector_core/src/models/health_platform_data.dart'
     show HealthPlatformData;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Energy, Length, Mass, Numeric, Temperature;
+    show Energy, Length, Mass, Numeric, Temperature, Volume;
 import 'package:health_connector_core/src/models/metadata/metadata.dart'
     show Metadata;
 import 'package:health_connector_core/src/utils/datetime.dart'
@@ -19,6 +19,7 @@ part 'body_temperature_record.dart';
 part 'distance_record.dart';
 part 'floors_climbed_record.dart';
 part 'height_record.dart';
+part 'hydration_record.dart';
 part 'instant_health_record.dart';
 part 'interval_health_record.dart';
 part 'lean_body_mass_record.dart';

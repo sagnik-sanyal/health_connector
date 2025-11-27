@@ -6,6 +6,7 @@ import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
+import androidx.health.connect.client.records.HydrationRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
@@ -78,6 +79,16 @@ internal fun AggregationMetricDto.toHealthConnectMetric(dataType: HealthDataType
                 AggregationMetricDto.MIN -> HeightRecord.HEIGHT_MIN
                 AggregationMetricDto.MAX -> HeightRecord.HEIGHT_MAX
                 AggregationMetricDto.SUM,
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
+            }
+        }
+
+        HealthDataTypeDto.HYDRATION -> {
+            when (this) {
+                AggregationMetricDto.SUM -> HydrationRecord.VOLUME_TOTAL
+                AggregationMetricDto.MIN,
+                AggregationMetricDto.MAX,
+                AggregationMetricDto.AVG,
                 AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
             }
         }

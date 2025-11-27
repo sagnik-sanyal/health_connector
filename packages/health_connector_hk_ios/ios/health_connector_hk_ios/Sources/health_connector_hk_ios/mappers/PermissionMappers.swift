@@ -32,6 +32,8 @@ extension HealthDataPermissionDto {
             return HKQuantityType.quantityType(forIdentifier: .flightsClimbed)!
         case .height:
             return HKQuantityType.quantityType(forIdentifier: .height)!
+        case .hydration:
+            return HKQuantityType.quantityType(forIdentifier: .dietaryWater)!
         case .leanBodyMass:
             return HKQuantityType.quantityType(forIdentifier: .leanBodyMass)!
         case .bodyFatPercentage:

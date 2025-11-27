@@ -1,3 +1,3 @@
 library health_connector_logger;
 
-export 'src/health_connector_logger.dart';
+export 'src/health_connector_logger.dart' hide LogLevel;

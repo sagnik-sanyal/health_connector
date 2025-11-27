@@ -318,4 +318,34 @@ extension Int64 {
     }
 }
 
+// ==================== PERCENTAGE MAPPERS ====================
+
+extension PercentageDto {
+    /**
+     * Converts this DTO to a HealthKit `HKQuantity`.
+     */
+    func toHealthKit() -> HKQuantity {
+        let percentValue: Double
+        switch self.unit {
+        case .decimal:
+            percentValue = value
+        case .whole:
+            percentValue = value / 100.0
+        }
+        return HKQuantity(unit: .percent(), doubleValue: percentValue)
+    }
+}
+
+extension HKQuantity {
+    /**
+     * Converts this HealthKit quantity to a `PercentageDto`.
+     *
+     * Uses decimal as the transfer unit for consistency (0.0 to 1.0).
+     */
+    func toPercentageDto() -> PercentageDto {
+        let decimalValue = doubleValue(for: .percent())
+        return PercentageDto(unit: .decimal, value: decimalValue)
+    }
+}
+
 

@@ -13,6 +13,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         LeanBodyMassHealthDataType,
         Length,
         Mass,
+        Percentage,
         MeasurementUnit,
         Numeric,
         StepsHealthDataType,
@@ -126,13 +127,13 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
-  Numeric? _parseBodyFatPercentage(String value) {
+  Percentage? _parseBodyFatPercentage(String value) {
     final percentageValue = double.tryParse(value);
     if (percentageValue != null &&
         percentageValue >= 0 &&
         percentageValue <= 100) {
-      // Convert percentage (0-100) to decimal (0-1)
-      return Numeric(percentageValue / 100);
+      // Convert percentage (0-100) to Percentage type
+      return Percentage.fromWhole(percentageValue);
     }
     return null;
   }

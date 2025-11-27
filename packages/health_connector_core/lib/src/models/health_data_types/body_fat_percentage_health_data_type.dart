@@ -7,7 +7,7 @@ part of 'health_data_type.dart';
 @Since('0.1.0')
 @immutable
 final class BodyFatPercentageHealthDataType
-    extends HealthDataType<BodyFatPercentageRecord, Numeric>
+    extends HealthDataType<BodyFatPercentageRecord, Percentage>
     implements
         ReadableHealthDataType<BodyFatPercentageRecord>,
         WriteableHealthDataType {

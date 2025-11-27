@@ -16,6 +16,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         Mass,
         MeasurementUnit,
         Numeric,
+        Percentage,
         PermissionStatus,
         RecordingMethod,
         ActiveCaloriesBurnedHealthDataType,
@@ -251,6 +252,7 @@ extension MeasurementUnitUI on MeasurementUnit {
     return switch (this) {
       Mass _ => AppTexts.mass,
       Numeric _ => AppTexts.numeric,
+      Percentage _ => AppTexts.percentage,
       Length _ => AppTexts.length,
       Energy _ => AppTexts.energy,
       BloodGlucose _ => AppTexts.bloodGlucose,
@@ -267,6 +269,7 @@ extension MeasurementUnitUI on MeasurementUnit {
     return switch (this) {
       Mass _ => AppIcons.mass,
       Numeric _ => AppIcons.numeric,
+      Percentage _ => AppIcons.percent,
       Length _ => AppIcons.length,
       Energy _ => AppIcons.energy,
       BloodGlucose _ => AppIcons.bloodGlucose,

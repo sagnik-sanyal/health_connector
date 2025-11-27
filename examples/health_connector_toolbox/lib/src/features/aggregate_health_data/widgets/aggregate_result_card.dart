@@ -7,6 +7,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         Mass,
         MeasurementUnit,
         Numeric,
+        Percentage,
         Power,
         Pressure,
         Temperature,
@@ -150,10 +151,17 @@ final class AggregateResultCard extends StatelessWidget {
               ),
         ),
         Numeric() => Text(
-          // Format as percentage if value is between 0 and 1
-          value.value >= 0 && value.value <= 1
-              ? '${(value.value * 100).toStringAsFixed(2)}%'
-              : value.value.toStringAsFixed(2),
+          value.value.toStringAsFixed(2),
+          style:
+              Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
+        ),
+        Percentage() => Text(
+          '${value.asWhole.toStringAsFixed(2)}%',
           style:
               Theme.of(
                 context,

@@ -36,7 +36,15 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         WeightRecord,
         WheelchairPushesRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Energy, Length, Mass, MeasurementUnit, Numeric, Temperature, Volume;
+    show
+        Energy,
+        Length,
+        Mass,
+        MeasurementUnit,
+        Numeric,
+        Percentage,
+        Temperature,
+        Volume;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
     show HealthDataPermission, HealthDataPermissionAccessType;
 import 'package:health_connector_core/src/models/requests/aggregate_request.dart'

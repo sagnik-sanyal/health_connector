@@ -11,6 +11,7 @@ part 'energy.dart';
 part 'length.dart';
 part 'mass.dart';
 part 'numeric.dart';
+part 'percentage.dart';
 part 'power.dart';
 part 'pressure.dart';
 part 'temperature.dart';

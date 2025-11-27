@@ -152,6 +152,15 @@ enum MassUnitDto { grams, kilograms, ounces, pounds }
 /// for consistency with other unit types.
 enum NumericUnitDto { numeric }
 
+/// Percentage unit types supported by the plugin.
+enum PercentageUnitDto {
+  /// Percentage as a decimal value (0.0 to 1.0).
+  decimal,
+
+  /// Percentage as a whole number (0 to 100).
+  whole,
+}
+
 /// Represents the type of access requested for health data.
 enum PermissionAccessTypeDto {
   /// Read access to health data.
@@ -262,6 +271,20 @@ class NumericDto {
   final NumericUnitDto unit;
 
   /// The numeric value.
+  final double value;
+}
+
+/// Represents a percentage measurement for platform transfer.
+///
+/// Percentage is used for body fat percentage, blood oxygen saturation,
+/// and other percentage-based health data.
+class PercentageDto {
+  PercentageDto({required this.value, required this.unit});
+
+  /// The unit in which the value is expressed.
+  final PercentageUnitDto unit;
+
+  /// The numeric value of the percentage.
   final double value;
 }
 
@@ -776,8 +799,8 @@ class BodyFatPercentageRecordDto {
   /// Measurement time in milliseconds since epoch (UTC).
   final int time;
 
-  /// Body fat percentage measurement (as decimal 0-1, e.g., 0.25 = 25%).
-  final NumericDto percentage;
+  /// Body fat percentage measurement.
+  final PercentageDto percentage;
 
   /// Timezone offset in seconds for measurement time (optional).
   final int? zoneOffsetSeconds;

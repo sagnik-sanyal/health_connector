@@ -153,6 +153,7 @@ abstract final class AppTexts {
   // ==========================================================================
   static const String mass = 'Mass';
   static const String numeric = 'Numeric';
+  static const String percentage = 'Percentage';
   static const String length = 'Length';
   static const String energy = 'Energy';
   static const String bloodGlucose = 'Blood Glucose';

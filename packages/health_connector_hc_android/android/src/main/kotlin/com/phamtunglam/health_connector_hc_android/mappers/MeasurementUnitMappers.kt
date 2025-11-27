@@ -4,6 +4,7 @@ import androidx.health.connect.client.units.BloodGlucose
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
+import androidx.health.connect.client.units.Percentage
 import androidx.health.connect.client.units.Power
 import androidx.health.connect.client.units.Pressure
 import androidx.health.connect.client.units.Temperature
@@ -19,6 +20,8 @@ import com.phamtunglam.health_connector_hc_android.pigeon.MassDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MassUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.NumericDto
 import com.phamtunglam.health_connector_hc_android.pigeon.NumericUnitDto
+import com.phamtunglam.health_connector_hc_android.pigeon.PercentageDto
+import com.phamtunglam.health_connector_hc_android.pigeon.PercentageUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PowerDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PowerUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PressureDto
@@ -265,6 +268,28 @@ internal fun Double.toNumericDto(): NumericDto {
     return NumericDto(
         value = this,
         unit = NumericUnitDto.NUMERIC
+    )
+}
+
+/**
+ * Converts a [PercentageDto] to a Health Connect [Percentage] object.
+ */
+internal fun PercentageDto.toHealthConnect(): Percentage {
+    return when (unit) {
+        PercentageUnitDto.DECIMAL -> Percentage(value)
+        PercentageUnitDto.WHOLE -> Percentage(value / 100.0)
+    }
+}
+
+/**
+ * Converts a Health Connect [Percentage] object to a [PercentageDto].
+ *
+ * Uses decimal as the transfer unit for consistency (0.0 to 1.0).
+ */
+internal fun Percentage.toDto(): PercentageDto {
+    return PercentageDto(
+        value = value,
+        unit = PercentageUnitDto.DECIMAL
     )
 }
 

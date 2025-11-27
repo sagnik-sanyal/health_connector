@@ -138,7 +138,7 @@ final class HealthRecordListTile extends StatelessWidget {
         InstantHealthRecordTile<BodyFatPercentageRecord>(
           record: record,
           icon: AppIcons.percent,
-          title: '${(record.percentage.value * 100).toStringAsFixed(2)}%',
+          title: '${record.percentage.asWhole.toStringAsFixed(2)}%',
           subtitleBuilder: (r, ctx) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -158,11 +158,11 @@ final class HealthRecordListTile extends StatelessWidget {
           detailRowsBuilder: (r, ctx) => [
             HealthRecordDetailRow(
               label: AppTexts.bodyFatPercentagePercent,
-              value: '${(r.percentage.value * 100).toStringAsFixed(2)}%',
+              value: '${r.percentage.asWhole.toStringAsFixed(2)}%',
             ),
             HealthRecordDetailRow(
               label: 'Decimal',
-              value: r.percentage.value.toStringAsFixed(4),
+              value: r.percentage.asDecimal.toStringAsFixed(4),
             ),
           ],
           onDelete: onDelete,

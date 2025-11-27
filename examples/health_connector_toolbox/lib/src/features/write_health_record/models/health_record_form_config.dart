@@ -19,6 +19,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HydrationRecord,
         LeanBodyMassHealthDataType,
         LeanBodyMassRecord,
+        Percentage,
         Length,
         Mass,
         MeasurementUnit,
@@ -176,7 +177,7 @@ final class HeightFormConfig extends HealthRecordFormConfig {
 ///
 /// Body fat percentage is an instant-based record that requires:
 /// - Time (single timestamp)
-/// - Body fat percentage value (as decimal 0-1, e.g., 0.25 = 25%)
+/// - Body fat percentage value (Percentage type)
 final class BodyFatPercentageFormConfig extends HealthRecordFormConfig {
   const BodyFatPercentageFormConfig();
 
@@ -190,11 +191,11 @@ final class BodyFatPercentageFormConfig extends HealthRecordFormConfig {
     required Metadata metadata,
     DateTime? endDateTime,
   }) {
-    final numericValue = value as Numeric;
+    final percentageValue = value as Percentage;
 
     return BodyFatPercentageRecord(
       time: startDateTime,
-      percentage: numericValue,
+      percentage: percentageValue,
       metadata: metadata,
     );
   }

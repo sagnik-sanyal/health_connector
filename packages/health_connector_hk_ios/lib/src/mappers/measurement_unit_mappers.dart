@@ -9,7 +9,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         Volume,
         Power,
         BloodGlucose,
-        Numeric;
+        Numeric,
+        Percentage;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
     show
         MassDto,
@@ -23,6 +24,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         PowerDto,
         BloodGlucoseDto,
         NumericDto,
+        PercentageDto,
         EnergyUnitDto,
         LengthUnitDto,
         TemperatureUnitDto,
@@ -31,7 +33,8 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         VolumeUnitDto,
         PowerUnitDto,
         BloodGlucoseUnitDto,
-        NumericUnitDto;
+        NumericUnitDto,
+        PercentageUnitDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [Mass] to [MassDto].
@@ -273,5 +276,27 @@ extension NumericDtoMapper on Numeric {
 extension NumericDtoToDomain on NumericDto {
   Numeric toDomain() {
     return Numeric(value);
+  }
+}
+
+/// Converts [Percentage] to [PercentageDto].
+@internal
+extension PercentageDtoMapper on Percentage {
+  PercentageDto toDto() {
+    // Uses decimal as the transfer unit for consistency.
+    return PercentageDto(value: asDecimal, unit: PercentageUnitDto.decimal);
+  }
+}
+
+/// Converts [PercentageDto] to [Percentage].
+@internal
+extension PercentageDtoToDomain on PercentageDto {
+  Percentage toDomain() {
+    switch (unit) {
+      case PercentageUnitDto.decimal:
+        return Percentage.fromDecimal(value);
+      case PercentageUnitDto.whole:
+        return Percentage.fromWhole(value);
+    }
   }
 }

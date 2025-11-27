@@ -224,7 +224,7 @@ internal fun HeightRecord.toDto(): HeightRecordDto {
  */
 internal fun BodyFatPercentageRecordDto.toHealthConnect(): BodyFatRecord {
     return BodyFatRecord(
-        percentage = Percentage(percentage.value),
+        percentage = percentage.toHealthConnect(),
         time = Instant.ofEpochMilli(time),
         zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
         metadata = metadata.toHealthConnect(),
@@ -240,7 +240,7 @@ internal fun BodyFatRecord.toDto(): BodyFatPercentageRecordDto {
         time = time.toEpochMilli(),
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
-        percentage = percentage.value.toNumericDto()
+        percentage = percentage.toDto()
     )
 }
 

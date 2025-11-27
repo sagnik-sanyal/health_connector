@@ -435,7 +435,7 @@ extension BodyFatPercentageRecordDto {
             )
         }
 
-        let quantity = HKQuantity(unit: .percent(), doubleValue: percentage.value)
+        let quantity = percentage.toHealthKit()
         let date = Date(timeIntervalSince1970: TimeInterval(time) / 1000.0)
 
         return HKQuantitySample(
@@ -461,9 +461,6 @@ extension HKQuantitySample {
             return nil
         }
 
-        let unit = HKUnit.percent()
-        let value = quantity.doubleValue(for: unit)
-
         return BodyFatPercentageRecordDto(
             id: uuid.uuidString,
             metadata: (metadata ?? [:]).toMetadataDto(
@@ -471,7 +468,7 @@ extension HKQuantitySample {
                 device: device
             ),
             time: Int64(startDate.timeIntervalSince1970 * 1000),
-            percentage: NumericDto(unit: NumericUnitDto.numeric, value: value),
+            percentage: quantity.toPercentageDto(),
             zoneOffsetSeconds: nil // HealthKit doesn't store zone offsets
         )
     }

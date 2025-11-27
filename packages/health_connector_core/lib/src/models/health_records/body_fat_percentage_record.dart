@@ -17,7 +17,7 @@ part of 'health_record.dart';
 /// final record = BodyFatPercentageRecord(
 ///   id: HealthRecordId.none,
 ///   time: DateTime.now(),
-///   percentage: Numeric(0.25), // 25% body fat
+///   percentage: Percentage.fromWhole(25), // 25% body fat
 ///   metadata: Metadata.automaticallyRecorded(
 ///     dataOrigin: DataOrigin(packageName: 'com.example.app'),
 ///   ),
@@ -54,8 +54,8 @@ final class BodyFatPercentageRecord extends InstantHealthRecord {
   /// - 0.25 = 25% body fat
   /// - 1.0 = 100% body fat
   ///
-  /// To display in UI, multiply by 100: `percentage.value * 100`
-  final Numeric percentage;
+  /// To display in UI, use: `percentage.asWhole`
+  final Percentage percentage;
 
   @override
   bool operator ==(Object other) =>
@@ -80,7 +80,7 @@ final class BodyFatPercentageRecord extends InstantHealthRecord {
   String toString() =>
       'BodyFatPercentageRecord('
       'id: $id, '
-      'percentage: ${percentage.value * 100}%, '
+      'percentage: ${percentage.asWhole}%, '
       'time: $time'
       ')';
 

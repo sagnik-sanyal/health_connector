@@ -2,6 +2,7 @@ package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
@@ -63,6 +64,13 @@ internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
             }
         }
 
+        HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(BodyFatRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(BodyFatRecord::class)
+            }
+        }
+
         HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
             when (this.accessType) {
                 PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(WheelchairPushesRecord::class)
@@ -109,6 +117,7 @@ internal fun String.toHealthDataPermissionDto(): HealthDataPermissionDto? {
         "DISTANCE" -> HealthDataTypeDto.DISTANCE
         "FLOORS_CLIMBED" -> HealthDataTypeDto.FLOORS_CLIMBED
         "HEIGHT" -> HealthDataTypeDto.HEIGHT
+        "BODY_FAT_PERCENTAGE" -> HealthDataTypeDto.BODY_FAT_PERCENTAGE
         "WHEELCHAIR_PUSHES" -> HealthDataTypeDto.WHEELCHAIR_PUSHES
         else -> return null // Unknown data type, skip it
     }

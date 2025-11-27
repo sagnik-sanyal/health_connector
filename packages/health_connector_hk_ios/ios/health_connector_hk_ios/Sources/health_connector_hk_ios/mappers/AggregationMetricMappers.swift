@@ -66,6 +66,19 @@ extension AggregationMetricDto {
                 return []
             }
 
+        case .bodyFatPercentage:
+            switch self {
+            case .avg:
+                return .discreteAverage
+            case .min:
+                return .discreteMin
+            case .max:
+                return .discreteMax
+            case .sum, .count:
+                // SUM not meaningful for body fat percentage, COUNT requires reading records
+                return []
+            }
+
         case .distance:
             switch self {
             case .sum:
@@ -149,6 +162,18 @@ extension AggregationMetricDto {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "\(metricName) not directly supported for height in HealthKit",
                     details: "\(metricName) not directly supported for height in HealthKit."
+                )
+            }
+        case .bodyFatPercentage:
+            // Only AVG, MIN, MAX are supported for body fat percentage (matches Android Health Connect behavior)
+            switch self {
+            case .avg, .min, .max:
+                break // These are supported
+            case .sum, .count:
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for bodyFatPercentage in HealthKit",
+                    details: "\(metricName) not directly supported for bodyFatPercentage in HealthKit."
                 )
             }
         case .distance:

@@ -14,6 +14,7 @@ import 'package:health_connector_core/src/utils/validation.dart' show require;
 import 'package:meta/meta.dart' show immutable, internal;
 
 part 'active_calories_burned_record.dart';
+part 'body_fat_percentage_record.dart';
 part 'distance_record.dart';
 part 'floors_climbed_record.dart';
 part 'height_record.dart';

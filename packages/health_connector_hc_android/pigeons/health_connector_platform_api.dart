@@ -169,6 +169,9 @@ enum HealthDataTypeDto {
   /// Body height data.
   height,
 
+  /// Body fat percentage data.
+  bodyFatPercentage,
+
   /// Wheelchair pushes data.
   wheelchairPushes,
 }
@@ -775,6 +778,39 @@ class HeightRecordDto {
   final int? zoneOffsetSeconds;
 }
 
+/// DTO for body fat percentage health data.
+///
+/// Maps to:
+/// - Health Connect: `androidx.health.connect.client.records.BodyFatRecord`
+/// - Domain: `BodyFatPercentageRecord`
+class BodyFatPercentageRecordDto {
+  BodyFatPercentageRecordDto({
+    required this.id,
+    required this.time,
+    required this.metadata,
+    required this.percentage,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  final int time;
+
+  /// Body fat percentage measurement (as decimal 0-1, e.g., 0.25 = 25%).
+  final NumericDto percentage;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  final int? zoneOffsetSeconds;
+}
+
 // ============================================================================
 // OPERATION REQUEST/RESPONSE DTOs
 // ============================================================================
@@ -899,6 +935,7 @@ class ReadRecordResponseDto {
   ReadRecordResponseDto({
     required this.dataType,
     this.activeCaloriesBurnedRecord,
+    this.bodyFatPercentageRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -927,6 +964,9 @@ class ReadRecordResponseDto {
 
   /// Weight record (non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
+
+  /// Body fat percentage record (non-null when dataType == BODY_FAT_PERCENTAGE).
+  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
   /// Wheelchair pushes record (non-null when dataType == WHEELCHAIR_PUSHES).
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
@@ -974,6 +1014,7 @@ class ReadRecordsResponseDto {
   ReadRecordsResponseDto({
     required this.dataType,
     this.activeCaloriesBurnedRecords,
+    this.bodyFatPercentageRecords,
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
@@ -1007,6 +1048,9 @@ class ReadRecordsResponseDto {
   /// List of weight records (non-null when dataType == WEIGHT).
   final List<WeightRecordDto>? weightRecords;
 
+  /// List of body fat percentage records (non-null when dataType == BODY_FAT_PERCENTAGE).
+  final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
+
   /// List of wheelchair pushes records (non-null when dataType == WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
 
@@ -1023,6 +1067,7 @@ class WriteRecordRequestDto {
   WriteRecordRequestDto({
     required this.dataType,
     this.activeCaloriesBurnedRecord,
+    this.bodyFatPercentageRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -1052,6 +1097,9 @@ class WriteRecordRequestDto {
   /// Weight record (only non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
 
+  /// Body fat percentage record (only non-null when dataType == BODY_FAT_PERCENTAGE).
+  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
+
   /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
@@ -1075,6 +1123,7 @@ class WriteRecordsRequestDto {
   WriteRecordsRequestDto({
     required this.dataTypes,
     this.activeCaloriesBurnedRecords,
+    this.bodyFatPercentageRecords,
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
@@ -1107,6 +1156,9 @@ class WriteRecordsRequestDto {
   /// List of weight records (non-null when dataTypes contains WEIGHT).
   final List<WeightRecordDto>? weightRecords;
 
+  /// List of body fat percentage records (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
+  final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
+
   /// List of wheelchair pushes records (non-null when dataTypes contains WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
 
@@ -1135,6 +1187,7 @@ class UpdateRecordRequestDto {
   UpdateRecordRequestDto({
     required this.dataType,
     this.activeCaloriesBurnedRecord,
+    this.bodyFatPercentageRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -1169,6 +1222,10 @@ class UpdateRecordRequestDto {
   /// Weight record (only non-null when dataType == WEIGHT).
   /// The record must have a valid existing ID.
   final WeightRecordDto? weightRecord;
+
+  /// Body fat percentage record (only non-null when dataType == BODY_FAT_PERCENTAGE).
+  /// The record must have a valid existing ID.
+  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
   /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
   /// The record must have a valid existing ID.

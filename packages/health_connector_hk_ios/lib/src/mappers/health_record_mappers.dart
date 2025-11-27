@@ -1,6 +1,7 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
+        BodyFatPercentageRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecordId,
@@ -13,6 +14,7 @@ import 'package:health_connector_hk_ios/src/mappers/metadata_mappers.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
     show
         ActiveCaloriesBurnedRecordDto,
+        BodyFatPercentageRecordDto,
         DistanceRecordDto,
         FloorsClimbedRecordDto,
         HeightRecordDto,
@@ -219,6 +221,34 @@ extension HeightRecordDtoToDomain on HeightRecordDto {
       zoneOffsetSeconds: zoneOffsetSeconds,
       metadata: metadata.toDomain(),
       height: height.toDomain(),
+    );
+  }
+}
+
+/// Converts [BodyFatPercentageRecord] to [BodyFatPercentageRecordDto].
+@internal
+extension BodyFatPercentageRecordDtoMapper on BodyFatPercentageRecord {
+  BodyFatPercentageRecordDto toDto() {
+    return BodyFatPercentageRecordDto(
+      id: id.toDto(),
+      time: time.millisecondsSinceEpoch,
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      percentage: percentage.toDto(),
+    );
+  }
+}
+
+/// Converts [BodyFatPercentageRecordDto] to [BodyFatPercentageRecord].
+@internal
+extension BodyFatPercentageRecordDtoToDomain on BodyFatPercentageRecordDto {
+  BodyFatPercentageRecord toDomain() {
+    return BodyFatPercentageRecord(
+      id: id.toHealthRecordId(),
+      time: DateTime.fromMillisecondsSinceEpoch(time),
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      percentage: percentage.toDomain(),
     );
   }
 }

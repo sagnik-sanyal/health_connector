@@ -1,6 +1,7 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
+        BodyFatPercentageHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -103,6 +104,20 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
         }
         return heightRecords.map((dto) => dto.toDomain()).cast<R>().toList();
 
+      case BodyFatPercentageHealthDataType _:
+        final bodyFatPercentageRecords = responseDto.bodyFatPercentageRecords;
+        if (bodyFatPercentageRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected bodyFatPercentageRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return bodyFatPercentageRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
+
       case StepsHealthDataType _:
         final stepsRecords = responseDto.stepsRecords;
         if (stepsRecords == null) {
@@ -202,6 +217,12 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
         }
         return value.toDomain() as U;
 
+      case BodyFatPercentageHealthDataType _:
+        throw HealthConnectorException(
+          HealthConnectorErrorCode.parsingError,
+          'Body fat percentage does not support aggregation',
+        );
+
       case FloorsClimbedHealthDataType _:
         final value = doubleValue;
         if (value == null) {
@@ -295,6 +316,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected heightRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case BodyFatPercentageHealthDataType _:
+        final record = bodyFatPercentageRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected bodyFatPercentageRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

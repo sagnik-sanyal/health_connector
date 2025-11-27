@@ -1,13 +1,16 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
+import androidx.health.connect.client.units.Percentage
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.BodyFatPercentageRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeightRecordDto
@@ -180,6 +183,31 @@ internal fun HeightRecord.toDto(): HeightRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         height = height.toDto()
+    )
+}
+
+/**
+ * Converts a [BodyFatPercentageRecordDto] to a Health Connect [BodyFatRecord] object.
+ */
+internal fun BodyFatPercentageRecordDto.toHealthConnect(): BodyFatRecord {
+    return BodyFatRecord(
+        percentage = Percentage(percentage.value),
+        time = Instant.ofEpochMilli(time),
+        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [BodyFatRecord] object to a [BodyFatPercentageRecordDto].
+ */
+internal fun BodyFatRecord.toDto(): BodyFatPercentageRecordDto {
+    return BodyFatPercentageRecordDto(
+        id = metadata.id,
+        time = time.toEpochMilli(),
+        zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        percentage = percentage.value.toNumericDto()
     )
 }
 

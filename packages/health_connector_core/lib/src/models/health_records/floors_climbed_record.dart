@@ -92,3 +92,4 @@ final class FloorsClimbedRecord extends IntervalHealthRecord {
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
 }
+

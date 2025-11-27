@@ -2,6 +2,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
         AggregateRequest,
+        BodyFatPercentageRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
@@ -98,6 +99,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.height,
           heightRecord: record.toDto(),
         );
+      case final BodyFatPercentageRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.bodyFatPercentage,
+          bodyFatPercentageRecord: record.toDto(),
+        );
       case final StepRecord record:
         return WriteRecordRequestDto(
           dataType: HealthDataTypeDto.steps,
@@ -142,6 +148,11 @@ extension HealthRecordToUpdateRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.height,
           heightRecord: record.toDto(),
         );
+      case final BodyFatPercentageRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.bodyFatPercentage,
+          bodyFatPercentageRecord: record.toDto(),
+        );
       case final StepRecord record:
         return UpdateRecordRequestDto(
           dataType: HealthDataTypeDto.steps,
@@ -171,6 +182,7 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
 
     // Group records by type
     final activeCaloriesBurnedRecords = <ActiveCaloriesBurnedRecord>[];
+    final bodyFatPercentageRecords = <BodyFatPercentageRecord>[];
     final distanceRecords = <DistanceRecord>[];
     final floorsClimbedRecords = <FloorsClimbedRecord>[];
     final heightRecords = <HeightRecord>[];
@@ -201,6 +213,11 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
           if (!dataTypes.contains(HealthDataTypeDto.height)) {
             dataTypes.add(HealthDataTypeDto.height);
           }
+        case final BodyFatPercentageRecord bodyFatPercentageRecord:
+          bodyFatPercentageRecords.add(bodyFatPercentageRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.bodyFatPercentage)) {
+            dataTypes.add(HealthDataTypeDto.bodyFatPercentage);
+          }
         case final StepRecord stepRecord:
           stepRecords.add(stepRecord);
           if (!dataTypes.contains(HealthDataTypeDto.steps)) {
@@ -230,6 +247,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
       floorsClimbedRecords: floorsClimbedRecords.isEmpty
           ? null
           : floorsClimbedRecords.map((r) => r.toDto()).toList(),
+      bodyFatPercentageRecords: bodyFatPercentageRecords.isEmpty
+          ? null
+          : bodyFatPercentageRecords.map((r) => r.toDto()).toList(),
       heightRecords: heightRecords.isEmpty
           ? null
           : heightRecords.map((r) => r.toDto()).toList(),

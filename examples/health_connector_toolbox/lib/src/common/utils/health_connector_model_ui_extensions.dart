@@ -19,6 +19,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         PermissionStatus,
         RecordingMethod,
         ActiveCaloriesBurnedHealthDataType,
+        BodyFatPercentageHealthDataType,
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HeightHealthDataType,
@@ -105,6 +106,7 @@ extension HealthDataTypeUI on HealthDataType {
       StepsHealthDataType _ => AppTexts.steps,
       WeightHealthDataType _ => AppTexts.weight,
       HeightHealthDataType _ => AppTexts.height,
+      BodyFatPercentageHealthDataType _ => AppTexts.bodyFatPercentage,
       DistanceHealthDataType _ => AppTexts.distance,
       ActiveCaloriesBurnedHealthDataType _ => AppTexts.activeCaloriesBurned,
       FloorsClimbedHealthDataType _ => AppTexts.floorsClimbed,
@@ -121,6 +123,8 @@ extension HealthDataTypeUI on HealthDataType {
       StepsHealthDataType _ => AppTexts.stepsDescription,
       WeightHealthDataType _ => AppTexts.weightDescription,
       HeightHealthDataType _ => AppTexts.heightDescription,
+      BodyFatPercentageHealthDataType _ =>
+        AppTexts.bodyFatPercentageDescription,
       DistanceHealthDataType _ => AppTexts.distanceDescription,
       ActiveCaloriesBurnedHealthDataType _ =>
         AppTexts.activeCaloriesBurnedDescription,
@@ -138,6 +142,7 @@ extension HealthDataTypeUI on HealthDataType {
       StepsHealthDataType _ => AppIcons.directionsWalk,
       WeightHealthDataType _ => AppIcons.monitorWeight,
       HeightHealthDataType _ => AppIcons.height,
+      BodyFatPercentageHealthDataType _ => AppIcons.percent,
       DistanceHealthDataType _ => AppIcons.straighten,
       ActiveCaloriesBurnedHealthDataType _ => AppIcons.localFireDepartment,
       FloorsClimbedHealthDataType _ => AppIcons.stairs,

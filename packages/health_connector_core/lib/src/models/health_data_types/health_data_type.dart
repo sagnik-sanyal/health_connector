@@ -23,6 +23,7 @@ import 'package:health_connector_core/src/models/health_platform_data.dart'
 import 'package:health_connector_core/src/models/health_records/health_record.dart'
     show
         ActiveCaloriesBurnedRecord,
+        BodyFatPercentageRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
@@ -46,6 +47,7 @@ import 'package:health_connector_core/src/models/requests/read_records_request.d
 import 'package:meta/meta.dart' show immutable, internal;
 
 part 'active_calories_burned_health_data_type.dart';
+part 'body_fat_percentage_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
 part 'height_health_data_type.dart';
@@ -146,6 +148,13 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// existing weight data and writing new weight measurements.
   static const weight = WeightHealthDataType();
 
+  /// Body fat percentage data type.
+  ///
+  /// Represents the user's body fat percentage measurements. Body fat percentage
+  /// is expressed as a decimal value between 0 and 1 (e.g., 0.25 = 25%). Supports
+  /// both reading existing body fat percentage data and writing new measurements.
+  static const bodyFatPercentage = BodyFatPercentageHealthDataType();
+
   /// Body height data type.
   ///
   /// Represents the user's body height measurements. Supports both reading
@@ -182,6 +191,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// As new data types are added, they will automatically appear in this list.
   static const List<HealthDataType<HealthRecord, MeasurementUnit>> values = [
     activeCaloriesBurned,
+    bodyFatPercentage,
     distance,
     floorsClimbed,
     height,

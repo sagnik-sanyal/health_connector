@@ -20,6 +20,8 @@ extension HealthDataTypeDto {
             return HKQuantityType.quantityType(forIdentifier: .flightsClimbed)!
         case .height:
             return HKQuantityType.quantityType(forIdentifier: .height)!
+        case .bodyFatPercentage:
+            return HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage)!
         case .steps:
             return HKQuantityType.quantityType(forIdentifier: .stepCount)!
         case .weight:

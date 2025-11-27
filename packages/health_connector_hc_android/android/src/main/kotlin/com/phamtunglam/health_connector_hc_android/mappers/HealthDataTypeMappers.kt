@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
@@ -23,6 +24,7 @@ internal fun HealthDataTypeDto.toHealthConnectRecordClass(): KClass<out Record> 
         HealthDataTypeDto.DISTANCE -> DistanceRecord::class
         HealthDataTypeDto.FLOORS_CLIMBED -> FloorsClimbedRecord::class
         HealthDataTypeDto.HEIGHT -> HeightRecord::class
+        HealthDataTypeDto.BODY_FAT_PERCENTAGE -> BodyFatRecord::class
         HealthDataTypeDto.STEPS -> StepsRecord::class
         HealthDataTypeDto.WEIGHT -> WeightRecord::class
         HealthDataTypeDto.WHEELCHAIR_PUSHES -> WheelchairPushesRecord::class

@@ -360,6 +360,66 @@ extension HKQuantitySample {
     }
 }
 
+// ==================== BODY FAT PERCENTAGE RECORD MAPPERS ====================
+
+extension BodyFatPercentageRecordDto {
+    /**
+     * Converts this DTO to a HealthKit `HKQuantitySample`.
+     *
+     * - Throws: An error if the quantity type cannot be created.
+     */
+
+    func toHealthKit() throws -> HKQuantitySample {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage) else {
+            throw NSError(
+                domain: "HealthConnectorError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to create body fat percentage quantity type"]
+            )
+        }
+
+        let quantity = HKQuantity(unit: .percent(), doubleValue: percentage.value)
+        let date = Date(timeIntervalSince1970: TimeInterval(time) / 1000.0)
+
+        return HKQuantitySample(
+            type: type,
+            quantity: quantity,
+            start: date,
+            end: date, // Instant records have same start and end
+            device: metadata.toHealthKitDevice(),
+            metadata: metadata.toHealthKitMetadata()
+        )
+    }
+}
+
+extension HKQuantitySample {
+    /**
+     * Converts this HealthKit sample to a `BodyFatPercentageRecordDto`.
+     *
+     * Returns `nil` if this sample is not a body fat percentage sample.
+     */
+
+    func toBodyFatPercentageRecordDto() -> BodyFatPercentageRecordDto? {
+        guard quantityType.identifier == HKQuantityTypeIdentifier.bodyFatPercentage.rawValue else {
+            return nil
+        }
+
+        let unit = HKUnit.percent()
+        let value = quantity.doubleValue(for: unit)
+
+        return BodyFatPercentageRecordDto(
+            id: uuid.uuidString,
+            metadata: (metadata ?? [:]).toMetadataDto(
+                source: sourceRevision.source,
+                device: device
+            ),
+            time: Int64(startDate.timeIntervalSince1970 * 1000),
+            percentage: NumericDto(unit: NumericUnitDto.numeric, value: value),
+            zoneOffsetSeconds: nil // HealthKit doesn't store zone offsets
+        )
+    }
+}
+
 // ==================== WHEELCHAIR PUSHES RECORD MAPPERS ====================
 
 extension WheelchairPushesRecordDto {

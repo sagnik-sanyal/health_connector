@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
         DistanceRecord,
+        FloorsClimbedRecord,
         HealthRecord,
         InstantHealthRecord,
         IntervalHealthRecord,
@@ -221,6 +222,45 @@ final class HealthRecordListTile extends StatelessWidget {
             HealthRecordDetailRow(
               label: AppTexts.activeCaloriesBurnedCal,
               value: r.energy.inCalories.toStringAsFixed(0),
+            ),
+          ],
+          onDelete: onDelete,
+        ),
+      FloorsClimbedRecord() =>
+        IntervalHealthRecordTile<FloorsClimbedRecord>(
+          record: record,
+          icon: AppIcons.stairs,
+          title:
+              '${record.floors.value.toInt()} ${AppTexts.floorsClimbedLabel}',
+          subtitleBuilder: (r, ctx) {
+            final duration = r.duration;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  '${AppTexts.startLabel} '
+                  '${DateFormatUtils.formatDateTime(r.startTime)}',
+                ),
+                Text(
+                  '${AppTexts.endLabel} '
+                  '${DateFormatUtils.formatDateTime(r.endTime)}',
+                ),
+                Text(
+                  '${AppTexts.duration} ${duration.inHours}h '
+                  '${duration.inMinutes.remainder(60)}m',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: theme.AppColors.grey600,
+                  ),
+                ),
+              ],
+            );
+          },
+          detailRowsBuilder: (r, ctx) => [
+            HealthRecordDetailRow(
+              label: AppTexts.count,
+              value: r.floors.value.toString(),
             ),
           ],
           onDelete: onDelete,

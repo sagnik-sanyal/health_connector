@@ -5,6 +5,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DataOrigin,
         Device,
         DistanceHealthDataType,
+        FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -260,6 +261,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
         DistanceHealthDataType() => AppTexts.writePermissionDeniedDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.writePermissionDeniedActiveCaloriesBurned,
+        FloorsClimbedHealthDataType() =>
+          AppTexts.writePermissionDeniedFloorsClimbed,
       };
     }
     return e.message;
@@ -279,6 +282,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
               DistanceHealthDataType() => AppTexts.insertDistance,
               ActiveCaloriesBurnedHealthDataType() =>
                 AppTexts.insertActiveCaloriesBurned,
+              FloorsClimbedHealthDataType() => AppTexts.insertFloorsClimbed,
             },
           ),
         ),

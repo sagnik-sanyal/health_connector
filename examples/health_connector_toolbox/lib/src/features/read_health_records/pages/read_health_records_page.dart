@@ -3,6 +3,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
+        FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -96,6 +97,12 @@ class _ReadHealthRecordsPageState
           );
         case ActiveCaloriesBurnedHealthDataType():
           request = HealthDataType.activeCaloriesBurned.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case FloorsClimbedHealthDataType():
+          request = HealthDataType.floorsClimbed.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

@@ -5,6 +5,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceHealthDataType,
         DistanceRecord,
         Energy,
+        FloorsClimbedHealthDataType,
+        FloorsClimbedRecord,
         HealthDataType,
         HealthRecord,
         Length,
@@ -56,6 +58,7 @@ sealed class HealthRecordFormConfig {
       DistanceHealthDataType() => const DistanceFormConfig(),
       ActiveCaloriesBurnedHealthDataType() =>
         const ActiveCaloriesBurnedFormConfig(),
+      FloorsClimbedHealthDataType() => const FloorsClimbedFormConfig(),
     };
   }
 }
@@ -184,6 +187,41 @@ final class ActiveCaloriesBurnedFormConfig extends HealthRecordFormConfig {
       startTime: startDateTime,
       endTime: endDateTime,
       energy: energyValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for floors climbed records.
+///
+/// Floors climbed is an interval-based record that requires:
+/// - Start time
+/// - End time (derived from start time + duration)
+/// - Floors count (numeric/integer)
+final class FloorsClimbedFormConfig extends HealthRecordFormConfig {
+  const FloorsClimbedFormConfig();
+
+  @override
+  bool get needsDuration => true;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    if (endDateTime == null) {
+      throw ArgumentError(
+        'endDateTime is required for floors climbed records',
+      );
+    }
+    final numericValue = value as Numeric;
+
+    return FloorsClimbedRecord(
+      startTime: startDateTime,
+      endTime: endDateTime,
+      floors: numericValue,
       metadata: metadata,
     );
   }

@@ -20,6 +20,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         RecordingMethod,
         ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
+        FloorsClimbedHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
         BloodGlucose,
@@ -103,6 +104,7 @@ extension HealthDataTypeUI on HealthDataType {
       WeightHealthDataType _ => AppTexts.weight,
       DistanceHealthDataType _ => AppTexts.distance,
       ActiveCaloriesBurnedHealthDataType _ => AppTexts.activeCaloriesBurned,
+      FloorsClimbedHealthDataType _ => AppTexts.floorsClimbed,
     };
   }
 
@@ -117,6 +119,7 @@ extension HealthDataTypeUI on HealthDataType {
       DistanceHealthDataType _ => AppTexts.distanceDescription,
       ActiveCaloriesBurnedHealthDataType _ =>
         AppTexts.activeCaloriesBurnedDescription,
+      FloorsClimbedHealthDataType _ => AppTexts.floorsClimbedDescription,
     };
   }
 
@@ -130,6 +133,7 @@ extension HealthDataTypeUI on HealthDataType {
       WeightHealthDataType _ => AppIcons.monitorWeight,
       DistanceHealthDataType _ => AppIcons.straighten,
       ActiveCaloriesBurnedHealthDataType _ => AppIcons.localFireDepartment,
+      FloorsClimbedHealthDataType _ => AppIcons.stairs,
     };
   }
 }

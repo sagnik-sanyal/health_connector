@@ -6,6 +6,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateResponse,
         AggregationMetric,
         DistanceHealthDataType,
+        FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -109,6 +110,19 @@ class _AggregateHealthDataPageState
           switch (_selectedMetric!) {
             case AggregationMetric.sum:
               request = HealthDataType.activeCaloriesBurned.aggregateSum(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.count:
+            case AggregationMetric.avg:
+            case AggregationMetric.min:
+            case AggregationMetric.max:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case FloorsClimbedHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.sum:
+              request = HealthDataType.floorsClimbed.aggregateSum(
                 startTime: startDateTime!,
                 endTime: endDateTime!,
               );

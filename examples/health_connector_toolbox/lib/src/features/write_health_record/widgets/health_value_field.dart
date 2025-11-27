@@ -4,6 +4,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
         Energy,
+        FloorsClimbedHealthDataType,
         HealthDataType,
         Length,
         Mass,
@@ -72,6 +73,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
           WeightHealthDataType() => _parseMass(value),
           DistanceHealthDataType() => _parseLength(value),
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
+          FloorsClimbedHealthDataType() => _parseNumeric(value),
         };
       }
     });
@@ -118,6 +120,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
+        FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
       };
     }
 
@@ -126,15 +129,19 @@ class _HealthValueFieldState extends State<HealthValueField> {
       WeightHealthDataType() => double.tryParse(value),
       DistanceHealthDataType() => double.tryParse(value),
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
+      FloorsClimbedHealthDataType() => int.tryParse(value),
     };
 
     if (parsed == null) {
       return AppTexts.pleaseEnterValidNumber;
     }
 
-    if (widget.dataType is StepsHealthDataType) {
+    if (widget.dataType is StepsHealthDataType ||
+        widget.dataType is FloorsClimbedHealthDataType) {
       if (parsed as int < 0) {
-        return AppTexts.countMustBeNonNegative;
+        return widget.dataType is StepsHealthDataType
+            ? AppTexts.countMustBeNonNegative
+            : AppTexts.floorsClimbedMustBeNonNegative;
       }
     } else if (widget.dataType is WeightHealthDataType) {
       if (parsed as double <= 0) {
@@ -157,6 +164,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
+        FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
       };
     }
 
@@ -211,6 +219,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           prefixIcon: Icon(AppIcons.localFireDepartment),
         ),
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      FloorsClimbedHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.floorsClimbedValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.stairs),
+        ),
+        keyboardType: TextInputType.number,
         onChanged: _onChanged,
         validator: _validate,
       ),

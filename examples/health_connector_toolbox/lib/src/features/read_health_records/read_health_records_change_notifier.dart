@@ -5,7 +5,6 @@ import 'package:health_connector/health_connector.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
         HealthDataType,
-        HealthConnectorException,
         HealthRecord,
         MeasurementUnit,
         ReadRecordsRequest;
@@ -13,7 +12,7 @@ import 'package:health_connector_core/health_connector_core.dart'
 /// Manages state and operations for reading health records.
 ///
 /// Handles reading health records with pagination support, loading additional
-/// pages, and deleting individual records. Tracks loading state, errors, and
+/// pages, and deleting individual records. Tracks loading state and
 /// the current list of records.
 final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   final HealthConnector _healthConnector;
@@ -21,7 +20,6 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   ReadHealthRecordsChangeNotifier(this._healthConnector);
 
   bool _isLoading = false;
-  Exception? _error;
   ReadRecordsRequest? _nextPageRequest;
   UnmodifiableListView<HealthRecord> _healthRecords = UnmodifiableListView([]);
   bool _hasQueriedRecords = false;
@@ -29,8 +27,6 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   UnmodifiableListView<HealthRecord> get healthRecords => _healthRecords;
 
   bool get isLoading => _isLoading;
-
-  Exception? get error => _error;
 
   ReadRecordsRequest? get nextPageRequest => _nextPageRequest;
 
@@ -40,6 +36,7 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   ///
   /// Resets the current records list and loads the first page of results.
   /// Updates [healthRecords], [nextPageRequest], and [hasQueriedRecords].
+  /// Exceptions are propagated to the caller for handling.
   Future<void> readHealthRecords(ReadRecordsRequest request) async {
     notify(() {
       _isLoading = true;
@@ -55,19 +52,6 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
         _healthRecords = UnmodifiableListView(response.records);
         _nextPageRequest = response.nextPageRequest;
         _hasQueriedRecords = true;
-        _error = null;
-      });
-    } on HealthConnectorException catch (e) {
-      notify(() {
-        _error = e;
-        _healthRecords = UnmodifiableListView([]);
-        _nextPageRequest = null;
-      });
-    } on Exception catch (e) {
-      notify(() {
-        _error = Exception('Error: $e');
-        _healthRecords = UnmodifiableListView([]);
-        _nextPageRequest = null;
       });
     } finally {
       notify(() {
@@ -80,6 +64,7 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   ///
   /// Appends the new records to the existing [healthRecords] list.
   /// Does nothing if [nextPageRequest] is null.
+  /// Exceptions are propagated to the caller for handling.
   Future<void> loadNextPage() async {
     final nextPageRequest = _nextPageRequest;
     if (nextPageRequest == null) {
@@ -100,15 +85,6 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
         ];
         _healthRecords = UnmodifiableListView(updatedHealthRecords);
         _nextPageRequest = nextResponse.nextPageRequest;
-        _error = null;
-      });
-    } on HealthConnectorException catch (e) {
-      notify(() {
-        _error = e;
-      });
-    } on Exception catch (e) {
-      notify(() {
-        _error = Exception('Error: $e');
       });
     } finally {
       notify(() {
@@ -120,6 +96,7 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
   /// Deletes a health record by its ID.
   ///
   /// Removes the record from [healthRecords] on success.
+  /// Exceptions are propagated to the caller for handling.
   Future<void> deleteRecord(
     HealthRecord record,
     HealthDataType<HealthRecord, MeasurementUnit> dataType,
@@ -139,15 +116,6 @@ final class ReadHealthRecordsChangeNotifier extends ChangeNotifier {
             .where((r) => r.id != record.id)
             .toList();
         _healthRecords = UnmodifiableListView(updatedHealthRecords);
-        _error = null;
-      });
-    } on HealthConnectorException catch (e) {
-      notify(() {
-        _error = e;
-      });
-    } on Exception catch (e) {
-      notify(() {
-        _error = Exception('Error: $e');
       });
     } finally {
       notify(() {

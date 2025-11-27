@@ -522,7 +522,8 @@ class PermissionsRequestResponseDto {
 /// Represents an active calories burned record for platform transfer.
 ///
 /// Maps to:
-/// - Health Connect: `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
+/// - Health Connect:
+///   `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
 /// - Domain: `ActiveCaloriesBurnedRecord`
 class ActiveCaloriesBurnedRecordDto {
   ActiveCaloriesBurnedRecordDto({
@@ -604,7 +605,8 @@ class DistanceRecordDto {
 /// Represents a floors climbed record for platform transfer.
 ///
 /// Maps to:
-/// - Health Connect: `androidx.health.connect.client.records.FloorsClimbedRecord`
+/// - Health Connect:
+///   `androidx.health.connect.client.records.FloorsClimbedRecord`
 /// - Domain: `FloorsClimbedRecord`
 class FloorsClimbedRecordDto {
   FloorsClimbedRecordDto({
@@ -860,7 +862,8 @@ class AggregateResponseDto {
   /// The type of health data that was aggregated.
   final HealthDataTypeDto dataType;
 
-  /// Active calories burned aggregated value (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// Active calories burned aggregated value
+  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
   final EnergyDto? activeCaloriesBurnedValue;
 
   /// Numeric aggregated value.
@@ -868,13 +871,15 @@ class AggregateResponseDto {
   /// Used for primitive numeric types like steps and count operations.
   final double? doubleValue;
 
-  /// Length aggregated value (non-null when dataType == DISTANCE or dataType == HEIGHT).
+  /// Length aggregated value
+  /// (non-null when dataType == DISTANCE or dataType == HEIGHT).
   final LengthDto? lengthValue;
 
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   final MassDto? massValue;
 
-  /// Wheelchair pushes aggregated value (non-null when dataType == WHEELCHAIR_PUSHES).
+  /// Wheelchair pushes aggregated value
+  /// (non-null when dataType == WHEELCHAIR_PUSHES).
   final NumericDto? wheelchairPushesValue;
 
   // Future value types will be added here as they are implemented
@@ -947,28 +952,36 @@ class ReadRecordResponseDto {
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
 
-  /// Active calories burned record (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// Active calories burned record
+  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
   final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
-  /// Distance record (non-null when dataType == DISTANCE).
+  /// Distance record
+  /// (non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
 
-  /// Floors climbed record (non-null when dataType == FLOORS_CLIMBED).
+  /// Floors climbed record
+  /// (non-null when dataType == FLOORS_CLIMBED).
   final FloorsClimbedRecordDto? floorsClimbedRecord;
 
-  /// Height record (non-null when dataType == HEIGHT).
+  /// Height record
+  /// (non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
 
-  /// Step count record (non-null when dataType == STEPS).
+  /// Step count record
+  /// (non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
 
-  /// Weight record (non-null when dataType == WEIGHT).
+  /// Weight record
+  /// (non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
 
-  /// Body fat percentage record (non-null when dataType == BODY_FAT_PERCENTAGE).
+  /// Body fat percentage record
+  /// (non-null when dataType == BODY_FAT_PERCENTAGE).
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
-  /// Wheelchair pushes record (non-null when dataType == WHEELCHAIR_PUSHES).
+  /// Wheelchair pushes record
+  /// (non-null when dataType == WHEELCHAIR_PUSHES).
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
   // Future record types will be added here as they are implemented
@@ -1027,31 +1040,39 @@ class ReadRecordsResponseDto {
   /// The type of health data that was read.
   final HealthDataTypeDto dataType;
 
-  /// List of active calories burned records (non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// List of active calories burned records
+  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
   final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
-  /// List of distance records (non-null when dataType == DISTANCE).
+  /// List of distance records
+  /// (non-null when dataType == DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
 
-  /// List of floors climbed records (non-null when dataType == FLOORS_CLIMBED).
+  /// List of floors climbed records
+  /// (non-null when dataType == FLOORS_CLIMBED).
   final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
 
-  /// List of height records (non-null when dataType == HEIGHT).
+  /// List of height records
+  /// (non-null when dataType == HEIGHT).
   final List<HeightRecordDto>? heightRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   final String? nextPageToken;
 
-  /// List of step records (non-null when dataType == STEPS).
+  /// List of step records
+  /// (non-null when dataType == STEPS).
   final List<StepRecordDto>? stepsRecords;
 
-  /// List of weight records (non-null when dataType == WEIGHT).
+  /// List of weight records
+  /// (non-null when dataType == WEIGHT).
   final List<WeightRecordDto>? weightRecords;
 
-  /// List of body fat percentage records (non-null when dataType == BODY_FAT_PERCENTAGE).
+  /// List of body fat percentage records
+  /// (non-null when dataType == BODY_FAT_PERCENTAGE).
   final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
 
-  /// List of wheelchair pushes records (non-null when dataType == WHEELCHAIR_PUSHES).
+  /// List of wheelchair pushes records
+  /// (non-null when dataType == WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
 
   // Future record types will be added here as they are implemented
@@ -1079,28 +1100,36 @@ class WriteRecordRequestDto {
   /// The type of health data being written.
   final HealthDataTypeDto dataType;
 
-  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// Active calories burned record
+  /// (only non-null when dataType == ACTIVE_CALORIES_BURNED).
   final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
-  /// Distance record (only non-null when dataType == DISTANCE).
+  /// Distance record
+  /// (only non-null when dataType == DISTANCE).
   final DistanceRecordDto? distanceRecord;
 
-  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  /// Floors climbed record
+  /// (only non-null when dataType == FLOORS_CLIMBED).
   final FloorsClimbedRecordDto? floorsClimbedRecord;
 
-  /// Height record (only non-null when dataType == HEIGHT).
+  /// Height record
+  /// (only non-null when dataType == HEIGHT).
   final HeightRecordDto? heightRecord;
 
-  /// Step count record (only non-null when dataType == STEPS).
+  /// Step count record
+  /// (only non-null when dataType == STEPS).
   final StepRecordDto? stepsRecord;
 
-  /// Weight record (only non-null when dataType == WEIGHT).
+  /// Weight record
+  /// (only non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
 
-  /// Body fat percentage record (only non-null when dataType == BODY_FAT_PERCENTAGE).
+  /// Body fat percentage record
+  /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
-  /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
+  /// Wheelchair pushes record
+  /// (only non-null when dataType == WHEELCHAIR_PUSHES).
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
   // Future record types will be added here as they are implemented
@@ -1138,28 +1167,36 @@ class WriteRecordsRequestDto {
   /// Each data type in this list corresponds to a non-null list field.
   final List<HealthDataTypeDto> dataTypes;
 
-  /// List of active calories burned records (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
+  /// List of active calories burned records
+  /// (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
   final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
 
-  /// List of distance records (non-null when dataTypes contains DISTANCE).
+  /// List of distance records
+  /// (non-null when dataTypes contains DISTANCE).
   final List<DistanceRecordDto>? distanceRecords;
 
-  /// List of floors climbed records (non-null when dataTypes contains FLOORS_CLIMBED).
+  /// List of floors climbed records
+  /// (non-null when dataTypes contains FLOORS_CLIMBED).
   final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
 
-  /// List of height records (non-null when dataTypes contains HEIGHT).
+  /// List of height records
+  /// (non-null when dataTypes contains HEIGHT).
   final List<HeightRecordDto>? heightRecords;
 
-  /// List of step records (non-null when dataTypes contains STEPS).
+  /// List of step records
+  /// (non-null when dataTypes contains STEPS).
   final List<StepRecordDto>? stepsRecords;
 
-  /// List of weight records (non-null when dataTypes contains WEIGHT).
+  /// List of weight records
+  /// (non-null when dataTypes contains WEIGHT).
   final List<WeightRecordDto>? weightRecords;
 
-  /// List of body fat percentage records (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
+  /// List of body fat percentage records
+  /// (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
   final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
 
-  /// List of wheelchair pushes records (non-null when dataTypes contains WHEELCHAIR_PUSHES).
+  /// List of wheelchair pushes records
+  /// (non-null when dataTypes contains WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
 
   // Future record types will be added here as they are implemented
@@ -1199,35 +1236,43 @@ class UpdateRecordRequestDto {
   /// The type of health data being updated.
   final HealthDataTypeDto dataType;
 
-  /// Active calories burned record (only non-null when dataType == ACTIVE_CALORIES_BURNED).
+  /// Active calories burned record
+  /// (only non-null when dataType == ACTIVE_CALORIES_BURNED).
   /// The record must have a valid existing ID.
   final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
 
-  /// Distance record (only non-null when dataType == DISTANCE).
+  /// Distance record
+  /// (only non-null when dataType == DISTANCE).
   /// The record must have a valid existing ID.
   final DistanceRecordDto? distanceRecord;
 
-  /// Floors climbed record (only non-null when dataType == FLOORS_CLIMBED).
+  /// Floors climbed record
+  /// (only non-null when dataType == FLOORS_CLIMBED).
   /// The record must have a valid existing ID.
   final FloorsClimbedRecordDto? floorsClimbedRecord;
 
-  /// Height record (only non-null when dataType == HEIGHT).
+  /// Height record
+  /// (only non-null when dataType == HEIGHT).
   /// The record must have a valid existing ID.
   final HeightRecordDto? heightRecord;
 
-  /// Step count record (only non-null when dataType == STEPS).
+  /// Step count record
+  /// (only non-null when dataType == STEPS).
   /// The record must have a valid existing ID.
   final StepRecordDto? stepsRecord;
 
-  /// Weight record (only non-null when dataType == WEIGHT).
+  /// Weight record
+  /// (only non-null when dataType == WEIGHT).
   /// The record must have a valid existing ID.
   final WeightRecordDto? weightRecord;
 
-  /// Body fat percentage record (only non-null when dataType == BODY_FAT_PERCENTAGE).
+  /// Body fat percentage record
+  /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
   /// The record must have a valid existing ID.
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
-  /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
+  /// Wheelchair pushes record
+  /// (only non-null when dataType == WHEELCHAIR_PUSHES).
   /// The record must have a valid existing ID.
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
 

@@ -17,8 +17,10 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsResponse,
         MeasurementUnit,
         Numeric;
-import 'package:health_connector_hc_android/src/mappers/health_record_mappers.dart';
-import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
+import 'package:health_connector_hc_android/src/mappers/'
+    'health_record_mappers.dart';
+import 'package:health_connector_hc_android/src/mappers/'
+    'measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show AggregateResponseDto, ReadRecordResponseDto, ReadRecordsResponseDto;
 import 'package:meta/meta.dart' show internal;
@@ -218,7 +220,7 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
         return value.toDomain() as U;
 
       case BodyFatPercentageHealthDataType _:
-        throw HealthConnectorException(
+        throw const HealthConnectorException(
           HealthConnectorErrorCode.parsingError,
           'Body fat percentage does not support aggregation',
         );

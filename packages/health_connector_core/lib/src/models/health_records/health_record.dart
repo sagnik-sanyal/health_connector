@@ -11,7 +11,7 @@ import 'package:health_connector_core/src/models/metadata/metadata.dart'
 import 'package:health_connector_core/src/utils/datetime.dart'
     show formatTimeRange;
 import 'package:health_connector_core/src/utils/validation.dart' show require;
-import 'package:meta/meta.dart' show immutable, internal;
+import 'package:meta/meta.dart' show immutable;
 
 part 'active_calories_burned_record.dart';
 part 'body_fat_percentage_record.dart';

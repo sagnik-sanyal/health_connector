@@ -13,7 +13,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         StepRecord,
         WeightRecord,
         WheelchairPushesRecord;
-import 'package:health_connector_hk_ios/src/mappers/aggregation_metric_mappers.dart';
+import 'package:health_connector_hk_ios/src/mappers/'
+    'aggregation_metric_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_data_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'

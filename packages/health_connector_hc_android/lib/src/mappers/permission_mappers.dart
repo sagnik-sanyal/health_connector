@@ -6,8 +6,10 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthPlatformFeaturePermission,
         PermissionStatus,
         PermissionRequestResult;
-import 'package:health_connector_hc_android/src/mappers/health_data_mappers.dart';
-import 'package:health_connector_hc_android/src/mappers/health_platform_feature_mappers.dart';
+import 'package:health_connector_hc_android/src/mappers/'
+    'health_data_mappers.dart';
+import 'package:health_connector_hc_android/src/mappers/'
+    'health_platform_feature_mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show
         PermissionsRequestDto,

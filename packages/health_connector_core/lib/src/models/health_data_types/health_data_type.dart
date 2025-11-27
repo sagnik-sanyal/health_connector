@@ -150,9 +150,10 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
 
   /// Body fat percentage data type.
   ///
-  /// Represents the user's body fat percentage measurements. Body fat percentage
-  /// is expressed as a decimal value between 0 and 1 (e.g., 0.25 = 25%). Supports
-  /// both reading existing body fat percentage data and writing new measurements.
+  /// Represents the user's body fat percentage measurements.
+  /// Body fat percentage is expressed as a decimal value between 0 and
+  /// 1 (e.g., 0.25 = 25%). Supports both reading existing body fat percentage
+  /// data and writing new measurements.
   static const bodyFatPercentage = BodyFatPercentageHealthDataType();
 
   /// Body height data type.

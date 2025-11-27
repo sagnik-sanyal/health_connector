@@ -1,7 +1,7 @@
-import 'package:health_connector_core/health_connector_core.dart';
 import 'package:health_connector_hc_android/health_connector_hc_android.dart'
     show HealthConnectorHCClient;
 import 'package:health_connector_hk_ios/health_connector_hk_ios.dart';
+import 'package:health_connector_logger/health_connector_logger.dart';
 import 'package:meta/meta.dart' show immutable, internal;
 
 /// Configuration for Health Connector.

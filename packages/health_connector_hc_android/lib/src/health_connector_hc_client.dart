@@ -20,8 +20,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsResponse,
         formatTimeRange,
         PermissionListExtension;
-import 'package:health_connector_logger/health_connector_logger.dart'
-    show HealthConnectorLogger;
 import 'package:health_connector_hc_android/src/mappers/mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show
@@ -29,6 +27,8 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
         DeleteRecordsByTimeRangeRequestDto,
         HealthConnectorPlatformApi,
         HealthPlatformStatusDto;
+import 'package:health_connector_logger/health_connector_logger.dart'
+    show HealthConnectorLogger;
 import 'package:meta/meta.dart' show immutable;
 
 /// Platform client that communicates with native Android Health Connect code.

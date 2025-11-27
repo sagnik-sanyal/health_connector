@@ -28,10 +28,10 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsResponse,
         require,
         requireEndTimeAfterStartTime;
-import 'package:health_connector_logger/health_connector_logger.dart'
-    show HealthConnectorLogger;
 import 'package:health_connector_hc_android/health_connector_hc_android.dart'
     show HealthConnectorHCClient;
+import 'package:health_connector_logger/health_connector_logger.dart'
+    show HealthConnectorLogger;
 import 'package:meta/meta.dart' show immutable;
 
 /// Main entry point for interacting with platform-specific health APIs.

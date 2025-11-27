@@ -32,7 +32,7 @@ final class FloorsClimbedRecord extends IntervalHealthRecord {
   ///
   /// - [startTime]: The start of the time interval (inclusive).
   /// - [endTime]: The end of the time interval (exclusive).
-  /// - [floors]: The number of floors (flights of stairs) climbed during the interval.
+  /// - [floors]: The number of floors (flights of stairs) climbed.
   /// - [metadata]: Metadata about the origin and recording method.
   /// - [id]: The unique identifier for this record.
   /// - [startZoneOffsetSeconds]: Optional timezone offset for start time.
@@ -92,4 +92,3 @@ final class FloorsClimbedRecord extends IntervalHealthRecord {
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
 }
-

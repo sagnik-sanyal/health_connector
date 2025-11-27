@@ -338,7 +338,8 @@ final class HealthRecordListTile extends StatelessWidget {
           record: record,
           icon: AppIcons.accessible,
           title:
-              '${record.pushes.value.toInt()} ${AppTexts.wheelchairPushesLabel}',
+              '${record.pushes.value.toInt()} '
+              '${AppTexts.wheelchairPushesLabel}',
           subtitleBuilder: (r, ctx) {
             final duration = r.duration;
             return Column(

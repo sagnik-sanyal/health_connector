@@ -8,7 +8,8 @@ part of 'health_record.dart';
 ///
 /// ## Platform Mapping
 ///
-/// - **Android (Health Connect)**: `androidx.health.connect.client.records.BodyFatRecord`
+/// - **Android (Health Connect)**:
+///   `androidx.health.connect.client.records.BodyFatRecord`
 /// - **iOS (HealthKit)**: `HKQuantityTypeIdentifier.bodyFatPercentage`
 ///
 /// ## Example
@@ -89,4 +90,3 @@ final class BodyFatPercentageRecord extends InstantHealthRecord {
   @override
   List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
 }
-

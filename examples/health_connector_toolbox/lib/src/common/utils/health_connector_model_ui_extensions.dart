@@ -24,6 +24,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HeightHealthDataType,
+        HydrationHealthDataType,
         LeanBodyMassHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
@@ -115,6 +116,7 @@ extension HealthDataTypeUI on HealthDataType {
       ActiveCaloriesBurnedHealthDataType _ => AppTexts.activeCaloriesBurned,
       FloorsClimbedHealthDataType _ => AppTexts.floorsClimbed,
       WheelchairPushesHealthDataType _ => AppTexts.wheelchairPushes,
+      HydrationHealthDataType _ => AppTexts.hydration,
     };
   }
 
@@ -136,6 +138,7 @@ extension HealthDataTypeUI on HealthDataType {
         AppTexts.activeCaloriesBurnedDescription,
       FloorsClimbedHealthDataType _ => AppTexts.floorsClimbedDescription,
       WheelchairPushesHealthDataType _ => AppTexts.wheelchairPushesDescription,
+      HydrationHealthDataType _ => AppTexts.hydrationDescription,
     };
   }
 
@@ -155,6 +158,7 @@ extension HealthDataTypeUI on HealthDataType {
       ActiveCaloriesBurnedHealthDataType _ => AppIcons.localFireDepartment,
       FloorsClimbedHealthDataType _ => AppIcons.stairs,
       WheelchairPushesHealthDataType _ => AppIcons.accessible,
+      HydrationHealthDataType _ => AppIcons.volume,
     };
   }
 }

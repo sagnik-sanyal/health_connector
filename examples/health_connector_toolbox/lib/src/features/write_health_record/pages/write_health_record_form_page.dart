@@ -12,6 +12,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthDataType,
         HeightHealthDataType,
+        HydrationHealthDataType,
         LeanBodyMassHealthDataType,
         MeasurementUnit,
         Metadata,
@@ -277,6 +278,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
           AppTexts.writePermissionDeniedFloorsClimbed,
         WheelchairPushesHealthDataType() =>
           AppTexts.writePermissionDeniedWheelchairPushes,
+        HydrationHealthDataType() => AppTexts.writePermissionDeniedHydration,
       };
     }
     return e.message;
@@ -304,6 +306,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
               FloorsClimbedHealthDataType() => AppTexts.insertFloorsClimbed,
               WheelchairPushesHealthDataType() =>
                 AppTexts.insertWheelchairPushes,
+              HydrationHealthDataType() => AppTexts.insertHydration,
             },
           ),
         ),

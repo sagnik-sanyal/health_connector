@@ -9,6 +9,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedHealthDataType,
         HealthDataType,
         HeightHealthDataType,
+        HydrationHealthDataType,
         LeanBodyMassHealthDataType,
         Length,
         Mass,
@@ -16,6 +17,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         Numeric,
         StepsHealthDataType,
         Temperature,
+        Volume,
         WeightHealthDataType,
         WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
@@ -85,6 +87,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
           FloorsClimbedHealthDataType() => _parseNumeric(value),
           WheelchairPushesHealthDataType() => _parseNumeric(value),
+          HydrationHealthDataType() => _parseVolume(value),
         };
       }
     });
@@ -142,6 +145,14 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
+  Volume? _parseVolume(String value) {
+    final volumeValue = double.tryParse(value);
+    if (volumeValue != null && volumeValue > 0) {
+      return Volume.liters(volumeValue);
+    }
+    return null;
+  }
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return switch (widget.dataType) {
@@ -158,6 +169,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
         WheelchairPushesHealthDataType() =>
           AppTexts.pleaseEnterWheelchairPushes,
+        HydrationHealthDataType() => AppTexts.pleaseEnterHydration,
       };
     }
 
@@ -172,6 +184,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
       FloorsClimbedHealthDataType() => int.tryParse(value),
       WheelchairPushesHealthDataType() => int.tryParse(value),
+      HydrationHealthDataType() => double.tryParse(value),
     };
 
     if (parsed == null) {
@@ -219,6 +232,10 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.activeCaloriesBurnedMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is HydrationHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.hydrationMustBeGreaterThanZero;
+      }
     }
 
     if (_value == null) {
@@ -236,6 +253,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
         WheelchairPushesHealthDataType() =>
           AppTexts.pleaseEnterWheelchairPushes,
+        HydrationHealthDataType() => AppTexts.pleaseEnterHydration,
       };
     }
 
@@ -356,6 +374,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           prefixIcon: Icon(AppIcons.accessible),
         ),
         keyboardType: TextInputType.number,
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      HydrationHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.hydrationValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.volume),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         onChanged: _onChanged,
         validator: _validate,
       ),

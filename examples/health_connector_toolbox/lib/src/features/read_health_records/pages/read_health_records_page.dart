@@ -11,6 +11,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthDataType,
         HealthRecord,
         HeightHealthDataType,
+        HydrationHealthDataType,
         LeanBodyMassHealthDataType,
         MeasurementUnit,
         ReadRecordsRequest,
@@ -138,6 +139,12 @@ class _ReadHealthRecordsPageState
           );
         case WheelchairPushesHealthDataType():
           request = HealthDataType.wheelchairPushes.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case HydrationHealthDataType():
+          request = HealthDataType.hydration.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

@@ -15,6 +15,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthRecord,
         HeightHealthDataType,
         HeightRecord,
+        HydrationHealthDataType,
+        HydrationRecord,
         LeanBodyMassHealthDataType,
         LeanBodyMassRecord,
         Length,
@@ -25,6 +27,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         StepRecord,
         StepsHealthDataType,
         Temperature,
+        Volume,
         WeightHealthDataType,
         WeightRecord,
         WheelchairPushesHealthDataType,
@@ -75,6 +78,7 @@ sealed class HealthRecordFormConfig {
         const ActiveCaloriesBurnedFormConfig(),
       FloorsClimbedHealthDataType() => const FloorsClimbedFormConfig(),
       WheelchairPushesHealthDataType() => const WheelchairPushesFormConfig(),
+      HydrationHealthDataType() => const HydrationFormConfig(),
     };
   }
 }
@@ -385,6 +389,39 @@ final class WheelchairPushesFormConfig extends HealthRecordFormConfig {
       startTime: startDateTime,
       endTime: endDateTime,
       pushes: numericValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for hydration records.
+///
+/// Hydration is an interval-based record that requires:
+/// - Start time
+/// - End time (derived from start time + duration)
+/// - Volume value (volume in liters)
+final class HydrationFormConfig extends HealthRecordFormConfig {
+  const HydrationFormConfig();
+
+  @override
+  bool get needsDuration => true;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    if (endDateTime == null) {
+      throw ArgumentError('endDateTime is required for hydration records');
+    }
+    final volumeValue = value as Volume;
+
+    return HydrationRecord(
+      startTime: startDateTime,
+      endTime: endDateTime,
+      volume: volumeValue,
       metadata: metadata,
     );
   }

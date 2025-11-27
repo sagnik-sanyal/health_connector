@@ -120,6 +120,13 @@ abstract final class AppTexts {
   static const String bodyTemperatureCelsius = 'Body Temperature (°C)';
   static const String bodyTemperatureFahrenheit = 'Body Temperature (°F)';
   static const String bodyTemperatureKelvin = 'Body Temperature (K)';
+  static const String hydration = 'Hydration';
+  static const String hydrationDescription =
+      'Water intake over a time interval';
+  static const String hydrationValue = 'Hydration Value (L)';
+  static const String hydrationLiters = 'Hydration (L)';
+  static const String hydrationMilliliters = 'Hydration (mL)';
+  static const String hydrationFluidOunces = 'Hydration (fl oz)';
 
   // ==========================================================================
   // Device Types
@@ -205,6 +212,8 @@ abstract final class AppTexts {
   static const String leanBodyMassWrite = 'Lean Body Mass - Write';
   static const String bodyTemperatureRead = 'Body Temperature - Read';
   static const String bodyTemperatureWrite = 'Body Temperature - Write';
+  static const String hydrationRead = 'Hydration - Read';
+  static const String hydrationWrite = 'Hydration - Write';
   static const String iosReadPermissionUnknownStatusNote =
       'Note: On iOS, read permissions may show as "unknown" status even after '
       'being granted due to privacy restrictions. '
@@ -264,6 +273,9 @@ abstract final class AppTexts {
   static const String writePermissionDeniedBodyTemperature =
       'Write permission denied or not supported. '
       'Please grant write permission for body temperature.';
+  static const String writePermissionDeniedHydration =
+      'Write permission denied or not supported. '
+      'Please grant write permission for hydration.';
 
   // ==========================================================================
   // Validation Messages
@@ -292,6 +304,7 @@ abstract final class AppTexts {
   static const String pleaseEnterLeanBodyMass = 'Please enter lean body mass';
   static const String pleaseEnterBodyTemperature =
       'Please enter body temperature';
+  static const String pleaseEnterHydration = 'Please enter hydration';
   static const String pleaseEnterValidNumber = 'Please enter a valid number';
   static const String endTimeMustBeAfterStartTime =
       'End time must be after start time';
@@ -314,6 +327,8 @@ abstract final class AppTexts {
       'Floors climbed must be non-negative';
   static const String wheelchairPushesMustBeNonNegative =
       'Wheelchair pushes must be non-negative';
+  static const String hydrationMustBeGreaterThanZero =
+      'Hydration must be greater than 0';
   static const String pageSizeMustBeBetween1And10000 =
       'Page size must be between 1 and 10000';
 
@@ -332,6 +347,7 @@ abstract final class AppTexts {
       'Insert Active Calories Burned';
   static const String insertFloorsClimbed = 'Insert Floors Climbed';
   static const String insertWheelchairPushes = 'Insert Wheelchair Pushes';
+  static const String insertHydration = 'Insert Hydration';
   static const String readHealthRecords = 'Read Health Records';
   static const String readAggregateData = 'Read Aggregate Data';
 

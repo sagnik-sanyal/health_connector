@@ -8,6 +8,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthRecord,
         HeightRecord,
+        HydrationRecord,
         InstantHealthRecord,
         IntervalHealthRecord,
         LeanBodyMassRecord,
@@ -451,6 +452,53 @@ final class HealthRecordListTile extends StatelessWidget {
           ],
           onDelete: onDelete,
         ),
+      HydrationRecord() => IntervalHealthRecordTile<HydrationRecord>(
+        record: record,
+        icon: AppIcons.volume,
+        title:
+            '${record.volume.inLiters.toStringAsFixed(2)} L '
+            '(${record.volume.inMilliliters.toStringAsFixed(0)} mL)',
+        subtitleBuilder: (r, ctx) {
+          final duration = r.duration;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                '${AppTexts.startLabel} '
+                '${DateFormatUtils.formatDateTime(r.startTime)}',
+              ),
+              Text(
+                '${AppTexts.endLabel} '
+                '${DateFormatUtils.formatDateTime(r.endTime)}',
+              ),
+              Text(
+                '${AppTexts.duration} ${duration.inHours}h '
+                '${duration.inMinutes.remainder(60)}m',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: theme.AppColors.grey600,
+                ),
+              ),
+            ],
+          );
+        },
+        detailRowsBuilder: (r, ctx) => [
+          HealthRecordDetailRow(
+            label: AppTexts.hydrationLiters,
+            value: r.volume.inLiters.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.hydrationMilliliters,
+            value: r.volume.inMilliliters.toStringAsFixed(0),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.hydrationFluidOunces,
+            value: r.volume.inFluidOuncesUs.toStringAsFixed(2),
+          ),
+        ],
+        onDelete: onDelete,
+      ),
     };
   }
 

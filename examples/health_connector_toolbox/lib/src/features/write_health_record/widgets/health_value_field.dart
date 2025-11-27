@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
+        BodyFatPercentageHealthDataType,
         DistanceHealthDataType,
         Energy,
         FloorsClimbedHealthDataType,
@@ -74,6 +75,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
           StepsHealthDataType() => _parseNumeric(value),
           WeightHealthDataType() => _parseMass(value),
           HeightHealthDataType() => _parseLength(value),
+          BodyFatPercentageHealthDataType() => _parseBodyFatPercentage(value),
           DistanceHealthDataType() => _parseLength(value),
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
           FloorsClimbedHealthDataType() => _parseNumeric(value),
@@ -116,12 +118,25 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
+  Numeric? _parseBodyFatPercentage(String value) {
+    final percentageValue = double.tryParse(value);
+    if (percentageValue != null &&
+        percentageValue >= 0 &&
+        percentageValue <= 100) {
+      // Convert percentage (0-100) to decimal (0-1)
+      return Numeric(percentageValue / 100);
+    }
+    return null;
+  }
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
         HeightHealthDataType() => AppTexts.pleaseEnterHeight,
+        BodyFatPercentageHealthDataType() =>
+          AppTexts.pleaseEnterBodyFatPercentage,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -135,6 +150,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       StepsHealthDataType() => int.tryParse(value),
       WeightHealthDataType() => double.tryParse(value),
       HeightHealthDataType() => double.tryParse(value),
+      BodyFatPercentageHealthDataType() => double.tryParse(value),
       DistanceHealthDataType() => double.tryParse(value),
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
       FloorsClimbedHealthDataType() => int.tryParse(value),
@@ -166,6 +182,11 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.heightMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is BodyFatPercentageHealthDataType) {
+      final percentage = parsed as double;
+      if (percentage < 0 || percentage > 100) {
+        return AppTexts.bodyFatPercentageMustBeBetween0And100;
+      }
     } else if (widget.dataType is DistanceHealthDataType) {
       if (parsed as double <= 0) {
         return AppTexts.distanceMustBeGreaterThanZero;
@@ -181,6 +202,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
         HeightHealthDataType() => AppTexts.pleaseEnterHeight,
+        BodyFatPercentageHealthDataType() =>
+          AppTexts.pleaseEnterBodyFatPercentage,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -228,6 +251,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           labelText: AppTexts.heightValue,
           border: OutlineInputBorder(),
           prefixIcon: Icon(AppIcons.height),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      BodyFatPercentageHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.bodyFatPercentageValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.percent),
         ),
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         onChanged: _onChanged,

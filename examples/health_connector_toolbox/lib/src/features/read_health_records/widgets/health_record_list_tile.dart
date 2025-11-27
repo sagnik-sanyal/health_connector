@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedRecord,
+        BodyFatPercentageRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
@@ -10,7 +12,6 @@ import 'package:health_connector_core/health_connector_core.dart'
         SeriesHealthRecord,
         StepRecord,
         WeightRecord,
-        ActiveCaloriesBurnedRecord,
         WheelchairPushesRecord;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
@@ -130,6 +131,39 @@ final class HealthRecordListTile extends StatelessWidget {
         ],
         onDelete: onDelete,
       ),
+      BodyFatPercentageRecord() =>
+        InstantHealthRecordTile<BodyFatPercentageRecord>(
+          record: record,
+          icon: AppIcons.percent,
+          title: '${(record.percentage.value * 100).toStringAsFixed(2)}%',
+          subtitleBuilder: (r, ctx) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                '${AppTexts.time}: ${DateFormatUtils.formatDateTime(r.time)}',
+              ),
+              Text(
+                '${AppTexts.recording}: ${r.metadata.recordingMethod.name}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: theme.AppColors.grey600,
+                ),
+              ),
+            ],
+          ),
+          detailRowsBuilder: (r, ctx) => [
+            HealthRecordDetailRow(
+              label: AppTexts.bodyFatPercentagePercent,
+              value: '${(r.percentage.value * 100).toStringAsFixed(2)}%',
+            ),
+            HealthRecordDetailRow(
+              label: 'Decimal',
+              value: r.percentage.value.toStringAsFixed(4),
+            ),
+          ],
+          onDelete: onDelete,
+        ),
     };
   }
 

@@ -101,6 +101,11 @@ abstract final class AppTexts {
   static const String heightValue = 'Height Value (m)';
   static const String heightMeters = 'Height (m)';
   static const String heightCm = 'Height (cm)';
+  static const String bodyFatPercentage = 'Body Fat Percentage';
+  static const String bodyFatPercentageDescription =
+      'Body fat percentage measurement at a point in time';
+  static const String bodyFatPercentageValue = 'Body Fat Percentage (%)';
+  static const String bodyFatPercentagePercent = 'Body Fat Percentage (%)';
 
   // ==========================================================================
   // Device Types
@@ -180,6 +185,8 @@ abstract final class AppTexts {
   static const String wheelchairPushesWrite = 'Wheelchair Pushes - Write';
   static const String heightRead = 'Height - Read';
   static const String heightWrite = 'Height - Write';
+  static const String bodyFatPercentageRead = 'Body Fat Percentage - Read';
+  static const String bodyFatPercentageWrite = 'Body Fat Percentage - Write';
   static const String iosReadPermissionUnknownStatusNote =
       'Note: On iOS, read permissions may show as "unknown" status even after '
       'being granted due to privacy restrictions. '
@@ -230,6 +237,9 @@ abstract final class AppTexts {
   static const String writePermissionDeniedHeight =
       'Write permission denied or not supported. '
       'Please grant write permission for height.';
+  static const String writePermissionDeniedBodyFatPercentage =
+      'Write permission denied or not supported. '
+      'Please grant write permission for body fat percentage.';
 
   // ==========================================================================
   // Validation Messages
@@ -253,6 +263,8 @@ abstract final class AppTexts {
   static const String pleaseEnterWheelchairPushes =
       'Please enter wheelchair pushes';
   static const String pleaseEnterHeight = 'Please enter height';
+  static const String pleaseEnterBodyFatPercentage =
+      'Please enter body fat percentage';
   static const String pleaseEnterValidNumber = 'Please enter a valid number';
   static const String endTimeMustBeAfterStartTime =
       'End time must be after start time';
@@ -263,6 +275,8 @@ abstract final class AppTexts {
       'Distance must be greater than 0';
   static const String heightMustBeGreaterThanZero =
       'Height must be greater than 0';
+  static const String bodyFatPercentageMustBeBetween0And100 =
+      'Body fat percentage must be between 0 and 100';
   static const String activeCaloriesBurnedMustBeGreaterThanZero =
       'Active calories burned must be greater than 0';
   static const String floorsClimbedMustBeNonNegative =
@@ -279,6 +293,7 @@ abstract final class AppTexts {
   static const String insertSteps = 'Insert Steps';
   static const String insertWeight = 'Insert Weight';
   static const String insertHeight = 'Insert Height';
+  static const String insertBodyFatPercentage = 'Insert Body Fat Percentage';
   static const String insertDistance = 'Insert Distance';
   static const String insertActiveCaloriesBurned =
       'Insert Active Calories Burned';

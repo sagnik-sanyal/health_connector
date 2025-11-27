@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
+        BodyFatPercentageHealthDataType,
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
@@ -93,6 +94,12 @@ class _ReadHealthRecordsPageState
           );
         case HeightHealthDataType():
           request = HealthDataType.height.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case BodyFatPercentageHealthDataType():
+          request = HealthDataType.bodyFatPercentage.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

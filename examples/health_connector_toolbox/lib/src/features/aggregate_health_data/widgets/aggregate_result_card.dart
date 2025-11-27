@@ -150,7 +150,10 @@ final class AggregateResultCard extends StatelessWidget {
               ),
         ),
         Numeric() => Text(
-          value.toString(),
+          // Format as percentage if value is between 0 and 1 (e.g., body fat percentage)
+          value.value >= 0 && value.value <= 1
+              ? '${(value.value * 100).toStringAsFixed(2)}%'
+              : value.value.toStringAsFixed(2),
           style:
               Theme.of(
                 context,

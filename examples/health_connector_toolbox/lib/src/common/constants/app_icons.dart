@@ -16,6 +16,7 @@ abstract final class AppIcons {
   static const IconData directionsWalk = Icons.directions_walk;
   static const IconData monitorWeight = Icons.monitor_weight;
   static const IconData height = Icons.height;
+  static const IconData percent = Icons.percent;
   static const IconData straighten = Icons.straighten;
   static const IconData localFireDepartment = Icons.local_fire_department;
   static const IconData stairs = Icons.stairs;

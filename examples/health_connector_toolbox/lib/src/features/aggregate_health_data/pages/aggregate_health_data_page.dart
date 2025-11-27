@@ -5,6 +5,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateRequest,
         AggregateResponse,
         AggregationMetric,
+        BodyFatPercentageHealthDataType,
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
@@ -116,6 +117,10 @@ class _AggregateHealthDataPageState
             case AggregationMetric.count:
               throw UnsupportedError('Unsupported metric: $_selectedMetric');
           }
+        case BodyFatPercentageHealthDataType():
+          throw UnsupportedError(
+            'Body fat percentage does not support aggregation',
+          );
         case DistanceHealthDataType():
           switch (_selectedMetric!) {
             case AggregationMetric.sum:
@@ -211,6 +216,7 @@ class _AggregateHealthDataPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Only show data types that support aggregation metrics
                     HealthDataTypeDropdownField(
                       initialValue: _selectedDataType,
                       onChanged: (value) {
@@ -232,6 +238,8 @@ class _AggregateHealthDataPageState
                         }
                         return null;
                       },
+                      // Filter to only display data types with non-empty
+                      // supported aggregation metrics
                       itemsFilter: (type) =>
                           type.supportedAggregationMetrics.isNotEmpty,
                     ),

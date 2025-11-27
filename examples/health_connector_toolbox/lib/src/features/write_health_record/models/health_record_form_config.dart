@@ -2,6 +2,8 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         ActiveCaloriesBurnedRecord,
+        BodyFatPercentageHealthDataType,
+        BodyFatPercentageRecord,
         DistanceHealthDataType,
         DistanceRecord,
         Energy,
@@ -60,6 +62,7 @@ sealed class HealthRecordFormConfig {
       StepsHealthDataType() => const StepsFormConfig(),
       WeightHealthDataType() => const WeightFormConfig(),
       HeightHealthDataType() => const HeightFormConfig(),
+      BodyFatPercentageHealthDataType() => const BodyFatPercentageFormConfig(),
       DistanceHealthDataType() => const DistanceFormConfig(),
       ActiveCaloriesBurnedHealthDataType() =>
         const ActiveCaloriesBurnedFormConfig(),
@@ -153,6 +156,34 @@ final class HeightFormConfig extends HealthRecordFormConfig {
     return HeightRecord(
       time: startDateTime,
       height: lengthValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for body fat percentage records.
+///
+/// Body fat percentage is an instant-based record that requires:
+/// - Time (single timestamp)
+/// - Body fat percentage value (as decimal 0-1, e.g., 0.25 = 25%)
+final class BodyFatPercentageFormConfig extends HealthRecordFormConfig {
+  const BodyFatPercentageFormConfig();
+
+  @override
+  bool get needsDuration => false;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    final numericValue = value as Numeric;
+
+    return BodyFatPercentageRecord(
+      time: startDateTime,
+      percentage: numericValue,
       metadata: metadata,
     );
   }

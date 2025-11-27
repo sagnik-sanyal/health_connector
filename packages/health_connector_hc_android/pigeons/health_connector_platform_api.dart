@@ -756,7 +756,8 @@ class WeightRecordDto {
 /// DTO for lean body mass health data.
 ///
 /// Maps to:
-/// - Health Connect: `androidx.health.connect.client.records.LeanBodyMassRecord`
+/// - Health Connect:
+///   `androidx.health.connect.client.records.LeanBodyMassRecord`
 /// - Domain: `LeanBodyMassRecord`
 class LeanBodyMassRecordDto {
   LeanBodyMassRecordDto({
@@ -855,7 +856,8 @@ class BodyFatPercentageRecordDto {
 /// DTO for body temperature health data.
 ///
 /// Maps to:
-/// - Health Connect: `androidx.health.connect.client.records.BodyTemperatureRecord`
+/// - Health Connect:
+///   `androidx.health.connect.client.records.BodyTemperatureRecord`
 /// - Domain: `BodyTemperatureRecord`
 class BodyTemperatureRecordDto {
   BodyTemperatureRecordDto({

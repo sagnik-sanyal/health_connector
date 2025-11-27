@@ -2,7 +2,7 @@ part of 'health_record.dart';
 
 /// Represents a body temperature measurement at a specific point in time.
 ///
-/// [BodyTemperatureRecord] captures the user's body temperature as an instant measurement.
+/// [BodyTemperatureRecord] captures the user's body temperature.
 /// This is a point-in-time record with a single timestamp.
 ///
 /// ## Platform Mapping
@@ -24,7 +24,8 @@ final class BodyTemperatureRecord extends InstantHealthRecord {
   ///
   /// ## Throws
   ///
-  /// - [ArgumentError] if [temperature] is invalid (via Temperature class validation).
+  /// - [ArgumentError] if [temperature] is invalid via [Temperature]
+  ///   class validation.
   const BodyTemperatureRecord({
     required super.time,
     required super.metadata,

@@ -6,6 +6,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         Energy,
         FloorsClimbedHealthDataType,
         HealthDataType,
+        HeightHealthDataType,
         Length,
         Mass,
         MeasurementUnit,
@@ -72,6 +73,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
         _value = switch (widget.dataType) {
           StepsHealthDataType() => _parseNumeric(value),
           WeightHealthDataType() => _parseMass(value),
+          HeightHealthDataType() => _parseLength(value),
           DistanceHealthDataType() => _parseLength(value),
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
           FloorsClimbedHealthDataType() => _parseNumeric(value),
@@ -119,6 +121,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+        HeightHealthDataType() => AppTexts.pleaseEnterHeight,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -131,6 +134,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
     final parsed = switch (widget.dataType) {
       StepsHealthDataType() => int.tryParse(value),
       WeightHealthDataType() => double.tryParse(value),
+      HeightHealthDataType() => double.tryParse(value),
       DistanceHealthDataType() => double.tryParse(value),
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
       FloorsClimbedHealthDataType() => int.tryParse(value),
@@ -158,6 +162,10 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.weightMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is HeightHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.heightMustBeGreaterThanZero;
+      }
     } else if (widget.dataType is DistanceHealthDataType) {
       if (parsed as double <= 0) {
         return AppTexts.distanceMustBeGreaterThanZero;
@@ -172,6 +180,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
+        HeightHealthDataType() => AppTexts.pleaseEnterHeight,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -208,6 +217,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           labelText: AppTexts.weightValue,
           border: OutlineInputBorder(),
           prefixIcon: Icon(AppIcons.monitorWeight),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      HeightHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.heightValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.height),
         ),
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         onChanged: _onChanged,

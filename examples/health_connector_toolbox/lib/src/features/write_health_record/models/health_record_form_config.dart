@@ -9,6 +9,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthDataType,
         HealthRecord,
+        HeightHealthDataType,
+        HeightRecord,
         Length,
         Mass,
         MeasurementUnit,
@@ -57,6 +59,7 @@ sealed class HealthRecordFormConfig {
     return switch (type) {
       StepsHealthDataType() => const StepsFormConfig(),
       WeightHealthDataType() => const WeightFormConfig(),
+      HeightHealthDataType() => const HeightFormConfig(),
       DistanceHealthDataType() => const DistanceFormConfig(),
       ActiveCaloriesBurnedHealthDataType() =>
         const ActiveCaloriesBurnedFormConfig(),
@@ -122,6 +125,34 @@ final class WeightFormConfig extends HealthRecordFormConfig {
     return WeightRecord(
       time: startDateTime,
       weight: massValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for height records.
+///
+/// Height is an instant-based record that requires:
+/// - Time (single timestamp)
+/// - Height value (length in meters)
+final class HeightFormConfig extends HealthRecordFormConfig {
+  const HeightFormConfig();
+
+  @override
+  bool get needsDuration => false;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    final lengthValue = value as Length;
+
+    return HeightRecord(
+      time: startDateTime,
+      height: lengthValue,
       metadata: metadata,
     );
   }

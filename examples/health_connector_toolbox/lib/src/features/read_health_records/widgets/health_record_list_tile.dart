@@ -4,6 +4,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
+        HeightRecord,
         InstantHealthRecord,
         IntervalHealthRecord,
         SeriesHealthRecord,
@@ -91,6 +92,40 @@ final class HealthRecordListTile extends StatelessWidget {
           HealthRecordDetailRow(
             label: AppTexts.weightGrams,
             value: r.weight.inGrams.toStringAsFixed(2),
+          ),
+        ],
+        onDelete: onDelete,
+      ),
+      HeightRecord() => InstantHealthRecordTile<HeightRecord>(
+        record: record,
+        icon: AppIcons.height,
+        title:
+            '${record.height.inMeters.toStringAsFixed(2)} m '
+            '(${record.height.inCentimeters.toStringAsFixed(0)} cm)',
+        subtitleBuilder: (r, ctx) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              '${AppTexts.time}: ${DateFormatUtils.formatDateTime(r.time)}',
+            ),
+            Text(
+              '${AppTexts.recording}: ${r.metadata.recordingMethod.name}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: theme.AppColors.grey600,
+              ),
+            ),
+          ],
+        ),
+        detailRowsBuilder: (r, ctx) => [
+          HealthRecordDetailRow(
+            label: AppTexts.heightMeters,
+            value: r.height.inMeters.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.heightCm,
+            value: r.height.inCentimeters.toStringAsFixed(0),
           ),
         ],
         onDelete: onDelete,

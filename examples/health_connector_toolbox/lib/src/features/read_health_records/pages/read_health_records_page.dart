@@ -8,6 +8,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthDataType,
         HealthRecord,
+        HeightHealthDataType,
         MeasurementUnit,
         ReadRecordsRequest,
         StepsHealthDataType,
@@ -86,6 +87,12 @@ class _ReadHealthRecordsPageState
           );
         case WeightHealthDataType():
           request = HealthDataType.weight.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case HeightHealthDataType():
+          request = HealthDataType.height.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

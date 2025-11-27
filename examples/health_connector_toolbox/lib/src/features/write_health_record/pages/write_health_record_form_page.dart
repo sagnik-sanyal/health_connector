@@ -9,6 +9,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
+        HeightHealthDataType,
         MeasurementUnit,
         Metadata,
         RecordingMethod,
@@ -259,6 +260,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.writePermissionDeniedSteps,
         WeightHealthDataType() => AppTexts.writePermissionDeniedWeight,
+        HeightHealthDataType() => AppTexts.writePermissionDeniedHeight,
         DistanceHealthDataType() => AppTexts.writePermissionDeniedDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.writePermissionDeniedActiveCaloriesBurned,
@@ -282,6 +284,7 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
             switch (widget.dataType) {
               StepsHealthDataType() => AppTexts.insertSteps,
               WeightHealthDataType() => AppTexts.insertWeight,
+              HeightHealthDataType() => AppTexts.insertHeight,
               DistanceHealthDataType() => AppTexts.insertDistance,
               ActiveCaloriesBurnedHealthDataType() =>
                 AppTexts.insertActiveCaloriesBurned,

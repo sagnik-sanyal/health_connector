@@ -11,6 +11,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthDataType,
         HealthRecord,
+        HeightHealthDataType,
         MeasurementUnit,
         StepsHealthDataType,
         WeightHealthDataType,
@@ -87,6 +88,27 @@ class _AggregateHealthDataPageState
               );
             case AggregationMetric.max:
               request = HealthDataType.weight.aggregateMax(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.sum:
+            case AggregationMetric.count:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case HeightHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.avg:
+              request = HealthDataType.height.aggregateAverage(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.min:
+              request = HealthDataType.height.aggregateMin(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.max:
+              request = HealthDataType.height.aggregateMax(
                 startTime: startDateTime!,
                 endTime: endDateTime!,
               );

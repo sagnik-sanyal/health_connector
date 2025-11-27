@@ -7,7 +7,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         IntervalHealthRecord,
         SeriesHealthRecord,
         StepRecord,
-        WeightRecord;
+        WeightRecord,
+        ActiveCaloriesBurnedRecord;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/theme/app_colors.dart'
@@ -180,6 +181,50 @@ final class HealthRecordListTile extends StatelessWidget {
         ],
         onDelete: onDelete,
       ),
+      ActiveCaloriesBurnedRecord() =>
+        IntervalHealthRecordTile<ActiveCaloriesBurnedRecord>(
+          record: record,
+          icon: AppIcons.localFireDepartment,
+          title:
+              '${record.energy.inKilocalories.toStringAsFixed(2)} kcal '
+              '(${record.energy.inCalories.toStringAsFixed(0)} cal)',
+          subtitleBuilder: (r, ctx) {
+            final duration = r.duration;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  '${AppTexts.startLabel} '
+                  '${DateFormatUtils.formatDateTime(r.startTime)}',
+                ),
+                Text(
+                  '${AppTexts.endLabel} '
+                  '${DateFormatUtils.formatDateTime(r.endTime)}',
+                ),
+                Text(
+                  '${AppTexts.duration} ${duration.inHours}h '
+                  '${duration.inMinutes.remainder(60)}m',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: theme.AppColors.grey600,
+                  ),
+                ),
+              ],
+            );
+          },
+          detailRowsBuilder: (r, ctx) => [
+            HealthRecordDetailRow(
+              label: AppTexts.activeCaloriesBurnedKcal,
+              value: r.energy.inKilocalories.toStringAsFixed(2),
+            ),
+            HealthRecordDetailRow(
+              label: AppTexts.activeCaloriesBurnedCal,
+              value: r.energy.inCalories.toStringAsFixed(0),
+            ),
+          ],
+          onDelete: onDelete,
+        ),
     };
   }
 

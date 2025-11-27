@@ -1,7 +1,10 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
+        ActiveCaloriesBurnedRecord,
         DistanceHealthDataType,
         DistanceRecord,
+        Energy,
         HealthDataType,
         HealthRecord,
         Length,
@@ -51,6 +54,8 @@ sealed class HealthRecordFormConfig {
       StepsHealthDataType() => const StepsFormConfig(),
       WeightHealthDataType() => const WeightFormConfig(),
       DistanceHealthDataType() => const DistanceFormConfig(),
+      ActiveCaloriesBurnedHealthDataType() =>
+        const ActiveCaloriesBurnedFormConfig(),
     };
   }
 }
@@ -144,6 +149,41 @@ final class DistanceFormConfig extends HealthRecordFormConfig {
       startTime: startDateTime,
       endTime: endDateTime,
       distance: lengthValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for active calories burned records.
+///
+/// Active calories burned is an interval-based record that requires:
+/// - Start time
+/// - End time (derived from start time + duration)
+/// - Energy value (energy in kilocalories)
+final class ActiveCaloriesBurnedFormConfig extends HealthRecordFormConfig {
+  const ActiveCaloriesBurnedFormConfig();
+
+  @override
+  bool get needsDuration => true;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    DateTime? endDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+  }) {
+    if (endDateTime == null) {
+      throw ArgumentError(
+        'endDateTime is required for active calories burned records',
+      );
+    }
+    final energyValue = value as Energy;
+
+    return ActiveCaloriesBurnedRecord(
+      startTime: startDateTime,
+      endTime: endDateTime,
+      energy: energyValue,
       metadata: metadata,
     );
   }

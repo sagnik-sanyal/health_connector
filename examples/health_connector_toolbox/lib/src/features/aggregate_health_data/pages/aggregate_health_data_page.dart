@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
         AggregateRequest,
         AggregateResponse,
         AggregationMetric,
@@ -95,6 +96,19 @@ class _AggregateHealthDataPageState
           switch (_selectedMetric!) {
             case AggregationMetric.sum:
               request = HealthDataType.distance.aggregateSum(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.count:
+            case AggregationMetric.avg:
+            case AggregationMetric.min:
+            case AggregationMetric.max:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case ActiveCaloriesBurnedHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.sum:
+              request = HealthDataType.activeCaloriesBurned.aggregateSum(
                 startTime: startDateTime!,
                 endTime: endDateTime!,
               );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
+        Energy,
         HealthDataType,
         Length,
         Mass,
@@ -68,6 +70,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
           StepsHealthDataType() => _parseNumeric(value),
           WeightHealthDataType() => _parseMass(value),
           DistanceHealthDataType() => _parseLength(value),
+          ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
         };
       }
     });
@@ -98,12 +101,22 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
+  Energy? _parseEnergy(String value) {
+    final energyValue = double.tryParse(value);
+    if (energyValue != null && energyValue > 0) {
+      return Energy.kilocalories(energyValue);
+    }
+    return null;
+  }
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return switch (widget.dataType) {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
+        ActiveCaloriesBurnedHealthDataType() =>
+          AppTexts.pleaseEnterActiveCaloriesBurned,
       };
     }
 
@@ -111,6 +124,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       StepsHealthDataType() => int.tryParse(value),
       WeightHealthDataType() => double.tryParse(value),
       DistanceHealthDataType() => double.tryParse(value),
+      ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
     };
 
     if (parsed == null) {
@@ -129,6 +143,10 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.distanceMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is ActiveCaloriesBurnedHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.activeCaloriesBurnedMustBeGreaterThanZero;
+      }
     }
 
     if (_value == null) {
@@ -136,6 +154,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         StepsHealthDataType() => AppTexts.pleaseEnterStepCount,
         WeightHealthDataType() => AppTexts.pleaseEnterWeight,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
+        ActiveCaloriesBurnedHealthDataType() =>
+          AppTexts.pleaseEnterActiveCaloriesBurned,
       };
     }
 
@@ -177,6 +197,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           labelText: AppTexts.distanceValue,
           border: OutlineInputBorder(),
           prefixIcon: Icon(AppIcons.straighten),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      ActiveCaloriesBurnedHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.activeCaloriesBurnedValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.localFireDepartment),
         ),
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         onChanged: _onChanged,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Velocity;
 import 'package:health_connector_core/health_connector_core.dart'
     show
         AggregationMetric,
@@ -11,15 +11,23 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthPlatformFeatureReadHealthDataHistory,
         HealthPlatformFeatureReadHealthDataInBackground,
         HealthPlatformFeatureStatus,
+        Energy,
         Length,
         Mass,
         MeasurementUnit,
         Numeric,
         PermissionStatus,
         RecordingMethod,
+        ActiveCaloriesBurnedHealthDataType,
         DistanceHealthDataType,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        BloodGlucose,
+        Power,
+        Pressure,
+        Temperature,
+        Velocity,
+        Volume;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 
@@ -28,9 +36,9 @@ extension HealthPlatformFeatureUI on HealthPlatformFeature {
   /// Returns the display name for this feature.
   String get displayName {
     return switch (this) {
-      HealthPlatformFeatureReadHealthDataHistory() =>
+      HealthPlatformFeatureReadHealthDataHistory _ =>
         AppTexts.readHealthDataHistory,
-      HealthPlatformFeatureReadHealthDataInBackground() =>
+      HealthPlatformFeatureReadHealthDataInBackground _ =>
         AppTexts.readHealthDataInBackground,
     };
   }
@@ -41,8 +49,8 @@ extension HealthPlatformFeatureStatusUI on HealthPlatformFeatureStatus {
   /// Returns the display name for this feature status.
   String get displayName {
     return switch (this) {
-      HealthPlatformFeatureStatus.available => 'Available',
-      HealthPlatformFeatureStatus.unavailable => 'Unavailable',
+      HealthPlatformFeatureStatus.available => AppTexts.available,
+      HealthPlatformFeatureStatus.unavailable => AppTexts.unavailable,
     };
   }
 }
@@ -59,13 +67,13 @@ extension PermissionStatusUI on PermissionStatus {
   }
 }
 
-/// Extension on [HealthDataPermissionAccessType] to provide UI-related properties.
+/// Extension to provide UI-related properties.
 extension HealthDataPermissionAccessTypeUI on HealthDataPermissionAccessType {
   /// Returns the display name for this access type.
   String get displayName {
     return switch (this) {
-      HealthDataPermissionAccessType.read => 'Read',
-      HealthDataPermissionAccessType.write => 'Write',
+      HealthDataPermissionAccessType.read => AppTexts.read,
+      HealthDataPermissionAccessType.write => AppTexts.write,
     };
   }
 }
@@ -74,7 +82,7 @@ extension HealthDataPermissionAccessTypeUI on HealthDataPermissionAccessType {
 extension HealthDataPermissionUI on HealthDataPermission {
   /// Returns the display name for this permission.
   ///
-  /// Combines the data type display name with the access type (e.g., "Steps - Read").
+  /// Combines the data type display name with the access type.
   String get displayName {
     return '${dataType.displayName} - ${accessType.displayName}';
   }
@@ -91,9 +99,10 @@ extension HealthDataTypeUI on HealthDataType {
   /// This name should be used in UI elements.
   String get displayName {
     return switch (this) {
-      StepsHealthDataType() => AppTexts.steps,
-      WeightHealthDataType() => AppTexts.weight,
-      DistanceHealthDataType() => AppTexts.distance,
+      StepsHealthDataType _ => AppTexts.steps,
+      WeightHealthDataType _ => AppTexts.weight,
+      DistanceHealthDataType _ => AppTexts.distance,
+      ActiveCaloriesBurnedHealthDataType _ => AppTexts.activeCaloriesBurned,
     };
   }
 
@@ -103,9 +112,11 @@ extension HealthDataTypeUI on HealthDataType {
   /// represents and is suitable for subtitle text or tooltips.
   String get description {
     return switch (this) {
-      StepsHealthDataType() => AppTexts.stepsDescription,
-      WeightHealthDataType() => AppTexts.weightDescription,
-      DistanceHealthDataType() => AppTexts.distanceDescription,
+      StepsHealthDataType _ => AppTexts.stepsDescription,
+      WeightHealthDataType _ => AppTexts.weightDescription,
+      DistanceHealthDataType _ => AppTexts.distanceDescription,
+      ActiveCaloriesBurnedHealthDataType _ =>
+        AppTexts.activeCaloriesBurnedDescription,
     };
   }
 
@@ -115,9 +126,10 @@ extension HealthDataTypeUI on HealthDataType {
   /// the health data type in UI elements.
   IconData get icon {
     return switch (this) {
-      StepsHealthDataType() => AppIcons.directionsWalk,
-      WeightHealthDataType() => AppIcons.monitorWeight,
-      DistanceHealthDataType() => AppIcons.straighten,
+      StepsHealthDataType _ => AppIcons.directionsWalk,
+      WeightHealthDataType _ => AppIcons.monitorWeight,
+      DistanceHealthDataType _ => AppIcons.straighten,
+      ActiveCaloriesBurnedHealthDataType _ => AppIcons.localFireDepartment,
     };
   }
 }
@@ -208,22 +220,32 @@ extension MeasurementUnitUI on MeasurementUnit {
   /// Returns the display name for this measurement unit.
   String get displayName {
     return switch (this) {
-      Mass() => AppTexts.mass,
-      Numeric() => AppTexts.numeric,
-      Length() => AppTexts.length,
-      // Add other unit types as needed
-      _ => toString(),
+      Mass _ => AppTexts.mass,
+      Numeric _ => AppTexts.numeric,
+      Length _ => AppTexts.length,
+      Energy _ => AppTexts.energy,
+      BloodGlucose _ => AppTexts.bloodGlucose,
+      Power _ => AppTexts.power,
+      Pressure _ => AppTexts.pressure,
+      Temperature _ => AppTexts.temperature,
+      Velocity _ => AppTexts.velocity,
+      Volume _ => AppTexts.volume,
     };
   }
 
   /// Returns the icon for this measurement unit.
   IconData get icon {
     return switch (this) {
-      Mass() => AppIcons.mass,
-      Numeric() => AppIcons.numeric,
-      Length() => AppIcons.length,
-      // Add other unit types as needed
-      _ => AppIcons.numbers,
+      Mass _ => AppIcons.mass,
+      Numeric _ => AppIcons.numeric,
+      Length _ => AppIcons.length,
+      Energy _ => AppIcons.energy,
+      BloodGlucose _ => AppIcons.bloodGlucose,
+      Power _ => AppIcons.power,
+      Pressure _ => AppIcons.pressure,
+      Temperature _ => AppIcons.temperature,
+      Velocity _ => AppIcons.velocity,
+      Volume _ => AppIcons.volume,
     };
   }
 }

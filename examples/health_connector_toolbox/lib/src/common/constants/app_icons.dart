@@ -16,6 +16,7 @@ abstract final class AppIcons {
   static const IconData directionsWalk = Icons.directions_walk;
   static const IconData monitorWeight = Icons.monitor_weight;
   static const IconData straighten = Icons.straighten;
+  static const IconData localFireDepartment = Icons.local_fire_department;
   static const IconData readMore = Icons.read_more;
   static const IconData calculate = Icons.calculate;
 
@@ -65,6 +66,13 @@ abstract final class AppIcons {
   static const IconData mass = Icons.scale;
   static const IconData numeric = Icons.numbers;
   static const IconData length = Icons.straighten;
+  static const IconData energy = Icons.local_fire_department;
+  static const IconData bloodGlucose = Icons.bloodtype;
+  static const IconData power = Icons.bolt;
+  static const IconData pressure = Icons.compress;
+  static const IconData temperature = Icons.thermostat;
+  static const IconData velocity = Icons.speed;
+  static const IconData volume = Icons.water_drop;
 
   // Health Platforms
   static const IconData apple = Icons.apple;

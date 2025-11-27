@@ -24,6 +24,10 @@ extension HealthDataPermissionDto {
      */
     func toHealthKitObjectType() -> HKObjectType {
         switch self.healthDataType {
+        case .activeCaloriesBurned:
+            return HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
+        case .distance:
+            return HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
         case .steps:
             return HKQuantityType.quantityType(forIdentifier: .stepCount)!
         case .weight:

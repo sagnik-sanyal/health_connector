@@ -46,6 +46,8 @@ abstract final class AppTexts {
   static const String unknown = 'Unknown';
   static const String granted = 'granted';
   static const String denied = 'denied';
+  static const String available = 'Available';
+  static const String unavailable = 'Unavailable';
   static const String notRequested = 'Not requested';
   static const String notAvailable = 'N/A';
   static const String nullValue = 'none';
@@ -76,6 +78,13 @@ abstract final class AppTexts {
   static const String distanceValue = 'Distance Value (m)';
   static const String distanceMeters = 'Distance (m)';
   static const String distanceKm = 'Distance (km)';
+  static const String activeCaloriesBurned = 'Active Calories Burned';
+  static const String activeCaloriesBurnedDescription =
+      'Active calories burned during physical activity over a time interval';
+  static const String activeCaloriesBurnedValue =
+      'Active Calories Burned (kcal)';
+  static const String activeCaloriesBurnedKcal = 'Active Calories (kcal)';
+  static const String activeCaloriesBurnedCal = 'Active Calories (cal)';
 
   // ==========================================================================
   // Device Types
@@ -103,6 +112,13 @@ abstract final class AppTexts {
   static const String mass = 'Mass';
   static const String numeric = 'Numeric';
   static const String length = 'Length';
+  static const String energy = 'Energy';
+  static const String bloodGlucose = 'Blood Glucose';
+  static const String power = 'Power';
+  static const String pressure = 'Pressure';
+  static const String temperature = 'Temperature';
+  static const String velocity = 'Velocity';
+  static const String volume = 'Volume';
 
   // ==========================================================================
   // Aggregation Metrics
@@ -120,6 +136,8 @@ abstract final class AppTexts {
   // Permissions
   // ==========================================================================
   static const String permissions = 'Permissions';
+  static const String read = 'Read';
+  static const String write = 'Write';
   static const String requestPermissions = 'Request Permissions';
   static const String requestPermissionsTitle = requestPermissions;
   static const String requestSelectedPermissions =
@@ -136,6 +154,10 @@ abstract final class AppTexts {
   static const String weightWrite = 'Weight - Write';
   static const String distanceRead = 'Distance - Read';
   static const String distanceWrite = 'Distance - Write';
+  static const String activeCaloriesBurnedRead =
+      'Active Calories Burned - Read';
+  static const String activeCaloriesBurnedWrite =
+      'Active Calories Burned - Write';
   static const String iosReadPermissionUnknownStatusNote =
       'Note: On iOS, read permissions may show as "unknown" status even after '
       'being granted due to privacy restrictions. '
@@ -174,6 +196,9 @@ abstract final class AppTexts {
   static const String writePermissionDeniedDistance =
       'Write permission denied or not supported. '
       'Please grant write permission for distance.';
+  static const String writePermissionDeniedActiveCaloriesBurned =
+      'Write permission denied or not supported. '
+      'Please grant write permission for active calories burned.';
 
   // ==========================================================================
   // Validation Messages
@@ -191,6 +216,8 @@ abstract final class AppTexts {
   static const String pleaseEnterStepCount = 'Please enter step count';
   static const String pleaseEnterWeight = 'Please enter weight';
   static const String pleaseEnterDistance = 'Please enter distance';
+  static const String pleaseEnterActiveCaloriesBurned =
+      'Please enter active calories burned';
   static const String pleaseEnterValidNumber = 'Please enter a valid number';
   static const String endTimeMustBeAfterStartTime =
       'End time must be after start time';
@@ -199,6 +226,8 @@ abstract final class AppTexts {
       'Weight must be greater than 0';
   static const String distanceMustBeGreaterThanZero =
       'Distance must be greater than 0';
+  static const String activeCaloriesBurnedMustBeGreaterThanZero =
+      'Active calories burned must be greater than 0';
   static const String pageSizeMustBeBetween1And10000 =
       'Page size must be between 1 and 10000';
 
@@ -209,6 +238,8 @@ abstract final class AppTexts {
   static const String insertSteps = 'Insert Steps';
   static const String insertWeight = 'Insert Weight';
   static const String insertDistance = 'Insert Distance';
+  static const String insertActiveCaloriesBurned =
+      'Insert Active Calories Burned';
   static const String readHealthRecords = 'Read Health Records';
   static const String readAggregateData = 'Read Aggregate Data';
 

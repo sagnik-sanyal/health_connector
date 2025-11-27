@@ -1591,6 +1591,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
+                        lengthValue: nil,
                         massValue: nil
                     )
                     continuation.resume(returning: response)
@@ -1609,6 +1610,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -1620,6 +1622,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: energyDto,
                         doubleValue: nil,
+                        lengthValue: nil,
                         massValue: nil
                     )
 
@@ -1631,6 +1634,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -1643,6 +1647,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: numericDto.value,
+                        lengthValue: nil,
                         massValue: nil
                     )
 
@@ -1666,6 +1671,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -1678,6 +1684,7 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
+                        lengthValue: nil,
                         massValue: massDto
                     )
 
@@ -1689,6 +1696,7 @@ internal class HealthConnectorClient {
                             dataType: dataType,
                             activeCaloriesBurnedValue: nil,
                             doubleValue: nil,
+                            lengthValue: nil,
                             massValue: nil
                         )
                         continuation.resume(returning: emptyResponse)
@@ -1700,8 +1708,8 @@ internal class HealthConnectorClient {
                         dataType: dataType,
                         activeCaloriesBurnedValue: nil,
                         doubleValue: nil,
-                        massValue: nil,
-                        lengthValue: lengthDto
+                        lengthValue: lengthDto,
+                        massValue: nil
                     )
                 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_connector_core/health_connector_core.dart'
     show
+        ActiveCaloriesBurnedHealthDataType,
         DataOrigin,
         Device,
         DistanceHealthDataType,
@@ -255,6 +256,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
         StepsHealthDataType() => AppTexts.writePermissionDeniedSteps,
         WeightHealthDataType() => AppTexts.writePermissionDeniedWeight,
         DistanceHealthDataType() => AppTexts.writePermissionDeniedDistance,
+        ActiveCaloriesBurnedHealthDataType() =>
+          AppTexts.writePermissionDeniedActiveCaloriesBurned,
       };
     }
     return e.message;
@@ -272,6 +275,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
               StepsHealthDataType() => AppTexts.insertSteps,
               WeightHealthDataType() => AppTexts.insertWeight,
               DistanceHealthDataType() => AppTexts.insertDistance,
+              ActiveCaloriesBurnedHealthDataType() =>
+                AppTexts.insertActiveCaloriesBurned,
             },
           ),
         ),

@@ -72,6 +72,16 @@ extension AggregationMetricDto {
                 // HealthKit doesn't provide direct aggregation for these on floors climbed
                 return []
             }
+
+        case .wheelchairPushes:
+            switch self {
+            case .sum:
+                return .cumulativeSum
+            case .avg, .min, .max, .count:
+                // These require reading individual records and calculating
+                // HealthKit doesn't provide direct aggregation for these on wheelchair pushes
+                return []
+            }
         }
     }
 
@@ -132,6 +142,15 @@ extension AggregationMetricDto {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "\(metricName) not directly supported for floorsClimbed in HealthKit",
                     details: "\(metricName) not directly supported for floorsClimbed in HealthKit."
+                )
+            }
+        case .wheelchairPushes:
+            // Only SUM is supported for wheelchair pushes (matches Android Health Connect behavior)
+            if self != .sum {
+                let metricName = String(describing: self)
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "\(metricName) not directly supported for wheelchairPushes in HealthKit",
+                    details: "\(metricName) not directly supported for wheelchairPushes in HealthKit."
                 )
             }
         }

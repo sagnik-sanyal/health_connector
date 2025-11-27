@@ -9,6 +9,7 @@ import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.records.WheelchairPushesRecord
 import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
@@ -354,7 +355,21 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         stepsRecord = null,
-                        weightRecord = record.toDto()
+                        weightRecord = record.toDto(),
+                        wheelchairPushesRecord = null
+                    )
+                }
+
+                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                    val record = response.record as WheelchairPushesRecord
+                    ReadRecordResponseDto(
+                        dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
+                        activeCaloriesBurnedRecord = null,
+                        distanceRecord = null,
+                        floorsClimbedRecord = null,
+                        stepsRecord = null,
+                        weightRecord = null,
+                        wheelchairPushesRecord = record.toDto()
                     )
                 }
             }
@@ -508,6 +523,22 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         floorsClimbedRecords = null,
                         stepsRecords = null,
                         weightRecords = weightRecords,
+                        wheelchairPushesRecords = null,
+                        nextPageToken = nextPageToken
+                    )
+                }
+
+                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                    val wheelchairPushesRecords = response.records.map { (it as WheelchairPushesRecord).toDto() }
+
+                    ReadRecordsResponseDto(
+                        dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
+                        activeCaloriesBurnedRecords = null,
+                        distanceRecords = null,
+                        floorsClimbedRecords = null,
+                        stepsRecords = null,
+                        weightRecords = null,
+                        wheelchairPushesRecords = wheelchairPushesRecords,
                         nextPageToken = nextPageToken
                     )
                 }
@@ -595,6 +626,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                 HealthDataTypeDto.WEIGHT -> {
                     requireNotNull(request.weightRecord) { "weightRecord must not be null for WEIGHT type" }
                     request.weightRecord.toHealthConnect()
+                }
+
+                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                    requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
+                    request.wheelchairPushesRecord.toHealthConnect()
                 }
             }
 
@@ -685,6 +721,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     HealthDataTypeDto.WEIGHT -> {
                         requireNotNull(request.weightRecords) { "weightRecords must not be null for WEIGHT type" }
                         request.weightRecords.map { it.toHealthConnect() }
+                    }
+
+                    HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                        requireNotNull(request.wheelchairPushesRecords) { "wheelchairPushesRecords must not be null for WHEELCHAIR_PUSHES type" }
+                        request.wheelchairPushesRecords.map { it.toHealthConnect() }
                     }
                 }
             }.flatten()
@@ -811,6 +852,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         )
                     }
                     weightRecord.toHealthConnect()
+                }
+
+                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                    requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
+                    val wheelchairPushesRecord = request.wheelchairPushesRecord
+                    // Validate record ID is not empty or "none"
+                    if (wheelchairPushesRecord.id.isEmpty() || wheelchairPushesRecord.id == "none") {
+                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                        )
+                    }
+                    wheelchairPushesRecord.toHealthConnect()
                 }
             }
 
@@ -974,7 +1027,22 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         activeCaloriesBurnedValue = null,
                         doubleValue = null,
                         massValue = massDto,
-                        lengthValue = null
+                        lengthValue = null,
+                        wheelchairPushesValue = null
+                    )
+                }
+
+                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+                    val pushesCount = aggregatedValue?.let { it as? Long } ?: 0L
+                    val numericDto = pushesCount.toNumericDto()
+                    AggregateResponseDto(
+                        aggregationMetric = request.aggregationMetric,
+                        dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
+                        doubleValue = null,
+                        massValue = null,
+                        lengthValue = null,
+                        wheelchairPushesValue = numericDto
                     )
                 }
             }

@@ -9,7 +9,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordRequest,
         ReadRecordsRequest,
         StepRecord,
-        WeightRecord;
+        WeightRecord,
+        WheelchairPushesRecord;
 import 'package:health_connector_hc_android/src/mappers/aggregation_metric_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_data_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers.dart';
@@ -101,6 +102,11 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.weight,
           weightRecord: record.toDto(),
         );
+      case final WheelchairPushesRecord record:
+        return WriteRecordRequestDto(
+          dataType: HealthDataTypeDto.wheelchairPushes,
+          wheelchairPushesRecord: record.toDto(),
+        );
     }
   }
 }
@@ -135,6 +141,11 @@ extension HealthRecordToUpdateRequestDto on HealthRecord {
           dataType: HealthDataTypeDto.weight,
           weightRecord: record.toDto(),
         );
+      case final WheelchairPushesRecord record:
+        return UpdateRecordRequestDto(
+          dataType: HealthDataTypeDto.wheelchairPushes,
+          wheelchairPushesRecord: record.toDto(),
+        );
     }
   }
 }
@@ -153,6 +164,7 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
     final floorsClimbedRecords = <FloorsClimbedRecord>[];
     final stepRecords = <StepRecord>[];
     final weightRecords = <WeightRecord>[];
+    final wheelchairPushesRecords = <WheelchairPushesRecord>[];
     final dataTypes = <HealthDataTypeDto>[];
 
     for (final record in this) {
@@ -182,6 +194,11 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
           if (!dataTypes.contains(HealthDataTypeDto.weight)) {
             dataTypes.add(HealthDataTypeDto.weight);
           }
+        case final WheelchairPushesRecord wheelchairPushesRecord:
+          wheelchairPushesRecords.add(wheelchairPushesRecord);
+          if (!dataTypes.contains(HealthDataTypeDto.wheelchairPushes)) {
+            dataTypes.add(HealthDataTypeDto.wheelchairPushes);
+          }
       }
     }
 
@@ -202,6 +219,9 @@ extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
       weightRecords: weightRecords.isEmpty
           ? null
           : weightRecords.map((r) => r.toDto()).toList(),
+      wheelchairPushesRecords: wheelchairPushesRecords.isEmpty
+          ? null
+          : wheelchairPushesRecords.map((r) => r.toDto()).toList(),
     );
   }
 }

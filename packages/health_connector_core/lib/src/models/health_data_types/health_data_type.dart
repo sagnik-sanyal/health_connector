@@ -28,7 +28,8 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         HealthRecord,
         HealthRecordId,
         StepRecord,
-        WeightRecord;
+        WeightRecord,
+        WheelchairPushesRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
     show Energy, Length, Mass, MeasurementUnit, Numeric;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
@@ -48,6 +49,7 @@ part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
 part 'steps_health_data_type.dart';
 part 'weight_health_data_type.dart';
+part 'wheelchair_pushes_health_data_type.dart';
 
 /// [HealthDataType] represents different kinds of health and fitness data
 /// that can be read from or written to health platforms.
@@ -158,6 +160,14 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// floors climbed data and writing new measurements.
   static const floorsClimbed = FloorsClimbedHealthDataType();
 
+  /// Wheelchair pushes data type.
+  ///
+  /// Represents the number of wheelchair pushes performed during
+  /// a time interval. A push represents a single propulsion action
+  /// used to move a wheelchair forward. Supports both reading existing
+  /// wheelchair pushes data and writing new measurements.
+  static const wheelchairPushes = WheelchairPushesHealthDataType();
+
   /// Returns a list of all available health data types.
   ///
   /// This list contains all data types currently supported by the plugin.
@@ -168,5 +178,6 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
     floorsClimbed,
     steps,
     weight,
+    wheelchairPushes,
   ];
 }

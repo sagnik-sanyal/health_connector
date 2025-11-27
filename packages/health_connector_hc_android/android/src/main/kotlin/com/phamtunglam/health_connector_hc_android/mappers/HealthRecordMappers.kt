@@ -5,11 +5,13 @@ import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.records.WheelchairPushesRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.StepRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WeightRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.WheelchairPushesRecordDto
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -151,6 +153,35 @@ internal fun WeightRecord.toDto(): WeightRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         weight = weight.toDto()
+    )
+}
+
+/**
+ * Converts a [WheelchairPushesRecordDto] to a Health Connect [WheelchairPushesRecord] object.
+ */
+internal fun WheelchairPushesRecordDto.toHealthConnect(): WheelchairPushesRecord {
+    return WheelchairPushesRecord(
+        count = pushes.value.toLong(),
+        startTime = Instant.ofEpochMilli(startTime),
+        endTime = Instant.ofEpochMilli(endTime),
+        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [WheelchairPushesRecord] object to a [WheelchairPushesRecordDto].
+ */
+internal fun WheelchairPushesRecord.toDto(): WheelchairPushesRecordDto {
+    return WheelchairPushesRecordDto(
+        id = metadata.id,
+        startTime = startTime.toEpochMilli(),
+        endTime = endTime.toEpochMilli(),
+        startZoneOffsetSeconds = startZoneOffset?.totalSeconds?.toLong(),
+        endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        pushes = count.toNumericDto()
     )
 }
 

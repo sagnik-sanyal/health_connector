@@ -111,6 +111,9 @@ enum HealthDataTypeDto {
 
   /// Body weight data.
   weight,
+
+  /// Wheelchair pushes data.
+  wheelchairPushes,
 }
 
 /// Represents the status of the health platform on the device.
@@ -562,6 +565,43 @@ class FloorsClimbedRecordDto {
   final int? startZoneOffsetSeconds;
 }
 
+/// Represents a wheelchair pushes record for platform transfer.
+class WheelchairPushesRecordDto {
+  WheelchairPushesRecordDto({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.pushes,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Number of wheelchair pushes performed during the interval.
+  final NumericDto pushes;
+
+  /// End time in milliseconds since epoch (UTC).
+  final int endTime;
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  final int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  final int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  final int? startZoneOffsetSeconds;
+}
+
 /// Represents a step count record for platform transfer.
 class StepRecordDto {
   StepRecordDto({
@@ -668,6 +708,7 @@ class AggregateResponseDto {
     this.doubleValue,
     this.lengthValue,
     this.massValue,
+    this.wheelchairPushesValue,
   });
 
   /// The type of aggregation that was performed.
@@ -689,6 +730,9 @@ class AggregateResponseDto {
 
   /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
   final MassDto? massValue;
+
+  /// Wheelchair pushes aggregated value (non-null when dataType == WHEELCHAIR_PUSHES).
+  final NumericDto? wheelchairPushesValue;
 
   // Future value types will be added here as they are implemented
 }
@@ -752,6 +796,7 @@ class ReadRecordResponseDto {
     this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
+    this.wheelchairPushesRecord,
   });
 
   /// The type of health data that was read.
@@ -771,6 +816,9 @@ class ReadRecordResponseDto {
 
   /// Weight record (non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
+
+  /// Wheelchair pushes record (non-null when dataType == WHEELCHAIR_PUSHES).
+  final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
   // Future record types will be added here as they are implemented
 }
@@ -819,6 +867,7 @@ class ReadRecordsResponseDto {
     this.floorsClimbedRecords,
     this.stepsRecords,
     this.weightRecords,
+    this.wheelchairPushesRecords,
     this.nextPageToken,
   });
 
@@ -843,6 +892,9 @@ class ReadRecordsResponseDto {
   /// List of weight records (non-null when dataType == WEIGHT).
   final List<WeightRecordDto>? weightRecords;
 
+  /// List of wheelchair pushes records (non-null when dataType == WHEELCHAIR_PUSHES).
+  final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
+
   // Future record types will be added here as they are implemented
 }
 
@@ -860,6 +912,7 @@ class WriteRecordRequestDto {
     this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
+    this.wheelchairPushesRecord,
   });
 
   /// The type of health data being written.
@@ -879,6 +932,9 @@ class WriteRecordRequestDto {
 
   /// Weight record (only non-null when dataType == WEIGHT).
   final WeightRecordDto? weightRecord;
+
+  /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
+  final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
   // Future record types will be added here as they are implemented
 }
@@ -904,6 +960,7 @@ class WriteRecordsRequestDto {
     this.floorsClimbedRecords,
     this.stepsRecords,
     this.weightRecords,
+    this.wheelchairPushesRecords,
   });
 
   /// The types of health data being written.
@@ -926,6 +983,9 @@ class WriteRecordsRequestDto {
 
   /// List of weight records (non-null when dataTypes contains WEIGHT).
   final List<WeightRecordDto>? weightRecords;
+
+  /// List of wheelchair pushes records (non-null when dataTypes contains WHEELCHAIR_PUSHES).
+  final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
 
   // Future record types will be added here as they are implemented
 }
@@ -956,6 +1016,7 @@ class UpdateRecordRequestDto {
     this.floorsClimbedRecord,
     this.stepsRecord,
     this.weightRecord,
+    this.wheelchairPushesRecord,
   });
 
   /// The type of health data being updated.
@@ -980,6 +1041,10 @@ class UpdateRecordRequestDto {
   /// Weight record (only non-null when dataType == WEIGHT).
   /// The record must have a valid existing ID.
   final WeightRecordDto? weightRecord;
+
+  /// Wheelchair pushes record (only non-null when dataType == WHEELCHAIR_PUSHES).
+  /// The record must have a valid existing ID.
+  final WheelchairPushesRecordDto? wheelchairPushesRecord;
 
   // Future record types will be added here as they are implemented
 }

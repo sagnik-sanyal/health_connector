@@ -8,6 +8,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedHealthDataType,
         StepsHealthDataType,
         WeightHealthDataType,
+        WheelchairPushesHealthDataType,
         HealthRecord,
         ReadRecordsRequest,
         AggregateResponse,
@@ -111,6 +112,20 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
           );
         }
         return weightRecords.map((dto) => dto.toDomain()).cast<R>().toList();
+
+      case WheelchairPushesHealthDataType _:
+        final wheelchairPushesRecords = responseDto.wheelchairPushesRecords;
+        if (wheelchairPushesRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected wheelchairPushesRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return wheelchairPushesRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
     }
   }
 }
@@ -196,6 +211,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
           );
         }
         return value.toDomain() as U;
+
+      case WheelchairPushesHealthDataType _:
+        final value = wheelchairPushesValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected wheelchairPushesValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
     }
   }
 }
@@ -257,6 +283,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected weightRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case WheelchairPushesHealthDataType _:
+        final record = wheelchairPushesRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected wheelchairPushesRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

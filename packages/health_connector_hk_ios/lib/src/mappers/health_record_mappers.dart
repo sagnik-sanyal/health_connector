@@ -5,7 +5,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         FloorsClimbedRecord,
         HealthRecordId,
         StepRecord,
-        WeightRecord;
+        WeightRecord,
+        WheelchairPushesRecord;
 import 'package:health_connector_hk_ios/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/metadata_mappers.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
@@ -14,7 +15,8 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         DistanceRecordDto,
         FloorsClimbedRecordDto,
         StepRecordDto,
-        WeightRecordDto;
+        WeightRecordDto,
+        WheelchairPushesRecordDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthRecordId] to [String] for DTO transfer.
@@ -187,6 +189,38 @@ extension WeightRecordDtoToDomain on WeightRecordDto {
       zoneOffsetSeconds: zoneOffsetSeconds,
       metadata: metadata.toDomain(),
       weight: weight.toDomain(),
+    );
+  }
+}
+
+/// Converts [WheelchairPushesRecord] to [WheelchairPushesRecordDto].
+@internal
+extension WheelchairPushesRecordDtoMapper on WheelchairPushesRecord {
+  WheelchairPushesRecordDto toDto() {
+    return WheelchairPushesRecordDto(
+      id: id.toDto(),
+      startTime: startTime.millisecondsSinceEpoch,
+      endTime: endTime.millisecondsSinceEpoch,
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      pushes: pushes.toDto(),
+    );
+  }
+}
+
+/// Converts [WheelchairPushesRecordDto] to [WheelchairPushesRecord].
+@internal
+extension WheelchairPushesRecordDtoToDomain on WheelchairPushesRecordDto {
+  WheelchairPushesRecord toDomain() {
+    return WheelchairPushesRecord(
+      id: id.toHealthRecordId(),
+      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
+      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
+      startZoneOffsetSeconds: startZoneOffsetSeconds,
+      endZoneOffsetSeconds: endZoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      pushes: pushes.toDomain(),
     );
   }
 }

@@ -21,6 +21,7 @@ part 'interval_health_record.dart';
 part 'series_health_record.dart';
 part 'step_record.dart';
 part 'weight_record.dart';
+part 'wheelchair_pushes_record.dart';
 
 /// Base class for all health records.
 ///

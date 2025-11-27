@@ -6,6 +6,7 @@ import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.records.WheelchairPushesRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import kotlin.reflect.KClass
 
@@ -22,6 +23,7 @@ internal fun HealthDataTypeDto.toHealthConnectRecordClass(): KClass<out Record> 
         HealthDataTypeDto.FLOORS_CLIMBED -> FloorsClimbedRecord::class
         HealthDataTypeDto.STEPS -> StepsRecord::class
         HealthDataTypeDto.WEIGHT -> WeightRecord::class
+        HealthDataTypeDto.WHEELCHAIR_PUSHES -> WheelchairPushesRecord::class
     }
 }
 

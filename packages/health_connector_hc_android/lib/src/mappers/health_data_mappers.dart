@@ -7,7 +7,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthRecord,
         MeasurementUnit,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        WheelchairPushesHealthDataType;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show HealthDataTypeDto;
 import 'package:meta/meta.dart' show internal;
@@ -27,6 +28,8 @@ extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
         return HealthDataType.steps;
       case HealthDataTypeDto.weight:
         return HealthDataType.weight;
+      case HealthDataTypeDto.wheelchairPushes:
+        return HealthDataType.wheelchairPushes;
     }
   }
 }
@@ -46,6 +49,8 @@ extension HealthDataTypeToDto on HealthDataType<HealthRecord, MeasurementUnit> {
         return HealthDataTypeDto.steps;
       case WeightHealthDataType _:
         return HealthDataTypeDto.weight;
+      case WheelchairPushesHealthDataType _:
+        return HealthDataTypeDto.wheelchairPushes;
     }
   }
 }

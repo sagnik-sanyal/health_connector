@@ -6,6 +6,7 @@ import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.records.WheelchairPushesRecord
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataPermissionDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureDto
@@ -53,6 +54,13 @@ internal fun HealthDataPermissionDto.toHealthConnectPermission(): String {
                 PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(FloorsClimbedRecord::class)
             }
         }
+
+        HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
+            when (this.accessType) {
+                PermissionAccessTypeDto.READ -> HealthPermission.getReadPermission(WheelchairPushesRecord::class)
+                PermissionAccessTypeDto.WRITE -> HealthPermission.getWritePermission(WheelchairPushesRecord::class)
+            }
+        }
     }
 }
 
@@ -92,6 +100,7 @@ internal fun String.toHealthDataPermissionDto(): HealthDataPermissionDto? {
         "WEIGHT" -> HealthDataTypeDto.WEIGHT
         "DISTANCE" -> HealthDataTypeDto.DISTANCE
         "FLOORS_CLIMBED" -> HealthDataTypeDto.FLOORS_CLIMBED
+        "WHEELCHAIR_PUSHES" -> HealthDataTypeDto.WHEELCHAIR_PUSHES
         else -> return null // Unknown data type, skip it
     }
 

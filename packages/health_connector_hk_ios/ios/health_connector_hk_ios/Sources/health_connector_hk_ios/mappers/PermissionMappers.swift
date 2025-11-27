@@ -34,6 +34,8 @@ extension HealthDataPermissionDto {
             return HKQuantityType.quantityType(forIdentifier: .stepCount)!
         case .weight:
             return HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+        case .wheelchairPushes:
+            return HKQuantityType.quantityType(forIdentifier: .pushCount)!
         }
     }
 }

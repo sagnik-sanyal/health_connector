@@ -10,9 +10,9 @@ import 'package:health_connector_toolbox/src/features/read_health_records/widget
 ///
 /// This widget provides a consistent interface for all interval health record
 /// types (e.g., StepRecord, DistanceRecord) by accepting builder callbacks for
-/// customization. It displays common interval record fields (startTime, endTime,
-/// duration, zone offsets) and uses the base health record tile for consistent
-/// layout.
+/// customization. It displays common interval record fields (startTime,
+/// endTime, duration, zone offsets) and uses the base health record tile for
+/// consistent layout.
 @immutable
 final class IntervalHealthRecordTile<T extends IntervalHealthRecord>
     extends StatelessWidget {

@@ -27,8 +27,9 @@ import 'package:provider/provider.dart' show Provider;
 /// Unified page for writing health records.
 ///
 /// This page dynamically renders the appropriate form fields based on the
-/// provided [HealthDataType]. It handles both interval-based records (e.g., steps)
-/// and instant-based records (e.g., weight).
+/// provided [HealthDataType].
+/// It handles both interval-based records (e.g., steps) and
+/// instant-based records (e.g., weight).
 @immutable
 final class WriteHealthRecordFormPage extends StatefulWidget {
   const WriteHealthRecordFormPage({
@@ -183,7 +184,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
     });
 
     try {
-      // Use a simple package name - in production this should come from app config
+      // Use a fake package name 'com.example.health_connector_toolbox'.
+      // In production this should come from app config.
       const dataOrigin = DataOrigin('com.example.health_connector_toolbox');
       final metadata = switch (_recordingMethod) {
         RecordingMethod.manualEntry => Metadata.manualEntry(

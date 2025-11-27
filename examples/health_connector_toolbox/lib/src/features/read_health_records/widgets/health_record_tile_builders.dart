@@ -22,7 +22,8 @@ typedef RecordDetailRowsBuilder<T extends HealthRecord> =
       BuildContext context,
     );
 
-/// Builder function type for creating sample display widgets from a series record.
+/// Builder function type for creating sample display widgets from a
+/// series record.
 typedef SeriesSamplesBuilder<T> =
     Widget? Function(
       T samples,

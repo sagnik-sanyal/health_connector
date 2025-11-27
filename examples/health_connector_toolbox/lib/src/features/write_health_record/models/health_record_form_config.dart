@@ -43,9 +43,9 @@ sealed class HealthRecordFormConfig {
   /// A [HealthRecord] instance ready to be written.
   HealthRecord buildRecord({
     required DateTime startDateTime,
-    DateTime? endDateTime,
     required MeasurementUnit value,
     required Metadata metadata,
+    DateTime? endDateTime,
   });
 
   /// Factory to get config for a given [HealthDataType].
@@ -75,9 +75,9 @@ final class StepsFormConfig extends HealthRecordFormConfig {
   @override
   HealthRecord buildRecord({
     required DateTime startDateTime,
-    DateTime? endDateTime,
     required MeasurementUnit value,
     required Metadata metadata,
+    DateTime? endDateTime,
   }) {
     if (endDateTime == null) {
       throw ArgumentError('endDateTime is required for step records');
@@ -107,9 +107,9 @@ final class WeightFormConfig extends HealthRecordFormConfig {
   @override
   HealthRecord buildRecord({
     required DateTime startDateTime,
-    DateTime? endDateTime,
     required MeasurementUnit value,
     required Metadata metadata,
+    DateTime? endDateTime,
   }) {
     final massValue = value as Mass;
 
@@ -136,9 +136,9 @@ final class DistanceFormConfig extends HealthRecordFormConfig {
   @override
   HealthRecord buildRecord({
     required DateTime startDateTime,
-    DateTime? endDateTime,
     required MeasurementUnit value,
     required Metadata metadata,
+    DateTime? endDateTime,
   }) {
     if (endDateTime == null) {
       throw ArgumentError('endDateTime is required for distance records');
@@ -169,9 +169,9 @@ final class ActiveCaloriesBurnedFormConfig extends HealthRecordFormConfig {
   @override
   HealthRecord buildRecord({
     required DateTime startDateTime,
-    DateTime? endDateTime,
     required MeasurementUnit value,
     required Metadata metadata,
+    DateTime? endDateTime,
   }) {
     if (endDateTime == null) {
       throw ArgumentError(

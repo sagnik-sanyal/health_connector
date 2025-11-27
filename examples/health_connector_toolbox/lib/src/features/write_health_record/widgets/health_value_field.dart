@@ -14,7 +14,8 @@ import 'package:health_connector_core/health_connector_core.dart'
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 
-/// A widget that renders the appropriate value input field based on the health data type.
+/// A widget that renders the appropriate value input field based on
+/// the health data type.
 ///
 /// This widget handles the data-type-specific input requirements:
 /// - Integer input for step count (Numeric)

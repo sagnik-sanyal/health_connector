@@ -3,16 +3,19 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         BodyFatPercentageHealthDataType,
+        BodyTemperatureHealthDataType,
         DistanceHealthDataType,
         Energy,
         FloorsClimbedHealthDataType,
         HealthDataType,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         Length,
         Mass,
         MeasurementUnit,
         Numeric,
         StepsHealthDataType,
+        Temperature,
         WeightHealthDataType,
         WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
@@ -76,6 +79,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
           WeightHealthDataType() => _parseMass(value),
           HeightHealthDataType() => _parseLength(value),
           BodyFatPercentageHealthDataType() => _parseBodyFatPercentage(value),
+          LeanBodyMassHealthDataType() => _parseMass(value),
+          BodyTemperatureHealthDataType() => _parseTemperature(value),
           DistanceHealthDataType() => _parseLength(value),
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
           FloorsClimbedHealthDataType() => _parseNumeric(value),
@@ -129,6 +134,14 @@ class _HealthValueFieldState extends State<HealthValueField> {
     return null;
   }
 
+  Temperature? _parseTemperature(String value) {
+    final tempValue = double.tryParse(value);
+    if (tempValue != null) {
+      return Temperature.celsius(tempValue);
+    }
+    return null;
+  }
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return switch (widget.dataType) {
@@ -137,6 +150,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         HeightHealthDataType() => AppTexts.pleaseEnterHeight,
         BodyFatPercentageHealthDataType() =>
           AppTexts.pleaseEnterBodyFatPercentage,
+        LeanBodyMassHealthDataType() => AppTexts.pleaseEnterLeanBodyMass,
+        BodyTemperatureHealthDataType() => AppTexts.pleaseEnterBodyTemperature,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -151,6 +166,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
       WeightHealthDataType() => double.tryParse(value),
       HeightHealthDataType() => double.tryParse(value),
       BodyFatPercentageHealthDataType() => double.tryParse(value),
+      LeanBodyMassHealthDataType() => double.tryParse(value),
+      BodyTemperatureHealthDataType() => double.tryParse(value),
       DistanceHealthDataType() => double.tryParse(value),
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
       FloorsClimbedHealthDataType() => int.tryParse(value),
@@ -182,6 +199,13 @@ class _HealthValueFieldState extends State<HealthValueField> {
       if (parsed as double <= 0) {
         return AppTexts.heightMustBeGreaterThanZero;
       }
+    } else if (widget.dataType is LeanBodyMassHealthDataType) {
+      if (parsed as double <= 0) {
+        return AppTexts.leanBodyMassMustBeGreaterThanZero;
+      }
+    } else if (widget.dataType is BodyTemperatureHealthDataType) {
+      // Temperature can be any valid number (including negative for very cold)
+      // No specific validation needed beyond being a valid number
     } else if (widget.dataType is BodyFatPercentageHealthDataType) {
       final percentage = parsed as double;
       if (percentage < 0 || percentage > 100) {
@@ -204,6 +228,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         HeightHealthDataType() => AppTexts.pleaseEnterHeight,
         BodyFatPercentageHealthDataType() =>
           AppTexts.pleaseEnterBodyFatPercentage,
+        LeanBodyMassHealthDataType() => AppTexts.pleaseEnterLeanBodyMass,
+        BodyTemperatureHealthDataType() => AppTexts.pleaseEnterBodyTemperature,
         DistanceHealthDataType() => AppTexts.pleaseEnterDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
@@ -262,6 +288,28 @@ class _HealthValueFieldState extends State<HealthValueField> {
           labelText: AppTexts.bodyFatPercentageValue,
           border: OutlineInputBorder(),
           prefixIcon: Icon(AppIcons.percent),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      LeanBodyMassHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.leanBodyMassValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.monitorWeight),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      BodyTemperatureHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.bodyTemperatureValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.temperature),
         ),
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         onChanged: _onChanged,

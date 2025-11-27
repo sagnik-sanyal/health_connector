@@ -3,6 +3,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         BodyFatPercentageHealthDataType,
+        BodyTemperatureHealthDataType,
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
@@ -10,6 +11,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthDataType,
         HealthRecord,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         MeasurementUnit,
         ReadRecordsRequest,
         StepsHealthDataType,
@@ -100,6 +102,18 @@ class _ReadHealthRecordsPageState
           );
         case BodyFatPercentageHealthDataType():
           request = HealthDataType.bodyFatPercentage.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case BodyTemperatureHealthDataType():
+          request = HealthDataType.bodyTemperature.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case LeanBodyMassHealthDataType():
+          request = HealthDataType.leanBodyMass.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

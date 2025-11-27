@@ -4,6 +4,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         ActiveCaloriesBurnedRecord,
         BodyFatPercentageHealthDataType,
         BodyFatPercentageRecord,
+        BodyTemperatureHealthDataType,
+        BodyTemperatureRecord,
         DistanceHealthDataType,
         DistanceRecord,
         Energy,
@@ -13,6 +15,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthRecord,
         HeightHealthDataType,
         HeightRecord,
+        LeanBodyMassHealthDataType,
+        LeanBodyMassRecord,
         Length,
         Mass,
         MeasurementUnit,
@@ -20,6 +24,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         Numeric,
         StepRecord,
         StepsHealthDataType,
+        Temperature,
         WeightHealthDataType,
         WeightRecord,
         WheelchairPushesHealthDataType,
@@ -63,6 +68,8 @@ sealed class HealthRecordFormConfig {
       WeightHealthDataType() => const WeightFormConfig(),
       HeightHealthDataType() => const HeightFormConfig(),
       BodyFatPercentageHealthDataType() => const BodyFatPercentageFormConfig(),
+      LeanBodyMassHealthDataType() => const LeanBodyMassFormConfig(),
+      BodyTemperatureHealthDataType() => const BodyTemperatureFormConfig(),
       DistanceHealthDataType() => const DistanceFormConfig(),
       ActiveCaloriesBurnedHealthDataType() =>
         const ActiveCaloriesBurnedFormConfig(),
@@ -184,6 +191,62 @@ final class BodyFatPercentageFormConfig extends HealthRecordFormConfig {
     return BodyFatPercentageRecord(
       time: startDateTime,
       percentage: numericValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for lean body mass records.
+///
+/// Lean body mass is an instant-based record that requires:
+/// - Time (single timestamp)
+/// - Lean body mass value (mass in kilograms)
+final class LeanBodyMassFormConfig extends HealthRecordFormConfig {
+  const LeanBodyMassFormConfig();
+
+  @override
+  bool get needsDuration => false;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    final massValue = value as Mass;
+
+    return LeanBodyMassRecord(
+      time: startDateTime,
+      mass: massValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for body temperature records.
+///
+/// Body temperature is an instant-based record that requires:
+/// - Time (single timestamp)
+/// - Body temperature value (temperature in Celsius)
+final class BodyTemperatureFormConfig extends HealthRecordFormConfig {
+  const BodyTemperatureFormConfig();
+
+  @override
+  bool get needsDuration => false;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    final temperatureValue = value as Temperature;
+
+    return BodyTemperatureRecord(
+      time: startDateTime,
+      temperature: temperatureValue,
       metadata: metadata,
     );
   }

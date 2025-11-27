@@ -3,6 +3,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         BodyFatPercentageHealthDataType,
+        BodyTemperatureHealthDataType,
         DataOrigin,
         Device,
         DistanceHealthDataType,
@@ -11,6 +12,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthConnectorException,
         HealthDataType,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         MeasurementUnit,
         Metadata,
         RecordingMethod,
@@ -264,6 +266,10 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
         HeightHealthDataType() => AppTexts.writePermissionDeniedHeight,
         BodyFatPercentageHealthDataType() =>
           AppTexts.writePermissionDeniedBodyFatPercentage,
+        LeanBodyMassHealthDataType() =>
+          AppTexts.writePermissionDeniedLeanBodyMass,
+        BodyTemperatureHealthDataType() =>
+          AppTexts.writePermissionDeniedBodyTemperature,
         DistanceHealthDataType() => AppTexts.writePermissionDeniedDistance,
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.writePermissionDeniedActiveCaloriesBurned,
@@ -290,6 +296,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
               HeightHealthDataType() => AppTexts.insertHeight,
               BodyFatPercentageHealthDataType() =>
                 AppTexts.insertBodyFatPercentage,
+              LeanBodyMassHealthDataType() => AppTexts.insertLeanBodyMass,
+              BodyTemperatureHealthDataType() => AppTexts.insertBodyTemperature,
               DistanceHealthDataType() => AppTexts.insertDistance,
               ActiveCaloriesBurnedHealthDataType() =>
                 AppTexts.insertActiveCaloriesBurned,

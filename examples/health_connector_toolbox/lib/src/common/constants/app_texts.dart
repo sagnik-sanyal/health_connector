@@ -106,6 +106,20 @@ abstract final class AppTexts {
       'Body fat percentage measurement at a point in time';
   static const String bodyFatPercentageValue = 'Body Fat Percentage (%)';
   static const String bodyFatPercentagePercent = 'Body Fat Percentage (%)';
+  static const String leanBodyMass = 'Lean Body Mass';
+  static const String leanBodyMassDescription =
+      'Lean body mass measurement at a point in time';
+  static const String leanBodyMassValue = 'Lean Body Mass (kg)';
+  static const String leanBodyMassKg = 'Lean Body Mass (kg)';
+  static const String leanBodyMassLbs = 'Lean Body Mass (lbs)';
+  static const String leanBodyMassGrams = 'Lean Body Mass (g)';
+  static const String bodyTemperature = 'Body Temperature';
+  static const String bodyTemperatureDescription =
+      'Body temperature measurement at a point in time';
+  static const String bodyTemperatureValue = 'Body Temperature (°C)';
+  static const String bodyTemperatureCelsius = 'Body Temperature (°C)';
+  static const String bodyTemperatureFahrenheit = 'Body Temperature (°F)';
+  static const String bodyTemperatureKelvin = 'Body Temperature (K)';
 
   // ==========================================================================
   // Device Types
@@ -187,6 +201,10 @@ abstract final class AppTexts {
   static const String heightWrite = 'Height - Write';
   static const String bodyFatPercentageRead = 'Body Fat Percentage - Read';
   static const String bodyFatPercentageWrite = 'Body Fat Percentage - Write';
+  static const String leanBodyMassRead = 'Lean Body Mass - Read';
+  static const String leanBodyMassWrite = 'Lean Body Mass - Write';
+  static const String bodyTemperatureRead = 'Body Temperature - Read';
+  static const String bodyTemperatureWrite = 'Body Temperature - Write';
   static const String iosReadPermissionUnknownStatusNote =
       'Note: On iOS, read permissions may show as "unknown" status even after '
       'being granted due to privacy restrictions. '
@@ -240,6 +258,12 @@ abstract final class AppTexts {
   static const String writePermissionDeniedBodyFatPercentage =
       'Write permission denied or not supported. '
       'Please grant write permission for body fat percentage.';
+  static const String writePermissionDeniedLeanBodyMass =
+      'Write permission denied or not supported. '
+      'Please grant write permission for lean body mass.';
+  static const String writePermissionDeniedBodyTemperature =
+      'Write permission denied or not supported. '
+      'Please grant write permission for body temperature.';
 
   // ==========================================================================
   // Validation Messages
@@ -265,6 +289,9 @@ abstract final class AppTexts {
   static const String pleaseEnterHeight = 'Please enter height';
   static const String pleaseEnterBodyFatPercentage =
       'Please enter body fat percentage';
+  static const String pleaseEnterLeanBodyMass = 'Please enter lean body mass';
+  static const String pleaseEnterBodyTemperature =
+      'Please enter body temperature';
   static const String pleaseEnterValidNumber = 'Please enter a valid number';
   static const String endTimeMustBeAfterStartTime =
       'End time must be after start time';
@@ -277,6 +304,10 @@ abstract final class AppTexts {
       'Height must be greater than 0';
   static const String bodyFatPercentageMustBeBetween0And100 =
       'Body fat percentage must be between 0 and 100';
+  static const String leanBodyMassMustBeGreaterThanZero =
+      'Lean body mass must be greater than 0';
+  static const String bodyTemperatureMustBeValid =
+      'Body temperature must be a valid value';
   static const String activeCaloriesBurnedMustBeGreaterThanZero =
       'Active calories burned must be greater than 0';
   static const String floorsClimbedMustBeNonNegative =
@@ -294,6 +325,8 @@ abstract final class AppTexts {
   static const String insertWeight = 'Insert Weight';
   static const String insertHeight = 'Insert Height';
   static const String insertBodyFatPercentage = 'Insert Body Fat Percentage';
+  static const String insertLeanBodyMass = 'Insert Lean Body Mass';
+  static const String insertBodyTemperature = 'Insert Body Temperature';
   static const String insertDistance = 'Insert Distance';
   static const String insertActiveCaloriesBurned =
       'Insert Active Calories Burned';

@@ -3,12 +3,14 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
         BodyFatPercentageRecord,
+        BodyTemperatureRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
         HeightRecord,
         InstantHealthRecord,
         IntervalHealthRecord,
+        LeanBodyMassRecord,
         SeriesHealthRecord,
         StepRecord,
         WeightRecord,
@@ -164,6 +166,82 @@ final class HealthRecordListTile extends StatelessWidget {
           ],
           onDelete: onDelete,
         ),
+      LeanBodyMassRecord() => InstantHealthRecordTile<LeanBodyMassRecord>(
+        record: record,
+        icon: AppIcons.monitorWeight,
+        title:
+            '${record.mass.inKilograms.toStringAsFixed(2)} kg '
+            '(${record.mass.inPounds.toStringAsFixed(2)} lbs)',
+        subtitleBuilder: (r, ctx) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              '${AppTexts.time}: ${DateFormatUtils.formatDateTime(r.time)}',
+            ),
+            Text(
+              '${AppTexts.recording}: ${r.metadata.recordingMethod.name}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: theme.AppColors.grey600,
+              ),
+            ),
+          ],
+        ),
+        detailRowsBuilder: (r, ctx) => [
+          HealthRecordDetailRow(
+            label: AppTexts.leanBodyMassKg,
+            value: r.mass.inKilograms.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.leanBodyMassLbs,
+            value: r.mass.inPounds.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.leanBodyMassGrams,
+            value: r.mass.inGrams.toStringAsFixed(2),
+          ),
+        ],
+        onDelete: onDelete,
+      ),
+      BodyTemperatureRecord() => InstantHealthRecordTile<BodyTemperatureRecord>(
+        record: record,
+        icon: AppIcons.temperature,
+        title:
+            '${record.temperature.inCelsius.toStringAsFixed(2)} °C '
+            '(${record.temperature.inFahrenheit.toStringAsFixed(2)} °F)',
+        subtitleBuilder: (r, ctx) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              '${AppTexts.time}: ${DateFormatUtils.formatDateTime(r.time)}',
+            ),
+            Text(
+              '${AppTexts.recording}: ${r.metadata.recordingMethod.name}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: theme.AppColors.grey600,
+              ),
+            ),
+          ],
+        ),
+        detailRowsBuilder: (r, ctx) => [
+          HealthRecordDetailRow(
+            label: AppTexts.bodyTemperatureCelsius,
+            value: r.temperature.inCelsius.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.bodyTemperatureFahrenheit,
+            value: r.temperature.inFahrenheit.toStringAsFixed(2),
+          ),
+          HealthRecordDetailRow(
+            label: AppTexts.bodyTemperatureKelvin,
+            value: r.temperature.inKelvin.toStringAsFixed(2),
+          ),
+        ],
+        onDelete: onDelete,
+      ),
     };
   }
 

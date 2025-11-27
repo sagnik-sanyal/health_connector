@@ -6,6 +6,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         AggregateResponse,
         AggregationMetric,
         BodyFatPercentageHealthDataType,
+        BodyTemperatureHealthDataType,
         DistanceHealthDataType,
         FloorsClimbedHealthDataType,
         HealthConnectorErrorCode,
@@ -13,6 +14,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthDataType,
         HealthRecord,
         HeightHealthDataType,
+        LeanBodyMassHealthDataType,
         MeasurementUnit,
         StepsHealthDataType,
         WeightHealthDataType,
@@ -121,6 +123,48 @@ class _AggregateHealthDataPageState
           throw UnsupportedError(
             'Body fat percentage does not support aggregation',
           );
+        case BodyTemperatureHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.avg:
+              request = HealthDataType.bodyTemperature.aggregateAverage(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.min:
+              request = HealthDataType.bodyTemperature.aggregateMin(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.max:
+              request = HealthDataType.bodyTemperature.aggregateMax(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.sum:
+            case AggregationMetric.count:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case LeanBodyMassHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.avg:
+              request = HealthDataType.leanBodyMass.aggregateAverage(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.min:
+              request = HealthDataType.leanBodyMass.aggregateMin(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.max:
+              request = HealthDataType.leanBodyMass.aggregateMax(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.sum:
+            case AggregationMetric.count:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
         case DistanceHealthDataType():
           switch (_selectedMetric!) {
             case AggregationMetric.sum:

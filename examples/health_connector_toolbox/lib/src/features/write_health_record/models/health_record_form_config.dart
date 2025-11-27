@@ -17,7 +17,9 @@ import 'package:health_connector_core/health_connector_core.dart'
         StepRecord,
         StepsHealthDataType,
         WeightHealthDataType,
-        WeightRecord;
+        WeightRecord,
+        WheelchairPushesHealthDataType,
+        WheelchairPushesRecord;
 
 /// Configuration for a health record write form.
 ///
@@ -59,6 +61,7 @@ sealed class HealthRecordFormConfig {
       ActiveCaloriesBurnedHealthDataType() =>
         const ActiveCaloriesBurnedFormConfig(),
       FloorsClimbedHealthDataType() => const FloorsClimbedFormConfig(),
+      WheelchairPushesHealthDataType() => const WheelchairPushesFormConfig(),
     };
   }
 }
@@ -222,6 +225,41 @@ final class FloorsClimbedFormConfig extends HealthRecordFormConfig {
       startTime: startDateTime,
       endTime: endDateTime,
       floors: numericValue,
+      metadata: metadata,
+    );
+  }
+}
+
+/// Configuration for wheelchair pushes records.
+///
+/// Wheelchair pushes is an interval-based record that requires:
+/// - Start time
+/// - End time (derived from start time + duration)
+/// - Pushes count (numeric/integer)
+final class WheelchairPushesFormConfig extends HealthRecordFormConfig {
+  const WheelchairPushesFormConfig();
+
+  @override
+  bool get needsDuration => true;
+
+  @override
+  HealthRecord buildRecord({
+    required DateTime startDateTime,
+    required MeasurementUnit value,
+    required Metadata metadata,
+    DateTime? endDateTime,
+  }) {
+    if (endDateTime == null) {
+      throw ArgumentError(
+        'endDateTime is required for wheelchair pushes records',
+      );
+    }
+    final numericValue = value as Numeric;
+
+    return WheelchairPushesRecord(
+      startTime: startDateTime,
+      endTime: endDateTime,
+      pushes: numericValue,
       metadata: metadata,
     );
   }

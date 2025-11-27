@@ -11,7 +11,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         MeasurementUnit,
         Numeric,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 
@@ -74,6 +75,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
           DistanceHealthDataType() => _parseLength(value),
           ActiveCaloriesBurnedHealthDataType() => _parseEnergy(value),
           FloorsClimbedHealthDataType() => _parseNumeric(value),
+          WheelchairPushesHealthDataType() => _parseNumeric(value),
         };
       }
     });
@@ -121,6 +123,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
         FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
+        WheelchairPushesHealthDataType() =>
+          AppTexts.pleaseEnterWheelchairPushes,
       };
     }
 
@@ -130,6 +134,7 @@ class _HealthValueFieldState extends State<HealthValueField> {
       DistanceHealthDataType() => double.tryParse(value),
       ActiveCaloriesBurnedHealthDataType() => double.tryParse(value),
       FloorsClimbedHealthDataType() => int.tryParse(value),
+      WheelchairPushesHealthDataType() => int.tryParse(value),
     };
 
     if (parsed == null) {
@@ -137,11 +142,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
     }
 
     if (widget.dataType is StepsHealthDataType ||
-        widget.dataType is FloorsClimbedHealthDataType) {
+        widget.dataType is FloorsClimbedHealthDataType ||
+        widget.dataType is WheelchairPushesHealthDataType) {
       if (parsed as int < 0) {
-        return widget.dataType is StepsHealthDataType
-            ? AppTexts.countMustBeNonNegative
-            : AppTexts.floorsClimbedMustBeNonNegative;
+        return switch (widget.dataType) {
+          StepsHealthDataType() => AppTexts.countMustBeNonNegative,
+          FloorsClimbedHealthDataType() =>
+            AppTexts.floorsClimbedMustBeNonNegative,
+          WheelchairPushesHealthDataType() =>
+            AppTexts.wheelchairPushesMustBeNonNegative,
+          _ => AppTexts.countMustBeNonNegative,
+        };
       }
     } else if (widget.dataType is WeightHealthDataType) {
       if (parsed as double <= 0) {
@@ -165,6 +176,8 @@ class _HealthValueFieldState extends State<HealthValueField> {
         ActiveCaloriesBurnedHealthDataType() =>
           AppTexts.pleaseEnterActiveCaloriesBurned,
         FloorsClimbedHealthDataType() => AppTexts.pleaseEnterFloorsClimbed,
+        WheelchairPushesHealthDataType() =>
+          AppTexts.pleaseEnterWheelchairPushes,
       };
     }
 
@@ -228,6 +241,17 @@ class _HealthValueFieldState extends State<HealthValueField> {
           labelText: AppTexts.floorsClimbedValue,
           border: OutlineInputBorder(),
           prefixIcon: Icon(AppIcons.stairs),
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: _onChanged,
+        validator: _validate,
+      ),
+      WheelchairPushesHealthDataType() => TextFormField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: AppTexts.wheelchairPushesValue,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(AppIcons.accessible),
         ),
         keyboardType: TextInputType.number,
         onChanged: _onChanged,

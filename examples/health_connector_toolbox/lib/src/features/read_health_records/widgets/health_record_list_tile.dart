@@ -9,7 +9,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         SeriesHealthRecord,
         StepRecord,
         WeightRecord,
-        ActiveCaloriesBurnedRecord;
+        ActiveCaloriesBurnedRecord,
+        WheelchairPushesRecord;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/theme/app_colors.dart'
@@ -226,12 +227,49 @@ final class HealthRecordListTile extends StatelessWidget {
           ],
           onDelete: onDelete,
         ),
-      FloorsClimbedRecord() =>
-        IntervalHealthRecordTile<FloorsClimbedRecord>(
+      FloorsClimbedRecord() => IntervalHealthRecordTile<FloorsClimbedRecord>(
+        record: record,
+        icon: AppIcons.stairs,
+        title: '${record.floors.value.toInt()} ${AppTexts.floorsClimbedLabel}',
+        subtitleBuilder: (r, ctx) {
+          final duration = r.duration;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                '${AppTexts.startLabel} '
+                '${DateFormatUtils.formatDateTime(r.startTime)}',
+              ),
+              Text(
+                '${AppTexts.endLabel} '
+                '${DateFormatUtils.formatDateTime(r.endTime)}',
+              ),
+              Text(
+                '${AppTexts.duration} ${duration.inHours}h '
+                '${duration.inMinutes.remainder(60)}m',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: theme.AppColors.grey600,
+                ),
+              ),
+            ],
+          );
+        },
+        detailRowsBuilder: (r, ctx) => [
+          HealthRecordDetailRow(
+            label: AppTexts.count,
+            value: r.floors.value.toString(),
+          ),
+        ],
+        onDelete: onDelete,
+      ),
+      WheelchairPushesRecord() =>
+        IntervalHealthRecordTile<WheelchairPushesRecord>(
           record: record,
-          icon: AppIcons.stairs,
+          icon: AppIcons.accessible,
           title:
-              '${record.floors.value.toInt()} ${AppTexts.floorsClimbedLabel}',
+              '${record.pushes.value.toInt()} ${AppTexts.wheelchairPushesLabel}',
           subtitleBuilder: (r, ctx) {
             final duration = r.duration;
             return Column(
@@ -260,7 +298,7 @@ final class HealthRecordListTile extends StatelessWidget {
           detailRowsBuilder: (r, ctx) => [
             HealthRecordDetailRow(
               label: AppTexts.count,
-              value: r.floors.value.toString(),
+              value: r.pushes.value.toString(),
             ),
           ],
           onDelete: onDelete,

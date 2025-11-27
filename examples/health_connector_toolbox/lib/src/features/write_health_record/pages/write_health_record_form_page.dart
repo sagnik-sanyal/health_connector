@@ -13,7 +13,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         Metadata,
         RecordingMethod,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/utils/show_snack_bar.dart';
 import 'package:health_connector_toolbox/src/common/widgets/date_time_picker_row.dart';
@@ -263,6 +264,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
           AppTexts.writePermissionDeniedActiveCaloriesBurned,
         FloorsClimbedHealthDataType() =>
           AppTexts.writePermissionDeniedFloorsClimbed,
+        WheelchairPushesHealthDataType() =>
+          AppTexts.writePermissionDeniedWheelchairPushes,
       };
     }
     return e.message;
@@ -283,6 +286,8 @@ class _WriteHealthRecordFormPageState extends State<WriteHealthRecordFormPage> {
               ActiveCaloriesBurnedHealthDataType() =>
                 AppTexts.insertActiveCaloriesBurned,
               FloorsClimbedHealthDataType() => AppTexts.insertFloorsClimbed,
+              WheelchairPushesHealthDataType() =>
+                AppTexts.insertWheelchairPushes,
             },
           ),
         ),

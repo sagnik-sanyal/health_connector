@@ -13,7 +13,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthRecord,
         MeasurementUnit,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/pages/date_time_range_page_state.dart';
@@ -123,6 +124,19 @@ class _AggregateHealthDataPageState
           switch (_selectedMetric!) {
             case AggregationMetric.sum:
               request = HealthDataType.floorsClimbed.aggregateSum(
+                startTime: startDateTime!,
+                endTime: endDateTime!,
+              );
+            case AggregationMetric.count:
+            case AggregationMetric.avg:
+            case AggregationMetric.min:
+            case AggregationMetric.max:
+              throw UnsupportedError('Unsupported metric: $_selectedMetric');
+          }
+        case WheelchairPushesHealthDataType():
+          switch (_selectedMetric!) {
+            case AggregationMetric.sum:
+              request = HealthDataType.wheelchairPushes.aggregateSum(
                 startTime: startDateTime!,
                 endTime: endDateTime!,
               );

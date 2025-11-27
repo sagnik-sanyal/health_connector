@@ -18,6 +18,7 @@ abstract final class AppIcons {
   static const IconData straighten = Icons.straighten;
   static const IconData localFireDepartment = Icons.local_fire_department;
   static const IconData stairs = Icons.stairs;
+  static const IconData accessible = Icons.accessible;
   static const IconData readMore = Icons.read_more;
   static const IconData calculate = Icons.calculate;
 

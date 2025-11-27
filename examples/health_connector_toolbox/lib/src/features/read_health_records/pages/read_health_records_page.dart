@@ -11,7 +11,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         MeasurementUnit,
         ReadRecordsRequest,
         StepsHealthDataType,
-        WeightHealthDataType;
+        WeightHealthDataType,
+        WheelchairPushesHealthDataType;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/pages/date_time_range_page_state.dart';
@@ -103,6 +104,12 @@ class _ReadHealthRecordsPageState
           );
         case FloorsClimbedHealthDataType():
           request = HealthDataType.floorsClimbed.readRecords(
+            startTime: startDateTime!,
+            endTime: endDateTime!,
+            pageSize: _pageSize,
+          );
+        case WheelchairPushesHealthDataType():
+          request = HealthDataType.wheelchairPushes.readRecords(
             startTime: startDateTime!,
             endTime: endDateTime!,
             pageSize: _pageSize,

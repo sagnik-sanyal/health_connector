@@ -3,6 +3,7 @@ package com.phamtunglam.health_connector_hc_android.mappers
 import androidx.health.connect.client.aggregate.AggregateMetric
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.BodyFatRecord
+import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
@@ -87,6 +88,16 @@ internal fun AggregationMetricDto.toHealthConnectMetric(dataType: HealthDataType
                 AggregationMetricDto.AVG,
                 AggregationMetricDto.MIN,
                 AggregationMetricDto.MAX,
+                AggregationMetricDto.SUM,
+                AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
+            }
+        }
+
+        HealthDataTypeDto.BODY_TEMPERATURE -> {
+            when (this) {
+                AggregationMetricDto.AVG -> BodyTemperatureRecord.TEMPERATURE_AVG
+                AggregationMetricDto.MIN -> BodyTemperatureRecord.TEMPERATURE_MIN
+                AggregationMetricDto.MAX -> BodyTemperatureRecord.TEMPERATURE_MAX
                 AggregationMetricDto.SUM,
                 AggregationMetricDto.COUNT -> throw IllegalArgumentException("${this.name} not directly supported for ${dataType.name}.")
             }

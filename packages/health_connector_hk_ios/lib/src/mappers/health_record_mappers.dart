@@ -2,6 +2,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
         BodyFatPercentageRecord,
+        BodyTemperatureRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecordId,
@@ -16,6 +17,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
     show
         ActiveCaloriesBurnedRecordDto,
         BodyFatPercentageRecordDto,
+        BodyTemperatureRecordDto,
         DistanceRecordDto,
         FloorsClimbedRecordDto,
         HeightRecordDto,
@@ -250,6 +252,34 @@ extension BodyFatPercentageRecordDtoToDomain on BodyFatPercentageRecordDto {
       zoneOffsetSeconds: zoneOffsetSeconds,
       metadata: metadata.toDomain(),
       percentage: percentage.toDomain(),
+    );
+  }
+}
+
+/// Converts [BodyTemperatureRecord] to [BodyTemperatureRecordDto].
+@internal
+extension BodyTemperatureRecordDtoMapper on BodyTemperatureRecord {
+  BodyTemperatureRecordDto toDto() {
+    return BodyTemperatureRecordDto(
+      id: id.toDto(),
+      time: time.millisecondsSinceEpoch,
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDto(),
+      temperature: temperature.toDto(),
+    );
+  }
+}
+
+/// Converts [BodyTemperatureRecordDto] to [BodyTemperatureRecord].
+@internal
+extension BodyTemperatureRecordDtoToDomain on BodyTemperatureRecordDto {
+  BodyTemperatureRecord toDomain() {
+    return BodyTemperatureRecord(
+      id: id.toHealthRecordId(),
+      time: DateTime.fromMillisecondsSinceEpoch(time),
+      zoneOffsetSeconds: zoneOffsetSeconds,
+      metadata: metadata.toDomain(),
+      temperature: temperature.toDomain(),
     );
   }
 }

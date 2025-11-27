@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.BodyFatRecord
+import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
@@ -19,6 +20,7 @@ import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
+import androidx.health.connect.client.units.Temperature
 import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.mappers.toError
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthConnect
@@ -307,6 +309,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
                         activeCaloriesBurnedRecord = record.toDto(),
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -322,6 +325,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.DISTANCE,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = record.toDto(),
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -337,6 +341,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.FLOORS_CLIMBED,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = record.toDto(),
                         heightRecord = null,
@@ -352,6 +357,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.STEPS,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -367,6 +373,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.WEIGHT,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -382,6 +389,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.HEIGHT,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = record.toDto(),
@@ -397,6 +405,23 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.BODY_FAT_PERCENTAGE,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = record.toDto(),
+                        bodyTemperatureRecord = null,
+                        distanceRecord = null,
+                        floorsClimbedRecord = null,
+                        heightRecord = null,
+                        stepsRecord = null,
+                        weightRecord = null,
+                        wheelchairPushesRecord = null
+                    )
+                }
+
+                HealthDataTypeDto.BODY_TEMPERATURE -> {
+                    val record = response.record as BodyTemperatureRecord
+                    ReadRecordResponseDto(
+                        dataType = HealthDataTypeDto.BODY_TEMPERATURE,
+                        activeCaloriesBurnedRecord = null,
+                        bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = record.toDto(),
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -412,6 +437,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
                         activeCaloriesBurnedRecord = null,
                         bodyFatPercentageRecord = null,
+                        bodyTemperatureRecord = null,
                         distanceRecord = null,
                         floorsClimbedRecord = null,
                         heightRecord = null,
@@ -512,6 +538,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
                         activeCaloriesBurnedRecords = activeCaloriesBurnedRecords,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -529,6 +556,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.DISTANCE,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = distanceRecords,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -546,6 +574,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.FLOORS_CLIMBED,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = floorsClimbedRecords,
                         heightRecords = null,
@@ -563,6 +592,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.STEPS,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -580,6 +610,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.WEIGHT,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -597,6 +628,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.HEIGHT,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = heightRecords,
@@ -614,6 +646,25 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.BODY_FAT_PERCENTAGE,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = bodyFatPercentageRecords,
+                        bodyTemperatureRecords = null,
+                        distanceRecords = null,
+                        floorsClimbedRecords = null,
+                        heightRecords = null,
+                        stepsRecords = null,
+                        weightRecords = null,
+                        wheelchairPushesRecords = null,
+                        nextPageToken = nextPageToken
+                    )
+                }
+
+                HealthDataTypeDto.BODY_TEMPERATURE -> {
+                    val bodyTemperatureRecords = response.records.map { (it as BodyTemperatureRecord).toDto() }
+
+                    ReadRecordsResponseDto(
+                        dataType = HealthDataTypeDto.BODY_TEMPERATURE,
+                        activeCaloriesBurnedRecords = null,
+                        bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = bodyTemperatureRecords,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -631,6 +682,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
                         activeCaloriesBurnedRecords = null,
                         bodyFatPercentageRecords = null,
+                        bodyTemperatureRecords = null,
                         distanceRecords = null,
                         floorsClimbedRecords = null,
                         heightRecords = null,
@@ -729,6 +781,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                 HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
                     requireNotNull(request.bodyFatPercentageRecord) { "bodyFatPercentageRecord must not be null for BODY_FAT_PERCENTAGE type" }
                     request.bodyFatPercentageRecord.toHealthConnect()
+                }
+
+                HealthDataTypeDto.BODY_TEMPERATURE -> {
+                    requireNotNull(request.bodyTemperatureRecord) { "bodyTemperatureRecord must not be null for BODY_TEMPERATURE type" }
+                    request.bodyTemperatureRecord.toHealthConnect()
                 }
 
                 HealthDataTypeDto.WEIGHT -> {
@@ -834,6 +891,11 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
                         requireNotNull(request.bodyFatPercentageRecords) { "bodyFatPercentageRecords must not be null for BODY_FAT_PERCENTAGE type" }
                         request.bodyFatPercentageRecords.map { it.toHealthConnect() }
+                    }
+
+                    HealthDataTypeDto.BODY_TEMPERATURE -> {
+                        requireNotNull(request.bodyTemperatureRecords) { "bodyTemperatureRecords must not be null for BODY_TEMPERATURE type" }
+                        request.bodyTemperatureRecords.map { it.toHealthConnect() }
                     }
 
                     HealthDataTypeDto.WEIGHT -> {
@@ -984,6 +1046,18 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                     bodyFatPercentageRecord.toHealthConnect()
                 }
 
+                HealthDataTypeDto.BODY_TEMPERATURE -> {
+                    requireNotNull(request.bodyTemperatureRecord) { "bodyTemperatureRecord must not be null for BODY_TEMPERATURE type" }
+                    val bodyTemperatureRecord = request.bodyTemperatureRecord
+                    // Validate record ID is not empty or "none"
+                    if (bodyTemperatureRecord.id.isEmpty() || bodyTemperatureRecord.id == "none") {
+                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                        )
+                    }
+                    bodyTemperatureRecord.toHealthConnect()
+                }
+
                 HealthDataTypeDto.WEIGHT -> {
                     requireNotNull(request.weightRecord) { "weightRecord must not be null for WEIGHT type" }
                     val weightRecord = request.weightRecord
@@ -1116,6 +1190,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = energyDto,
+                        bodyTemperatureValue = null,
                         doubleValue = null,
                         massValue = null,
                         lengthValue = null,
@@ -1130,6 +1205,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = null,
                         massValue = null,
                         lengthValue = lengthDto,
@@ -1144,6 +1220,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = null,
                         massValue = null,
                         lengthValue = lengthDto,
@@ -1157,6 +1234,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = floorsCount,
                         massValue = null,
                         lengthValue = null,
@@ -1171,6 +1249,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = numericDto.value,
                         massValue = null,
                         lengthValue = null,
@@ -1185,8 +1264,24 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = null,
                         massValue = massDto,
+                        lengthValue = null,
+                        wheelchairPushesValue = null
+                    )
+                }
+
+                HealthDataTypeDto.BODY_TEMPERATURE -> {
+                    val temperature = aggregatedValue?.let { it as? Temperature }
+                    val temperatureDto = temperature?.toDto()
+                    AggregateResponseDto(
+                        aggregationMetric = request.aggregationMetric,
+                        dataType = request.dataType,
+                        activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = temperatureDto,
+                        doubleValue = null,
+                        massValue = null,
                         lengthValue = null,
                         wheelchairPushesValue = null
                     )
@@ -1199,6 +1294,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                         aggregationMetric = request.aggregationMetric,
                         dataType = request.dataType,
                         activeCaloriesBurnedValue = null,
+                        bodyTemperatureValue = null,
                         doubleValue = null,
                         massValue = null,
                         lengthValue = null,

@@ -268,3 +268,15 @@ internal fun Double.toNumericDto(): NumericDto {
     )
 }
 
+/**
+ * Converts a temperature value (Double in Celsius) to a [TemperatureDto].
+ *
+ * Uses celsius as the transfer unit for consistency.
+ */
+internal fun Double.toTemperatureDto(): TemperatureDto {
+    return TemperatureDto(
+        value = this,
+        unit = TemperatureUnitDto.CELSIUS
+    )
+}
+

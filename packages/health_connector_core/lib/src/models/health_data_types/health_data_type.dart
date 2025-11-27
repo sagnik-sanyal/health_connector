@@ -24,6 +24,7 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
     show
         ActiveCaloriesBurnedRecord,
         BodyFatPercentageRecord,
+        BodyTemperatureRecord,
         DistanceRecord,
         FloorsClimbedRecord,
         HealthRecord,
@@ -33,7 +34,7 @@ import 'package:health_connector_core/src/models/health_records/health_record.da
         WeightRecord,
         WheelchairPushesRecord;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Energy, Length, Mass, MeasurementUnit, Numeric;
+    show Energy, Length, Mass, MeasurementUnit, Numeric, Temperature;
 import 'package:health_connector_core/src/models/permissions/permission.dart'
     show HealthDataPermission, HealthDataPermissionAccessType;
 import 'package:health_connector_core/src/models/requests/aggregate_request.dart'
@@ -48,6 +49,7 @@ import 'package:meta/meta.dart' show immutable, internal;
 
 part 'active_calories_burned_health_data_type.dart';
 part 'body_fat_percentage_health_data_type.dart';
+part 'body_temperature_health_data_type.dart';
 part 'distance_health_data_type.dart';
 part 'floors_climbed_health_data_type.dart';
 part 'height_health_data_type.dart';
@@ -156,6 +158,12 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// data and writing new measurements.
   static const bodyFatPercentage = BodyFatPercentageHealthDataType();
 
+  /// Body temperature data type.
+  ///
+  /// Represents the user's body temperature measurements. Supports both reading
+  /// existing body temperature data and writing new measurements.
+  static const bodyTemperature = BodyTemperatureHealthDataType();
+
   /// Body height data type.
   ///
   /// Represents the user's body height measurements. Supports both reading
@@ -193,6 +201,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   static const List<HealthDataType<HealthRecord, MeasurementUnit>> values = [
     activeCaloriesBurned,
     bodyFatPercentage,
+    bodyTemperature,
     distance,
     floorsClimbed,
     height,

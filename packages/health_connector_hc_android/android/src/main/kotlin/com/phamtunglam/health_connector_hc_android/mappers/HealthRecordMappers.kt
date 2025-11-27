@@ -2,15 +2,18 @@ package com.phamtunglam.health_connector_hc_android.mappers
 
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.BodyFatRecord
+import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.HeightRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
+import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.Percentage
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.BodyFatPercentageRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.BodyTemperatureRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeightRecordDto
@@ -208,6 +211,31 @@ internal fun BodyFatRecord.toDto(): BodyFatPercentageRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         percentage = percentage.value.toNumericDto()
+    )
+}
+
+/**
+ * Converts a [BodyTemperatureRecordDto] to a Health Connect [BodyTemperatureRecord] object.
+ */
+internal fun BodyTemperatureRecordDto.toHealthConnect(): BodyTemperatureRecord {
+    return BodyTemperatureRecord(
+        temperature = Temperature.celsius(temperature.value),
+        time = Instant.ofEpochMilli(time),
+        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+        metadata = metadata.toHealthConnect(),
+    )
+}
+
+/**
+ * Converts a Health Connect [BodyTemperatureRecord] object to a [BodyTemperatureRecordDto].
+ */
+internal fun BodyTemperatureRecord.toDto(): BodyTemperatureRecordDto {
+    return BodyTemperatureRecordDto(
+        id = metadata.id,
+        time = time.toEpochMilli(),
+        zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
+        metadata = metadata.toDto(),
+        temperature = temperature.inCelsius.toTemperatureDto()
     )
 }
 

@@ -34,6 +34,8 @@ extension HealthDataPermissionDto {
             return HKQuantityType.quantityType(forIdentifier: .height)!
         case .bodyFatPercentage:
             return HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage)!
+        case .bodyTemperature:
+            return HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!
         case .steps:
             return HKQuantityType.quantityType(forIdentifier: .stepCount)!
         case .weight:

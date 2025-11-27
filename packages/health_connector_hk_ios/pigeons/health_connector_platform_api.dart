@@ -118,6 +118,9 @@ enum HealthDataTypeDto {
   /// Body fat percentage data.
   bodyFatPercentage,
 
+  /// Body temperature data.
+  bodyTemperature,
+
   /// Wheelchair pushes data.
   wheelchairPushes,
 }
@@ -741,6 +744,39 @@ class BodyFatPercentageRecordDto {
   final int? zoneOffsetSeconds;
 }
 
+/// DTO for body temperature health data.
+///
+/// Maps to:
+/// - HealthKit: `HKQuantityTypeIdentifier.bodyTemperature`
+/// - Domain: `BodyTemperatureRecord`
+class BodyTemperatureRecordDto {
+  BodyTemperatureRecordDto({
+    required this.id,
+    required this.time,
+    required this.metadata,
+    required this.temperature,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  ///
+  /// For new records being written, use an empty string or placeholder value.
+  /// The platform will assign a proper ID upon successful write.
+  final String id;
+
+  /// Metadata about this record.
+  final MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  final int time;
+
+  /// Body temperature measurement.
+  final TemperatureDto temperature;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  final int? zoneOffsetSeconds;
+}
+
 // ============================================================================
 // OPERATION REQUEST/RESPONSE DTOs
 // ============================================================================
@@ -778,6 +814,7 @@ class AggregateResponseDto {
     required this.dataType,
     required this.aggregationMetric,
     this.activeCaloriesBurnedValue,
+    this.bodyTemperatureValue,
     this.doubleValue,
     this.lengthValue,
     this.massValue,
@@ -793,6 +830,10 @@ class AggregateResponseDto {
   /// Active calories burned aggregated value
   /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
   final EnergyDto? activeCaloriesBurnedValue;
+
+  /// Body temperature aggregated value
+  /// (non-null when dataType == BODY_TEMPERATURE and aggregationMetric is avg/min/max).
+  final TemperatureDto? bodyTemperatureValue;
 
   /// Numeric aggregated value.
   ///
@@ -869,6 +910,7 @@ class ReadRecordResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.bodyFatPercentageRecord,
+    this.bodyTemperatureRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -907,6 +949,10 @@ class ReadRecordResponseDto {
   /// Body fat percentage record
   /// (non-null when dataType == BODY_FAT_PERCENTAGE).
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
+
+  /// Body temperature record
+  /// (non-null when dataType == BODY_TEMPERATURE).
+  final BodyTemperatureRecordDto? bodyTemperatureRecord;
 
   /// Wheelchair pushes record
   /// (non-null when dataType == WHEELCHAIR_PUSHES).
@@ -956,6 +1002,7 @@ class ReadRecordsResponseDto {
     required this.dataType,
     this.activeCaloriesBurnedRecords,
     this.bodyFatPercentageRecords,
+    this.bodyTemperatureRecords,
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
@@ -999,6 +1046,10 @@ class ReadRecordsResponseDto {
   /// (non-null when dataType == BODY_FAT_PERCENTAGE).
   final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
 
+  /// List of body temperature records
+  /// (non-null when dataType == BODY_TEMPERATURE).
+  final List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
+
   /// List of wheelchair pushes records
   /// (non-null when dataType == WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
@@ -1017,6 +1068,7 @@ class WriteRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.bodyFatPercentageRecord,
+    this.bodyTemperatureRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -1056,6 +1108,10 @@ class WriteRecordRequestDto {
   /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
 
+  /// Body temperature record
+  /// (only non-null when dataType == BODY_TEMPERATURE).
+  final BodyTemperatureRecordDto? bodyTemperatureRecord;
+
   /// Wheelchair pushes record
   /// (only non-null when dataType == WHEELCHAIR_PUSHES).
   final WheelchairPushesRecordDto? wheelchairPushesRecord;
@@ -1081,6 +1137,7 @@ class WriteRecordsRequestDto {
     required this.dataTypes,
     this.activeCaloriesBurnedRecords,
     this.bodyFatPercentageRecords,
+    this.bodyTemperatureRecords,
     this.distanceRecords,
     this.floorsClimbedRecords,
     this.heightRecords,
@@ -1123,6 +1180,10 @@ class WriteRecordsRequestDto {
   /// (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
   final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
 
+  /// List of body temperature records
+  /// (non-null when dataTypes contains BODY_TEMPERATURE).
+  final List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
+
   /// List of wheelchair pushes records
   /// (non-null when dataTypes contains WHEELCHAIR_PUSHES).
   final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
@@ -1153,6 +1214,7 @@ class UpdateRecordRequestDto {
     required this.dataType,
     this.activeCaloriesBurnedRecord,
     this.bodyFatPercentageRecord,
+    this.bodyTemperatureRecord,
     this.distanceRecord,
     this.floorsClimbedRecord,
     this.heightRecord,
@@ -1198,6 +1260,11 @@ class UpdateRecordRequestDto {
   /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
   /// The record must have a valid existing ID.
   final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
+
+  /// Body temperature record
+  /// (only non-null when dataType == BODY_TEMPERATURE).
+  /// The record must have a valid existing ID.
+  final BodyTemperatureRecordDto? bodyTemperatureRecord;
 
   /// Wheelchair pushes record
   /// (only non-null when dataType == WHEELCHAIR_PUSHES).

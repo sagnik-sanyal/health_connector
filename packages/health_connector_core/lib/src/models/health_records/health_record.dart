@@ -5,7 +5,7 @@ import 'package:health_connector_core/src/models/health_platform.dart'
 import 'package:health_connector_core/src/models/health_platform_data.dart'
     show HealthPlatformData;
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart'
-    show Energy, Length, Mass, Numeric;
+    show Energy, Length, Mass, Numeric, Temperature;
 import 'package:health_connector_core/src/models/metadata/metadata.dart'
     show Metadata;
 import 'package:health_connector_core/src/utils/datetime.dart'
@@ -15,6 +15,7 @@ import 'package:meta/meta.dart' show immutable;
 
 part 'active_calories_burned_record.dart';
 part 'body_fat_percentage_record.dart';
+part 'body_temperature_record.dart';
 part 'distance_record.dart';
 part 'floors_climbed_record.dart';
 part 'height_record.dart';

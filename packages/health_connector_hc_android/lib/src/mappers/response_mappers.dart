@@ -2,6 +2,7 @@ import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         BodyFatPercentageHealthDataType,
+        BodyTemperatureHealthDataType,
         HealthConnectorErrorCode,
         HealthConnectorException,
         HealthDataType,
@@ -120,6 +121,20 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
             .cast<R>()
             .toList();
 
+      case BodyTemperatureHealthDataType _:
+        final bodyTemperatureRecords = responseDto.bodyTemperatureRecords;
+        if (bodyTemperatureRecords == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected bodyTemperatureRecords but got null in '
+            'ReadRecordsResponseDto for dataType: $dataType',
+          );
+        }
+        return bodyTemperatureRecords
+            .map((dto) => dto.toDomain())
+            .cast<R>()
+            .toList();
+
       case StepsHealthDataType _:
         final stepsRecords = responseDto.stepsRecords;
         if (stepsRecords == null) {
@@ -225,6 +240,17 @@ extension AggregateResponseDtoToDomain on AggregateResponseDto {
           'Body fat percentage does not support aggregation',
         );
 
+      case BodyTemperatureHealthDataType _:
+        final value = bodyTemperatureValue;
+        if (value == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected bodyTemperatureValue but got null in '
+            'AggregateResponseDto for dataType: $dataType',
+          );
+        }
+        return value.toDomain() as U;
+
       case FloorsClimbedHealthDataType _:
         final value = doubleValue;
         if (value == null) {
@@ -329,6 +355,17 @@ extension ReadRecordResponseDtoToDomain on ReadRecordResponseDto {
           throw HealthConnectorException(
             HealthConnectorErrorCode.parsingError,
             'Expected bodyFatPercentageRecord but got null in '
+            'ReadRecordResponseDto for dataType: $dataType',
+          );
+        }
+        return record.toDomain() as R;
+
+      case BodyTemperatureHealthDataType _:
+        final record = bodyTemperatureRecord;
+        if (record == null) {
+          throw HealthConnectorException(
+            HealthConnectorErrorCode.parsingError,
+            'Expected bodyTemperatureRecord but got null in '
             'ReadRecordResponseDto for dataType: $dataType',
           );
         }

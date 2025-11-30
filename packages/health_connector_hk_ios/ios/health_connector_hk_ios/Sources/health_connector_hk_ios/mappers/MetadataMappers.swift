@@ -1,15 +1,6 @@
 import Foundation
 import HealthKit
 
-// ==================== METADATA KEYS ====================
-
-/// Custom metadata key used to store the full recording method enum value.
-///
-/// HealthKit only provides a boolean flag (`HKMetadataKeyWasUserEntered`) to distinguish
-/// manual entry from device-recorded data. This custom key allows us to preserve the
-/// full recording method enum (manualEntry, automaticallyRecorded, activelyRecorded, unknown).
-private let recordingMethodMetadataKey = "recordingMethod"
-
 // ==================== DEVICE MAPPERS ====================
 
 extension DeviceDto {
@@ -86,7 +77,6 @@ extension MetadataDto {
      * - `HKMetadataKeyWasUserEntered` for manual entry detection
      * - `HKMetadataKeyDeviceName` for device name (redundancy with HKDevice.name)
      * - `HKMetadataKeyTimeZone` for timezone identifier (if provided)
-     * - Custom recording method key for full enum value (since HealthKit only has boolean)
      *
      * - Parameter timeZone: Optional timezone to store in metadata. If nil, uses device's current timezone.
      */
@@ -101,17 +91,8 @@ extension MetadataDto {
             metadata[HKMetadataKeySyncVersion] = NSNumber(value: clientRecordVersion)
         }
 
-        // Map recording method to HKMetadataKeyWasUserEntered
-        // manualEntry -> true, others -> false
-        if recordingMethod == .manualEntry {
-            metadata[HKMetadataKeyWasUserEntered] = true
-        } else {
-            metadata[HKMetadataKeyWasUserEntered] = false
-        }
-
-        // Store full recording method enum as custom key for reading back
-        // This allows us to distinguish between automaticallyRecorded, activelyRecorded, and unknown
-        metadata[recordingMethodMetadataKey] = Int(recordingMethod.rawValue)
+        // Map isManualEntry to HKMetadataKeyWasUserEntered
+        metadata[HKMetadataKeyWasUserEntered] = isManualEntry
 
         // Store device name in metadata for redundancy (also stored in HKDevice.name)
         if let deviceName = device?.name {
@@ -141,9 +122,8 @@ extension Dictionary where Key == String, Value == Any {
      * Reads from standard HealthKit metadata keys:
      * - `HKMetadataKeySyncIdentifier` -> clientRecordId
      * - `HKMetadataKeySyncVersion` -> clientRecordVersion
-     * - `HKMetadataKeyWasUserEntered` -> recordingMethod (manualEntry if true)
+     * - `HKMetadataKeyWasUserEntered` -> isManualEntry
      * - `HKMetadataKeyDeviceName` -> device name (if not in HKDevice)
-     * - Custom recording method key -> full enum value (for backward compatibility)
      */
     func toMetadataDto(source: HKSource, device: HKDevice?) -> MetadataDto {
         // Extract sync identifier from standard HealthKit key
@@ -157,20 +137,9 @@ extension Dictionary where Key == String, Value == Any {
             clientRecordVersion = nil
         }
 
-        // Determine recording method from HKMetadataKeyWasUserEntered and custom key
-        let recordingMethod: RecordingMethodDto
-        if let wasUserEntered = self[HKMetadataKeyWasUserEntered] as? Bool, wasUserEntered {
-            // If HKMetadataKeyWasUserEntered is true, it's manual entry
-            recordingMethod = .manualEntry
-        } else if let methodValue = self[recordingMethodMetadataKey] as? Int {
-            // Use custom key if available (for automaticallyRecorded, activelyRecorded, unknown)
-            recordingMethod = RecordingMethodDto(rawValue: methodValue) ?? .unknown
-        } else if let methodValue = self[recordingMethodMetadataKey] as? Int64 {
-            recordingMethod = RecordingMethodDto(rawValue: Int(methodValue)) ?? .unknown
-        } else {
-            // Default to unknown if no information available
-            recordingMethod = .unknown
-        }
+        // Extract isManualEntry from HKMetadataKeyWasUserEntered
+        // Default to false if not present (unknown/not manual entry)
+        let isManualEntry = self[HKMetadataKeyWasUserEntered] as? Bool ?? false
 
         // Device name is extracted from HKDevice.name in toDto() method
         // HKMetadataKeyDeviceName in metadata is for redundancy but we prefer HKDevice.name
@@ -181,7 +150,7 @@ extension Dictionary where Key == String, Value == Any {
             clientRecordVersion: clientRecordVersion,
             dataOrigin: source.bundleIdentifier,
             device: deviceDto,
-            recordingMethod: recordingMethod
+            isManualEntry: isManualEntry
         )
     }
 

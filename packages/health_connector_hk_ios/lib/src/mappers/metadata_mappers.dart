@@ -1,42 +1,8 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show RecordingMethod, DeviceType, Device, DataOrigin, Metadata;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
-    show RecordingMethodDto, DeviceDto, MetadataDto;
+    show DeviceDto, MetadataDto;
 import 'package:meta/meta.dart' show internal;
-
-/// Converts [RecordingMethod] to [RecordingMethodDto].
-@internal
-extension RecordingMethodDtoMapper on RecordingMethod {
-  RecordingMethodDto toDto() {
-    switch (this) {
-      case RecordingMethod.unknown:
-        return RecordingMethodDto.unknown;
-      case RecordingMethod.manualEntry:
-        return RecordingMethodDto.manualEntry;
-      case RecordingMethod.automaticallyRecorded:
-        return RecordingMethodDto.automaticallyRecorded;
-      case RecordingMethod.activelyRecorded:
-        return RecordingMethodDto.activelyRecorded;
-    }
-  }
-}
-
-/// Converts [RecordingMethodDto] to [RecordingMethod].
-@internal
-extension RecordingMethodDtoToDomain on RecordingMethodDto {
-  RecordingMethod toDomain() {
-    switch (this) {
-      case RecordingMethodDto.unknown:
-        return RecordingMethod.unknown;
-      case RecordingMethodDto.manualEntry:
-        return RecordingMethod.manualEntry;
-      case RecordingMethodDto.automaticallyRecorded:
-        return RecordingMethod.automaticallyRecorded;
-      case RecordingMethodDto.activelyRecorded:
-        return RecordingMethod.activelyRecorded;
-    }
-  }
-}
 
 /// Converts [Device] to [DeviceDto].
 @internal
@@ -67,7 +33,7 @@ extension MetadataDtoMapper on Metadata {
   MetadataDto toDto() {
     return MetadataDto(
       dataOrigin: dataOrigin.packageName,
-      recordingMethod: recordingMethod.toDto(),
+      isManualEntry: recordingMethod == RecordingMethod.manualEntry,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
       device: device?.toDto(),
@@ -81,7 +47,9 @@ extension MetadataDtoToDomain on MetadataDto {
   Metadata toDomain() {
     return Metadata(
       dataOrigin: DataOrigin(dataOrigin),
-      recordingMethod: recordingMethod.toDomain(),
+      recordingMethod: isManualEntry
+          ? RecordingMethod.manualEntry
+          : RecordingMethod.unknown,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
       device: device?.toDomain(),

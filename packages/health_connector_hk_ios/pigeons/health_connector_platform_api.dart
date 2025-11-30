@@ -238,21 +238,6 @@ class VolumeDto extends MeasurementUnitDto {
 
 // region Metadata
 
-/// Recording method for health data.
-enum RecordingMethodDto {
-  /// Data was recorded during an active user-initiated session.
-  activelyRecorded,
-
-  /// Data was automatically recorded by a device in the background.
-  automaticallyRecorded,
-
-  /// Data was manually entered by the user.
-  manualEntry,
-
-  /// The recording method is unknown or unspecified.
-  unknown,
-}
-
 /// Represents device information for health data recording.
 class DeviceDto {
   DeviceDto({
@@ -295,7 +280,7 @@ class DeviceDto {
 class MetadataDto {
   MetadataDto({
     required this.dataOrigin,
-    required this.recordingMethod,
+    required this.isManualEntry,
     this.clientRecordId,
     this.clientRecordVersion,
     this.device,
@@ -317,8 +302,10 @@ class MetadataDto {
   /// The device that recorded the data (optional).
   final DeviceDto? device;
 
-  /// The method used to record this data.
-  final RecordingMethodDto recordingMethod;
+  /// Whether this data was manually entered by the user.
+  ///
+  /// `true` indicates manual entry, `false` indicates unknown/not manual entry.
+  final bool isManualEntry;
 }
 
 // endregion

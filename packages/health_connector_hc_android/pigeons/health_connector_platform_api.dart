@@ -58,6 +58,9 @@ enum HealthPlatformStatusDto {
 }
 
 // region Measurement Unit
+/// Sealed class for all measurement unit DTOs.
+sealed class MeasurementUnitDto {}
+
 /// Blood glucose unit types supported by the plugin.
 enum BloodGlucoseUnitDto { milligramsPerDeciliter, millimolesPerLiter }
 
@@ -122,7 +125,7 @@ enum VelocityUnitDto { kilometersPerHour, metersPerSecond, milesPerHour }
 enum VolumeUnitDto { fluidOuncesUs, liters, milliliters }
 
 /// Represents a blood glucose measurement for platform transfer.
-class BloodGlucoseDto {
+class BloodGlucoseDto extends MeasurementUnitDto {
   BloodGlucoseDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -133,7 +136,7 @@ class BloodGlucoseDto {
 }
 
 /// Represents an energy measurement for platform transfer.
-class EnergyDto {
+class EnergyDto extends MeasurementUnitDto {
   EnergyDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -144,7 +147,7 @@ class EnergyDto {
 }
 
 /// Represents a length measurement for platform transfer.
-class LengthDto {
+class LengthDto extends MeasurementUnitDto {
   LengthDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -155,7 +158,7 @@ class LengthDto {
 }
 
 /// Represents a mass measurement for platform transfer.
-class MassDto {
+class MassDto extends MeasurementUnitDto {
   MassDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -166,7 +169,7 @@ class MassDto {
 }
 
 /// Represents a numeric measurement for platform transfer.
-class NumericDto {
+class NumericDto extends MeasurementUnitDto {
   NumericDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -177,7 +180,7 @@ class NumericDto {
 }
 
 /// Represents a percentage measurement for platform transfer.
-class PercentageDto {
+class PercentageDto extends MeasurementUnitDto {
   PercentageDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -188,7 +191,7 @@ class PercentageDto {
 }
 
 /// Represents a power measurement for platform transfer.
-class PowerDto {
+class PowerDto extends MeasurementUnitDto {
   PowerDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -199,7 +202,7 @@ class PowerDto {
 }
 
 /// Represents a pressure measurement for platform transfer.
-class PressureDto {
+class PressureDto extends MeasurementUnitDto {
   PressureDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -210,7 +213,7 @@ class PressureDto {
 }
 
 /// Represents a temperature measurement for platform transfer.
-class TemperatureDto {
+class TemperatureDto extends MeasurementUnitDto {
   TemperatureDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -221,7 +224,7 @@ class TemperatureDto {
 }
 
 /// Represents a velocity measurement for platform transfer.
-class VelocityDto {
+class VelocityDto extends MeasurementUnitDto {
   VelocityDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -232,7 +235,7 @@ class VelocityDto {
 }
 
 /// Represents a volume measurement for platform transfer.
-class VolumeDto {
+class VolumeDto extends MeasurementUnitDto {
   VolumeDto({required this.value, required this.unit});
 
   /// The unit in which the value is expressed.
@@ -358,6 +361,9 @@ class MetadataDto {
 
 // region Health Records
 
+/// Sealed class for all health record DTOs.
+sealed class HealthRecordDto {}
+
 /// Represents a health data type.
 enum HealthDataTypeDto {
   /// Active calories burned data.
@@ -401,7 +407,7 @@ enum HealthDataTypeDto {
 }
 
 /// Represents an active calories burned record for platform transfer.
-class ActiveCaloriesBurnedRecordDto {
+class ActiveCaloriesBurnedRecordDto extends HealthRecordDto {
   ActiveCaloriesBurnedRecordDto({
     required this.id,
     required this.startTime,
@@ -435,7 +441,7 @@ class ActiveCaloriesBurnedRecordDto {
 }
 
 /// Represents a distance record for platform transfer.
-class DistanceRecordDto {
+class DistanceRecordDto extends HealthRecordDto {
   DistanceRecordDto({
     required this.id,
     required this.startTime,
@@ -469,7 +475,7 @@ class DistanceRecordDto {
 }
 
 /// Represents a floors climbed record for platform transfer.
-class FloorsClimbedRecordDto {
+class FloorsClimbedRecordDto extends HealthRecordDto {
   FloorsClimbedRecordDto({
     required this.id,
     required this.startTime,
@@ -503,7 +509,7 @@ class FloorsClimbedRecordDto {
 }
 
 /// Represents a wheelchair pushes record for platform transfer.
-class WheelchairPushesRecordDto {
+class WheelchairPushesRecordDto extends HealthRecordDto {
   WheelchairPushesRecordDto({
     required this.id,
     required this.startTime,
@@ -537,7 +543,7 @@ class WheelchairPushesRecordDto {
 }
 
 /// Represents a step count record for platform transfer.
-class StepRecordDto {
+class StepRecordDto extends HealthRecordDto {
   StepRecordDto({
     required this.id,
     required this.startTime,
@@ -571,7 +577,7 @@ class StepRecordDto {
 }
 
 /// Represents a weight record for platform transfer.
-class WeightRecordDto {
+class WeightRecordDto extends HealthRecordDto {
   WeightRecordDto({
     required this.id,
     required this.time,
@@ -597,7 +603,7 @@ class WeightRecordDto {
 }
 
 /// DTO for lean body mass health data.
-class LeanBodyMassRecordDto {
+class LeanBodyMassRecordDto extends HealthRecordDto {
   LeanBodyMassRecordDto({
     required this.id,
     required this.time,
@@ -623,7 +629,7 @@ class LeanBodyMassRecordDto {
 }
 
 /// DTO for body height health data.
-class HeightRecordDto {
+class HeightRecordDto extends HealthRecordDto {
   HeightRecordDto({
     required this.id,
     required this.time,
@@ -649,7 +655,7 @@ class HeightRecordDto {
 }
 
 /// DTO for body fat percentage health data.
-class BodyFatPercentageRecordDto {
+class BodyFatPercentageRecordDto extends HealthRecordDto {
   BodyFatPercentageRecordDto({
     required this.id,
     required this.time,
@@ -675,7 +681,7 @@ class BodyFatPercentageRecordDto {
 }
 
 /// DTO for body temperature health data.
-class BodyTemperatureRecordDto {
+class BodyTemperatureRecordDto extends HealthRecordDto {
   BodyTemperatureRecordDto({
     required this.id,
     required this.time,
@@ -701,7 +707,7 @@ class BodyTemperatureRecordDto {
 }
 
 /// Represents a hydration (water intake) record for platform transfer.
-class HydrationRecordDto {
+class HydrationRecordDto extends HealthRecordDto {
   HydrationRecordDto({
     required this.id,
     required this.startTime,
@@ -752,7 +758,7 @@ class HeartRateMeasurementDto {
 }
 
 /// Represents a heart rate series record for platform transfer.
-class HeartRateSeriesRecordDto {
+class HeartRateSeriesRecordDto extends HealthRecordDto {
   HeartRateSeriesRecordDto({
     required this.id,
     required this.startTime,
@@ -816,7 +822,7 @@ class SleepStageDto {
 }
 
 /// DTO for sleep session.
-class SleepSessionRecordDto {
+class SleepSessionRecordDto extends HealthRecordDto {
   SleepSessionRecordDto({
     required this.id,
     required this.metadata,
@@ -976,58 +982,10 @@ class AggregateRequestDto {
 
 /// Response containing aggregated value.
 class AggregateResponseDto {
-  AggregateResponseDto({
-    required this.dataType,
-    required this.aggregationMetric,
-    this.activeCaloriesBurnedValue,
-    this.bodyTemperatureValue,
-    this.doubleValue,
-    this.hydrationValue,
-    this.lengthValue,
-    this.leanBodyMassValue,
-    this.massValue,
-    this.wheelchairPushesValue,
-    this.heartRateBeatsPerMinuteValue,
-    this.sleepSessionValue,
-  });
+  AggregateResponseDto(this.value);
 
-  /// The type of aggregation that was performed.
-  final AggregationMetricDto aggregationMetric;
-
-  /// The type of health data that was aggregated.
-  final HealthDataTypeDto dataType;
-
-  /// Active calories burned aggregated value.
-  final EnergyDto? activeCaloriesBurnedValue;
-
-  /// Body temperature aggregated value.
-  final TemperatureDto? bodyTemperatureValue;
-
-  /// Numeric aggregated value.
-  ///
-  /// Used for primitive numeric types like steps and count operations.
-  final double? doubleValue;
-
-  /// Hydration aggregated value.
-  final VolumeDto? hydrationValue;
-
-  /// Length aggregated value.
-  final LengthDto? lengthValue;
-
-  /// Mass aggregated value.
-  final MassDto? massValue;
-
-  /// Lean body mass aggregated value.
-  final MassDto? leanBodyMassValue;
-
-  /// Wheelchair pushes aggregated value.
-  final NumericDto? wheelchairPushesValue;
-
-  /// Heart rate series record aggregated value.
-  final NumericDto? heartRateBeatsPerMinuteValue;
-
-  /// Sleep session aggregated value.
-  final NumericDto? sleepSessionValue;
+  /// Aggregated value.
+  final MeasurementUnitDto value;
 }
 
 /// Request to delete specific records by their IDs.
@@ -1064,75 +1022,21 @@ class DeleteRecordsByTimeRangeRequestDto {
 
 /// Request to read a single health record by ID.
 class ReadRecordRequestDto {
-  ReadRecordRequestDto({required this.dataType, required this.recordId});
-
-  /// The type of health data to read.
-  final HealthDataTypeDto dataType;
+  ReadRecordRequestDto(this.recordId, this.dataType);
 
   /// The unique identifier of the record to read.
   final String recordId;
+
+  /// The type of health data to read.
+  final HealthDataTypeDto dataType;
 }
 
 /// Response containing a single health record.
 class ReadRecordResponseDto {
-  ReadRecordResponseDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateSeriesRecord,
-    this.sleepSessionRecord,
-  });
+  ReadRecordResponseDto(this.record);
 
-  /// The type of health data that was read.
-  final HealthDataTypeDto dataType;
-
-  /// Active calories burned record.
-  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record.
-  final DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record.
-  final FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record.
-  final HeightRecordDto? heightRecord;
-
-  /// Hydration record.
-  final HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record.
-  final LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record.
-  final StepRecordDto? stepsRecord;
-
-  /// Weight record.
-  final WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record.
-  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record.
-  final BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record.
-  final WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate series record.
-  final HeartRateSeriesRecordDto? heartRateSeriesRecord;
-
-  /// Sleep session record.
-  final SleepSessionRecordDto? sleepSessionRecord;
+  /// The health record that was read.
+  final HealthRecordDto? record;
 }
 
 /// Request to read multiple health records within a time range.
@@ -1146,14 +1050,8 @@ class ReadRecordsRequestDto {
     this.dataOriginPackageNames = const [],
   });
 
-  /// List of package names to filter by.
-  final List<String> dataOriginPackageNames;
-
   /// The type of health data to read.
   final HealthDataTypeDto dataType;
-
-  /// End of time range in milliseconds since epoch (UTC), exclusive.
-  final int endTime;
 
   /// Maximum number of records to return per page (1-10,000).
   final int pageSize;
@@ -1165,142 +1063,39 @@ class ReadRecordsRequestDto {
 
   /// Start of time range in milliseconds since epoch (UTC), inclusive.
   final int startTime;
+
+  /// End of time range in milliseconds since epoch (UTC), exclusive.
+  final int endTime;
+
+  /// List of package names to filter by.
+  final List<String> dataOriginPackageNames;
 }
 
 /// Response containing paginated health records.
 class ReadRecordsResponseDto {
-  ReadRecordsResponseDto({
-    required this.dataType,
+  ReadRecordsResponseDto(
+    this.records, {
     this.nextPageToken,
-    this.activeCaloriesBurnedRecords,
-    this.bodyFatPercentageRecords,
-    this.bodyTemperatureRecords,
-    this.distanceRecords,
-    this.floorsClimbedRecords,
-    this.heightRecords,
-    this.hydrationRecords,
-    this.leanBodyMassRecords,
-    this.stepsRecords,
-    this.weightRecords,
-    this.wheelchairPushesRecords,
-    this.heartRateSeriesRecords,
-    this.sleepSessionRecords,
   });
-
-  /// The type of health data that was read.
-  final HealthDataTypeDto dataType;
 
   /// Token for fetching next page, null if no more pages exist.
   final String? nextPageToken;
 
-  /// List of active calories burned records.
-  final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
-
-  /// List of distance records.
-  final List<DistanceRecordDto>? distanceRecords;
-
-  /// List of floors climbed records.
-  final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
-
-  /// List of height records.
-  final List<HeightRecordDto>? heightRecords;
-
-  /// List of hydration records.
-  final List<HydrationRecordDto>? hydrationRecords;
-
-  /// List of lean body mass records.
-  final List<LeanBodyMassRecordDto>? leanBodyMassRecords;
-
-  /// List of step records.
-  final List<StepRecordDto>? stepsRecords;
-
-  /// List of weight records.
-  final List<WeightRecordDto>? weightRecords;
-
-  /// List of body fat percentage records.
-  final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
-
-  /// List of body temperature records.
-  final List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
-
-  /// List of wheelchair pushes records.
-  final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
-
-  /// List of heart rate series records.
-  final List<HeartRateSeriesRecordDto>? heartRateSeriesRecords;
-
-  /// List of sleep session records.
-  final List<SleepSessionRecordDto>? sleepSessionRecords;
+  /// List of health records that were read.
+  final List<HealthRecordDto> records;
 }
 
 /// Request to write a single health record.
-///
-/// Uses explicit typed fields for compile-time safety.
-/// Only ONE field should be non-null per request.
 class WriteRecordRequestDto {
-  WriteRecordRequestDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateSeriesRecord,
-    this.sleepSessionRecord,
-  });
+  WriteRecordRequestDto(this.record);
 
-  /// The type of health data being written.
-  final HealthDataTypeDto dataType;
-
-  /// Active calories burned record.
-  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record.
-  final DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record.
-  final FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record.
-  final HeightRecordDto? heightRecord;
-
-  /// Hydration record.
-  final HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record.
-  final LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record.
-  final StepRecordDto? stepsRecord;
-
-  /// Weight record.
-  final WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record.
-  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record.
-  final BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record.
-  final WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate series record.
-  final HeartRateSeriesRecordDto? heartRateSeriesRecord;
-
-  /// Sleep session record.
-  final SleepSessionRecordDto? sleepSessionRecord;
+  /// Health record.
+  final HealthRecordDto record;
 }
 
 /// Response after writing a single record.
 class WriteRecordResponseDto {
-  WriteRecordResponseDto({required this.recordId});
+  WriteRecordResponseDto(this.recordId);
 
   /// Platform-assigned unique identifier for the written record.
   final String recordId;
@@ -1308,69 +1103,15 @@ class WriteRecordResponseDto {
 
 /// Request to write multiple health records atomically.
 class WriteRecordsRequestDto {
-  WriteRecordsRequestDto({
-    required this.dataTypes,
-    this.activeCaloriesBurnedRecords,
-    this.bodyFatPercentageRecords,
-    this.bodyTemperatureRecords,
-    this.distanceRecords,
-    this.floorsClimbedRecords,
-    this.heightRecords,
-    this.hydrationRecords,
-    this.leanBodyMassRecords,
-    this.stepsRecords,
-    this.weightRecords,
-    this.wheelchairPushesRecords,
-    this.heartRateSeriesRecords,
-    this.sleepSessionRecords,
-  });
+  WriteRecordsRequestDto(this.records);
 
-  /// The types of health data being written.
-  final List<HealthDataTypeDto> dataTypes;
-
-  /// List of active calories burned records.
-  final List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
-
-  /// List of distance records.
-  final List<DistanceRecordDto>? distanceRecords;
-
-  /// List of floors climbed records.
-  final List<FloorsClimbedRecordDto>? floorsClimbedRecords;
-
-  /// List of height records.
-  final List<HeightRecordDto>? heightRecords;
-
-  /// List of hydration records.
-  final List<HydrationRecordDto>? hydrationRecords;
-
-  /// List of lean body mass records.
-  final List<LeanBodyMassRecordDto>? leanBodyMassRecords;
-
-  /// List of step records.
-  final List<StepRecordDto>? stepsRecords;
-
-  /// List of weight records.
-  final List<WeightRecordDto>? weightRecords;
-
-  /// List of body fat percentage records.
-  final List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
-
-  /// List of body temperature records.
-  final List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
-
-  /// List of wheelchair pushes records.
-  final List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
-
-  /// List of heart rate series records.
-  final List<HeartRateSeriesRecordDto>? heartRateSeriesRecords;
-
-  /// List of sleep session records.
-  final List<SleepSessionRecordDto>? sleepSessionRecords;
+  /// Records being written.
+  final List<HealthRecordDto> records;
 }
 
 /// Response after writing multiple records.
 class WriteRecordsResponseDto {
-  WriteRecordsResponseDto({required this.recordIds});
+  WriteRecordsResponseDto(this.recordIds);
 
   /// Platform-assigned unique identifiers for written records.
   final List<String> recordIds;
@@ -1378,69 +1119,15 @@ class WriteRecordsResponseDto {
 
 /// Request to update a single health record.
 class UpdateRecordRequestDto {
-  UpdateRecordRequestDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateSeriesRecord,
-    this.sleepSessionRecord,
-  });
+  UpdateRecordRequestDto(this.record);
 
-  /// The type of health data being updated.
-  final HealthDataTypeDto dataType;
-
-  /// Active calories burned record.
-  final ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record.
-  final DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record.
-  final FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record.
-  final HeightRecordDto? heightRecord;
-
-  /// Hydration record.
-  final HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record.
-  final LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record.
-  final StepRecordDto? stepsRecord;
-
-  /// Weight record.
-  final WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record.
-  final BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record.
-  final BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record.
-  final WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate series record.
-  final HeartRateSeriesRecordDto? heartRateSeriesRecord;
-
-  /// Sleep session record.
-  final SleepSessionRecordDto? sleepSessionRecord;
+  /// The health record to update.
+  final HealthRecordDto record;
 }
 
 /// Response after updating a single record.
 class UpdateRecordResponseDto {
-  UpdateRecordResponseDto({required this.recordId});
+  UpdateRecordResponseDto(this.recordId);
 
   /// Platform-assigned unique identifier for the updated record.
   final String recordId;

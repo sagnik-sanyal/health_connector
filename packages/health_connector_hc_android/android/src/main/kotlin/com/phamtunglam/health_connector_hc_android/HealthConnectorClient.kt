@@ -26,6 +26,7 @@ import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
 import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.Volume
+import com.phamtunglam.health_connector_hc_android.mappers.id
 import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.mappers.toError
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthConnect
@@ -41,6 +42,8 @@ import com.phamtunglam.health_connector_hc_android.pigeon.AggregateRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregateResponseDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByIdsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeleteRecordsByTimeRangeRequestDto
+import com.phamtunglam.health_connector_hc_android.pigeon.EnergyDto
+import com.phamtunglam.health_connector_hc_android.pigeon.EnergyUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorError
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthConnectorErrorCodeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataPermissionRequestResultDto
@@ -49,6 +52,10 @@ import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureD
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeaturePermissionRequestResultDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureStatusDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformStatusDto
+import com.phamtunglam.health_connector_hc_android.pigeon.LengthDto
+import com.phamtunglam.health_connector_hc_android.pigeon.LengthUnitDto
+import com.phamtunglam.health_connector_hc_android.pigeon.MassDto
+import com.phamtunglam.health_connector_hc_android.pigeon.MassUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionStatusDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionsRequestResponseDto
@@ -56,8 +63,12 @@ import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordResponseDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.TemperatureDto
+import com.phamtunglam.health_connector_hc_android.pigeon.TemperatureUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.UpdateRecordRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.UpdateRecordResponseDto
+import com.phamtunglam.health_connector_hc_android.pigeon.VolumeDto
+import com.phamtunglam.health_connector_hc_android.pigeon.VolumeUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordResponseDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WriteRecordsRequestDto
@@ -307,265 +318,74 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val response = client.readRecord(recordClass, request.recordId)
 
             // Convert SDK record to DTO using typed mappers
-            val responseDto = when (request.dataType) {
+            val recordDto = when (request.dataType) {
                 HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
                     val record = response.record as ActiveCaloriesBurnedRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
-                        activeCaloriesBurnedRecord = record.toDto(),
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.DISTANCE -> {
                     val record = response.record as DistanceRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.DISTANCE,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = record.toDto(),
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.FLOORS_CLIMBED -> {
                     val record = response.record as FloorsClimbedRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.FLOORS_CLIMBED,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = record.toDto(),
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.STEPS -> {
                     val record = response.record as StepsRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.STEPS,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = record.toDto(),
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.WEIGHT -> {
                     val record = response.record as WeightRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.WEIGHT,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = record.toDto(),
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.HEIGHT -> {
                     val record = response.record as HeightRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.HEIGHT,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = record.toDto(),
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.HYDRATION -> {
                     val record = response.record as HydrationRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.HYDRATION,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = record.toDto(),
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.LEAN_BODY_MASS -> {
                     val record = response.record as LeanBodyMassRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.LEAN_BODY_MASS,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = record.toDto(),
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
                     val record = response.record as BodyFatRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.BODY_FAT_PERCENTAGE,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = record.toDto(),
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.BODY_TEMPERATURE -> {
                     val record = response.record as BodyTemperatureRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.BODY_TEMPERATURE,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = record.toDto(),
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
                     val record = response.record as WheelchairPushesRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = record.toDto(),
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
                     val record = response.record as HeartRateRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.HEART_RATE_SERIES_RECORD,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = record.toDto(),
-                        sleepSessionRecord = null
-                    )
+                    record.toDto()
                 }
 
                 HealthDataTypeDto.SLEEP_SESSION -> {
                     val record = response.record as SleepSessionRecord
-                    ReadRecordResponseDto(
-                        dataType = HealthDataTypeDto.SLEEP_SESSION,
-                        activeCaloriesBurnedRecord = null,
-                        bodyFatPercentageRecord = null,
-                        bodyTemperatureRecord = null,
-                        distanceRecord = null,
-                        floorsClimbedRecord = null,
-                        heightRecord = null,
-                        hydrationRecord = null,
-                        leanBodyMassRecord = null,
-                        stepsRecord = null,
-                        weightRecord = null,
-                        wheelchairPushesRecord = null,
-                        heartRateSeriesRecord = null,
-                        sleepSessionRecord = record.toDto()
-                    )
+                    record.toDto()
                 }
             }
+
+            val responseDto = ReadRecordResponseDto(record = recordDto)
 
             HealthConnectorLogger.info(
                 tag = TAG ?: "HealthConnectorClient",
@@ -649,275 +469,64 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             } else response.pageToken
 
             // Convert SDK records to DTOs using typed mappers
-            val responseDto = when (request.dataType) {
+            val recordDtos = when (request.dataType) {
                 HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
-                    val activeCaloriesBurnedRecords =
-                        response.records.map { (it as ActiveCaloriesBurnedRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.ACTIVE_CALORIES_BURNED,
-                        activeCaloriesBurnedRecords = activeCaloriesBurnedRecords,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        heartRateSeriesRecords = null,
-                        sleepSessionRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as ActiveCaloriesBurnedRecord).toDto() }
                 }
 
                 HealthDataTypeDto.DISTANCE -> {
-                    val distanceRecords = response.records.map { (it as DistanceRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.DISTANCE,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = distanceRecords,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as DistanceRecord).toDto() }
                 }
 
                 HealthDataTypeDto.FLOORS_CLIMBED -> {
-                    val floorsClimbedRecords = response.records.map { (it as FloorsClimbedRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.FLOORS_CLIMBED,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = floorsClimbedRecords,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as FloorsClimbedRecord).toDto() }
                 }
 
                 HealthDataTypeDto.STEPS -> {
-                    val stepRecords = response.records.map { (it as StepsRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.STEPS,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = stepRecords,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as StepsRecord).toDto() }
                 }
 
                 HealthDataTypeDto.WEIGHT -> {
-                    val weightRecords = response.records.map { (it as WeightRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.WEIGHT,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = weightRecords,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as WeightRecord).toDto() }
                 }
 
                 HealthDataTypeDto.HEIGHT -> {
-                    val heightRecords = response.records.map { (it as HeightRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.HEIGHT,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = heightRecords,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as HeightRecord).toDto() }
                 }
 
                 HealthDataTypeDto.HYDRATION -> {
-                    val hydrationRecords = response.records.map { (it as HydrationRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.HYDRATION,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = hydrationRecords,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as HydrationRecord).toDto() }
                 }
 
                 HealthDataTypeDto.LEAN_BODY_MASS -> {
-                    val leanBodyMassRecords = response.records.map { (it as LeanBodyMassRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.LEAN_BODY_MASS,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = leanBodyMassRecords,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as LeanBodyMassRecord).toDto() }
                 }
 
                 HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
-                    val bodyFatPercentageRecords = response.records.map { (it as BodyFatRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.BODY_FAT_PERCENTAGE,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = bodyFatPercentageRecords,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as BodyFatRecord).toDto() }
                 }
 
                 HealthDataTypeDto.BODY_TEMPERATURE -> {
-                    val bodyTemperatureRecords = response.records.map { (it as BodyTemperatureRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.BODY_TEMPERATURE,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = bodyTemperatureRecords,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as BodyTemperatureRecord).toDto() }
                 }
 
                 HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
-                    val wheelchairPushesRecords = response.records.map { (it as WheelchairPushesRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.WHEELCHAIR_PUSHES,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = wheelchairPushesRecords,
-                        heartRateSeriesRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as WheelchairPushesRecord).toDto() }
                 }
 
                 HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
-                    val heartRateSeriesRecords = response.records.map { (it as HeartRateRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.HEART_RATE_SERIES_RECORD,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        heartRateSeriesRecords = heartRateSeriesRecords,
-                        sleepSessionRecords = null,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as HeartRateRecord).toDto() }
                 }
 
                 HealthDataTypeDto.SLEEP_SESSION -> {
-                    val sleepSessionRecords = response.records.map { (it as SleepSessionRecord).toDto() }
-
-                    ReadRecordsResponseDto(
-                        dataType = HealthDataTypeDto.SLEEP_SESSION,
-                        activeCaloriesBurnedRecords = null,
-                        bodyFatPercentageRecords = null,
-                        bodyTemperatureRecords = null,
-                        distanceRecords = null,
-                        floorsClimbedRecords = null,
-                        heightRecords = null,
-                        hydrationRecords = null,
-                        leanBodyMassRecords = null,
-                        stepsRecords = null,
-                        weightRecords = null,
-                        wheelchairPushesRecords = null,
-                        heartRateSeriesRecords = null,
-                        sleepSessionRecords = sleepSessionRecords,
-                        nextPageToken = nextPageToken
-                    )
+                    response.records.map { (it as SleepSessionRecord).toDto() }
                 }
             }
+
+            val responseDto = ReadRecordsResponseDto(
+                records = recordDtos,
+                nextPageToken = nextPageToken
+            )
 
             HealthConnectorLogger.info(
                 tag = TAG ?: "HealthConnectorClient",
@@ -976,73 +585,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         )
 
         try {
-            // Extract typed record from request DTO
-            val record: Record = when (request.dataType) {
-                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
-                    requireNotNull(request.activeCaloriesBurnedRecord) { "activeCaloriesBurnedRecord must not be null for ACTIVE_CALORIES_BURNED type" }
-                    request.activeCaloriesBurnedRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.DISTANCE -> {
-                    requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
-                    request.distanceRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.FLOORS_CLIMBED -> {
-                    requireNotNull(request.floorsClimbedRecord) { "floorsClimbedRecord must not be null for FLOORS_CLIMBED type" }
-                    request.floorsClimbedRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.STEPS -> {
-                    requireNotNull(request.stepsRecord) { "stepsRecord must not be null for STEPS type" }
-                    request.stepsRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HEIGHT -> {
-                    requireNotNull(request.heightRecord) { "heightRecord must not be null for HEIGHT type" }
-                    request.heightRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HYDRATION -> {
-                    requireNotNull(request.hydrationRecord) { "hydrationRecord must not be null for HYDRATION type" }
-                    request.hydrationRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
-                    requireNotNull(request.bodyFatPercentageRecord) { "bodyFatPercentageRecord must not be null for BODY_FAT_PERCENTAGE type" }
-                    request.bodyFatPercentageRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.BODY_TEMPERATURE -> {
-                    requireNotNull(request.bodyTemperatureRecord) { "bodyTemperatureRecord must not be null for BODY_TEMPERATURE type" }
-                    request.bodyTemperatureRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.WEIGHT -> {
-                    requireNotNull(request.weightRecord) { "weightRecord must not be null for WEIGHT type" }
-                    request.weightRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.LEAN_BODY_MASS -> {
-                    requireNotNull(request.leanBodyMassRecord) { "leanBodyMassRecord must not be null for LEAN_BODY_MASS type" }
-                    request.leanBodyMassRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
-                    requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
-                    request.wheelchairPushesRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
-                    requireNotNull(request.heartRateSeriesRecord) { "heartRateSeriesRecord must not be null for HEART_RATE_SERIES_RECORD type" }
-                    request.heartRateSeriesRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.SLEEP_SESSION -> {
-                    requireNotNull(request.sleepSessionRecord) { "sleepSessionRecord must not be null for SLEEP_SESSION type" }
-                    request.sleepSessionRecord.toHealthConnect()
-                }
-            }
+            // Convert record DTO to Health Connect Record using extension
+            val record: Record = request.record.toHealthConnect()
 
             // Write to Health Connect using ACID transaction
             val response = client.insertRecords(listOf(record))
@@ -1105,75 +649,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         )
 
         try {
-            // Extract typed records from request DTO
-            val records = request.dataTypes.map { dataTypeDto ->
-                when (dataTypeDto) {
-                    HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
-                        requireNotNull(request.activeCaloriesBurnedRecords) { "activeCaloriesBurnedRecords must not be null for ACTIVE_CALORIES_BURNED type" }
-                        request.activeCaloriesBurnedRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.DISTANCE -> {
-                        requireNotNull(request.distanceRecords) { "distanceRecords must not be null for DISTANCE type" }
-                        request.distanceRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.FLOORS_CLIMBED -> {
-                        requireNotNull(request.floorsClimbedRecords) { "floorsClimbedRecords must not be null for FLOORS_CLIMBED type" }
-                        request.floorsClimbedRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.STEPS -> {
-                        requireNotNull(request.stepsRecords) { "stepsRecords must not be null for STEPS type" }
-                        request.stepsRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.HEIGHT -> {
-                        requireNotNull(request.heightRecords) { "heightRecords must not be null for HEIGHT type" }
-                        request.heightRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.HYDRATION -> {
-                        requireNotNull(request.hydrationRecords) { "hydrationRecords must not be null for HYDRATION type" }
-                        request.hydrationRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
-                        requireNotNull(request.bodyFatPercentageRecords) { "bodyFatPercentageRecords must not be null for BODY_FAT_PERCENTAGE type" }
-                        request.bodyFatPercentageRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.BODY_TEMPERATURE -> {
-                        requireNotNull(request.bodyTemperatureRecords) { "bodyTemperatureRecords must not be null for BODY_TEMPERATURE type" }
-                        request.bodyTemperatureRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.WEIGHT -> {
-                        requireNotNull(request.weightRecords) { "weightRecords must not be null for WEIGHT type" }
-                        request.weightRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.LEAN_BODY_MASS -> {
-                        requireNotNull(request.leanBodyMassRecords) { "leanBodyMassRecords must not be null for LEAN_BODY_MASS type" }
-                        request.leanBodyMassRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
-                        requireNotNull(request.wheelchairPushesRecords) { "wheelchairPushesRecords must not be null for WHEELCHAIR_PUSHES type" }
-                        request.wheelchairPushesRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
-                        requireNotNull(request.heartRateSeriesRecords) { "heartRateSeriesRecords must not be null for HEART_RATE_SERIES_RECORD type" }
-                        request.heartRateSeriesRecords.map { it.toHealthConnect() }
-                    }
-
-                    HealthDataTypeDto.SLEEP_SESSION -> {
-                        requireNotNull(request.sleepSessionRecords) { "sleepSessionRecords must not be null for SLEEP_SESSION type" }
-                        request.sleepSessionRecords.map { it.toHealthConnect() }
-                    }
-                }
-            }.flatten()
+            // Convert record DTOs to Health Connect Records using extension
+            val records = request.records.map { it.toHealthConnect() }
 
             // Atomic batch write using Health Connect's ACID transaction
             val response = client.insertRecords(records)
@@ -1237,166 +714,19 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         )
 
         try {
-            // Extract typed record from request DTO
-            val record = when (request.dataType) {
-                HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
-                    requireNotNull(request.activeCaloriesBurnedRecord) { "activeCaloriesBurnedRecord must not be null for ACTIVE_CALORIES_BURNED type" }
-                    val activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord
-                    // Validate record ID is not empty or "none"
-                    if (activeCaloriesBurnedRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    activeCaloriesBurnedRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.DISTANCE -> {
-                    requireNotNull(request.distanceRecord) { "distanceRecord must not be null for DISTANCE type" }
-                    val distanceRecord = request.distanceRecord
-                    if (distanceRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    distanceRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.FLOORS_CLIMBED -> {
-                    requireNotNull(request.floorsClimbedRecord) { "floorsClimbedRecord must not be null for FLOORS_CLIMBED type" }
-                    val floorsClimbedRecord = request.floorsClimbedRecord
-                    // Validate record ID is not empty or "none"
-                    if (floorsClimbedRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    floorsClimbedRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.STEPS -> {
-                    requireNotNull(request.stepsRecord) { "stepsRecord must not be null for STEPS type" }
-                    val stepsRecord = request.stepsRecord
-                    // Validate record ID is not empty or "none"
-                    if (stepsRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    stepsRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HEIGHT -> {
-                    requireNotNull(request.heightRecord) { "heightRecord must not be null for HEIGHT type" }
-                    val heightRecord = request.heightRecord
-                    // Validate record ID is not empty or "none"
-                    if (heightRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    heightRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HYDRATION -> {
-                    requireNotNull(request.hydrationRecord) { "hydrationRecord must not be null for HYDRATION type" }
-                    val hydrationRecord = request.hydrationRecord
-                    // Validate record ID is not empty or "none"
-                    if (hydrationRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    hydrationRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.BODY_FAT_PERCENTAGE -> {
-                    requireNotNull(request.bodyFatPercentageRecord) { "bodyFatPercentageRecord must not be null for BODY_FAT_PERCENTAGE type" }
-                    val bodyFatPercentageRecord = request.bodyFatPercentageRecord
-                    // Validate record ID is not empty or "none"
-                    if (bodyFatPercentageRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    bodyFatPercentageRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.BODY_TEMPERATURE -> {
-                    requireNotNull(request.bodyTemperatureRecord) { "bodyTemperatureRecord must not be null for BODY_TEMPERATURE type" }
-                    val bodyTemperatureRecord = request.bodyTemperatureRecord
-                    // Validate record ID is not empty or "none"
-                    if (bodyTemperatureRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    bodyTemperatureRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.WEIGHT -> {
-                    requireNotNull(request.weightRecord) { "weightRecord must not be null for WEIGHT type" }
-                    val weightRecord = request.weightRecord
-                    // Validate record ID is not empty or "none"
-                    if (weightRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    weightRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.LEAN_BODY_MASS -> {
-                    requireNotNull(request.leanBodyMassRecord) { "leanBodyMassRecord must not be null for LEAN_BODY_MASS type" }
-                    val leanBodyMassRecord = request.leanBodyMassRecord
-                    // Validate record ID is not empty or "none"
-                    if (leanBodyMassRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    leanBodyMassRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
-                    requireNotNull(request.wheelchairPushesRecord) { "wheelchairPushesRecord must not be null for WHEELCHAIR_PUSHES type" }
-                    val wheelchairPushesRecord = request.wheelchairPushesRecord
-                    // Validate record ID is not empty or "none"
-                    if (wheelchairPushesRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    wheelchairPushesRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
-                    requireNotNull(request.heartRateSeriesRecord) { "heartRateSeriesRecord must not be null for HEART_RATE_SERIES_RECORD type" }
-                    val heartRateSeriesRecord = request.heartRateSeriesRecord
-                    // Validate record ID is not empty or "none"
-                    if (heartRateSeriesRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    heartRateSeriesRecord.toHealthConnect()
-                }
-
-                HealthDataTypeDto.SLEEP_SESSION -> {
-                    requireNotNull(request.sleepSessionRecord) { "sleepSessionRecord must not be null for SLEEP_SESSION type" }
-                    val sleepSessionRecord = request.sleepSessionRecord
-                    // Validate record ID is not empty or "none"
-                    if (sleepSessionRecord.id.isNullOrEmpty()) {
-                        throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                            details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                        )
-                    }
-                    sleepSessionRecord.toHealthConnect()
-                }
+            val recordDto = request.record
+            if (recordDto.id.isNullOrEmpty()) {
+                throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                    details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
+                )
             }
 
-            // Update record using Health Connect's updateRecords API
+            // Convert record DTO to Health Connect Record
+            val record: Record = recordDto.toHealthConnect()
+
             client.updateRecords(listOf(record))
+
+            // Retrieve updated record ID from the response metadata
             val recordId = record.metadata.id
 
             HealthConnectorLogger.info(
@@ -1418,7 +748,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                 exception = e,
             )
             throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                details = "Invalid record data for update (dataType=${request.dataType}): ${e.message ?: "Invalid argument"}",
+                details = "Invalid record data for update: ${e.message ?: "Invalid argument"}",
             )
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
@@ -1493,223 +823,98 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             // The result may be null if no data is available in the time range
             val aggregatedValue = response[metric]
 
-            // Convert result to DTO based on data type
-            val responseDto = when (request.dataType) {
+            // Convert result to MeasurementUnitDto based on data type
+            // If no data is available, return default values (0 with appropriate units)
+            val valueDto = when (request.dataType) {
                 HealthDataTypeDto.ACTIVE_CALORIES_BURNED -> {
                     val energy = aggregatedValue?.let { it as? Energy }
-                    val energyDto = energy?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = energyDto,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
+                    energy?.toDto() ?: EnergyDto(
+                        value = 0.0,
+                        unit = EnergyUnitDto.KILOCALORIES
                     )
                 }
 
                 HealthDataTypeDto.DISTANCE -> {
                     val length = aggregatedValue?.let { it as? Length }
-                    val lengthDto = length?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = lengthDto,
-                        wheelchairPushesValue = null
+                    length?.toDto() ?: LengthDto(
+                        value = 0.0,
+                        unit = LengthUnitDto.METERS
                     )
                 }
 
                 HealthDataTypeDto.HEIGHT -> {
                     val length = aggregatedValue?.let { it as? Length }
-                    val lengthDto = length?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = lengthDto,
-                        wheelchairPushesValue = null
+                    length?.toDto() ?: LengthDto(
+                        value = 0.0,
+                        unit = LengthUnitDto.METERS
                     )
                 }
 
                 HealthDataTypeDto.HYDRATION -> {
                     val volume = aggregatedValue?.let { it as? Volume }
-                    val volumeDto = volume?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = volumeDto,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
+                    volume?.toDto() ?: VolumeDto(
+                        value = 0.0,
+                        unit = VolumeUnitDto.LITERS
                     )
                 }
 
                 HealthDataTypeDto.FLOORS_CLIMBED -> {
                     val floorsCount = aggregatedValue?.let { it as? Double } ?: 0.0
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = floorsCount,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
-                    )
+                    floorsCount.toNumericDto()
                 }
 
                 HealthDataTypeDto.STEPS -> {
                     val stepCount = aggregatedValue?.let { it as? Long } ?: 0L
-                    val numericDto = stepCount.toNumericDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = numericDto.value,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
-                    )
+                    stepCount.toNumericDto()
                 }
 
                 HealthDataTypeDto.WEIGHT -> {
                     val mass = aggregatedValue?.let { it as? Mass }
-                    val massDto = mass?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = massDto,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
+                    mass?.toDto() ?: MassDto(
+                        value = 0.0,
+                        unit = MassUnitDto.KILOGRAMS
                     )
                 }
 
                 HealthDataTypeDto.LEAN_BODY_MASS -> {
                     val mass = aggregatedValue?.let { it as? Mass }
-                    val massDto = mass?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = massDto,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
+                    mass?.toDto() ?: MassDto(
+                        value = 0.0,
+                        unit = MassUnitDto.KILOGRAMS
                     )
                 }
 
                 HealthDataTypeDto.BODY_TEMPERATURE -> {
                     val temperature = aggregatedValue?.let { it as? Temperature }
-                    val temperatureDto = temperature?.toDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = temperatureDto,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null
+                    temperature?.toDto() ?: TemperatureDto(
+                        value = 0.0,
+                        unit = TemperatureUnitDto.CELSIUS
                     )
                 }
 
                 HealthDataTypeDto.WHEELCHAIR_PUSHES -> {
                     val pushesCount = aggregatedValue?.let { it as? Long } ?: 0L
-                    val numericDto = pushesCount.toNumericDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = numericDto,
-                        heartRateBeatsPerMinuteValue = null,
-                        sleepSessionValue = null
-                    )
+                    pushesCount.toNumericDto()
                 }
 
                 HealthDataTypeDto.HEART_RATE_SERIES_RECORD -> {
                     val bpmValue = aggregatedValue?.let { it as? Long } ?: 0L
-                    val numericDto = bpmValue.toNumericDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null,
-                        heartRateBeatsPerMinuteValue = numericDto,
-                        sleepSessionValue = null
-                    )
+                    bpmValue.toNumericDto()
                 }
 
                 HealthDataTypeDto.SLEEP_SESSION -> {
                     // Sleep duration is returned as Duration, convert to seconds
                     val duration = aggregatedValue?.let { it as? java.time.Duration }
                     val seconds = duration?.seconds?.toDouble() ?: 0.0
-                    val numericDto = seconds.toNumericDto()
-                    AggregateResponseDto(
-                        aggregationMetric = request.aggregationMetric,
-                        dataType = request.dataType,
-                        activeCaloriesBurnedValue = null,
-                        bodyTemperatureValue = null,
-                        doubleValue = null,
-                        hydrationValue = null,
-                        leanBodyMassValue = null,
-                        massValue = null,
-                        lengthValue = null,
-                        wheelchairPushesValue = null,
-                        heartRateBeatsPerMinuteValue = null,
-                        sleepSessionValue = numericDto
-                    )
+                    seconds.toNumericDto()
                 }
 
                 HealthDataTypeDto.BODY_FAT_PERCENTAGE -> throw IllegalArgumentException(
                     "Body fat percentage data type does not support aggregation"
                 )
             }
+
+            val responseDto = AggregateResponseDto(value = valueDto)
 
             HealthConnectorLogger.info(
                 tag = TAG ?: "HealthConnectorClient",

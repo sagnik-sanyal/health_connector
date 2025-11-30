@@ -93,132 +93,7 @@ class HealthConnectorError (
   val details: Any? = null
 ) : Throwable()
 
-/** Aggregation metric types for health data queries. */
-enum class AggregationMetricDto(val raw: Int) {
-  /**
-   * Average (mean) value across all data points.
-   *
-   * Meaningful for both cumulative and measurement data types.
-   */
-  AVG(0),
-  /** Count of data points (records) in the dataset. */
-  COUNT(1),
-  /** Maximum value in the dataset. */
-  MAX(2),
-  /** Minimum value in the dataset. */
-  MIN(3),
-  /**
-   * Sum of all values in the time range.
-   *
-   * Only meaningful for cumulative data types (e.g., steps, distance).
-   */
-  SUM(4);
-
-  companion object {
-    fun ofRaw(raw: Int): AggregationMetricDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Blood glucose unit types supported by the plugin. */
-enum class BloodGlucoseUnitDto(val raw: Int) {
-  MILLIGRAMS_PER_DECILITER(0),
-  MILLIMOLES_PER_LITER(1);
-
-  companion object {
-    fun ofRaw(raw: Int): BloodGlucoseUnitDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Device type for health data recording. */
-enum class DeviceTypeDto(val raw: Int) {
-  /** Chest strap heart rate monitor. */
-  CHEST_STRAP(0),
-  /** Fitness band or activity tracker. */
-  FITNESS_BAND(1),
-  /** Head-mounted device (e.g., AR/VR headset). */
-  HEAD_MOUNTED(2),
-  /** Mobile phone or smartphone. */
-  PHONE(3),
-  /** Smart ring wearable. */
-  RING(4),
-  /** Weight scale or body composition scale. */
-  SCALE(5),
-  /** Smart display device. */
-  SMART_DISPLAY(6),
-  /** Unknown or unspecified device type. */
-  UNKNOWN(7),
-  /** Smartwatch or wearable watch. */
-  WATCH(8);
-
-  companion object {
-    fun ofRaw(raw: Int): DeviceTypeDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Energy unit types supported by the plugin. */
-enum class EnergyUnitDto(val raw: Int) {
-  CALORIES(0),
-  JOULES(1),
-  KILOCALORIES(2),
-  KILOJOULES(3);
-
-  companion object {
-    fun ofRaw(raw: Int): EnergyUnitDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Represents a health platform feature. */
-enum class HealthPlatformFeatureDto(val raw: Int) {
-  /** Read health data in the background. */
-  READ_HEALTH_DATA_IN_BACKGROUND(0),
-  /** Read historical health data from the past. */
-  READ_HEALTH_DATA_HISTORY(1);
-
-  companion object {
-    fun ofRaw(raw: Int): HealthPlatformFeatureDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Represents the availability status of a feature. */
-enum class HealthPlatformFeatureStatusDto(val raw: Int) {
-  /** The feature is available on this platform. */
-  AVAILABLE(0),
-  /** The feature is not available on this platform. */
-  UNAVAILABLE(1);
-
-  companion object {
-    fun ofRaw(raw: Int): HealthPlatformFeatureStatusDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/**
- * Error codes that native platforms can use when throwing error.
- *
- * These codes are mapped to HealthConnectorErrorCode on the Dart side
- * via PlatformException.code.
- *
- * ## Example
- *
- * ```kotlin
- * throw HealthConnectorError(
- *   HealthConnectorErrorCodeDto.PLATFORM_ERROR.name,
- *   message,
- *   details,
- * )
- * ```
- */
+/** Error codes that native platforms can use when throwing error. */
 enum class HealthConnectorErrorCodeDto(val raw: Int) {
   /** Health Connect installation or update is required. */
   INSTALLATION_OR_UPDATE_REQUIRED(0),
@@ -226,15 +101,7 @@ enum class HealthConnectorErrorCodeDto(val raw: Int) {
   HEALTH_PLATFORM_UNAVAILABLE(1),
   /** Invalid platform configuration detected. */
   INVALID_PLATFORM_CONFIGURATION(2),
-  /**
-   * Invalid argument or input validation error.
-   *
-   * This error occurs when invalid input is provided to a method, such as:
-   * - Invalid record ID format (e.g., malformed UUID)
-   * - Invalid time range (e.g., start time after end time)
-   * - Invalid record data (e.g., negative values where not allowed)
-   * - Invalid pagination parameters
-   */
+  /** Invalid argument or input validation error. */
   INVALID_ARGUMENT(3),
   /**
    * Attempted to use platform APIs or features that are not supported
@@ -243,57 +110,11 @@ enum class HealthConnectorErrorCodeDto(val raw: Int) {
   UNSUPPORTED_HEALTH_PLATFORM_API(4),
   /** Unknown or unspecified error. */
   UNKNOWN(5),
-  /**
-   * Security/permission error occurred.
-   *
-   * This error occurs when a request is made without proper permissions
-   * or when access is denied by the health platform.
-   *
-   * Common scenarios include:
-   * - Missing required permissions for the requested operation
-   * - User denied permission access
-   * - Attempting to access data without proper authorization
-   */
+  /** Security/permission error occurred. */
   SECURITY_ERROR(6);
 
   companion object {
     fun ofRaw(raw: Int): HealthConnectorErrorCodeDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Represents a health data type. */
-enum class HealthDataTypeDto(val raw: Int) {
-  /** Active calories burned data. */
-  ACTIVE_CALORIES_BURNED(0),
-  /** Distance traveled data. */
-  DISTANCE(1),
-  /** Floors climbed data. */
-  FLOORS_CLIMBED(2),
-  /** Step count data. */
-  STEPS(3),
-  /** Body weight data. */
-  WEIGHT(4),
-  /** Body height data. */
-  HEIGHT(5),
-  /** Body fat percentage data. */
-  BODY_FAT_PERCENTAGE(6),
-  /** Body temperature data. */
-  BODY_TEMPERATURE(7),
-  /** Lean body mass data. */
-  LEAN_BODY_MASS(8),
-  /** Wheelchair pushes data. */
-  WHEELCHAIR_PUSHES(9),
-  /** Hydration (water intake) data. */
-  HYDRATION(10),
-  /** Heart rate series record data. */
-  HEART_RATE_SERIES_RECORD(11),
-  /** Sleep session data. */
-  SLEEP_SESSION(12);
-
-  companion object {
-    fun ofRaw(raw: Int): HealthDataTypeDto? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -314,6 +135,32 @@ enum class HealthPlatformStatusDto(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): HealthPlatformStatusDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Blood glucose unit types supported by the plugin. */
+enum class BloodGlucoseUnitDto(val raw: Int) {
+  MILLIGRAMS_PER_DECILITER(0),
+  MILLIMOLES_PER_LITER(1);
+
+  companion object {
+    fun ofRaw(raw: Int): BloodGlucoseUnitDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Energy unit types supported by the plugin. */
+enum class EnergyUnitDto(val raw: Int) {
+  CALORIES(0),
+  JOULES(1),
+  KILOCALORIES(2),
+  KILOJOULES(3);
+
+  companion object {
+    fun ofRaw(raw: Int): EnergyUnitDto? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -431,24 +278,6 @@ enum class PowerUnitDto(val raw: Int) {
   }
 }
 
-/** Recording method for health data. */
-enum class RecordingMethodDto(val raw: Int) {
-  /** Data was recorded during an active user-initiated session. */
-  ACTIVELY_RECORDED(0),
-  /** Data was automatically recorded by a device in the background. */
-  AUTOMATICALLY_RECORDED(1),
-  /** Data was manually entered by the user. */
-  MANUAL_ENTRY(2),
-  /** The recording method is unknown or unspecified. */
-  UNKNOWN(3);
-
-  companion object {
-    fun ofRaw(raw: Int): RecordingMethodDto? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
 /** Temperature unit types supported by the plugin. */
 enum class TemperatureUnitDto(val raw: Int) {
   CELSIUS(0),
@@ -488,6 +317,88 @@ enum class VolumeUnitDto(val raw: Int) {
   }
 }
 
+/** Device type for health data recording. */
+enum class DeviceTypeDto(val raw: Int) {
+  /** Chest strap heart rate monitor. */
+  CHEST_STRAP(0),
+  /** Fitness band or activity tracker. */
+  FITNESS_BAND(1),
+  /** Head-mounted device (e.g., AR/VR headset). */
+  HEAD_MOUNTED(2),
+  /** Mobile phone or smartphone. */
+  PHONE(3),
+  /** Smart ring wearable. */
+  RING(4),
+  /** Weight scale or body composition scale. */
+  SCALE(5),
+  /** Smart display device. */
+  SMART_DISPLAY(6),
+  /** Unknown or unspecified device type. */
+  UNKNOWN(7),
+  /** Smartwatch or wearable watch. */
+  WATCH(8);
+
+  companion object {
+    fun ofRaw(raw: Int): DeviceTypeDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Recording method for health data. */
+enum class RecordingMethodDto(val raw: Int) {
+  /** Data was recorded during an active user-initiated session. */
+  ACTIVELY_RECORDED(0),
+  /** Data was automatically recorded by a device in the background. */
+  AUTOMATICALLY_RECORDED(1),
+  /** Data was manually entered by the user. */
+  MANUAL_ENTRY(2),
+  /** The recording method is unknown or unspecified. */
+  UNKNOWN(3);
+
+  companion object {
+    fun ofRaw(raw: Int): RecordingMethodDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Represents a health data type. */
+enum class HealthDataTypeDto(val raw: Int) {
+  /** Active calories burned data. */
+  ACTIVE_CALORIES_BURNED(0),
+  /** Distance traveled data. */
+  DISTANCE(1),
+  /** Floors climbed data. */
+  FLOORS_CLIMBED(2),
+  /** Step count data. */
+  STEPS(3),
+  /** Body weight data. */
+  WEIGHT(4),
+  /** Body height data. */
+  HEIGHT(5),
+  /** Body fat percentage data. */
+  BODY_FAT_PERCENTAGE(6),
+  /** Body temperature data. */
+  BODY_TEMPERATURE(7),
+  /** Lean body mass data. */
+  LEAN_BODY_MASS(8),
+  /** Wheelchair pushes data. */
+  WHEELCHAIR_PUSHES(9),
+  /** Hydration (water intake) data. */
+  HYDRATION(10),
+  /** Heart rate series record data. */
+  HEART_RATE_SERIES_RECORD(11),
+  /** Sleep session data. */
+  SLEEP_SESSION(12);
+
+  companion object {
+    fun ofRaw(raw: Int): HealthDataTypeDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Sleep stage type enum. */
 enum class SleepStageTypeDto(val raw: Int) {
   UNKNOWN(0),
@@ -506,6 +417,61 @@ enum class SleepStageTypeDto(val raw: Int) {
   }
 }
 
+/** Represents a health platform feature. */
+enum class HealthPlatformFeatureDto(val raw: Int) {
+  /** Read health data in the background. */
+  READ_HEALTH_DATA_IN_BACKGROUND(0),
+  /** Read historical health data from the past. */
+  READ_HEALTH_DATA_HISTORY(1);
+
+  companion object {
+    fun ofRaw(raw: Int): HealthPlatformFeatureDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Represents the availability status of a feature. */
+enum class HealthPlatformFeatureStatusDto(val raw: Int) {
+  /** The feature is available on this platform. */
+  AVAILABLE(0),
+  /** The feature is not available on this platform. */
+  UNAVAILABLE(1);
+
+  companion object {
+    fun ofRaw(raw: Int): HealthPlatformFeatureStatusDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Aggregation metric types for health data queries. */
+enum class AggregationMetricDto(val raw: Int) {
+  /** Average (mean) value across all data points. */
+  AVG(0),
+  /** Count of data points (records) in the dataset. */
+  COUNT(1),
+  /** Maximum value in the dataset. */
+  MAX(2),
+  /** Minimum value in the dataset. */
+  MIN(3),
+  /** Sum of all values in the time range. */
+  SUM(4);
+
+  companion object {
+    fun ofRaw(raw: Int): AggregationMetricDto? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/**
+ * Sealed class for all measurement unit DTOs.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class MeasurementUnitDto 
 /**
  * Represents a blood glucose measurement for platform transfer.
  *
@@ -516,7 +482,7 @@ data class BloodGlucoseDto (
   val unit: BloodGlucoseUnitDto,
   /** The numeric value of the blood glucose. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): BloodGlucoseDto {
@@ -553,7 +519,7 @@ data class EnergyDto (
   val unit: EnergyUnitDto,
   /** The numeric value of the energy. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): EnergyDto {
@@ -590,7 +556,7 @@ data class LengthDto (
   val unit: LengthUnitDto,
   /** The numeric value of the length. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): LengthDto {
@@ -627,7 +593,7 @@ data class MassDto (
   val unit: MassUnitDto,
   /** The numeric value of the mass. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): MassDto {
@@ -657,9 +623,6 @@ data class MassDto (
 /**
  * Represents a numeric measurement for platform transfer.
  *
- * Numeric is used for simple count values like step counts, where there is
- * no meaningful unit conversion.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class NumericDto (
@@ -667,7 +630,7 @@ data class NumericDto (
   val unit: NumericUnitDto,
   /** The numeric value. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NumericDto {
@@ -697,9 +660,6 @@ data class NumericDto (
 /**
  * Represents a percentage measurement for platform transfer.
  *
- * Percentage is used for body fat percentage, blood oxygen saturation,
- * and other percentage-based health data.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class PercentageDto (
@@ -707,7 +667,7 @@ data class PercentageDto (
   val unit: PercentageUnitDto,
   /** The numeric value of the percentage. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PercentageDto {
@@ -744,7 +704,7 @@ data class PowerDto (
   val unit: PowerUnitDto,
   /** The numeric value of the power. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PowerDto {
@@ -781,7 +741,7 @@ data class PressureDto (
   val unit: PressureUnitDto,
   /** The numeric value of the pressure. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PressureDto {
@@ -818,7 +778,7 @@ data class TemperatureDto (
   val unit: TemperatureUnitDto,
   /** The numeric value of the temperature. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): TemperatureDto {
@@ -855,7 +815,7 @@ data class VelocityDto (
   val unit: VelocityUnitDto,
   /** The numeric value of the velocity. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): VelocityDto {
@@ -892,7 +852,7 @@ data class VolumeDto (
   val unit: VolumeUnitDto,
   /** The numeric value of the volume. */
   val value: Double
-)
+) : MeasurementUnitDto()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): VolumeDto {
@@ -958,9 +918,9 @@ data class DataOriginDto (
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class DeviceDto (
-  /** The device manufacturer (e.g., "Samsung"). */
+  /** The device manufacturer. */
   val manufacturer: String? = null,
-  /** The device model (e.g., "Galaxy Watch 6"). */
+  /** The device model. */
   val model: String? = null,
   /** The type of device. */
   val type: DeviceTypeDto
@@ -995,9 +955,6 @@ data class DeviceDto (
 
 /**
  * Represents metadata for a health record.
- *
- * All health records contain metadata that provides context about how, when,
- * and by what the data was recorded.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
@@ -1052,6 +1009,795 @@ data class MetadataDto (
   }
   override fun equals(other: Any?): Boolean {
     if (other !is MetadataDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Sealed class for all health record DTOs.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class HealthRecordDto 
+/**
+ * Represents an active calories burned record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class ActiveCaloriesBurnedRecordDto (
+  /** Energy (calories) burned during the interval. */
+  val energy: EnergyDto,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): ActiveCaloriesBurnedRecordDto {
+      val energy = pigeonVar_list[0] as EnergyDto
+      val endTime = pigeonVar_list[1] as Long
+      val id = pigeonVar_list[2] as String?
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val startTime = pigeonVar_list[4] as Long
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return ActiveCaloriesBurnedRecordDto(energy, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      energy,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is ActiveCaloriesBurnedRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a distance record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class DistanceRecordDto (
+  /** Distance traveled during the interval. */
+  val distance: LengthDto,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): DistanceRecordDto {
+      val distance = pigeonVar_list[0] as LengthDto
+      val endTime = pigeonVar_list[1] as Long
+      val id = pigeonVar_list[2] as String?
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val startTime = pigeonVar_list[4] as Long
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return DistanceRecordDto(distance, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      distance,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is DistanceRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a floors climbed record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class FloorsClimbedRecordDto (
+  /** Number of floors (flights of stairs) climbed during the interval. */
+  val floors: NumericDto,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): FloorsClimbedRecordDto {
+      val floors = pigeonVar_list[0] as NumericDto
+      val endTime = pigeonVar_list[1] as Long
+      val id = pigeonVar_list[2] as String?
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val startTime = pigeonVar_list[4] as Long
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return FloorsClimbedRecordDto(floors, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      floors,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is FloorsClimbedRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a wheelchair pushes record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class WheelchairPushesRecordDto (
+  /** Number of wheelchair pushes performed during the interval. */
+  val pushes: NumericDto,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): WheelchairPushesRecordDto {
+      val pushes = pigeonVar_list[0] as NumericDto
+      val endTime = pigeonVar_list[1] as Long
+      val id = pigeonVar_list[2] as String?
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val startTime = pigeonVar_list[4] as Long
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return WheelchairPushesRecordDto(pushes, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      pushes,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is WheelchairPushesRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a step count record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class StepRecordDto (
+  /** Number of steps taken during the interval (must be >= 0). */
+  val count: NumericDto,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): StepRecordDto {
+      val count = pigeonVar_list[0] as NumericDto
+      val endTime = pigeonVar_list[1] as Long
+      val id = pigeonVar_list[2] as String?
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val startTime = pigeonVar_list[4] as Long
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return StepRecordDto(count, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      count,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is StepRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a weight record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class WeightRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Measurement time in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Weight measurement. */
+  val weight: MassDto,
+  /** Timezone offset in seconds for measurement time (optional). */
+  val zoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): WeightRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val time = pigeonVar_list[2] as Long
+      val weight = pigeonVar_list[3] as MassDto
+      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
+      return WeightRecordDto(id, metadata, time, weight, zoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      time,
+      weight,
+      zoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is WeightRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for lean body mass health data.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class LeanBodyMassRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Measurement time in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Lean body mass measurement. */
+  val mass: MassDto,
+  /** Timezone offset in seconds for measurement time (optional). */
+  val zoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): LeanBodyMassRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val time = pigeonVar_list[2] as Long
+      val mass = pigeonVar_list[3] as MassDto
+      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
+      return LeanBodyMassRecordDto(id, metadata, time, mass, zoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      time,
+      mass,
+      zoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is LeanBodyMassRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for body height health data.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class HeightRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Measurement time in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Height measurement. */
+  val height: LengthDto,
+  /** Timezone offset in seconds for measurement time (optional). */
+  val zoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): HeightRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val time = pigeonVar_list[2] as Long
+      val height = pigeonVar_list[3] as LengthDto
+      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
+      return HeightRecordDto(id, metadata, time, height, zoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      time,
+      height,
+      zoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is HeightRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for body fat percentage health data.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class BodyFatPercentageRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Measurement time in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Body fat percentage measurement. */
+  val percentage: PercentageDto,
+  /** Timezone offset in seconds for measurement time (optional). */
+  val zoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): BodyFatPercentageRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val time = pigeonVar_list[2] as Long
+      val percentage = pigeonVar_list[3] as PercentageDto
+      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
+      return BodyFatPercentageRecordDto(id, metadata, time, percentage, zoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      time,
+      percentage,
+      zoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is BodyFatPercentageRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for body temperature health data.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class BodyTemperatureRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Measurement time in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Body temperature measurement. */
+  val temperature: TemperatureDto,
+  /** Timezone offset in seconds for measurement time (optional). */
+  val zoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): BodyTemperatureRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val time = pigeonVar_list[2] as Long
+      val temperature = pigeonVar_list[3] as TemperatureDto
+      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
+      return BodyTemperatureRecordDto(id, metadata, time, temperature, zoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      time,
+      temperature,
+      zoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is BodyTemperatureRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a hydration (water intake) record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class HydrationRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** Volume of water consumed during the interval. */
+  val volume: VolumeDto,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): HydrationRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val startTime = pigeonVar_list[1] as Long
+      val endTime = pigeonVar_list[2] as Long
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val volume = pigeonVar_list[4] as VolumeDto
+      val startZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val endZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return HydrationRecordDto(id, startTime, endTime, metadata, volume, startZoneOffsetSeconds, endZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      startTime,
+      endTime,
+      metadata,
+      volume,
+      startZoneOffsetSeconds,
+      endZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is HydrationRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a single heart rate measurement for platform transfer.
+ *
+ * This is a platform-agnostic value class used within heart rate records.
+ * It contains a timestamp and BPM value without ID or metadata.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class HeartRateMeasurementDto (
+  /** Timestamp in milliseconds since epoch (UTC). */
+  val time: Long,
+  /** Heart rate value in beats per minute (BPM). */
+  val beatsPerMinute: NumericDto
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): HeartRateMeasurementDto {
+      val time = pigeonVar_list[0] as Long
+      val beatsPerMinute = pigeonVar_list[1] as NumericDto
+      return HeartRateMeasurementDto(time, beatsPerMinute)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      time,
+      beatsPerMinute,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is HeartRateMeasurementDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Represents a heart rate series record for platform transfer.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class HeartRateSeriesRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  /** Start time in milliseconds since epoch (UTC). */
+  val startTime: Long,
+  /** End time in milliseconds since epoch (UTC). */
+  val endTime: Long,
+  /** Metadata about this record. */
+  val metadata: MetadataDto,
+  /** List of heart rate measurements within this time interval. */
+  val samples: List<HeartRateMeasurementDto>,
+  /** Timezone offset in seconds for start time (optional). */
+  val startZoneOffsetSeconds: Long? = null,
+  /** Timezone offset in seconds for end time (optional). */
+  val endZoneOffsetSeconds: Long? = null
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): HeartRateSeriesRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val startTime = pigeonVar_list[1] as Long
+      val endTime = pigeonVar_list[2] as Long
+      val metadata = pigeonVar_list[3] as MetadataDto
+      val samples = pigeonVar_list[4] as List<HeartRateMeasurementDto>
+      val startZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val endZoneOffsetSeconds = pigeonVar_list[6] as Long?
+      return HeartRateSeriesRecordDto(id, startTime, endTime, metadata, samples, startZoneOffsetSeconds, endZoneOffsetSeconds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      startTime,
+      endTime,
+      metadata,
+      samples,
+      startZoneOffsetSeconds,
+      endZoneOffsetSeconds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is HeartRateSeriesRecordDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for a sleep stage value.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class SleepStageDto (
+  /** Start time (milliseconds since epoch). */
+  val startTime: Long,
+  /** End time (milliseconds since epoch). */
+  val endTime: Long,
+  /** The sleep stage type. */
+  val stage: SleepStageTypeDto
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): SleepStageDto {
+      val startTime = pigeonVar_list[0] as Long
+      val endTime = pigeonVar_list[1] as Long
+      val stage = pigeonVar_list[2] as SleepStageTypeDto
+      return SleepStageDto(startTime, endTime, stage)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      startTime,
+      endTime,
+      stage,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is SleepStageDto) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * DTO for sleep session.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class SleepSessionRecordDto (
+  /** Platform-assigned unique identifier. */
+  val id: String? = null,
+  val metadata: MetadataDto,
+  val startTime: Long,
+  val endTime: Long,
+  val startZoneOffsetSeconds: Long? = null,
+  val endZoneOffsetSeconds: Long? = null,
+  val title: String? = null,
+  val notes: String? = null,
+  val stages: List<SleepStageDto>
+) : HealthRecordDto()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): SleepSessionRecordDto {
+      val id = pigeonVar_list[0] as String?
+      val metadata = pigeonVar_list[1] as MetadataDto
+      val startTime = pigeonVar_list[2] as Long
+      val endTime = pigeonVar_list[3] as Long
+      val startZoneOffsetSeconds = pigeonVar_list[4] as Long?
+      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
+      val title = pigeonVar_list[6] as String?
+      val notes = pigeonVar_list[7] as String?
+      val stages = pigeonVar_list[8] as List<SleepStageDto>
+      return SleepSessionRecordDto(id, metadata, startTime, endTime, startZoneOffsetSeconds, endZoneOffsetSeconds, title, notes, stages)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      metadata,
+      startTime,
+      endTime,
+      startZoneOffsetSeconds,
+      endZoneOffsetSeconds,
+      title,
+      notes,
+      stages,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is SleepSessionRecordDto) {
       return false
     }
     if (this === other) {
@@ -1248,830 +1994,6 @@ data class PermissionsRequestResponseDto (
 }
 
 /**
- * Represents an active calories burned record for platform transfer.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
- * - Domain: `ActiveCaloriesBurnedRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class ActiveCaloriesBurnedRecordDto (
-  /** Energy (calories) burned during the interval. */
-  val energy: EnergyDto,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): ActiveCaloriesBurnedRecordDto {
-      val energy = pigeonVar_list[0] as EnergyDto
-      val endTime = pigeonVar_list[1] as Long
-      val id = pigeonVar_list[2] as String?
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val startTime = pigeonVar_list[4] as Long
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return ActiveCaloriesBurnedRecordDto(energy, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      energy,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is ActiveCaloriesBurnedRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a distance record for platform transfer.
- *
- * Maps to:
- * - Health Connect: `androidx.health.connect.client.records.DistanceRecord`
- * - Domain: `DistanceRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class DistanceRecordDto (
-  /** Distance traveled during the interval. */
-  val distance: LengthDto,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): DistanceRecordDto {
-      val distance = pigeonVar_list[0] as LengthDto
-      val endTime = pigeonVar_list[1] as Long
-      val id = pigeonVar_list[2] as String?
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val startTime = pigeonVar_list[4] as Long
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return DistanceRecordDto(distance, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      distance,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is DistanceRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a floors climbed record for platform transfer.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.FloorsClimbedRecord`
- * - Domain: `FloorsClimbedRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class FloorsClimbedRecordDto (
-  /** Number of floors (flights of stairs) climbed during the interval. */
-  val floors: NumericDto,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): FloorsClimbedRecordDto {
-      val floors = pigeonVar_list[0] as NumericDto
-      val endTime = pigeonVar_list[1] as Long
-      val id = pigeonVar_list[2] as String?
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val startTime = pigeonVar_list[4] as Long
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return FloorsClimbedRecordDto(floors, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      floors,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is FloorsClimbedRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a wheelchair pushes record for platform transfer.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class WheelchairPushesRecordDto (
-  /** Number of wheelchair pushes performed during the interval. */
-  val pushes: NumericDto,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): WheelchairPushesRecordDto {
-      val pushes = pigeonVar_list[0] as NumericDto
-      val endTime = pigeonVar_list[1] as Long
-      val id = pigeonVar_list[2] as String?
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val startTime = pigeonVar_list[4] as Long
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return WheelchairPushesRecordDto(pushes, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      pushes,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is WheelchairPushesRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a step count record for platform transfer.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class StepRecordDto (
-  /** Number of steps taken during the interval (must be >= 0). */
-  val count: NumericDto,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): StepRecordDto {
-      val count = pigeonVar_list[0] as NumericDto
-      val endTime = pigeonVar_list[1] as Long
-      val id = pigeonVar_list[2] as String?
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val startTime = pigeonVar_list[4] as Long
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val startZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return StepRecordDto(count, endTime, id, metadata, startTime, endZoneOffsetSeconds, startZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      count,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is StepRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a weight record for platform transfer.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class WeightRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Measurement time in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Weight measurement. */
-  val weight: MassDto,
-  /** Timezone offset in seconds for measurement time (optional). */
-  val zoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): WeightRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val time = pigeonVar_list[2] as Long
-      val weight = pigeonVar_list[3] as MassDto
-      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
-      return WeightRecordDto(id, metadata, time, weight, zoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      time,
-      weight,
-      zoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is WeightRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for lean body mass health data.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.LeanBodyMassRecord`
- * - Domain: `LeanBodyMassRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class LeanBodyMassRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Measurement time in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Lean body mass measurement. */
-  val mass: MassDto,
-  /** Timezone offset in seconds for measurement time (optional). */
-  val zoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): LeanBodyMassRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val time = pigeonVar_list[2] as Long
-      val mass = pigeonVar_list[3] as MassDto
-      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
-      return LeanBodyMassRecordDto(id, metadata, time, mass, zoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      time,
-      mass,
-      zoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is LeanBodyMassRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for body height health data.
- *
- * Maps to:
- * - Health Connect: `androidx.health.connect.client.records.HeightRecord`
- * - Domain: `HeightRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class HeightRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Measurement time in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Height measurement. */
-  val height: LengthDto,
-  /** Timezone offset in seconds for measurement time (optional). */
-  val zoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): HeightRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val time = pigeonVar_list[2] as Long
-      val height = pigeonVar_list[3] as LengthDto
-      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
-      return HeightRecordDto(id, metadata, time, height, zoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      time,
-      height,
-      zoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is HeightRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for body fat percentage health data.
- *
- * Maps to:
- * - Health Connect: `androidx.health.connect.client.records.BodyFatRecord`
- * - Domain: `BodyFatPercentageRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class BodyFatPercentageRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Measurement time in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Body fat percentage measurement. */
-  val percentage: PercentageDto,
-  /** Timezone offset in seconds for measurement time (optional). */
-  val zoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): BodyFatPercentageRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val time = pigeonVar_list[2] as Long
-      val percentage = pigeonVar_list[3] as PercentageDto
-      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
-      return BodyFatPercentageRecordDto(id, metadata, time, percentage, zoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      time,
-      percentage,
-      zoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is BodyFatPercentageRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for body temperature health data.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.BodyTemperatureRecord`
- * - Domain: `BodyTemperatureRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class BodyTemperatureRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Measurement time in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Body temperature measurement. */
-  val temperature: TemperatureDto,
-  /** Timezone offset in seconds for measurement time (optional). */
-  val zoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): BodyTemperatureRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val time = pigeonVar_list[2] as Long
-      val temperature = pigeonVar_list[3] as TemperatureDto
-      val zoneOffsetSeconds = pigeonVar_list[4] as Long?
-      return BodyTemperatureRecordDto(id, metadata, time, temperature, zoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      time,
-      temperature,
-      zoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is BodyTemperatureRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a hydration (water intake) record for platform transfer.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.HydrationRecord`
- * - Domain: `HydrationRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class HydrationRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** Volume of water consumed during the interval. */
-  val volume: VolumeDto,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): HydrationRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val startTime = pigeonVar_list[1] as Long
-      val endTime = pigeonVar_list[2] as Long
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val volume = pigeonVar_list[4] as VolumeDto
-      val startZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val endZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return HydrationRecordDto(id, startTime, endTime, metadata, volume, startZoneOffsetSeconds, endZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      startTime,
-      endTime,
-      metadata,
-      volume,
-      startZoneOffsetSeconds,
-      endZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is HydrationRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a single heart rate measurement for platform transfer.
- *
- * This is a platform-agnostic value class used within heart rate records.
- * It contains a timestamp and BPM value without ID or metadata.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class HeartRateMeasurementDto (
-  /** Timestamp in milliseconds since epoch (UTC). */
-  val time: Long,
-  /** Heart rate value in beats per minute (BPM). */
-  val beatsPerMinute: NumericDto
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): HeartRateMeasurementDto {
-      val time = pigeonVar_list[0] as Long
-      val beatsPerMinute = pigeonVar_list[1] as NumericDto
-      return HeartRateMeasurementDto(time, beatsPerMinute)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      time,
-      beatsPerMinute,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is HeartRateMeasurementDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * Represents a heart rate series record for platform transfer.
- *
- * Maps to:
- * - Health Connect:
- *   `androidx.health.connect.client.records.HeartRateRecord`
- * - Domain: `HeartRateSeriesRecord`
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class HeartRateSeriesRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  /** Start time in milliseconds since epoch (UTC). */
-  val startTime: Long,
-  /** End time in milliseconds since epoch (UTC). */
-  val endTime: Long,
-  /** Metadata about this record. */
-  val metadata: MetadataDto,
-  /** List of heart rate measurements within this time interval. */
-  val samples: List<HeartRateMeasurementDto>,
-  /** Timezone offset in seconds for start time (optional). */
-  val startZoneOffsetSeconds: Long? = null,
-  /** Timezone offset in seconds for end time (optional). */
-  val endZoneOffsetSeconds: Long? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): HeartRateSeriesRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val startTime = pigeonVar_list[1] as Long
-      val endTime = pigeonVar_list[2] as Long
-      val metadata = pigeonVar_list[3] as MetadataDto
-      val samples = pigeonVar_list[4] as List<HeartRateMeasurementDto>
-      val startZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val endZoneOffsetSeconds = pigeonVar_list[6] as Long?
-      return HeartRateSeriesRecordDto(id, startTime, endTime, metadata, samples, startZoneOffsetSeconds, endZoneOffsetSeconds)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      startTime,
-      endTime,
-      metadata,
-      samples,
-      startZoneOffsetSeconds,
-      endZoneOffsetSeconds,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is HeartRateSeriesRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for a sleep stage value.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class SleepStageDto (
-  /** Start time (milliseconds since epoch). */
-  val startTime: Long,
-  /** End time (milliseconds since epoch). */
-  val endTime: Long,
-  /** The sleep stage type. */
-  val stage: SleepStageTypeDto
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): SleepStageDto {
-      val startTime = pigeonVar_list[0] as Long
-      val endTime = pigeonVar_list[1] as Long
-      val stage = pigeonVar_list[2] as SleepStageTypeDto
-      return SleepStageDto(startTime, endTime, stage)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      startTime,
-      endTime,
-      stage,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is SleepStageDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
- * DTO for sleep session.
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
-data class SleepSessionRecordDto (
-  /** Platform-assigned unique identifier. */
-  val id: String? = null,
-  val metadata: MetadataDto,
-  val startTime: Long,
-  val endTime: Long,
-  val startZoneOffsetSeconds: Long? = null,
-  val endZoneOffsetSeconds: Long? = null,
-  val title: String? = null,
-  val notes: String? = null,
-  val stages: List<SleepStageDto>
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): SleepSessionRecordDto {
-      val id = pigeonVar_list[0] as String?
-      val metadata = pigeonVar_list[1] as MetadataDto
-      val startTime = pigeonVar_list[2] as Long
-      val endTime = pigeonVar_list[3] as Long
-      val startZoneOffsetSeconds = pigeonVar_list[4] as Long?
-      val endZoneOffsetSeconds = pigeonVar_list[5] as Long?
-      val title = pigeonVar_list[6] as String?
-      val notes = pigeonVar_list[7] as String?
-      val stages = pigeonVar_list[8] as List<SleepStageDto>
-      return SleepSessionRecordDto(id, metadata, startTime, endTime, startZoneOffsetSeconds, endZoneOffsetSeconds, title, notes, stages)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      id,
-      metadata,
-      startTime,
-      endTime,
-      startZoneOffsetSeconds,
-      endZoneOffsetSeconds,
-      title,
-      notes,
-      stages,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is SleepSessionRecordDto) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return HealthConnectorPlatformApiPigeonUtils.deepEquals(toList(), other.toList())  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/**
  * Request to perform aggregation on health records.
  *
  * Generated class from Pigeon that represents data sent in messages.
@@ -2119,97 +2041,22 @@ data class AggregateRequestDto (
 /**
  * Response containing aggregated value.
  *
- * Uses explicit typed fields for compile-time safety.
- * Only ONE field will be non-null based on the dataType requested.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class AggregateResponseDto (
-  /** The type of aggregation that was performed. */
-  val aggregationMetric: AggregationMetricDto,
-  /** The type of health data that was aggregated. */
-  val dataType: HealthDataTypeDto,
-  /**
-   * Active calories burned aggregated value
-   * (non-null when dataType == ACTIVE_CALORIES_BURNED).
-   */
-  val activeCaloriesBurnedValue: EnergyDto? = null,
-  /**
-   * Body temperature aggregated value
-   * (non-null when dataType == BODY_TEMPERATURE and aggregationMetric is avg/min/max).
-   */
-  val bodyTemperatureValue: TemperatureDto? = null,
-  /**
-   * Numeric aggregated value.
-   *
-   * Used for primitive numeric types like steps and count operations.
-   */
-  val doubleValue: Double? = null,
-  /**
-   * Hydration aggregated value
-   * (non-null when dataType == HYDRATION).
-   */
-  val hydrationValue: VolumeDto? = null,
-  /**
-   * Length aggregated value
-   * (non-null when dataType == DISTANCE or dataType == HEIGHT).
-   */
-  val lengthValue: LengthDto? = null,
-  /** Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max). */
-  val massValue: MassDto? = null,
-  /**
-   * Lean body mass aggregated value
-   * (non-null when dataType == LEAN_BODY_MASS and aggregationMetric is avg/min/max).
-   */
-  val leanBodyMassValue: MassDto? = null,
-  /**
-   * Wheelchair pushes aggregated value
-   * (non-null when dataType == WHEELCHAIR_PUSHES).
-   */
-  val wheelchairPushesValue: NumericDto? = null,
-  /**
-   * Heart rate series record aggregated value
-   * (non-null when dataType == HEART_RATE_SERIES_RECORD).
-   */
-  val heartRateBeatsPerMinuteValue: NumericDto? = null,
-  /**
-   * Sleep session aggregated value
-   * (non-null when dataType == SLEEP_SESSION).
-   */
-  val sleepSessionValue: NumericDto? = null
+  /** Aggregated value. */
+  val value: MeasurementUnitDto
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AggregateResponseDto {
-      val aggregationMetric = pigeonVar_list[0] as AggregationMetricDto
-      val dataType = pigeonVar_list[1] as HealthDataTypeDto
-      val activeCaloriesBurnedValue = pigeonVar_list[2] as EnergyDto?
-      val bodyTemperatureValue = pigeonVar_list[3] as TemperatureDto?
-      val doubleValue = pigeonVar_list[4] as Double?
-      val hydrationValue = pigeonVar_list[5] as VolumeDto?
-      val lengthValue = pigeonVar_list[6] as LengthDto?
-      val massValue = pigeonVar_list[7] as MassDto?
-      val leanBodyMassValue = pigeonVar_list[8] as MassDto?
-      val wheelchairPushesValue = pigeonVar_list[9] as NumericDto?
-      val heartRateBeatsPerMinuteValue = pigeonVar_list[10] as NumericDto?
-      val sleepSessionValue = pigeonVar_list[11] as NumericDto?
-      return AggregateResponseDto(aggregationMetric, dataType, activeCaloriesBurnedValue, bodyTemperatureValue, doubleValue, hydrationValue, lengthValue, massValue, leanBodyMassValue, wheelchairPushesValue, heartRateBeatsPerMinuteValue, sleepSessionValue)
+      val value = pigeonVar_list[0] as MeasurementUnitDto
+      return AggregateResponseDto(value)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      aggregationMetric,
-      dataType,
-      activeCaloriesBurnedValue,
-      bodyTemperatureValue,
-      doubleValue,
-      hydrationValue,
-      lengthValue,
-      massValue,
-      leanBodyMassValue,
-      wheelchairPushesValue,
-      heartRateBeatsPerMinuteValue,
-      sleepSessionValue,
+      value,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2308,23 +2155,23 @@ data class DeleteRecordsByTimeRangeRequestDto (
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class ReadRecordRequestDto (
-  /** The type of health data to read. */
-  val dataType: HealthDataTypeDto,
   /** The unique identifier of the record to read. */
-  val recordId: String
+  val recordId: String,
+  /** The type of health data to read. */
+  val dataType: HealthDataTypeDto
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ReadRecordRequestDto {
-      val dataType = pigeonVar_list[0] as HealthDataTypeDto
-      val recordId = pigeonVar_list[1] as String
-      return ReadRecordRequestDto(dataType, recordId)
+      val recordId = pigeonVar_list[0] as String
+      val dataType = pigeonVar_list[1] as HealthDataTypeDto
+      return ReadRecordRequestDto(recordId, dataType)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataType,
       recordId,
+      dataType,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2342,116 +2189,22 @@ data class ReadRecordRequestDto (
 /**
  * Response containing a single health record.
  *
- * Uses explicit typed fields for compile-time safety.
- * Only ONE field will be non-null based on the dataType requested.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class ReadRecordResponseDto (
-  /** The type of health data that was read. */
-  val dataType: HealthDataTypeDto,
-  /**
-   * Active calories burned record
-   * (non-null when dataType == ACTIVE_CALORIES_BURNED).
-   */
-  val activeCaloriesBurnedRecord: ActiveCaloriesBurnedRecordDto? = null,
-  /**
-   * Distance record
-   * (non-null when dataType == DISTANCE).
-   */
-  val distanceRecord: DistanceRecordDto? = null,
-  /**
-   * Floors climbed record
-   * (non-null when dataType == FLOORS_CLIMBED).
-   */
-  val floorsClimbedRecord: FloorsClimbedRecordDto? = null,
-  /**
-   * Height record
-   * (non-null when dataType == HEIGHT).
-   */
-  val heightRecord: HeightRecordDto? = null,
-  /**
-   * Hydration record
-   * (non-null when dataType == HYDRATION).
-   */
-  val hydrationRecord: HydrationRecordDto? = null,
-  /**
-   * Lean body mass record
-   * (non-null when dataType == LEAN_BODY_MASS).
-   */
-  val leanBodyMassRecord: LeanBodyMassRecordDto? = null,
-  /**
-   * Step count record
-   * (non-null when dataType == STEPS).
-   */
-  val stepsRecord: StepRecordDto? = null,
-  /**
-   * Weight record
-   * (non-null when dataType == WEIGHT).
-   */
-  val weightRecord: WeightRecordDto? = null,
-  /**
-   * Body fat percentage record
-   * (non-null when dataType == BODY_FAT_PERCENTAGE).
-   */
-  val bodyFatPercentageRecord: BodyFatPercentageRecordDto? = null,
-  /**
-   * Body temperature record
-   * (non-null when dataType == BODY_TEMPERATURE).
-   */
-  val bodyTemperatureRecord: BodyTemperatureRecordDto? = null,
-  /**
-   * Wheelchair pushes record
-   * (non-null when dataType == WHEELCHAIR_PUSHES).
-   */
-  val wheelchairPushesRecord: WheelchairPushesRecordDto? = null,
-  /**
-   * Heart rate series record
-   * (non-null when dataType == HEART_RATE_SERIES_RECORD).
-   */
-  val heartRateSeriesRecord: HeartRateSeriesRecordDto? = null,
-  /**
-   * Sleep session record
-   * (non-null when dataType == SLEEP_SESSION).
-   */
-  val sleepSessionRecord: SleepSessionRecordDto? = null
+  /** The health record that was read. */
+  val record: HealthRecordDto? = null
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ReadRecordResponseDto {
-      val dataType = pigeonVar_list[0] as HealthDataTypeDto
-      val activeCaloriesBurnedRecord = pigeonVar_list[1] as ActiveCaloriesBurnedRecordDto?
-      val distanceRecord = pigeonVar_list[2] as DistanceRecordDto?
-      val floorsClimbedRecord = pigeonVar_list[3] as FloorsClimbedRecordDto?
-      val heightRecord = pigeonVar_list[4] as HeightRecordDto?
-      val hydrationRecord = pigeonVar_list[5] as HydrationRecordDto?
-      val leanBodyMassRecord = pigeonVar_list[6] as LeanBodyMassRecordDto?
-      val stepsRecord = pigeonVar_list[7] as StepRecordDto?
-      val weightRecord = pigeonVar_list[8] as WeightRecordDto?
-      val bodyFatPercentageRecord = pigeonVar_list[9] as BodyFatPercentageRecordDto?
-      val bodyTemperatureRecord = pigeonVar_list[10] as BodyTemperatureRecordDto?
-      val wheelchairPushesRecord = pigeonVar_list[11] as WheelchairPushesRecordDto?
-      val heartRateSeriesRecord = pigeonVar_list[12] as HeartRateSeriesRecordDto?
-      val sleepSessionRecord = pigeonVar_list[13] as SleepSessionRecordDto?
-      return ReadRecordResponseDto(dataType, activeCaloriesBurnedRecord, distanceRecord, floorsClimbedRecord, heightRecord, hydrationRecord, leanBodyMassRecord, stepsRecord, weightRecord, bodyFatPercentageRecord, bodyTemperatureRecord, wheelchairPushesRecord, heartRateSeriesRecord, sleepSessionRecord)
+      val record = pigeonVar_list[0] as HealthRecordDto?
+      return ReadRecordResponseDto(record)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateSeriesRecord,
-      sleepSessionRecord,
+      record,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2472,12 +2225,8 @@ data class ReadRecordResponseDto (
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class ReadRecordsRequestDto (
-  /** List of package names to filter by. */
-  val dataOriginPackageNames: List<String>,
   /** The type of health data to read. */
   val dataType: HealthDataTypeDto,
-  /** End of time range in milliseconds since epoch (UTC), exclusive. */
-  val endTime: Long,
   /** Maximum number of records to return per page (1-10,000). */
   val pageSize: Long,
   /**
@@ -2487,28 +2236,32 @@ data class ReadRecordsRequestDto (
    */
   val pageToken: String? = null,
   /** Start of time range in milliseconds since epoch (UTC), inclusive. */
-  val startTime: Long
+  val startTime: Long,
+  /** End of time range in milliseconds since epoch (UTC), exclusive. */
+  val endTime: Long,
+  /** List of package names to filter by. */
+  val dataOriginPackageNames: List<String>
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ReadRecordsRequestDto {
-      val dataOriginPackageNames = pigeonVar_list[0] as List<String>
-      val dataType = pigeonVar_list[1] as HealthDataTypeDto
-      val endTime = pigeonVar_list[2] as Long
-      val pageSize = pigeonVar_list[3] as Long
-      val pageToken = pigeonVar_list[4] as String?
-      val startTime = pigeonVar_list[5] as Long
-      return ReadRecordsRequestDto(dataOriginPackageNames, dataType, endTime, pageSize, pageToken, startTime)
+      val dataType = pigeonVar_list[0] as HealthDataTypeDto
+      val pageSize = pigeonVar_list[1] as Long
+      val pageToken = pigeonVar_list[2] as String?
+      val startTime = pigeonVar_list[3] as Long
+      val endTime = pigeonVar_list[4] as Long
+      val dataOriginPackageNames = pigeonVar_list[5] as List<String>
+      return ReadRecordsRequestDto(dataType, pageSize, pageToken, startTime, endTime, dataOriginPackageNames)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataOriginPackageNames,
       dataType,
-      endTime,
       pageSize,
       pageToken,
       startTime,
+      endTime,
+      dataOriginPackageNames,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2526,120 +2279,26 @@ data class ReadRecordsRequestDto (
 /**
  * Response containing paginated health records.
  *
- * Uses explicit typed lists for compile-time safety.
- * Only ONE list will be non-null based on the dataType requested.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class ReadRecordsResponseDto (
-  /** The type of health data that was read. */
-  val dataType: HealthDataTypeDto,
-  /**
-   * List of active calories burned records
-   * (non-null when dataType == ACTIVE_CALORIES_BURNED).
-   */
-  val activeCaloriesBurnedRecords: List<ActiveCaloriesBurnedRecordDto>? = null,
-  /**
-   * List of distance records
-   * (non-null when dataType == DISTANCE).
-   */
-  val distanceRecords: List<DistanceRecordDto>? = null,
-  /**
-   * List of floors climbed records
-   * (non-null when dataType == FLOORS_CLIMBED).
-   */
-  val floorsClimbedRecords: List<FloorsClimbedRecordDto>? = null,
-  /**
-   * List of height records
-   * (non-null when dataType == HEIGHT).
-   */
-  val heightRecords: List<HeightRecordDto>? = null,
-  /**
-   * List of hydration records
-   * (non-null when dataType == HYDRATION).
-   */
-  val hydrationRecords: List<HydrationRecordDto>? = null,
-  /**
-   * List of lean body mass records
-   * (non-null when dataType == LEAN_BODY_MASS).
-   */
-  val leanBodyMassRecords: List<LeanBodyMassRecordDto>? = null,
   /** Token for fetching next page, null if no more pages exist. */
   val nextPageToken: String? = null,
-  /**
-   * List of step records
-   * (non-null when dataType == STEPS).
-   */
-  val stepsRecords: List<StepRecordDto>? = null,
-  /**
-   * List of weight records
-   * (non-null when dataType == WEIGHT).
-   */
-  val weightRecords: List<WeightRecordDto>? = null,
-  /**
-   * List of body fat percentage records
-   * (non-null when dataType == BODY_FAT_PERCENTAGE).
-   */
-  val bodyFatPercentageRecords: List<BodyFatPercentageRecordDto>? = null,
-  /**
-   * List of body temperature records
-   * (non-null when dataType == BODY_TEMPERATURE).
-   */
-  val bodyTemperatureRecords: List<BodyTemperatureRecordDto>? = null,
-  /**
-   * List of wheelchair pushes records
-   * (non-null when dataType == WHEELCHAIR_PUSHES).
-   */
-  val wheelchairPushesRecords: List<WheelchairPushesRecordDto>? = null,
-  /**
-   * List of heart rate series records
-   * (non-null when dataType == HEART_RATE_SERIES_RECORD).
-   */
-  val heartRateSeriesRecords: List<HeartRateSeriesRecordDto>? = null,
-  /**
-   * List of sleep session records
-   * (non-null when dataType == SLEEP_SESSION).
-   */
-  val sleepSessionRecords: List<SleepSessionRecordDto>? = null
+  /** List of health records that were read. */
+  val records: List<HealthRecordDto>
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ReadRecordsResponseDto {
-      val dataType = pigeonVar_list[0] as HealthDataTypeDto
-      val activeCaloriesBurnedRecords = pigeonVar_list[1] as List<ActiveCaloriesBurnedRecordDto>?
-      val distanceRecords = pigeonVar_list[2] as List<DistanceRecordDto>?
-      val floorsClimbedRecords = pigeonVar_list[3] as List<FloorsClimbedRecordDto>?
-      val heightRecords = pigeonVar_list[4] as List<HeightRecordDto>?
-      val hydrationRecords = pigeonVar_list[5] as List<HydrationRecordDto>?
-      val leanBodyMassRecords = pigeonVar_list[6] as List<LeanBodyMassRecordDto>?
-      val nextPageToken = pigeonVar_list[7] as String?
-      val stepsRecords = pigeonVar_list[8] as List<StepRecordDto>?
-      val weightRecords = pigeonVar_list[9] as List<WeightRecordDto>?
-      val bodyFatPercentageRecords = pigeonVar_list[10] as List<BodyFatPercentageRecordDto>?
-      val bodyTemperatureRecords = pigeonVar_list[11] as List<BodyTemperatureRecordDto>?
-      val wheelchairPushesRecords = pigeonVar_list[12] as List<WheelchairPushesRecordDto>?
-      val heartRateSeriesRecords = pigeonVar_list[13] as List<HeartRateSeriesRecordDto>?
-      val sleepSessionRecords = pigeonVar_list[14] as List<SleepSessionRecordDto>?
-      return ReadRecordsResponseDto(dataType, activeCaloriesBurnedRecords, distanceRecords, floorsClimbedRecords, heightRecords, hydrationRecords, leanBodyMassRecords, nextPageToken, stepsRecords, weightRecords, bodyFatPercentageRecords, bodyTemperatureRecords, wheelchairPushesRecords, heartRateSeriesRecords, sleepSessionRecords)
+      val nextPageToken = pigeonVar_list[0] as String?
+      val records = pigeonVar_list[1] as List<HealthRecordDto>
+      return ReadRecordsResponseDto(nextPageToken, records)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataType,
-      activeCaloriesBurnedRecords,
-      distanceRecords,
-      floorsClimbedRecords,
-      heightRecords,
-      hydrationRecords,
-      leanBodyMassRecords,
       nextPageToken,
-      stepsRecords,
-      weightRecords,
-      bodyFatPercentageRecords,
-      bodyTemperatureRecords,
-      wheelchairPushesRecords,
-      heartRateSeriesRecords,
-      sleepSessionRecords,
+      records,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2657,116 +2316,22 @@ data class ReadRecordsResponseDto (
 /**
  * Request to write a single health record.
  *
- * Uses explicit typed fields for compile-time safety.
- * Only ONE field should be non-null per request.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class WriteRecordRequestDto (
-  /** The type of health data being written. */
-  val dataType: HealthDataTypeDto,
-  /**
-   * Active calories burned record
-   * (only non-null when dataType == ACTIVE_CALORIES_BURNED).
-   */
-  val activeCaloriesBurnedRecord: ActiveCaloriesBurnedRecordDto? = null,
-  /**
-   * Distance record
-   * (only non-null when dataType == DISTANCE).
-   */
-  val distanceRecord: DistanceRecordDto? = null,
-  /**
-   * Floors climbed record
-   * (only non-null when dataType == FLOORS_CLIMBED).
-   */
-  val floorsClimbedRecord: FloorsClimbedRecordDto? = null,
-  /**
-   * Height record
-   * (only non-null when dataType == HEIGHT).
-   */
-  val heightRecord: HeightRecordDto? = null,
-  /**
-   * Hydration record
-   * (only non-null when dataType == HYDRATION).
-   */
-  val hydrationRecord: HydrationRecordDto? = null,
-  /**
-   * Lean body mass record
-   * (only non-null when dataType == LEAN_BODY_MASS).
-   */
-  val leanBodyMassRecord: LeanBodyMassRecordDto? = null,
-  /**
-   * Step count record
-   * (only non-null when dataType == STEPS).
-   */
-  val stepsRecord: StepRecordDto? = null,
-  /**
-   * Weight record
-   * (only non-null when dataType == WEIGHT).
-   */
-  val weightRecord: WeightRecordDto? = null,
-  /**
-   * Body fat percentage record
-   * (only non-null when dataType == BODY_FAT_PERCENTAGE).
-   */
-  val bodyFatPercentageRecord: BodyFatPercentageRecordDto? = null,
-  /**
-   * Body temperature record
-   * (only non-null when dataType == BODY_TEMPERATURE).
-   */
-  val bodyTemperatureRecord: BodyTemperatureRecordDto? = null,
-  /**
-   * Wheelchair pushes record
-   * (only non-null when dataType == WHEELCHAIR_PUSHES).
-   */
-  val wheelchairPushesRecord: WheelchairPushesRecordDto? = null,
-  /**
-   * Heart rate series record
-   * (only non-null when dataType == HEART_RATE_SERIES_RECORD).
-   */
-  val heartRateSeriesRecord: HeartRateSeriesRecordDto? = null,
-  /**
-   * Sleep session record
-   * (only non-null when dataType == SLEEP_SESSION).
-   */
-  val sleepSessionRecord: SleepSessionRecordDto? = null
+  /** Health record. */
+  val record: HealthRecordDto
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): WriteRecordRequestDto {
-      val dataType = pigeonVar_list[0] as HealthDataTypeDto
-      val activeCaloriesBurnedRecord = pigeonVar_list[1] as ActiveCaloriesBurnedRecordDto?
-      val distanceRecord = pigeonVar_list[2] as DistanceRecordDto?
-      val floorsClimbedRecord = pigeonVar_list[3] as FloorsClimbedRecordDto?
-      val heightRecord = pigeonVar_list[4] as HeightRecordDto?
-      val hydrationRecord = pigeonVar_list[5] as HydrationRecordDto?
-      val leanBodyMassRecord = pigeonVar_list[6] as LeanBodyMassRecordDto?
-      val stepsRecord = pigeonVar_list[7] as StepRecordDto?
-      val weightRecord = pigeonVar_list[8] as WeightRecordDto?
-      val bodyFatPercentageRecord = pigeonVar_list[9] as BodyFatPercentageRecordDto?
-      val bodyTemperatureRecord = pigeonVar_list[10] as BodyTemperatureRecordDto?
-      val wheelchairPushesRecord = pigeonVar_list[11] as WheelchairPushesRecordDto?
-      val heartRateSeriesRecord = pigeonVar_list[12] as HeartRateSeriesRecordDto?
-      val sleepSessionRecord = pigeonVar_list[13] as SleepSessionRecordDto?
-      return WriteRecordRequestDto(dataType, activeCaloriesBurnedRecord, distanceRecord, floorsClimbedRecord, heightRecord, hydrationRecord, leanBodyMassRecord, stepsRecord, weightRecord, bodyFatPercentageRecord, bodyTemperatureRecord, wheelchairPushesRecord, heartRateSeriesRecord, sleepSessionRecord)
+      val record = pigeonVar_list[0] as HealthRecordDto
+      return WriteRecordRequestDto(record)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateSeriesRecord,
-      sleepSessionRecord,
+      record,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2817,122 +2382,22 @@ data class WriteRecordResponseDto (
 /**
  * Request to write multiple health records atomically.
  *
- * Uses explicit typed lists for compile-time safety.
- * Multiple lists can be non-null, each corresponding to a different data type.
- * All records must be valid for the operation to succeed (atomic).
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class WriteRecordsRequestDto (
-  /**
-   * The types of health data being written.
-   *
-   * This list indicates which record type lists contain data.
-   * Each data type in this list corresponds to a non-null list field.
-   */
-  val dataTypes: List<HealthDataTypeDto>,
-  /**
-   * List of active calories burned records
-   * (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
-   */
-  val activeCaloriesBurnedRecords: List<ActiveCaloriesBurnedRecordDto>? = null,
-  /**
-   * List of distance records
-   * (non-null when dataTypes contains DISTANCE).
-   */
-  val distanceRecords: List<DistanceRecordDto>? = null,
-  /**
-   * List of floors climbed records
-   * (non-null when dataTypes contains FLOORS_CLIMBED).
-   */
-  val floorsClimbedRecords: List<FloorsClimbedRecordDto>? = null,
-  /**
-   * List of height records
-   * (non-null when dataTypes contains HEIGHT).
-   */
-  val heightRecords: List<HeightRecordDto>? = null,
-  /**
-   * List of hydration records
-   * (non-null when dataTypes contains HYDRATION).
-   */
-  val hydrationRecords: List<HydrationRecordDto>? = null,
-  /**
-   * List of lean body mass records
-   * (non-null when dataTypes contains LEAN_BODY_MASS).
-   */
-  val leanBodyMassRecords: List<LeanBodyMassRecordDto>? = null,
-  /**
-   * List of step records
-   * (non-null when dataTypes contains STEPS).
-   */
-  val stepsRecords: List<StepRecordDto>? = null,
-  /**
-   * List of weight records
-   * (non-null when dataTypes contains WEIGHT).
-   */
-  val weightRecords: List<WeightRecordDto>? = null,
-  /**
-   * List of body fat percentage records
-   * (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
-   */
-  val bodyFatPercentageRecords: List<BodyFatPercentageRecordDto>? = null,
-  /**
-   * List of body temperature records
-   * (non-null when dataTypes contains BODY_TEMPERATURE).
-   */
-  val bodyTemperatureRecords: List<BodyTemperatureRecordDto>? = null,
-  /**
-   * List of wheelchair pushes records
-   * (non-null when dataTypes contains WHEELCHAIR_PUSHES).
-   */
-  val wheelchairPushesRecords: List<WheelchairPushesRecordDto>? = null,
-  /**
-   * List of heart rate series records
-   * (non-null when dataTypes contains HEART_RATE_SERIES_RECORD).
-   */
-  val heartRateSeriesRecords: List<HeartRateSeriesRecordDto>? = null,
-  /**
-   * List of sleep session records
-   * (non-null when dataTypes contains SLEEP_SESSION).
-   */
-  val sleepSessionRecords: List<SleepSessionRecordDto>? = null
+  /** Records being written. */
+  val records: List<HealthRecordDto>
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): WriteRecordsRequestDto {
-      val dataTypes = pigeonVar_list[0] as List<HealthDataTypeDto>
-      val activeCaloriesBurnedRecords = pigeonVar_list[1] as List<ActiveCaloriesBurnedRecordDto>?
-      val distanceRecords = pigeonVar_list[2] as List<DistanceRecordDto>?
-      val floorsClimbedRecords = pigeonVar_list[3] as List<FloorsClimbedRecordDto>?
-      val heightRecords = pigeonVar_list[4] as List<HeightRecordDto>?
-      val hydrationRecords = pigeonVar_list[5] as List<HydrationRecordDto>?
-      val leanBodyMassRecords = pigeonVar_list[6] as List<LeanBodyMassRecordDto>?
-      val stepsRecords = pigeonVar_list[7] as List<StepRecordDto>?
-      val weightRecords = pigeonVar_list[8] as List<WeightRecordDto>?
-      val bodyFatPercentageRecords = pigeonVar_list[9] as List<BodyFatPercentageRecordDto>?
-      val bodyTemperatureRecords = pigeonVar_list[10] as List<BodyTemperatureRecordDto>?
-      val wheelchairPushesRecords = pigeonVar_list[11] as List<WheelchairPushesRecordDto>?
-      val heartRateSeriesRecords = pigeonVar_list[12] as List<HeartRateSeriesRecordDto>?
-      val sleepSessionRecords = pigeonVar_list[13] as List<SleepSessionRecordDto>?
-      return WriteRecordsRequestDto(dataTypes, activeCaloriesBurnedRecords, distanceRecords, floorsClimbedRecords, heightRecords, hydrationRecords, leanBodyMassRecords, stepsRecords, weightRecords, bodyFatPercentageRecords, bodyTemperatureRecords, wheelchairPushesRecords, heartRateSeriesRecords, sleepSessionRecords)
+      val records = pigeonVar_list[0] as List<HealthRecordDto>
+      return WriteRecordsRequestDto(records)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataTypes,
-      activeCaloriesBurnedRecords,
-      distanceRecords,
-      floorsClimbedRecords,
-      heightRecords,
-      hydrationRecords,
-      leanBodyMassRecords,
-      stepsRecords,
-      weightRecords,
-      bodyFatPercentageRecords,
-      bodyTemperatureRecords,
-      wheelchairPushesRecords,
-      heartRateSeriesRecords,
-      sleepSessionRecords,
+      records,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2953,11 +2418,7 @@ data class WriteRecordsRequestDto (
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class WriteRecordsResponseDto (
-  /**
-   * Platform-assigned unique identifiers for written records.
-   *
-   * Order matches the order of records in the request.
-   */
+  /** Platform-assigned unique identifiers for written records. */
   val recordIds: List<String>
 )
  {
@@ -2987,131 +2448,22 @@ data class WriteRecordsResponseDto (
 /**
  * Request to update a single health record.
  *
- * Uses explicit typed fields for compile-time safety.
- * Only ONE field should be non-null per request.
- *
- * Unlike write operations, the record must have a valid existing ID.
- *
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class UpdateRecordRequestDto (
-  /** The type of health data being updated. */
-  val dataType: HealthDataTypeDto,
-  /**
-   * Active calories burned record
-   * (only non-null when dataType == ACTIVE_CALORIES_BURNED).
-   * The record must have a valid existing ID.
-   */
-  val activeCaloriesBurnedRecord: ActiveCaloriesBurnedRecordDto? = null,
-  /**
-   * Distance record
-   * (only non-null when dataType == DISTANCE).
-   * The record must have a valid existing ID.
-   */
-  val distanceRecord: DistanceRecordDto? = null,
-  /**
-   * Floors climbed record
-   * (only non-null when dataType == FLOORS_CLIMBED).
-   * The record must have a valid existing ID.
-   */
-  val floorsClimbedRecord: FloorsClimbedRecordDto? = null,
-  /**
-   * Height record
-   * (only non-null when dataType == HEIGHT).
-   * The record must have a valid existing ID.
-   */
-  val heightRecord: HeightRecordDto? = null,
-  /**
-   * Hydration record
-   * (only non-null when dataType == HYDRATION).
-   * The record must have a valid existing ID.
-   */
-  val hydrationRecord: HydrationRecordDto? = null,
-  /**
-   * Lean body mass record
-   * (only non-null when dataType == LEAN_BODY_MASS).
-   * The record must have a valid existing ID.
-   */
-  val leanBodyMassRecord: LeanBodyMassRecordDto? = null,
-  /**
-   * Step count record
-   * (only non-null when dataType == STEPS).
-   * The record must have a valid existing ID.
-   */
-  val stepsRecord: StepRecordDto? = null,
-  /**
-   * Weight record
-   * (only non-null when dataType == WEIGHT).
-   * The record must have a valid existing ID.
-   */
-  val weightRecord: WeightRecordDto? = null,
-  /**
-   * Body fat percentage record
-   * (only non-null when dataType == BODY_FAT_PERCENTAGE).
-   * The record must have a valid existing ID.
-   */
-  val bodyFatPercentageRecord: BodyFatPercentageRecordDto? = null,
-  /**
-   * Body temperature record
-   * (only non-null when dataType == BODY_TEMPERATURE).
-   * The record must have a valid existing ID.
-   */
-  val bodyTemperatureRecord: BodyTemperatureRecordDto? = null,
-  /**
-   * Wheelchair pushes record
-   * (only non-null when dataType == WHEELCHAIR_PUSHES).
-   * The record must have a valid existing ID.
-   */
-  val wheelchairPushesRecord: WheelchairPushesRecordDto? = null,
-  /**
-   * Heart rate series record
-   * (only non-null when dataType == HEART_RATE_SERIES_RECORD).
-   * The record must have a valid existing ID.
-   */
-  val heartRateSeriesRecord: HeartRateSeriesRecordDto? = null,
-  /**
-   * Sleep session record
-   * (only non-null when dataType == SLEEP_SESSION).
-   * The record must have a valid existing ID.
-   */
-  val sleepSessionRecord: SleepSessionRecordDto? = null
+  /** The health record to update. */
+  val record: HealthRecordDto
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): UpdateRecordRequestDto {
-      val dataType = pigeonVar_list[0] as HealthDataTypeDto
-      val activeCaloriesBurnedRecord = pigeonVar_list[1] as ActiveCaloriesBurnedRecordDto?
-      val distanceRecord = pigeonVar_list[2] as DistanceRecordDto?
-      val floorsClimbedRecord = pigeonVar_list[3] as FloorsClimbedRecordDto?
-      val heightRecord = pigeonVar_list[4] as HeightRecordDto?
-      val hydrationRecord = pigeonVar_list[5] as HydrationRecordDto?
-      val leanBodyMassRecord = pigeonVar_list[6] as LeanBodyMassRecordDto?
-      val stepsRecord = pigeonVar_list[7] as StepRecordDto?
-      val weightRecord = pigeonVar_list[8] as WeightRecordDto?
-      val bodyFatPercentageRecord = pigeonVar_list[9] as BodyFatPercentageRecordDto?
-      val bodyTemperatureRecord = pigeonVar_list[10] as BodyTemperatureRecordDto?
-      val wheelchairPushesRecord = pigeonVar_list[11] as WheelchairPushesRecordDto?
-      val heartRateSeriesRecord = pigeonVar_list[12] as HeartRateSeriesRecordDto?
-      val sleepSessionRecord = pigeonVar_list[13] as SleepSessionRecordDto?
-      return UpdateRecordRequestDto(dataType, activeCaloriesBurnedRecord, distanceRecord, floorsClimbedRecord, heightRecord, hydrationRecord, leanBodyMassRecord, stepsRecord, weightRecord, bodyFatPercentageRecord, bodyTemperatureRecord, wheelchairPushesRecord, heartRateSeriesRecord, sleepSessionRecord)
+      val record = pigeonVar_list[0] as HealthRecordDto
+      return UpdateRecordRequestDto(record)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateSeriesRecord,
-      sleepSessionRecord,
+      record,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -3132,11 +2484,7 @@ data class UpdateRecordRequestDto (
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class UpdateRecordResponseDto (
-  /**
-   * Platform-assigned unique identifier for the updated record.
-   *
-   * On Health Connect, this will be the same as the input record ID.
-   */
+  /** Platform-assigned unique identifier for the updated record. */
   val recordId: String
 )
  {
@@ -3167,17 +2515,17 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
     return when (type) {
       129.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          AggregationMetricDto.ofRaw(it.toInt())
+          HealthConnectorErrorCodeDto.ofRaw(it.toInt())
         }
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          BloodGlucoseUnitDto.ofRaw(it.toInt())
+          HealthPlatformStatusDto.ofRaw(it.toInt())
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          DeviceTypeDto.ofRaw(it.toInt())
+          BloodGlucoseUnitDto.ofRaw(it.toInt())
         }
       }
       132.toByte() -> {
@@ -3187,92 +2535,92 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
       }
       133.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          HealthPlatformFeatureDto.ofRaw(it.toInt())
+          LengthUnitDto.ofRaw(it.toInt())
         }
       }
       134.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          HealthPlatformFeatureStatusDto.ofRaw(it.toInt())
+          MassUnitDto.ofRaw(it.toInt())
         }
       }
       135.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          HealthConnectorErrorCodeDto.ofRaw(it.toInt())
+          NumericUnitDto.ofRaw(it.toInt())
         }
       }
       136.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          HealthDataTypeDto.ofRaw(it.toInt())
+          PercentageUnitDto.ofRaw(it.toInt())
         }
       }
       137.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          HealthPlatformStatusDto.ofRaw(it.toInt())
+          PermissionAccessTypeDto.ofRaw(it.toInt())
         }
       }
       138.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          LengthUnitDto.ofRaw(it.toInt())
+          PermissionStatusDto.ofRaw(it.toInt())
         }
       }
       139.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          MassUnitDto.ofRaw(it.toInt())
+          PressureUnitDto.ofRaw(it.toInt())
         }
       }
       140.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          NumericUnitDto.ofRaw(it.toInt())
+          PowerUnitDto.ofRaw(it.toInt())
         }
       }
       141.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PercentageUnitDto.ofRaw(it.toInt())
+          TemperatureUnitDto.ofRaw(it.toInt())
         }
       }
       142.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PermissionAccessTypeDto.ofRaw(it.toInt())
+          VelocityUnitDto.ofRaw(it.toInt())
         }
       }
       143.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PermissionStatusDto.ofRaw(it.toInt())
+          VolumeUnitDto.ofRaw(it.toInt())
         }
       }
       144.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PressureUnitDto.ofRaw(it.toInt())
+          DeviceTypeDto.ofRaw(it.toInt())
         }
       }
       145.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PowerUnitDto.ofRaw(it.toInt())
+          RecordingMethodDto.ofRaw(it.toInt())
         }
       }
       146.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          RecordingMethodDto.ofRaw(it.toInt())
+          HealthDataTypeDto.ofRaw(it.toInt())
         }
       }
       147.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          TemperatureUnitDto.ofRaw(it.toInt())
+          SleepStageTypeDto.ofRaw(it.toInt())
         }
       }
       148.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          VelocityUnitDto.ofRaw(it.toInt())
+          HealthPlatformFeatureDto.ofRaw(it.toInt())
         }
       }
       149.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          VolumeUnitDto.ofRaw(it.toInt())
+          HealthPlatformFeatureStatusDto.ofRaw(it.toInt())
         }
       }
       150.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          SleepStageTypeDto.ofRaw(it.toInt())
+          AggregationMetricDto.ofRaw(it.toInt())
         }
       }
       151.toByte() -> {
@@ -3347,102 +2695,102 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
       }
       165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HealthPlatformFeaturePermissionRequestResultDto.fromList(it)
+          ActiveCaloriesBurnedRecordDto.fromList(it)
         }
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HealthDataPermissionDto.fromList(it)
+          DistanceRecordDto.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HealthDataPermissionRequestResultDto.fromList(it)
+          FloorsClimbedRecordDto.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PermissionsRequestDto.fromList(it)
+          WheelchairPushesRecordDto.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PermissionsRequestResponseDto.fromList(it)
+          StepRecordDto.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          ActiveCaloriesBurnedRecordDto.fromList(it)
+          WeightRecordDto.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          DistanceRecordDto.fromList(it)
+          LeanBodyMassRecordDto.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          FloorsClimbedRecordDto.fromList(it)
+          HeightRecordDto.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          WheelchairPushesRecordDto.fromList(it)
+          BodyFatPercentageRecordDto.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          StepRecordDto.fromList(it)
+          BodyTemperatureRecordDto.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          WeightRecordDto.fromList(it)
+          HydrationRecordDto.fromList(it)
         }
       }
       176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          LeanBodyMassRecordDto.fromList(it)
+          HeartRateMeasurementDto.fromList(it)
         }
       }
       177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HeightRecordDto.fromList(it)
+          HeartRateSeriesRecordDto.fromList(it)
         }
       }
       178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          BodyFatPercentageRecordDto.fromList(it)
+          SleepStageDto.fromList(it)
         }
       }
       179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          BodyTemperatureRecordDto.fromList(it)
+          SleepSessionRecordDto.fromList(it)
         }
       }
       180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HydrationRecordDto.fromList(it)
+          HealthPlatformFeaturePermissionRequestResultDto.fromList(it)
         }
       }
       181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HeartRateMeasurementDto.fromList(it)
+          HealthDataPermissionDto.fromList(it)
         }
       }
       182.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          HeartRateSeriesRecordDto.fromList(it)
+          HealthDataPermissionRequestResultDto.fromList(it)
         }
       }
       183.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          SleepStageDto.fromList(it)
+          PermissionsRequestDto.fromList(it)
         }
       }
       184.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          SleepSessionRecordDto.fromList(it)
+          PermissionsRequestResponseDto.fromList(it)
         }
       }
       185.toByte() -> {
@@ -3520,15 +2868,15 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is AggregationMetricDto -> {
+      is HealthConnectorErrorCodeDto -> {
         stream.write(129)
         writeValue(stream, value.raw.toLong())
       }
-      is BloodGlucoseUnitDto -> {
+      is HealthPlatformStatusDto -> {
         stream.write(130)
         writeValue(stream, value.raw.toLong())
       }
-      is DeviceTypeDto -> {
+      is BloodGlucoseUnitDto -> {
         stream.write(131)
         writeValue(stream, value.raw.toLong())
       }
@@ -3536,75 +2884,75 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
         stream.write(132)
         writeValue(stream, value.raw.toLong())
       }
-      is HealthPlatformFeatureDto -> {
+      is LengthUnitDto -> {
         stream.write(133)
         writeValue(stream, value.raw.toLong())
       }
-      is HealthPlatformFeatureStatusDto -> {
+      is MassUnitDto -> {
         stream.write(134)
         writeValue(stream, value.raw.toLong())
       }
-      is HealthConnectorErrorCodeDto -> {
+      is NumericUnitDto -> {
         stream.write(135)
         writeValue(stream, value.raw.toLong())
       }
-      is HealthDataTypeDto -> {
+      is PercentageUnitDto -> {
         stream.write(136)
         writeValue(stream, value.raw.toLong())
       }
-      is HealthPlatformStatusDto -> {
+      is PermissionAccessTypeDto -> {
         stream.write(137)
         writeValue(stream, value.raw.toLong())
       }
-      is LengthUnitDto -> {
+      is PermissionStatusDto -> {
         stream.write(138)
         writeValue(stream, value.raw.toLong())
       }
-      is MassUnitDto -> {
+      is PressureUnitDto -> {
         stream.write(139)
         writeValue(stream, value.raw.toLong())
       }
-      is NumericUnitDto -> {
+      is PowerUnitDto -> {
         stream.write(140)
         writeValue(stream, value.raw.toLong())
       }
-      is PercentageUnitDto -> {
+      is TemperatureUnitDto -> {
         stream.write(141)
         writeValue(stream, value.raw.toLong())
       }
-      is PermissionAccessTypeDto -> {
+      is VelocityUnitDto -> {
         stream.write(142)
         writeValue(stream, value.raw.toLong())
       }
-      is PermissionStatusDto -> {
+      is VolumeUnitDto -> {
         stream.write(143)
         writeValue(stream, value.raw.toLong())
       }
-      is PressureUnitDto -> {
+      is DeviceTypeDto -> {
         stream.write(144)
         writeValue(stream, value.raw.toLong())
       }
-      is PowerUnitDto -> {
+      is RecordingMethodDto -> {
         stream.write(145)
         writeValue(stream, value.raw.toLong())
       }
-      is RecordingMethodDto -> {
+      is HealthDataTypeDto -> {
         stream.write(146)
         writeValue(stream, value.raw.toLong())
       }
-      is TemperatureUnitDto -> {
+      is SleepStageTypeDto -> {
         stream.write(147)
         writeValue(stream, value.raw.toLong())
       }
-      is VelocityUnitDto -> {
+      is HealthPlatformFeatureDto -> {
         stream.write(148)
         writeValue(stream, value.raw.toLong())
       }
-      is VolumeUnitDto -> {
+      is HealthPlatformFeatureStatusDto -> {
         stream.write(149)
         writeValue(stream, value.raw.toLong())
       }
-      is SleepStageTypeDto -> {
+      is AggregationMetricDto -> {
         stream.write(150)
         writeValue(stream, value.raw.toLong())
       }
@@ -3664,83 +3012,83 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is HealthPlatformFeaturePermissionRequestResultDto -> {
+      is ActiveCaloriesBurnedRecordDto -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is HealthDataPermissionDto -> {
+      is DistanceRecordDto -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is HealthDataPermissionRequestResultDto -> {
+      is FloorsClimbedRecordDto -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PermissionsRequestDto -> {
+      is WheelchairPushesRecordDto -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PermissionsRequestResponseDto -> {
+      is StepRecordDto -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is ActiveCaloriesBurnedRecordDto -> {
+      is WeightRecordDto -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is DistanceRecordDto -> {
+      is LeanBodyMassRecordDto -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is FloorsClimbedRecordDto -> {
+      is HeightRecordDto -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is WheelchairPushesRecordDto -> {
+      is BodyFatPercentageRecordDto -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is StepRecordDto -> {
+      is BodyTemperatureRecordDto -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is WeightRecordDto -> {
+      is HydrationRecordDto -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is LeanBodyMassRecordDto -> {
+      is HeartRateMeasurementDto -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is HeightRecordDto -> {
+      is HeartRateSeriesRecordDto -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is BodyFatPercentageRecordDto -> {
+      is SleepStageDto -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is BodyTemperatureRecordDto -> {
+      is SleepSessionRecordDto -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is HydrationRecordDto -> {
+      is HealthPlatformFeaturePermissionRequestResultDto -> {
         stream.write(180)
         writeValue(stream, value.toList())
       }
-      is HeartRateMeasurementDto -> {
+      is HealthDataPermissionDto -> {
         stream.write(181)
         writeValue(stream, value.toList())
       }
-      is HeartRateSeriesRecordDto -> {
+      is HealthDataPermissionRequestResultDto -> {
         stream.write(182)
         writeValue(stream, value.toList())
       }
-      is SleepStageDto -> {
+      is PermissionsRequestDto -> {
         stream.write(183)
         writeValue(stream, value.toList())
       }
-      is SleepSessionRecordDto -> {
+      is PermissionsRequestResponseDto -> {
         stream.write(184)
         writeValue(stream, value.toList())
       }
@@ -3809,229 +3157,21 @@ private open class HealthConnectorPlatformApiPigeonCodec : StandardMessageCodec(
 /**
  * The main API for communicating with the health platform.
  *
- * This API is implemented on Android and called from Dart.
- *
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface HealthConnectorPlatformApi {
-  /**
-   * Performs an aggregation query on health records.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type, aggregation metric, and time range.
-   *
-   * ## Returns
-   *
-   * - Response containing aggregated value and data point count.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   read permission not granted.
-   * - PlatformException with code `UNSUPPORTED_OPERATION` if
-   *   aggregation not supported.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun aggregate(request: AggregateRequestDto, callback: (Result<AggregateResponseDto>) -> Unit)
-  /**
-   * Deletes specific records by their IDs.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type and list of record IDs to delete.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   write permission not granted.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun deleteRecordsByIds(request: DeleteRecordsByIdsRequestDto, callback: (Result<Unit>) -> Unit)
-  /**
-   * Deletes all records of a data type within a time range.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type and time range for deletion.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   write permission not granted.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun deleteRecordsByTimeRange(request: DeleteRecordsByTimeRangeRequestDto, callback: (Result<Unit>) -> Unit)
-  /**
-   * Gets the status of a specific feature on the current platform.
-   *
-   * Returns whether the feature is available or unavailable on this device.
-   *
-   * Throws a PlatformException if unable to determine feature status.
-   */
   fun getFeatureStatus(feature: HealthPlatformFeatureDto, callback: (Result<HealthPlatformFeatureStatusDto>) -> Unit)
-  /**
-   * Gets the current status of the health platform.
-   *
-   * Returns information about whether the health platform is available,
-   * installed, and ready to use.
-   */
   fun getHealthPlatformStatus(callback: (Result<HealthPlatformStatusDto>) -> Unit)
-  /**
-   * Requests the specified permissions from the user.
-   *
-   * The [request] contains separate lists for health data and
-   * feature permissions.
-   *
-   * Returns a response with separate results for health data and
-   * feature permissions.
-   *
-   * Throws a PlatformException if the request fails.
-   */
   fun requestPermissions(request: PermissionsRequestDto, callback: (Result<PermissionsRequestResponseDto>) -> Unit)
-  /**
-   * Gets all permissions that have been granted to the app.
-   *
-   * Returns a list of all currently granted permissions.
-   * Only permissions with PermissionStatus.granted status are returned.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `UNKNOWN` for other errors
-   */
   fun getGrantedPermissions(callback: (Result<PermissionsRequestResponseDto>) -> Unit)
-  /**
-   * Revokes all permissions that have been granted to the app.
-   *
-   * Programmatically revokes all granted permissions, removing both
-   * health data permissions (read/write) and feature permissions.
-   * No user confirmation dialog is shown.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `UNKNOWN` for other errors
-   */
   fun revokeAllPermissions(callback: (Result<Unit>) -> Unit)
-  /**
-   * Reads a single health record by ID.
-   *
-   * Returns a DTO with the appropriate typed field populated.
-   * Returns null if the record doesn't exist or cannot be accessed.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains the data type and record ID to read.
-   *
-   * ## Returns
-   *
-   * - ReadRecordResponseDto with the appropriate typed field populated,
-   *   or null if not found.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   read permission not granted.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun readRecord(request: ReadRecordRequestDto, callback: (Result<ReadRecordResponseDto?>) -> Unit)
-  /**
-   * Reads multiple health records within a time range.
-   *
-   * Returns paginated results.
-   * Use the nextPageToken to fetch subsequent pages.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type, time range, page size, and
-   *   optional page token.
-   *
-   * ## Returns
-   *
-   * - ReadRecordsResponseDto with the appropriate typed list populated
-   *   and optional next page token.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   read permission not granted.
-   * - PlatformException with code `RATE_LIMITED` if
-   *   too many requests (Android only).
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun readRecords(request: ReadRecordsRequestDto, callback: (Result<ReadRecordsResponseDto>) -> Unit)
-  /**
-   * Writes a single health record.
-   *
-   * Returns the platform-assigned record ID.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type and typed record field.
-   *   Only ONE field should be non-null based on the dataType.
-   *
-   * ## Returns
-   *
-   * - Platform-assigned unique identifier for the written record.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   write permission not granted.
-   * - PlatformException with code `INVALID_ARGUMENT` if
-   *   record data is invalid.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun writeRecord(request: WriteRecordRequestDto, callback: (Result<WriteRecordResponseDto>) -> Unit)
-  /**
-   * Writes multiple health records atomically.
-   *
-   * All records must be valid for the operation to succeed.
-   * If any record is invalid, the entire batch is rejected.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type and typed list field.
-   *   Only ONE list should be non-null based on the dataType.
-   *
-   * ## Returns
-   *
-   * - Platform-assigned unique identifiers for all written records.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   write permission not granted.
-   * - PlatformException with code `INVALID_ARGUMENT` if
-   *   any record data is invalid.
-   * - PlatformException with code `RATE_LIMITED` if
-   *   too many records (Android only).
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun writeRecords(request: WriteRecordsRequestDto, callback: (Result<WriteRecordsResponseDto>) -> Unit)
-  /**
-   * Updates a single health record.
-   *
-   * The record must have a valid existing ID. Health Connect uses the native
-   * `updateRecords()` API, and the record ID is preserved.
-   *
-   * ## Parameters
-   *
-   * - [request]: Contains data type and typed record field.
-   *   The record must have a valid existing ID (not empty or "none").
-   *
-   * ## Returns
-   *
-   * - Platform-assigned unique identifier for the updated record.
-   *   This will be the same as the input record ID.
-   *
-   * ## Throws
-   *
-   * - PlatformException with code `PERMISSION_DENIED` if
-   *   write/delete permission not granted.
-   * - PlatformException with code `INVALID_ARGUMENT` if
-   *   record ID is invalid or record data is invalid.
-   * - PlatformException with code `UNKNOWN` for other errors.
-   */
   fun updateRecord(request: UpdateRecordRequestDto, callback: (Result<UpdateRecordResponseDto>) -> Unit)
 
   companion object {

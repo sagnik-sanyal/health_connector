@@ -9,6 +9,7 @@ import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.HeightRecord
 import androidx.health.connect.client.records.HydrationRecord
 import androidx.health.connect.client.records.LeanBodyMassRecord
+import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -19,6 +20,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.BodyFatPercentageRecor
 import com.phamtunglam.health_connector_hc_android.pigeon.BodyTemperatureRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DistanceRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.FloorsClimbedRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeartRateMeasurementDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeartRateSeriesRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HeightRecordDto
@@ -34,18 +36,32 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 /**
- * Converts an [ActiveCaloriesBurnedRecordDto] to a Health Connect [ActiveCaloriesBurnedRecord] object.
+ * Extension property to get the ID from a [HealthRecordDto].
+ *
+ * This extension is needed due to a Pigeon limitation where sealed classes cannot have
+ * any fields. Since [HealthRecordDto] is a sealed class, we cannot define a common `id`
+ * field at the sealed class level. Instead, each subclass has its own `id` field, and
+ * this extension provides a unified way to access the ID across all record types.
+ *
+ * @return The platform-assigned unique identifier for the record, or `null` if the
+ * record doesn't have an ID (e.g., for new records being written).
  */
-internal fun ActiveCaloriesBurnedRecordDto.toHealthConnect(): ActiveCaloriesBurnedRecord {
-    return ActiveCaloriesBurnedRecord(
-        energy = energy.toHealthConnect(),
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
+internal val HealthRecordDto.id: String?
+    get() = when (this) {
+        is ActiveCaloriesBurnedRecordDto -> id
+        is DistanceRecordDto -> id
+        is FloorsClimbedRecordDto -> id
+        is StepRecordDto -> id
+        is HeightRecordDto -> id
+        is HydrationRecordDto -> id
+        is BodyFatPercentageRecordDto -> id
+        is BodyTemperatureRecordDto -> id
+        is WeightRecordDto -> id
+        is LeanBodyMassRecordDto -> id
+        is WheelchairPushesRecordDto -> id
+        is HeartRateSeriesRecordDto -> id
+        is SleepSessionRecordDto -> id
+    }
 
 /**
  * Converts a Health Connect [ActiveCaloriesBurnedRecord] object to an [ActiveCaloriesBurnedRecordDto].
@@ -59,20 +75,6 @@ internal fun ActiveCaloriesBurnedRecord.toDto(): ActiveCaloriesBurnedRecordDto {
         endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         energy = energy.toDto()
-    )
-}
-
-/**
- * Converts a [DistanceRecordDto] to a Health Connect [DistanceRecord] object.
- */
-internal fun DistanceRecordDto.toHealthConnect(): DistanceRecord {
-    return DistanceRecord(
-        distance = distance.toHealthConnect(),
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -92,20 +94,6 @@ internal fun DistanceRecord.toDto(): DistanceRecordDto {
 }
 
 /**
- * Converts a [FloorsClimbedRecordDto] to a Health Connect [FloorsClimbedRecord] object.
- */
-internal fun FloorsClimbedRecordDto.toHealthConnect(): FloorsClimbedRecord {
-    return FloorsClimbedRecord(
-        floors = floors.value,
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
-
-/**
  * Converts a Health Connect [FloorsClimbedRecord] object to a [FloorsClimbedRecordDto].
  */
 internal fun FloorsClimbedRecord.toDto(): FloorsClimbedRecordDto {
@@ -117,20 +105,6 @@ internal fun FloorsClimbedRecord.toDto(): FloorsClimbedRecordDto {
         endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         floors = floors.toNumericDto()
-    )
-}
-
-/**
- * Converts a [StepRecordDto] to a Health Connect [StepsRecord] object.
- */
-internal fun StepRecordDto.toHealthConnect(): StepsRecord {
-    return StepsRecord(
-        count = count.toLong(),
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -150,18 +124,6 @@ internal fun StepsRecord.toDto(): StepRecordDto {
 }
 
 /**
- * Converts a [WeightRecordDto] to a Health Connect [WeightRecord] object.
- */
-internal fun WeightRecordDto.toHealthConnect(): WeightRecord {
-    return WeightRecord(
-        weight = weight.toHealthConnect(),
-        time = Instant.ofEpochMilli(time),
-        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
-
-/**
  * Converts a Health Connect [WeightRecord] object to a [WeightRecordDto].
  */
 internal fun WeightRecord.toDto(): WeightRecordDto {
@@ -171,18 +133,6 @@ internal fun WeightRecord.toDto(): WeightRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         weight = weight.toDto()
-    )
-}
-
-/**
- * Converts a [LeanBodyMassRecordDto] to a Health Connect [LeanBodyMassRecord] object.
- */
-internal fun LeanBodyMassRecordDto.toHealthConnect(): LeanBodyMassRecord {
-    return LeanBodyMassRecord(
-        mass = mass.toHealthConnect(),
-        time = Instant.ofEpochMilli(time),
-        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -200,18 +150,6 @@ internal fun LeanBodyMassRecord.toDto(): LeanBodyMassRecordDto {
 }
 
 /**
- * Converts a [HeightRecordDto] to a Health Connect [HeightRecord] object.
- */
-internal fun HeightRecordDto.toHealthConnect(): HeightRecord {
-    return HeightRecord(
-        height = height.toHealthConnect(),
-        time = Instant.ofEpochMilli(time),
-        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
-
-/**
  * Converts a Health Connect [HeightRecord] object to a [HeightRecordDto].
  */
 internal fun HeightRecord.toDto(): HeightRecordDto {
@@ -221,18 +159,6 @@ internal fun HeightRecord.toDto(): HeightRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         height = height.toDto()
-    )
-}
-
-/**
- * Converts a [BodyFatPercentageRecordDto] to a Health Connect [BodyFatRecord] object.
- */
-internal fun BodyFatPercentageRecordDto.toHealthConnect(): BodyFatRecord {
-    return BodyFatRecord(
-        percentage = percentage.toHealthConnect(),
-        time = Instant.ofEpochMilli(time),
-        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -250,18 +176,6 @@ internal fun BodyFatRecord.toDto(): BodyFatPercentageRecordDto {
 }
 
 /**
- * Converts a [BodyTemperatureRecordDto] to a Health Connect [BodyTemperatureRecord] object.
- */
-internal fun BodyTemperatureRecordDto.toHealthConnect(): BodyTemperatureRecord {
-    return BodyTemperatureRecord(
-        temperature = Temperature.celsius(temperature.value),
-        time = Instant.ofEpochMilli(time),
-        zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
-
-/**
  * Converts a Health Connect [BodyTemperatureRecord] object to a [BodyTemperatureRecordDto].
  */
 internal fun BodyTemperatureRecord.toDto(): BodyTemperatureRecordDto {
@@ -271,20 +185,6 @@ internal fun BodyTemperatureRecord.toDto(): BodyTemperatureRecordDto {
         zoneOffsetSeconds = zoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         temperature = temperature.inCelsius.toTemperatureDto()
-    )
-}
-
-/**
- * Converts a [WheelchairPushesRecordDto] to a Health Connect [WheelchairPushesRecord] object.
- */
-internal fun WheelchairPushesRecordDto.toHealthConnect(): WheelchairPushesRecord {
-    return WheelchairPushesRecord(
-        count = pushes.value.toLong(),
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -304,20 +204,6 @@ internal fun WheelchairPushesRecord.toDto(): WheelchairPushesRecordDto {
 }
 
 /**
- * Converts a [HydrationRecordDto] to a Health Connect [HydrationRecord] object.
- */
-internal fun HydrationRecordDto.toHealthConnect(): HydrationRecord {
-    return HydrationRecord(
-        volume = volume.toHealthConnect(),
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
-    )
-}
-
-/**
  * Converts a Health Connect [HydrationRecord] object to a [HydrationRecordDto].
  */
 internal fun HydrationRecord.toDto(): HydrationRecordDto {
@@ -329,25 +215,6 @@ internal fun HydrationRecord.toDto(): HydrationRecordDto {
         endZoneOffsetSeconds = endZoneOffset?.totalSeconds?.toLong(),
         metadata = metadata.toDto(),
         volume = volume.toDto()
-    )
-}
-
-/**
- * Converts a [HeartRateSeriesRecordDto] to a Health Connect [HeartRateRecord] object.
- */
-internal fun HeartRateSeriesRecordDto.toHealthConnect(): HeartRateRecord {
-    return HeartRateRecord(
-        samples = samples.map { sample ->
-            HeartRateRecord.Sample(
-                time = Instant.ofEpochMilli(sample.time),
-                beatsPerMinute = sample.beatsPerMinute.value.toLong()
-            )
-        },
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
-        metadata = metadata.toHealthConnect(),
     )
 }
 
@@ -414,23 +281,6 @@ internal fun SleepSessionRecord.Stage.toDto(): SleepStageDto {
     )
 }
 
-internal fun SleepSessionRecordDto.toHealthConnect(): SleepSessionRecord {
-    return SleepSessionRecord(
-        startTime = Instant.ofEpochMilli(startTime),
-        endTime = Instant.ofEpochMilli(endTime),
-        startZoneOffset = startZoneOffsetSeconds?.let {
-            ZoneOffset.ofTotalSeconds(it.toInt())
-        } ?: ZoneOffset.UTC,
-        endZoneOffset = endZoneOffsetSeconds?.let {
-            ZoneOffset.ofTotalSeconds(it.toInt())
-        } ?: ZoneOffset.UTC,
-        title = title,
-        notes = notes,
-        stages = stages.map { it.toHealthConnect() },
-        metadata = metadata.toHealthConnect()
-    )
-}
-
 internal fun SleepSessionRecord.toDto(): SleepSessionRecordDto {
     return SleepSessionRecordDto(
         id = metadata.id,
@@ -443,4 +293,132 @@ internal fun SleepSessionRecord.toDto(): SleepSessionRecordDto {
         notes = notes,
         stages = stages.map { it.toDto() }
     )
+}
+
+/**
+ * Converts a [HealthRecordDto] to a Health Connect [Record] object.
+ *
+ * This extension uses pattern matching on the sealed class to convert
+ * each record type to its corresponding Health Connect record.
+ */
+internal fun HealthRecordDto.toHealthConnect(): Record {
+    return when (this) {
+        is ActiveCaloriesBurnedRecordDto -> ActiveCaloriesBurnedRecord(
+            energy = energy.toHealthConnect(),
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is DistanceRecordDto -> DistanceRecord(
+            distance = distance.toHealthConnect(),
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is FloorsClimbedRecordDto -> FloorsClimbedRecord(
+            floors = floors.value,
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is StepRecordDto -> StepsRecord(
+            count = count.toLong(),
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is HeightRecordDto -> HeightRecord(
+            height = height.toHealthConnect(),
+            time = Instant.ofEpochMilli(time),
+            zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is HydrationRecordDto -> HydrationRecord(
+            volume = volume.toHealthConnect(),
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is BodyFatPercentageRecordDto -> BodyFatRecord(
+            percentage = percentage.toHealthConnect(),
+            time = Instant.ofEpochMilli(time),
+            zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is BodyTemperatureRecordDto -> BodyTemperatureRecord(
+            temperature = Temperature.celsius(temperature.value),
+            time = Instant.ofEpochMilli(time),
+            zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is WeightRecordDto -> WeightRecord(
+            weight = weight.toHealthConnect(),
+            time = Instant.ofEpochMilli(time),
+            zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is LeanBodyMassRecordDto -> LeanBodyMassRecord(
+            mass = mass.toHealthConnect(),
+            time = Instant.ofEpochMilli(time),
+            zoneOffset = zoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is WheelchairPushesRecordDto -> WheelchairPushesRecord(
+            count = pushes.value.toLong(),
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is HeartRateSeriesRecordDto -> HeartRateRecord(
+            samples = samples.map { sample ->
+                HeartRateRecord.Sample(
+                    time = Instant.ofEpochMilli(sample.time),
+                    beatsPerMinute = sample.beatsPerMinute.value.toLong()
+                )
+            },
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            endZoneOffset = endZoneOffsetSeconds?.let { ZoneOffset.ofTotalSeconds(it.toInt()) },
+            metadata = metadata.toHealthConnect(),
+        )
+
+        is SleepSessionRecordDto -> SleepSessionRecord(
+            startTime = Instant.ofEpochMilli(startTime),
+            endTime = Instant.ofEpochMilli(endTime),
+            startZoneOffset = startZoneOffsetSeconds?.let {
+                ZoneOffset.ofTotalSeconds(it.toInt())
+            } ?: ZoneOffset.UTC,
+            endZoneOffset = endZoneOffsetSeconds?.let {
+                ZoneOffset.ofTotalSeconds(it.toInt())
+            } ?: ZoneOffset.UTC,
+            title = title,
+            notes = notes,
+            stages = stages.map { it.toHealthConnect() },
+            metadata = metadata.toHealthConnect()
+        )
+    }
 }

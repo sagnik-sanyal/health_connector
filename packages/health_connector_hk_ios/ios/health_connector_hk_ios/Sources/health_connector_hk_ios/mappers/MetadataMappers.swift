@@ -1,70 +1,6 @@
 import Foundation
 import HealthKit
 
-// ==================== DEVICE MAPPERS ====================
-
-extension DeviceDto {
-    /**
-     * Converts this DTO to a HealthKit `HKDevice`.
-     *
-     * Uses `model` value for `name` if `name` is null, as per HealthKit best practices.
-     * Returns `nil` if all device fields are null.
-     *
-     * **Important:** HealthKit requires at least one non-nil field when creating an `HKDevice`.
-     * If all fields are nil, HealthKit will throw:
-     * ```
-     * NSInvalidArgumentException: 'At least one field of the device must be non-nil.'
-     * ```
-     * This method prevents this exception by returning `nil` when no device information is available.
-     *
-     * - Returns: An `HKDevice` instance if at least one field is non-nil, otherwise `nil`
-     */
-    func toHealthKit() -> HKDevice? {
-        // Check if at least one field is non-nil (HealthKit requirement)
-        let deviceName = name ?? model
-        let hasAnyField = deviceName != nil ||
-                          manufacturer != nil ||
-                          hardwareVersion != nil ||
-                          firmwareVersion != nil ||
-                          softwareVersion != nil ||
-                          localIdentifier != nil ||
-                          udiDeviceIdentifier != nil
-        
-        guard hasAnyField else {
-            return nil
-        }
-        
-        return HKDevice(
-            name: deviceName,
-            manufacturer: manufacturer,
-            model: model,
-            hardwareVersion: hardwareVersion,
-            firmwareVersion: firmwareVersion,
-            softwareVersion: softwareVersion,
-            localIdentifier: localIdentifier,
-            udiDeviceIdentifier: udiDeviceIdentifier
-        )
-    }
-}
-
-extension HKDevice {
-    /**
-     * Converts this HealthKit device to a `DeviceDto`.
-     */
-    func toDto() -> DeviceDto {
-        return DeviceDto(
-            firmwareVersion: firmwareVersion,
-            hardwareVersion: hardwareVersion,
-            localIdentifier: localIdentifier,
-            manufacturer: manufacturer,
-            model: model,
-            name: name,
-            softwareVersion: softwareVersion,
-            udiDeviceIdentifier: udiDeviceIdentifier
-        )
-    }
-}
-
 // ==================== METADATA MAPPERS ====================
 
 extension MetadataDto {
@@ -95,7 +31,8 @@ extension MetadataDto {
         metadata[HKMetadataKeyWasUserEntered] = isManualEntry
 
         // Store device name in metadata for redundancy (also stored in HKDevice.name)
-        if let deviceName = device?.name {
+        let deviceName = deviceName ?? deviceModel
+        if let deviceName = deviceName {
             metadata[HKMetadataKeyDeviceName] = deviceName
         }
 
@@ -109,9 +46,44 @@ extension MetadataDto {
 
     /**
      * Extracts the device from this DTO for HealthKit sample creation.
+     *
+     * Uses `deviceModel` value for `name` if `deviceName` is null, as per HealthKit best practices.
+     * Returns `nil` if all device fields are null.
+     *
+     * **Important:** HealthKit requires at least one non-nil field when creating an `HKDevice`.
+     * If all fields are nil, HealthKit will throw:
+     * ```
+     * NSInvalidArgumentException: 'At least one field of the device must be non-nil.'
+     * ```
+     * This method prevents this exception by returning `nil` when no device information is available.
+     *
+     * - Returns: An `HKDevice` instance if at least one field is non-nil, otherwise `nil`
      */
     func toHealthKitDevice() -> HKDevice? {
-        return device?.toHealthKit()
+        // Check if at least one field is non-nil (HealthKit requirement)
+        let deviceName = deviceName ?? deviceModel
+        let hasAnyField = deviceName != nil ||
+                          deviceManufacturer != nil ||
+                          deviceHardwareVersion != nil ||
+                          deviceFirmwareVersion != nil ||
+                          deviceSoftwareVersion != nil ||
+                          deviceLocalIdentifier != nil ||
+                          deviceUdiDeviceIdentifier != nil
+        
+        guard hasAnyField else {
+            return nil
+        }
+        
+        return HKDevice(
+            name: deviceName,
+            manufacturer: deviceManufacturer,
+            model: deviceModel,
+            hardwareVersion: deviceHardwareVersion,
+            firmwareVersion: deviceFirmwareVersion,
+            softwareVersion: deviceSoftwareVersion,
+            localIdentifier: deviceLocalIdentifier,
+            udiDeviceIdentifier: deviceUdiDeviceIdentifier
+        )
     }
 }
 
@@ -141,15 +113,22 @@ extension Dictionary where Key == String, Value == Any {
         // Default to false if not present (unknown/not manual entry)
         let isManualEntry = self[HKMetadataKeyWasUserEntered] as? Bool ?? false
 
-        // Device name is extracted from HKDevice.name in toDto() method
+        // Extract device information from HKDevice
+        // Device name is extracted from HKDevice.name
         // HKMetadataKeyDeviceName in metadata is for redundancy but we prefer HKDevice.name
-        let deviceDto = device?.toDto()
 
         return MetadataDto(
             clientRecordId: clientRecordId,
             clientRecordVersion: clientRecordVersion,
             dataOrigin: source.bundleIdentifier,
-            device: deviceDto,
+            deviceName: device?.name,
+            deviceManufacturer: device?.manufacturer,
+            deviceModel: device?.model,
+            deviceHardwareVersion: device?.hardwareVersion,
+            deviceFirmwareVersion: device?.firmwareVersion,
+            deviceSoftwareVersion: device?.softwareVersion,
+            deviceLocalIdentifier: device?.localIdentifier,
+            deviceUdiDeviceIdentifier: device?.udiDeviceIdentifier,
             isManualEntry: isManualEntry
         )
     }

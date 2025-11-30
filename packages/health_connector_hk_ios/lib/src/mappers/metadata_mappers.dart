@@ -1,31 +1,8 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show RecordingMethod, DeviceType, Device, DataOrigin, Metadata;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
-    show DeviceDto, MetadataDto;
+    show MetadataDto;
 import 'package:meta/meta.dart' show internal;
-
-/// Converts [Device] to [DeviceDto].
-@internal
-extension DeviceDtoMapper on Device {
-  DeviceDto toDto() {
-    return DeviceDto(
-      manufacturer: manufacturer,
-      model: model,
-    );
-  }
-}
-
-/// Converts [DeviceDto] to [Device].
-@internal
-extension DeviceDtoToDomain on DeviceDto {
-  Device toDomain() {
-    return Device(
-      type: DeviceType.unknown,
-      manufacturer: manufacturer,
-      model: model,
-    );
-  }
-}
 
 /// Converts [Metadata] to [MetadataDto].
 @internal
@@ -36,7 +13,14 @@ extension MetadataDtoMapper on Metadata {
       isManualEntry: recordingMethod == RecordingMethod.manualEntry,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
-      device: device?.toDto(),
+      deviceName: device?.name,
+      deviceManufacturer: device?.manufacturer,
+      deviceModel: device?.model,
+      deviceHardwareVersion: device?.hardwareVersion,
+      deviceFirmwareVersion: device?.firmwareVersion,
+      deviceSoftwareVersion: device?.softwareVersion,
+      deviceLocalIdentifier: device?.localIdentifier,
+      deviceUdiDeviceIdentifier: device?.udiDeviceIdentifier,
     );
   }
 }
@@ -52,7 +36,27 @@ extension MetadataDtoToDomain on MetadataDto {
           : RecordingMethod.unknown,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
-      device: device?.toDomain(),
+      device:
+          (deviceName != null ||
+              deviceManufacturer != null ||
+              deviceModel != null ||
+              deviceHardwareVersion != null ||
+              deviceFirmwareVersion != null ||
+              deviceSoftwareVersion != null ||
+              deviceLocalIdentifier != null ||
+              deviceUdiDeviceIdentifier != null)
+          ? Device(
+              type: DeviceType.unknown,
+              name: deviceName,
+              manufacturer: deviceManufacturer,
+              model: deviceModel,
+              hardwareVersion: deviceHardwareVersion,
+              firmwareVersion: deviceFirmwareVersion,
+              softwareVersion: deviceSoftwareVersion,
+              localIdentifier: deviceLocalIdentifier,
+              udiDeviceIdentifier: deviceUdiDeviceIdentifier,
+            )
+          : null,
     );
   }
 }

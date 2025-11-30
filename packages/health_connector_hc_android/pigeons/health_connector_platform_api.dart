@@ -294,24 +294,6 @@ enum RecordingMethodDto {
   unknown,
 }
 
-/// Represents device information for health data recording.
-class DeviceDto {
-  DeviceDto({
-    required this.type,
-    this.manufacturer,
-    this.model,
-  });
-
-  /// The device manufacturer.
-  final String? manufacturer;
-
-  /// The device model.
-  final String? model;
-
-  /// The type of device.
-  final DeviceTypeDto type;
-}
-
 /// Represents metadata for a health record.
 class MetadataDto {
   MetadataDto({
@@ -320,7 +302,9 @@ class MetadataDto {
     this.lastModifiedTime,
     this.clientRecordId,
     this.clientRecordVersion,
-    this.device,
+    this.deviceType,
+    this.deviceManufacturer,
+    this.deviceModel,
   });
 
   /// A custom identifier assigned by your application.
@@ -336,8 +320,14 @@ class MetadataDto {
   /// The package name of the source app that wrote this health record.
   final String dataOrigin;
 
-  /// The device that recorded the data (optional).
-  final DeviceDto? device;
+  /// The type of device that recorded the data (optional).
+  final DeviceTypeDto? deviceType;
+
+  /// The manufacturer of the device that recorded the data (optional).
+  final String? deviceManufacturer;
+
+  /// The model of the device that recorded the data (optional).
+  final String? deviceModel;
 
   /// The timestamp when this record was last modified on the platform.
   ///

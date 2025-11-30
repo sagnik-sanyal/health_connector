@@ -1,7 +1,7 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show RecordingMethod, DeviceType, Device, DataOrigin, Metadata;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
-    show RecordingMethodDto, DeviceTypeDto, DeviceDto, MetadataDto;
+    show RecordingMethodDto, DeviceTypeDto, MetadataDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [RecordingMethod] to [RecordingMethodDto].
@@ -92,30 +92,6 @@ extension DeviceTypeDtoToDomain on DeviceTypeDto {
   }
 }
 
-/// Converts [Device] to [DeviceDto].
-@internal
-extension DeviceDtoMapper on Device {
-  DeviceDto toDto() {
-    return DeviceDto(
-      type: type.toDto(),
-      manufacturer: manufacturer,
-      model: model,
-    );
-  }
-}
-
-/// Converts [DeviceDto] to [Device].
-@internal
-extension DeviceDtoToDomain on DeviceDto {
-  Device toDomain() {
-    return Device(
-      type: type.toDomain(),
-      manufacturer: manufacturer,
-      model: model,
-    );
-  }
-}
-
 /// Converts [Metadata] to [MetadataDto].
 @internal
 extension MetadataDtoMapper on Metadata {
@@ -126,7 +102,9 @@ extension MetadataDtoMapper on Metadata {
       lastModifiedTime: lastModifiedTime?.millisecondsSinceEpoch,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
-      device: device?.toDto(),
+      deviceType: device?.type.toDto(),
+      deviceManufacturer: device?.manufacturer,
+      deviceModel: device?.model,
     );
   }
 }
@@ -143,7 +121,16 @@ extension MetadataDtoToDomain on MetadataDto {
           : null,
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
-      device: device?.toDomain(),
+      device:
+          (deviceType != null ||
+              deviceManufacturer != null ||
+              deviceModel != null)
+          ? Device(
+              type: deviceType?.toDomain() ?? DeviceType.unknown,
+              manufacturer: deviceManufacturer,
+              model: deviceModel,
+            )
+          : null,
     );
   }
 }

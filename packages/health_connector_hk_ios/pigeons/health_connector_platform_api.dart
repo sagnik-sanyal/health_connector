@@ -238,44 +238,6 @@ class VolumeDto extends MeasurementUnitDto {
 
 // region Metadata
 
-/// Represents device information for health data recording.
-class DeviceDto {
-  DeviceDto({
-    this.name,
-    this.manufacturer,
-    this.model,
-    this.hardwareVersion,
-    this.firmwareVersion,
-    this.softwareVersion,
-    this.localIdentifier,
-    this.udiDeviceIdentifier,
-  });
-
-  /// The firmware version of the device.
-  final String? firmwareVersion;
-
-  /// The hardware version of the device.
-  final String? hardwareVersion;
-
-  /// A local identifier for the device.
-  final String? localIdentifier;
-
-  /// The device manufacturer.
-  final String? manufacturer;
-
-  /// The device model.
-  final String? model;
-
-  /// The name of the device.
-  final String? name;
-
-  /// The software version of the device.
-  final String? softwareVersion;
-
-  /// The UDI (Unique Device Identifier) for the device.
-  final String? udiDeviceIdentifier;
-}
-
 /// Represents metadata for a health record.
 class MetadataDto {
   MetadataDto({
@@ -283,7 +245,14 @@ class MetadataDto {
     required this.isManualEntry,
     this.clientRecordId,
     this.clientRecordVersion,
-    this.device,
+    this.deviceName,
+    this.deviceManufacturer,
+    this.deviceModel,
+    this.deviceHardwareVersion,
+    this.deviceFirmwareVersion,
+    this.deviceSoftwareVersion,
+    this.deviceLocalIdentifier,
+    this.deviceUdiDeviceIdentifier,
   });
 
   /// A custom identifier assigned by your application.
@@ -299,8 +268,29 @@ class MetadataDto {
   /// The package name of the source app that wrote this health record.
   final String dataOrigin;
 
-  /// The device that recorded the data (optional).
-  final DeviceDto? device;
+  /// The name of the device that recorded the data (optional).
+  final String? deviceName;
+
+  /// The manufacturer of the device that recorded the data (optional).
+  final String? deviceManufacturer;
+
+  /// The model of the device that recorded the data (optional).
+  final String? deviceModel;
+
+  /// The hardware version of the device that recorded the data (optional).
+  final String? deviceHardwareVersion;
+
+  /// The firmware version of the device that recorded the data (optional).
+  final String? deviceFirmwareVersion;
+
+  /// The software version of the device that recorded the data (optional).
+  final String? deviceSoftwareVersion;
+
+  /// A local identifier for the device that recorded the data (optional).
+  final String? deviceLocalIdentifier;
+
+  /// The UDI (Unique Device Identifier) for the device that recorded the data (optional).
+  final String? deviceUdiDeviceIdentifier;
 
   /// Whether this data was manually entered by the user.
   ///

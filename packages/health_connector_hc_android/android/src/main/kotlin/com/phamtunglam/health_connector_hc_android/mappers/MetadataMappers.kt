@@ -3,7 +3,6 @@ package com.phamtunglam.health_connector_hc_android.mappers
 import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
-import com.phamtunglam.health_connector_hc_android.pigeon.DeviceDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeviceTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MetadataDto
 import com.phamtunglam.health_connector_hc_android.pigeon.RecordingMethodDto
@@ -56,28 +55,6 @@ internal fun Int.toDeviceTypeDto(): DeviceTypeDto {
 }
 
 /**
- * Converts a [DeviceDto] to a Health Connect [Device] object.
- */
-internal fun DeviceDto.toHealthConnect(): Device {
-    return Device(
-        manufacturer = manufacturer,
-        model = model,
-        type = type.toHealthConnect()
-    )
-}
-
-/**
- * Converts a Health Connect [Device] object to a [DeviceDto].
- */
-internal fun Device.toDto(): DeviceDto {
-    return DeviceDto(
-        type = type.toDeviceTypeDto(),
-        manufacturer = manufacturer,
-        model = model,
-    )
-}
-
-/**
  * Converts a [MetadataDto] to a Health Connect [Metadata] object.
  *
  * Note: [MetadataDto.lastModifiedTime] is managed by Health Connect and not set during writes.
@@ -85,7 +62,13 @@ internal fun Device.toDto(): DeviceDto {
  * the recording method. This will be populated by Health Connect when records are written.
  */
 internal fun MetadataDto.toHealthConnect(): Metadata {
-    val device = device?.toHealthConnect()
+    val device = if (deviceType != null || deviceManufacturer != null || deviceModel != null) {
+        Device(
+            manufacturer = deviceManufacturer,
+            model = deviceModel,
+            type = deviceType?.toHealthConnect() ?: Device.TYPE_UNKNOWN
+        )
+    } else null
     val clientRecordVersion = clientRecordVersion ?: 0L
 
     return when (recordingMethod) {
@@ -139,7 +122,9 @@ internal fun Metadata.toDto(): MetadataDto {
         lastModifiedTime = lastModifiedTime.toEpochMilli(),
         clientRecordId = clientRecordId,
         clientRecordVersion = clientRecordVersion,
-        device = device?.toDto()
+        deviceType = device?.type?.toDeviceTypeDto(),
+        deviceManufacturer = device?.manufacturer,
+        deviceModel = device?.model
     )
 }
 

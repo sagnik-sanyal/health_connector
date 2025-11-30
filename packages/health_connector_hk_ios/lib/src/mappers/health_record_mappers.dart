@@ -102,8 +102,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds:
+              record.startZoneOffsetSeconds ?? record.endZoneOffsetSeconds,
           metadata: record.metadata.toDto(),
           energy: record.energy.toDto() as EnergyDto,
         );
@@ -112,8 +112,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds: record.startZoneOffsetSeconds,
+
           metadata: record.metadata.toDto(),
           distance: record.distance.toDto() as LengthDto,
         );
@@ -122,8 +122,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds: record.startZoneOffsetSeconds,
+
           metadata: record.metadata.toDto(),
           floors: record.floors.toDto() as NumericDto,
         );
@@ -132,8 +132,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds: record.startZoneOffsetSeconds,
+
           metadata: record.metadata.toDto(),
           count: record.count.toDto() as NumericDto,
         );
@@ -182,8 +182,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds: record.startZoneOffsetSeconds,
+
           metadata: record.metadata.toDto(),
           volume: record.volume.toDto() as VolumeDto,
         );
@@ -192,8 +192,8 @@ extension HealthRecordToDto on HealthRecord {
           id: record.id.toDto(),
           startTime: record.startTime.millisecondsSinceEpoch,
           endTime: record.endTime.millisecondsSinceEpoch,
-          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          zoneOffsetSeconds: record.startZoneOffsetSeconds,
+
           metadata: record.metadata.toDto(),
           pushes: record.pushes.toDto() as NumericDto,
         );
@@ -230,8 +230,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           energy: dto.energy.toDomain() as Energy,
         );
@@ -240,8 +240,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           distance: dto.distance.toDomain() as Length,
         );
@@ -250,8 +250,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           floors: dto.floors.toDomain() as Numeric,
         );
@@ -260,8 +260,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           count: dto.count.toDomain() as Numeric,
         );
@@ -310,8 +310,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           volume: dto.volume.toDomain() as Volume,
         );
@@ -320,8 +320,8 @@ extension HealthRecordDtoToDomain on HealthRecordDto {
           id: dto.id?.toDomain() ?? HealthRecordId.none,
           startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
           endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
-          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
-          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          startZoneOffsetSeconds: dto.zoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.zoneOffsetSeconds,
           metadata: dto.metadata.toDomain(),
           pushes: dto.pushes.toDomain() as Numeric,
         );

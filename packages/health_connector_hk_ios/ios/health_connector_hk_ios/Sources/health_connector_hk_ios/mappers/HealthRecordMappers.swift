@@ -47,8 +47,7 @@ extension HKQuantitySample {
         }
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return ActiveCaloriesBurnedRecordDto(
             energy: quantity.toEnergyDto(),
@@ -59,8 +58,7 @@ extension HKQuantitySample {
                 device: device
             ),
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),
-            endZoneOffsetSeconds: endZoneOffset,
-            startZoneOffsetSeconds: startZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }
@@ -111,8 +109,7 @@ extension HKQuantitySample {
         }
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return DistanceRecordDto(
             distance: quantity.toLengthDto(),
@@ -123,8 +120,7 @@ extension HKQuantitySample {
                 device: device
             ),
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),
-            endZoneOffsetSeconds: endZoneOffset,
-            startZoneOffsetSeconds: startZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }
@@ -178,8 +174,7 @@ extension HKQuantitySample {
         let value = quantity.doubleValue(for: unit)
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return FloorsClimbedRecordDto(
             floors: NumericDto(unit: NumericUnitDto.numeric, value: value),
@@ -190,8 +185,7 @@ extension HKQuantitySample {
                 device: device
             ),
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),
-            endZoneOffsetSeconds: endZoneOffset,
-            startZoneOffsetSeconds: startZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }
@@ -244,8 +238,7 @@ extension HKQuantitySample {
         let count = Int64(quantity.doubleValue(for: .count()))
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return StepRecordDto(
             count: count.toNumericDto(),
@@ -256,8 +249,7 @@ extension HKQuantitySample {
                 device: device
             ),
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),
-            endZoneOffsetSeconds: endZoneOffset,
-            startZoneOffsetSeconds: startZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }
@@ -614,8 +606,7 @@ extension HKQuantitySample {
         let value = quantity.doubleValue(for: unit)
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return WheelchairPushesRecordDto(
             pushes: NumericDto(unit: NumericUnitDto.numeric, value: value),
@@ -626,8 +617,7 @@ extension HKQuantitySample {
                 device: device
             ),
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),
-            endZoneOffsetSeconds: endZoneOffset,
-            startZoneOffsetSeconds: startZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }
@@ -676,8 +666,7 @@ extension HKQuantitySample {
         }
 
         let metadataDict = metadata ?? [:]
-        let startZoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        let endZoneOffset = metadataDict.extractTimeZoneOffset(for: endDate)
+        let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
         
         return HydrationRecordDto(
             id: uuid.uuidString,
@@ -688,8 +677,7 @@ extension HKQuantitySample {
                 device: device
             ),
             volume: quantity.toVolumeDto(),
-            startZoneOffsetSeconds: startZoneOffset,
-            endZoneOffsetSeconds: endZoneOffset
+            zoneOffsetSeconds: zoneOffset
         )
     }
 }

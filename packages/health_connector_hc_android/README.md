@@ -399,17 +399,17 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 | **Cycling Pedaling Cadence** | ❌         | [`CyclingPedalingCadenceRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/CyclingPedalingCadenceRecord) |
 | **Power**                    | ❌         | [`PowerRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/PowerRecord)                                   |
 | **Speed**                    | ❌         | [`SpeedRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/SpeedRecord)                                   |
-| **Wheelchair Pushes**        | ❌         | [`WheelchairPushesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WheelchairPushesRecord)             |
+| **Wheelchair Pushes**        | ✅         | [`WheelchairPushesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WheelchairPushesRecord)             |
 
 ### 📏 Body Measurements
 
 | Data Type                | Supported | Documentation                                                                                                                                |
 |--------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | **Weight**               | ✅         | [`WeightRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WeightRecord)                         |
-| **Height**               | ❌         | [`HeightRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeightRecord)                         |
-| **Body Fat Percentage**  | ❌         | [`BodyFatRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyFatRecord)                       |
+| **Height**               | ✅         | [`HeightRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeightRecord)                         |
+| **Body Fat Percentage**  | ✅         | [`BodyFatRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyFatRecord)                       |
 | **Bone Mass**            | ❌         | [`BoneMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BoneMassRecord)                     |
-| **Lean Body Mass**       | ❌         | [`LeanBodyMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/LeanBodyMassRecord)             |
+| **Lean Body Mass**       | ✅         | [`LeanBodyMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/LeanBodyMassRecord)             |
 | **Basal Metabolic Rate** | ❌         | [`BasalMetabolicRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BasalMetabolicRateRecord) |
 
 ### 🩸 Cycle Tracking / Reproductive Health
@@ -426,24 +426,24 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 
 | Data Type                      | Supported | Documentation                                                                                                              |
 |--------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------|
-| **Hydration / Water**          | ❌         | [`HydrationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HydrationRecord) |
+| **Hydration / Water**          | ✅         | [`HydrationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HydrationRecord) |
 | **Nutrition / Dietary Energy** | ❌         | [`NutritionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/NutritionRecord) |
 
 ### 😴 Sleep
 
 | Data Type         | Supported | Documentation                                                                                                                    |
 |-------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------|
-| **Sleep Session** | ❌         | [`SleepSessionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/SleepSessionRecord) |
+| **Sleep Session** | ✅         | [`SleepSessionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/SleepSessionRecord) |
 | **Sleep Stage**   | ❌         | [`SleepStageRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/SleepStageRecord)     |
 
 ### ❤️ Vitals
 
 | Data Type              | Supported | Documentation                                                                                                                            |
 |------------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
-| **Heart Rate**         | ❌         | [`HeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeartRateRecord)               |
+| **Heart Rate (Series)** | ✅         | [`HeartRateSeriesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeartRateSeriesRecord)               |
 | **Resting Heart Rate** | ❌         | [`RestingHeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RestingHeartRateRecord) |
 | **Blood Pressure**     | ❌         | [`BloodPressureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodPressureRecord)       |
-| **Body Temperature**   | ❌         | [`BodyTemperatureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyTemperatureRecord)   |
+| **Body Temperature**   | ✅         | [`BodyTemperatureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyTemperatureRecord)   |
 | **Blood Glucose**      | ❌         | [`BloodGlucoseRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodGlucoseRecord)         |
 | **Oxygen Saturation**  | ❌         | [`OxygenSaturationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/OxygenSaturationRecord) |
 | **Respiratory Rate**   | ❌         | [`RespiratoryRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RespiratoryRateRecord)   |

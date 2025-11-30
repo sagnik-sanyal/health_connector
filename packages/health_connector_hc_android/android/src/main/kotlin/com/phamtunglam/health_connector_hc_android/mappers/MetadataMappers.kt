@@ -3,7 +3,6 @@ package com.phamtunglam.health_connector_hc_android.mappers
 import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
-import com.phamtunglam.health_connector_hc_android.pigeon.DataOriginDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeviceDto
 import com.phamtunglam.health_connector_hc_android.pigeon.DeviceTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MetadataDto
@@ -79,15 +78,6 @@ internal fun Device.toDto(): DeviceDto {
 }
 
 /**
- * Converts a Health Connect DataOrigin object to a [DataOriginDto].
- */
-internal fun DataOrigin.toDto(): DataOriginDto {
-    return DataOriginDto(
-        packageName = packageName
-    )
-}
-
-/**
  * Converts a [MetadataDto] to a Health Connect [Metadata] object.
  *
  * Note: [MetadataDto.lastModifiedTime] is managed by Health Connect and not set during writes.
@@ -144,7 +134,7 @@ internal fun MetadataDto.toHealthConnect(): Metadata {
  */
 internal fun Metadata.toDto(): MetadataDto {
     return MetadataDto(
-        dataOrigin = dataOrigin.toDto(),
+        dataOrigin = dataOrigin.packageName,
         recordingMethod = recordingMethod.toRecordingMethodDto(),
         lastModifiedTime = lastModifiedTime.toEpochMilli(),
         clientRecordId = clientRecordId,

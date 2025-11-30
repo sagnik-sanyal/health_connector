@@ -294,14 +294,6 @@ enum RecordingMethodDto {
   unknown,
 }
 
-/// Represents data origin (source application) for health records.
-class DataOriginDto {
-  DataOriginDto(this.packageName);
-
-  /// The package name of the source app.
-  final String packageName;
-}
-
 /// Represents device information for health data recording.
 class DeviceDto {
   DeviceDto({
@@ -341,8 +333,8 @@ class MetadataDto {
   /// Use this to implement your own versioning or tracking logic.
   final int? clientRecordVersion;
 
-  /// The application that wrote this health record.
-  final DataOriginDto dataOrigin;
+  /// The package name of the source app that wrote this health record.
+  final String dataOrigin;
 
   /// The device that recorded the data (optional).
   final DeviceDto? device;

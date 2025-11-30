@@ -179,9 +179,7 @@ extension Dictionary where Key == String, Value == Any {
         return MetadataDto(
             clientRecordId: clientRecordId,
             clientRecordVersion: clientRecordVersion,
-            dataOrigin: DataOriginDto(
-                packageName: source.bundleIdentifier
-            ),
+            dataOrigin: source.bundleIdentifier,
             device: deviceDto,
             recordingMethod: recordingMethod
         )

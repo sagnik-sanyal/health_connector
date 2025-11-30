@@ -1,7 +1,7 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show RecordingMethod, DeviceType, Device, DataOrigin, Metadata;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
-    show RecordingMethodDto, DeviceDto, DataOriginDto, MetadataDto;
+    show RecordingMethodDto, DeviceDto, MetadataDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [RecordingMethod] to [RecordingMethodDto].
@@ -61,28 +61,12 @@ extension DeviceDtoToDomain on DeviceDto {
   }
 }
 
-/// Converts [DataOrigin] to [DataOriginDto].
-@internal
-extension DataOriginDtoMapper on DataOrigin {
-  DataOriginDto toDto() {
-    return DataOriginDto(packageName: packageName);
-  }
-}
-
-/// Converts [DataOriginDto] to [DataOrigin].
-@internal
-extension DataOriginDtoToDomain on DataOriginDto {
-  DataOrigin toDomain() {
-    return DataOrigin(packageName);
-  }
-}
-
 /// Converts [Metadata] to [MetadataDto].
 @internal
 extension MetadataDtoMapper on Metadata {
   MetadataDto toDto() {
     return MetadataDto(
-      dataOrigin: dataOrigin.toDto(),
+      dataOrigin: dataOrigin.packageName,
       recordingMethod: recordingMethod.toDto(),
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,
@@ -96,7 +80,7 @@ extension MetadataDtoMapper on Metadata {
 extension MetadataDtoToDomain on MetadataDto {
   Metadata toDomain() {
     return Metadata(
-      dataOrigin: dataOrigin.toDomain(),
+      dataOrigin: DataOrigin(dataOrigin),
       recordingMethod: recordingMethod.toDomain(),
       clientRecordId: clientRecordId,
       clientRecordVersion: clientRecordVersion,

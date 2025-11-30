@@ -66,6 +66,7 @@ final class Device {
       udiDeviceIdentifier = null;
 
   /// The type of device (watch, phone, scale, etc.).
+  @availableOnHealthConnect
   final DeviceType type;
 
   /// The name of the device.

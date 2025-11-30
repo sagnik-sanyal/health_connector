@@ -44,22 +44,29 @@ bool _deepEquals(Object? a, Object? b) {
 }
 
 
-/// Aggregation metric types for health data queries.
-enum AggregationMetricDto {
-  /// Average (mean) value across all data points.
-  ///
-  /// Meaningful for both cumulative and measurement data types.
-  avg,
-  /// Count of data points (records) in the dataset.
-  count,
-  /// Maximum value in the dataset.
-  max,
-  /// Minimum value in the dataset.
-  min,
-  /// Sum of all values in the time range.
-  ///
-  /// Only meaningful for cumulative data types (e.g., steps, distance).
-  sum,
+/// Error codes that native platforms can use when throwing error.
+enum HealthConnectorErrorCodeDto {
+  /// Health platform is unavailable on this device.
+  healthPlatformUnavailable,
+  /// Invalid platform configuration detected.
+  invalidPlatformConfiguration,
+  /// Invalid argument or input validation error.
+  invalidArgument,
+  /// Attempted to use platform APIs that are not supported on
+  /// the current health platform.
+  unsupportedHealthPlatformApi,
+  /// Unknown or unspecified error.
+  unknown,
+  /// Security/permission error occurred.
+  securityError,
+}
+
+/// Represents the status of the health platform on the device.
+enum HealthPlatformStatusDto {
+  /// The health platform is available and ready to use.
+  available,
+  /// The health platform is not available on this device.
+  notAvailable,
 }
 
 /// Blood glucose unit types supported by the plugin.
@@ -74,86 +81,6 @@ enum EnergyUnitDto {
   joules,
   kilocalories,
   kilojoules,
-}
-
-/// Error codes that native platforms can use when throwing error.
-///
-/// These codes are mapped to HealthConnectorErrorCode on the Dart side
-/// via PlatformException.code.
-///
-/// ## Example
-///
-/// ```kotlin
-/// throw HealthConnectorError(
-///   HealthConnectorErrorCodeDto.PLATFORM_ERROR.name,
-///   message,
-///   details,
-/// )
-/// ```
-enum HealthConnectorErrorCodeDto {
-  /// Health platform is unavailable on this device.
-  healthPlatformUnavailable,
-  /// Invalid platform configuration detected.
-  invalidPlatformConfiguration,
-  /// Invalid argument or input validation error.
-  ///
-  /// This error occurs when invalid input is provided to a method, such as:
-  /// - Invalid record ID format (e.g., malformed UUID)
-  /// - Invalid time range (e.g., start time after end time)
-  /// - Invalid record data (e.g., negative values where not allowed)
-  /// - Invalid pagination parameters
-  invalidArgument,
-  /// Attempted to use platform APIs that are not supported on
-  /// the current health platform.
-  unsupportedHealthPlatformApi,
-  /// Unknown or unspecified error.
-  unknown,
-  /// Security/permission error occurred.
-  ///
-  /// This error occurs when a request is made without proper permissions
-  /// or when access is denied by the health platform.
-  ///
-  /// Common scenarios include:
-  /// - Missing required permissions for the requested operation
-  /// - User denied permission access
-  /// - Attempting to access data without proper authorization
-  securityError,
-}
-
-/// Represents a health data type.
-enum HealthDataTypeDto {
-  /// Active calories burned data.
-  activeCaloriesBurned,
-  /// Distance traveled data.
-  distance,
-  /// Floors climbed data.
-  floorsClimbed,
-  /// Step count data.
-  steps,
-  /// Body weight data.
-  weight,
-  /// Body height data.
-  height,
-  /// Body fat percentage data.
-  bodyFatPercentage,
-  /// Body temperature data.
-  bodyTemperature,
-  /// Lean body mass data.
-  leanBodyMass,
-  /// Wheelchair pushes data.
-  wheelchairPushes,
-  /// Hydration (water intake) data.
-  hydration,
-  /// Heart rate measurement record data (iOS).
-  heartRateMeasurementRecord,
-}
-
-/// Represents the status of the health platform on the device.
-enum HealthPlatformStatusDto {
-  /// The health platform is available and ready to use.
-  available,
-  /// The health platform is not available on this device.
-  notAvailable,
 }
 
 /// Length unit types supported by the plugin.
@@ -218,18 +145,6 @@ enum PowerUnitDto {
   watts,
 }
 
-/// Recording method for health data.
-enum RecordingMethodDto {
-  /// Data was recorded during an active user-initiated session.
-  activelyRecorded,
-  /// Data was automatically recorded by a device in the background.
-  automaticallyRecorded,
-  /// Data was manually entered by the user.
-  manualEntry,
-  /// The recording method is unknown or unspecified.
-  unknown,
-}
-
 /// Temperature unit types supported by the plugin.
 enum TemperatureUnitDto {
   celsius,
@@ -251,8 +166,66 @@ enum VolumeUnitDto {
   milliliters,
 }
 
+/// Recording method for health data.
+enum RecordingMethodDto {
+  /// Data was recorded during an active user-initiated session.
+  activelyRecorded,
+  /// Data was automatically recorded by a device in the background.
+  automaticallyRecorded,
+  /// Data was manually entered by the user.
+  manualEntry,
+  /// The recording method is unknown or unspecified.
+  unknown,
+}
+
+/// Represents a health data type.
+enum HealthDataTypeDto {
+  /// Active calories burned data.
+  activeCaloriesBurned,
+  /// Distance traveled data.
+  distance,
+  /// Floors climbed data.
+  floorsClimbed,
+  /// Step count data.
+  steps,
+  /// Body weight data.
+  weight,
+  /// Body height data.
+  height,
+  /// Body fat percentage data.
+  bodyFatPercentage,
+  /// Body temperature data.
+  bodyTemperature,
+  /// Lean body mass data.
+  leanBodyMass,
+  /// Wheelchair pushes data.
+  wheelchairPushes,
+  /// Hydration (water intake) data.
+  hydration,
+  /// Heart rate measurement record data (iOS).
+  heartRateMeasurementRecord,
+}
+
+/// Aggregation metric types for health data queries.
+enum AggregationMetricDto {
+  /// Average (mean) value across all data points.
+  avg,
+  /// Count of data points (records) in the dataset.
+  count,
+  /// Maximum value in the dataset.
+  max,
+  /// Minimum value in the dataset.
+  min,
+  /// Sum of all values in the time range.
+  sum,
+}
+
+/// Sealed class for all measurement unit DTOs.
+sealed class MeasurementUnitDto {
+}
+
 /// Represents a blood glucose measurement for platform transfer.
-class BloodGlucoseDto {
+class BloodGlucoseDto extends MeasurementUnitDto {
   BloodGlucoseDto({
     required this.unit,
     required this.value,
@@ -301,7 +274,7 @@ class BloodGlucoseDto {
 }
 
 /// Represents an energy measurement for platform transfer.
-class EnergyDto {
+class EnergyDto extends MeasurementUnitDto {
   EnergyDto({
     required this.unit,
     required this.value,
@@ -350,7 +323,7 @@ class EnergyDto {
 }
 
 /// Represents a length measurement for platform transfer.
-class LengthDto {
+class LengthDto extends MeasurementUnitDto {
   LengthDto({
     required this.unit,
     required this.value,
@@ -399,7 +372,7 @@ class LengthDto {
 }
 
 /// Represents a mass measurement for platform transfer.
-class MassDto {
+class MassDto extends MeasurementUnitDto {
   MassDto({
     required this.unit,
     required this.value,
@@ -448,10 +421,7 @@ class MassDto {
 }
 
 /// Represents a numeric measurement for platform transfer.
-///
-/// Numeric is used for simple count values like step counts, where there is
-/// no meaningful unit conversion.
-class NumericDto {
+class NumericDto extends MeasurementUnitDto {
   NumericDto({
     required this.unit,
     required this.value,
@@ -500,10 +470,7 @@ class NumericDto {
 }
 
 /// Represents a percentage measurement for platform transfer.
-///
-/// Percentage is used for body fat percentage, blood oxygen saturation,
-/// and other percentage-based health data.
-class PercentageDto {
+class PercentageDto extends MeasurementUnitDto {
   PercentageDto({
     required this.unit,
     required this.value,
@@ -552,7 +519,7 @@ class PercentageDto {
 }
 
 /// Represents a power measurement for platform transfer.
-class PowerDto {
+class PowerDto extends MeasurementUnitDto {
   PowerDto({
     required this.unit,
     required this.value,
@@ -601,7 +568,7 @@ class PowerDto {
 }
 
 /// Represents a pressure measurement for platform transfer.
-class PressureDto {
+class PressureDto extends MeasurementUnitDto {
   PressureDto({
     required this.unit,
     required this.value,
@@ -650,7 +617,7 @@ class PressureDto {
 }
 
 /// Represents a temperature measurement for platform transfer.
-class TemperatureDto {
+class TemperatureDto extends MeasurementUnitDto {
   TemperatureDto({
     required this.unit,
     required this.value,
@@ -699,7 +666,7 @@ class TemperatureDto {
 }
 
 /// Represents a velocity measurement for platform transfer.
-class VelocityDto {
+class VelocityDto extends MeasurementUnitDto {
   VelocityDto({
     required this.unit,
     required this.value,
@@ -748,7 +715,7 @@ class VelocityDto {
 }
 
 /// Represents a volume measurement for platform transfer.
-class VolumeDto {
+class VolumeDto extends MeasurementUnitDto {
   VolumeDto({
     required this.unit,
     required this.value,
@@ -861,13 +828,13 @@ class DeviceDto {
   /// A local identifier for the device.
   String? localIdentifier;
 
-  /// The device manufacturer (e.g., "Apple", "Samsung").
+  /// The device manufacturer.
   String? manufacturer;
 
-  /// The device model (e.g., "iPhone 15 Pro", "Galaxy Watch 6").
+  /// The device model.
   String? model;
 
-  /// The name of the device (e.g., "Apple Watch", "My Fitness Tracker").
+  /// The name of the device.
   String? name;
 
   /// The software version of the device.
@@ -925,9 +892,6 @@ class DeviceDto {
 }
 
 /// Represents metadata for a health record.
-///
-/// All health records contain metadata that provides context about how, when,
-/// and by what the data was recorded.
 class MetadataDto {
   MetadataDto({
     this.clientRecordId,
@@ -1033,6 +997,938 @@ class HealthDataPermissionDto {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! HealthDataPermissionDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Sealed class for all health record DTOs.
+sealed class HealthRecordDto {
+}
+
+/// Represents an active calories burned record for platform transfer.
+class ActiveCaloriesBurnedRecordDto extends HealthRecordDto {
+  ActiveCaloriesBurnedRecordDto({
+    required this.energy,
+    required this.endTime,
+    this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Energy (calories) burned during the interval.
+  EnergyDto energy;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      energy,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static ActiveCaloriesBurnedRecordDto decode(Object result) {
+    result as List<Object?>;
+    return ActiveCaloriesBurnedRecordDto(
+      energy: result[0]! as EnergyDto,
+      endTime: result[1]! as int,
+      id: result[2] as String?,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ActiveCaloriesBurnedRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a distance record for platform transfer.
+class DistanceRecordDto extends HealthRecordDto {
+  DistanceRecordDto({
+    required this.distance,
+    required this.endTime,
+    this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Distance traveled during the interval.
+  LengthDto distance;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      distance,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static DistanceRecordDto decode(Object result) {
+    result as List<Object?>;
+    return DistanceRecordDto(
+      distance: result[0]! as LengthDto,
+      endTime: result[1]! as int,
+      id: result[2] as String?,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! DistanceRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a floors climbed record for platform transfer.
+class FloorsClimbedRecordDto extends HealthRecordDto {
+  FloorsClimbedRecordDto({
+    required this.floors,
+    required this.endTime,
+    this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Number of floors (flights of stairs) climbed during the interval.
+  NumericDto floors;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      floors,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static FloorsClimbedRecordDto decode(Object result) {
+    result as List<Object?>;
+    return FloorsClimbedRecordDto(
+      floors: result[0]! as NumericDto,
+      endTime: result[1]! as int,
+      id: result[2] as String?,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FloorsClimbedRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a wheelchair pushes record for platform transfer.
+class WheelchairPushesRecordDto extends HealthRecordDto {
+  WheelchairPushesRecordDto({
+    required this.pushes,
+    required this.endTime,
+    this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Number of wheelchair pushes performed during the interval.
+  NumericDto pushes;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      pushes,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static WheelchairPushesRecordDto decode(Object result) {
+    result as List<Object?>;
+    return WheelchairPushesRecordDto(
+      pushes: result[0]! as NumericDto,
+      endTime: result[1]! as int,
+      id: result[2] as String?,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! WheelchairPushesRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a step count record for platform transfer.
+class StepRecordDto extends HealthRecordDto {
+  StepRecordDto({
+    required this.count,
+    required this.endTime,
+    this.id,
+    required this.metadata,
+    required this.startTime,
+    this.endZoneOffsetSeconds,
+    this.startZoneOffsetSeconds,
+  });
+
+  /// Number of steps taken during the interval (must be >= 0).
+  NumericDto count;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      count,
+      endTime,
+      id,
+      metadata,
+      startTime,
+      endZoneOffsetSeconds,
+      startZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static StepRecordDto decode(Object result) {
+    result as List<Object?>;
+    return StepRecordDto(
+      count: result[0]! as NumericDto,
+      endTime: result[1]! as int,
+      id: result[2] as String?,
+      metadata: result[3]! as MetadataDto,
+      startTime: result[4]! as int,
+      endZoneOffsetSeconds: result[5] as int?,
+      startZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! StepRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a weight record for platform transfer.
+class WeightRecordDto extends HealthRecordDto {
+  WeightRecordDto({
+    this.id,
+    required this.metadata,
+    required this.time,
+    required this.weight,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Weight measurement.
+  MassDto weight;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      weight,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static WeightRecordDto decode(Object result) {
+    result as List<Object?>;
+    return WeightRecordDto(
+      id: result[0] as String?,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      weight: result[3]! as MassDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! WeightRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// DTO for lean body mass health data.
+class LeanBodyMassRecordDto extends HealthRecordDto {
+  LeanBodyMassRecordDto({
+    this.id,
+    required this.metadata,
+    required this.time,
+    required this.mass,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Lean body mass measurement.
+  MassDto mass;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      mass,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static LeanBodyMassRecordDto decode(Object result) {
+    result as List<Object?>;
+    return LeanBodyMassRecordDto(
+      id: result[0] as String?,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      mass: result[3]! as MassDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! LeanBodyMassRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// DTO for body height health data.
+class HeightRecordDto extends HealthRecordDto {
+  HeightRecordDto({
+    this.id,
+    required this.metadata,
+    required this.time,
+    required this.height,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Height measurement.
+  LengthDto height;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      height,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static HeightRecordDto decode(Object result) {
+    result as List<Object?>;
+    return HeightRecordDto(
+      id: result[0] as String?,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      height: result[3]! as LengthDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HeightRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// DTO for body fat percentage health data.
+class BodyFatPercentageRecordDto extends HealthRecordDto {
+  BodyFatPercentageRecordDto({
+    this.id,
+    required this.metadata,
+    required this.time,
+    required this.percentage,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Body fat percentage measurement.
+  PercentageDto percentage;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      percentage,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static BodyFatPercentageRecordDto decode(Object result) {
+    result as List<Object?>;
+    return BodyFatPercentageRecordDto(
+      id: result[0] as String?,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      percentage: result[3]! as PercentageDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BodyFatPercentageRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// DTO for body temperature health data.
+class BodyTemperatureRecordDto extends HealthRecordDto {
+  BodyTemperatureRecordDto({
+    this.id,
+    required this.metadata,
+    required this.time,
+    required this.temperature,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Body temperature measurement.
+  TemperatureDto temperature;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      metadata,
+      time,
+      temperature,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static BodyTemperatureRecordDto decode(Object result) {
+    result as List<Object?>;
+    return BodyTemperatureRecordDto(
+      id: result[0] as String?,
+      metadata: result[1]! as MetadataDto,
+      time: result[2]! as int,
+      temperature: result[3]! as TemperatureDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BodyTemperatureRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a hydration (water intake) record for platform transfer.
+class HydrationRecordDto extends HealthRecordDto {
+  HydrationRecordDto({
+    this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.metadata,
+    required this.volume,
+    this.startZoneOffsetSeconds,
+    this.endZoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Start time in milliseconds since epoch (UTC).
+  int startTime;
+
+  /// End time in milliseconds since epoch (UTC).
+  int endTime;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// Volume of water consumed during the interval.
+  VolumeDto volume;
+
+  /// Timezone offset in seconds for start time (optional).
+  int? startZoneOffsetSeconds;
+
+  /// Timezone offset in seconds for end time (optional).
+  int? endZoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      startTime,
+      endTime,
+      metadata,
+      volume,
+      startZoneOffsetSeconds,
+      endZoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static HydrationRecordDto decode(Object result) {
+    result as List<Object?>;
+    return HydrationRecordDto(
+      id: result[0] as String?,
+      startTime: result[1]! as int,
+      endTime: result[2]! as int,
+      metadata: result[3]! as MetadataDto,
+      volume: result[4]! as VolumeDto,
+      startZoneOffsetSeconds: result[5] as int?,
+      endZoneOffsetSeconds: result[6] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HydrationRecordDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a single heart rate measurement for platform transfer.
+///
+/// This is a platform-agnostic value class used within heart rate records.
+/// It contains a timestamp and BPM value without ID or metadata.
+class HeartRateMeasurementDto {
+  HeartRateMeasurementDto({
+    required this.time,
+    required this.beatsPerMinute,
+  });
+
+  /// Timestamp in milliseconds since epoch (UTC).
+  int time;
+
+  /// Heart rate value in beats per minute (BPM).
+  NumericDto beatsPerMinute;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      time,
+      beatsPerMinute,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static HeartRateMeasurementDto decode(Object result) {
+    result as List<Object?>;
+    return HeartRateMeasurementDto(
+      time: result[0]! as int,
+      beatsPerMinute: result[1]! as NumericDto,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HeartRateMeasurementDto || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Represents a heart rate measurement record for platform transfer (iOS).
+class HeartRateMeasurementRecordDto extends HealthRecordDto {
+  HeartRateMeasurementRecordDto({
+    this.id,
+    required this.time,
+    required this.metadata,
+    required this.measurement,
+    this.zoneOffsetSeconds,
+  });
+
+  /// Platform-assigned unique identifier.
+  String? id;
+
+  /// Measurement time in milliseconds since epoch (UTC).
+  int time;
+
+  /// Metadata about this record.
+  MetadataDto metadata;
+
+  /// The heart rate measurement.
+  HeartRateMeasurementDto measurement;
+
+  /// Timezone offset in seconds for measurement time (optional).
+  int? zoneOffsetSeconds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      time,
+      metadata,
+      measurement,
+      zoneOffsetSeconds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static HeartRateMeasurementRecordDto decode(Object result) {
+    result as List<Object?>;
+    return HeartRateMeasurementRecordDto(
+      id: result[0] as String?,
+      time: result[1]! as int,
+      metadata: result[2]! as MetadataDto,
+      measurement: result[3]! as HeartRateMeasurementDto,
+      zoneOffsetSeconds: result[4] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HeartRateMeasurementRecordDto || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1182,972 +2078,6 @@ class PermissionsRequestResponseDto {
 ;
 }
 
-/// Represents an active calories burned record for platform transfer.
-///
-/// Maps to:
-/// - Health Connect:
-///   `androidx.health.connect.client.records.ActiveCaloriesBurnedRecord`
-/// - Domain: `ActiveCaloriesBurnedRecord`
-class ActiveCaloriesBurnedRecordDto {
-  ActiveCaloriesBurnedRecordDto({
-    required this.energy,
-    required this.endTime,
-    this.id,
-    required this.metadata,
-    required this.startTime,
-    this.endZoneOffsetSeconds,
-    this.startZoneOffsetSeconds,
-  });
-
-  /// Energy (calories) burned during the interval.
-  EnergyDto energy;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      energy,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static ActiveCaloriesBurnedRecordDto decode(Object result) {
-    result as List<Object?>;
-    return ActiveCaloriesBurnedRecordDto(
-      energy: result[0]! as EnergyDto,
-      endTime: result[1]! as int,
-      id: result[2] as String?,
-      metadata: result[3]! as MetadataDto,
-      startTime: result[4]! as int,
-      endZoneOffsetSeconds: result[5] as int?,
-      startZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! ActiveCaloriesBurnedRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a distance record for platform transfer.
-///
-/// Maps to:
-/// - Health Connect: `androidx.health.connect.client.records.DistanceRecord`
-/// - Domain: `DistanceRecord`
-class DistanceRecordDto {
-  DistanceRecordDto({
-    required this.distance,
-    required this.endTime,
-    this.id,
-    required this.metadata,
-    required this.startTime,
-    this.endZoneOffsetSeconds,
-    this.startZoneOffsetSeconds,
-  });
-
-  /// Distance traveled during the interval.
-  LengthDto distance;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      distance,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static DistanceRecordDto decode(Object result) {
-    result as List<Object?>;
-    return DistanceRecordDto(
-      distance: result[0]! as LengthDto,
-      endTime: result[1]! as int,
-      id: result[2] as String?,
-      metadata: result[3]! as MetadataDto,
-      startTime: result[4]! as int,
-      endZoneOffsetSeconds: result[5] as int?,
-      startZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! DistanceRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a floors climbed record for platform transfer.
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.flightsClimbed`
-/// - Domain: `FloorsClimbedRecord`
-class FloorsClimbedRecordDto {
-  FloorsClimbedRecordDto({
-    required this.floors,
-    required this.endTime,
-    this.id,
-    required this.metadata,
-    required this.startTime,
-    this.endZoneOffsetSeconds,
-    this.startZoneOffsetSeconds,
-  });
-
-  /// Number of floors (flights of stairs) climbed during the interval.
-  NumericDto floors;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      floors,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static FloorsClimbedRecordDto decode(Object result) {
-    result as List<Object?>;
-    return FloorsClimbedRecordDto(
-      floors: result[0]! as NumericDto,
-      endTime: result[1]! as int,
-      id: result[2] as String?,
-      metadata: result[3]! as MetadataDto,
-      startTime: result[4]! as int,
-      endZoneOffsetSeconds: result[5] as int?,
-      startZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! FloorsClimbedRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a wheelchair pushes record for platform transfer.
-class WheelchairPushesRecordDto {
-  WheelchairPushesRecordDto({
-    required this.pushes,
-    required this.endTime,
-    this.id,
-    required this.metadata,
-    required this.startTime,
-    this.endZoneOffsetSeconds,
-    this.startZoneOffsetSeconds,
-  });
-
-  /// Number of wheelchair pushes performed during the interval.
-  NumericDto pushes;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      pushes,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static WheelchairPushesRecordDto decode(Object result) {
-    result as List<Object?>;
-    return WheelchairPushesRecordDto(
-      pushes: result[0]! as NumericDto,
-      endTime: result[1]! as int,
-      id: result[2] as String?,
-      metadata: result[3]! as MetadataDto,
-      startTime: result[4]! as int,
-      endZoneOffsetSeconds: result[5] as int?,
-      startZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! WheelchairPushesRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a step count record for platform transfer.
-class StepRecordDto {
-  StepRecordDto({
-    required this.count,
-    required this.endTime,
-    this.id,
-    required this.metadata,
-    required this.startTime,
-    this.endZoneOffsetSeconds,
-    this.startZoneOffsetSeconds,
-  });
-
-  /// Number of steps taken during the interval (must be >= 0).
-  NumericDto count;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      count,
-      endTime,
-      id,
-      metadata,
-      startTime,
-      endZoneOffsetSeconds,
-      startZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static StepRecordDto decode(Object result) {
-    result as List<Object?>;
-    return StepRecordDto(
-      count: result[0]! as NumericDto,
-      endTime: result[1]! as int,
-      id: result[2] as String?,
-      metadata: result[3]! as MetadataDto,
-      startTime: result[4]! as int,
-      endZoneOffsetSeconds: result[5] as int?,
-      startZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! StepRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a weight record for platform transfer.
-class WeightRecordDto {
-  WeightRecordDto({
-    this.id,
-    required this.metadata,
-    required this.time,
-    required this.weight,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Weight measurement.
-  MassDto weight;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      metadata,
-      time,
-      weight,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static WeightRecordDto decode(Object result) {
-    result as List<Object?>;
-    return WeightRecordDto(
-      id: result[0] as String?,
-      metadata: result[1]! as MetadataDto,
-      time: result[2]! as int,
-      weight: result[3]! as MassDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! WeightRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// DTO for lean body mass health data.
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.leanBodyMass`
-/// - Domain: `LeanBodyMassRecord`
-class LeanBodyMassRecordDto {
-  LeanBodyMassRecordDto({
-    this.id,
-    required this.metadata,
-    required this.time,
-    required this.mass,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Lean body mass measurement.
-  MassDto mass;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      metadata,
-      time,
-      mass,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static LeanBodyMassRecordDto decode(Object result) {
-    result as List<Object?>;
-    return LeanBodyMassRecordDto(
-      id: result[0] as String?,
-      metadata: result[1]! as MetadataDto,
-      time: result[2]! as int,
-      mass: result[3]! as MassDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! LeanBodyMassRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// DTO for body height health data.
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.height`
-/// - Domain: `HeightRecord`
-class HeightRecordDto {
-  HeightRecordDto({
-    this.id,
-    required this.metadata,
-    required this.time,
-    required this.height,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Height measurement.
-  LengthDto height;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      metadata,
-      time,
-      height,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static HeightRecordDto decode(Object result) {
-    result as List<Object?>;
-    return HeightRecordDto(
-      id: result[0] as String?,
-      metadata: result[1]! as MetadataDto,
-      time: result[2]! as int,
-      height: result[3]! as LengthDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! HeightRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// DTO for body fat percentage health data.
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.bodyFatPercentage`
-/// - Domain: `BodyFatPercentageRecord`
-class BodyFatPercentageRecordDto {
-  BodyFatPercentageRecordDto({
-    this.id,
-    required this.metadata,
-    required this.time,
-    required this.percentage,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Body fat percentage measurement.
-  PercentageDto percentage;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      metadata,
-      time,
-      percentage,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static BodyFatPercentageRecordDto decode(Object result) {
-    result as List<Object?>;
-    return BodyFatPercentageRecordDto(
-      id: result[0] as String?,
-      metadata: result[1]! as MetadataDto,
-      time: result[2]! as int,
-      percentage: result[3]! as PercentageDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! BodyFatPercentageRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// DTO for body temperature health data.
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.bodyTemperature`
-/// - Domain: `BodyTemperatureRecord`
-class BodyTemperatureRecordDto {
-  BodyTemperatureRecordDto({
-    this.id,
-    required this.metadata,
-    required this.time,
-    required this.temperature,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Body temperature measurement.
-  TemperatureDto temperature;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      metadata,
-      time,
-      temperature,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static BodyTemperatureRecordDto decode(Object result) {
-    result as List<Object?>;
-    return BodyTemperatureRecordDto(
-      id: result[0] as String?,
-      metadata: result[1]! as MetadataDto,
-      time: result[2]! as int,
-      temperature: result[3]! as TemperatureDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! BodyTemperatureRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a hydration (water intake) record for platform transfer.
-///
-/// Maps to:
-/// - Health Connect:
-///   `androidx.health.connect.client.records.HydrationRecord`
-/// - Domain: `HydrationRecord`
-class HydrationRecordDto {
-  HydrationRecordDto({
-    this.id,
-    required this.startTime,
-    required this.endTime,
-    required this.metadata,
-    required this.volume,
-    this.startZoneOffsetSeconds,
-    this.endZoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Start time in milliseconds since epoch (UTC).
-  int startTime;
-
-  /// End time in milliseconds since epoch (UTC).
-  int endTime;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// Volume of water consumed during the interval.
-  VolumeDto volume;
-
-  /// Timezone offset in seconds for start time (optional).
-  int? startZoneOffsetSeconds;
-
-  /// Timezone offset in seconds for end time (optional).
-  int? endZoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      startTime,
-      endTime,
-      metadata,
-      volume,
-      startZoneOffsetSeconds,
-      endZoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static HydrationRecordDto decode(Object result) {
-    result as List<Object?>;
-    return HydrationRecordDto(
-      id: result[0] as String?,
-      startTime: result[1]! as int,
-      endTime: result[2]! as int,
-      metadata: result[3]! as MetadataDto,
-      volume: result[4]! as VolumeDto,
-      startZoneOffsetSeconds: result[5] as int?,
-      endZoneOffsetSeconds: result[6] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! HydrationRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a single heart rate measurement for platform transfer.
-///
-/// This is a platform-agnostic value class used within heart rate records.
-/// It contains a timestamp and BPM value without ID or metadata.
-class HeartRateMeasurementDto {
-  HeartRateMeasurementDto({
-    required this.time,
-    required this.beatsPerMinute,
-  });
-
-  /// Timestamp in milliseconds since epoch (UTC).
-  int time;
-
-  /// Heart rate value in beats per minute (BPM).
-  NumericDto beatsPerMinute;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      time,
-      beatsPerMinute,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static HeartRateMeasurementDto decode(Object result) {
-    result as List<Object?>;
-    return HeartRateMeasurementDto(
-      time: result[0]! as int,
-      beatsPerMinute: result[1]! as NumericDto,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! HeartRateMeasurementDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
-/// Represents a heart rate measurement record for platform transfer (iOS).
-///
-/// Maps to:
-/// - HealthKit: `HKQuantityTypeIdentifier.heartRate`
-/// - Domain: `HeartRateMeasurementRecord`
-class HeartRateMeasurementRecordDto {
-  HeartRateMeasurementRecordDto({
-    this.id,
-    required this.time,
-    required this.metadata,
-    required this.measurement,
-    this.zoneOffsetSeconds,
-  });
-
-  /// Platform-assigned unique identifier.
-  String? id;
-
-  /// Measurement time in milliseconds since epoch (UTC).
-  int time;
-
-  /// Metadata about this record.
-  MetadataDto metadata;
-
-  /// The heart rate measurement.
-  HeartRateMeasurementDto measurement;
-
-  /// Timezone offset in seconds for measurement time (optional).
-  int? zoneOffsetSeconds;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      id,
-      time,
-      metadata,
-      measurement,
-      zoneOffsetSeconds,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static HeartRateMeasurementRecordDto decode(Object result) {
-    result as List<Object?>;
-    return HeartRateMeasurementRecordDto(
-      id: result[0] as String?,
-      time: result[1]! as int,
-      metadata: result[2]! as MetadataDto,
-      measurement: result[3]! as HeartRateMeasurementDto,
-      zoneOffsetSeconds: result[4] as int?,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! HeartRateMeasurementRecordDto || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
 /// Request to perform aggregation on health records.
 class AggregateRequestDto {
   AggregateRequestDto({
@@ -2210,79 +2140,17 @@ class AggregateRequestDto {
 }
 
 /// Response containing aggregated value.
-///
-/// Uses explicit typed fields for compile-time safety.
-/// Only ONE field will be non-null based on the dataType requested.
 class AggregateResponseDto {
   AggregateResponseDto({
-    required this.aggregationMetric,
-    required this.dataType,
-    this.activeCaloriesBurnedValue,
-    this.bodyTemperatureValue,
-    this.doubleValue,
-    this.hydrationValue,
-    this.lengthValue,
-    this.massValue,
-    this.leanBodyMassValue,
-    this.wheelchairPushesValue,
-    this.heartRateMeasurementRecordValue,
+    required this.value,
   });
 
-  /// The type of aggregation that was performed.
-  AggregationMetricDto aggregationMetric;
-
-  /// The type of health data that was aggregated.
-  HealthDataTypeDto dataType;
-
-  /// Active calories burned aggregated value
-  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
-  EnergyDto? activeCaloriesBurnedValue;
-
-  /// Body temperature aggregated value
-  /// (non-null when dataType == BODY_TEMPERATURE and aggregationMetric is avg/min/max).
-  TemperatureDto? bodyTemperatureValue;
-
-  /// Numeric aggregated value.
-  ///
-  /// Used for primitive numeric types like steps and count operations.
-  double? doubleValue;
-
-  /// Hydration aggregated value
-  /// (non-null when dataType == HYDRATION).
-  VolumeDto? hydrationValue;
-
-  /// Length aggregated value
-  /// (non-null when dataType == DISTANCE or dataType == HEIGHT).
-  LengthDto? lengthValue;
-
-  /// Mass aggregated value (non-null when dataType == WEIGHT and aggregationMetric is avg/min/max).
-  MassDto? massValue;
-
-  /// Lean body mass aggregated value
-  /// (non-null when dataType == LEAN_BODY_MASS and aggregationMetric is avg/min/max).
-  MassDto? leanBodyMassValue;
-
-  /// Wheelchair pushes aggregated value
-  /// (non-null when dataType == WHEELCHAIR_PUSHES).
-  NumericDto? wheelchairPushesValue;
-
-  /// Heart rate measurement record aggregated value
-  /// (non-null when dataType == HEART_RATE_MEASUREMENT_RECORD).
-  NumericDto? heartRateMeasurementRecordValue;
+  /// Aggregated value.
+  MeasurementUnitDto value;
 
   List<Object?> _toList() {
     return <Object?>[
-      aggregationMetric,
-      dataType,
-      activeCaloriesBurnedValue,
-      bodyTemperatureValue,
-      doubleValue,
-      hydrationValue,
-      lengthValue,
-      massValue,
-      leanBodyMassValue,
-      wheelchairPushesValue,
-      heartRateMeasurementRecordValue,
+      value,
     ];
   }
 
@@ -2292,17 +2160,7 @@ class AggregateResponseDto {
   static AggregateResponseDto decode(Object result) {
     result as List<Object?>;
     return AggregateResponseDto(
-      aggregationMetric: result[0]! as AggregationMetricDto,
-      dataType: result[1]! as HealthDataTypeDto,
-      activeCaloriesBurnedValue: result[2] as EnergyDto?,
-      bodyTemperatureValue: result[3] as TemperatureDto?,
-      doubleValue: result[4] as double?,
-      hydrationValue: result[5] as VolumeDto?,
-      lengthValue: result[6] as LengthDto?,
-      massValue: result[7] as MassDto?,
-      leanBodyMassValue: result[8] as MassDto?,
-      wheelchairPushesValue: result[9] as NumericDto?,
-      heartRateMeasurementRecordValue: result[10] as NumericDto?,
+      value: result[0]! as MeasurementUnitDto,
     );
   }
 
@@ -2431,20 +2289,20 @@ class DeleteRecordsByTimeRangeRequestDto {
 /// Request to read a single health record by ID.
 class ReadRecordRequestDto {
   ReadRecordRequestDto({
-    required this.dataType,
     required this.recordId,
+    required this.dataType,
   });
-
-  /// The type of health data to read.
-  HealthDataTypeDto dataType;
 
   /// The unique identifier of the record to read.
   String recordId;
 
+  /// The type of health data to read.
+  HealthDataTypeDto dataType;
+
   List<Object?> _toList() {
     return <Object?>[
-      dataType,
       recordId,
+      dataType,
     ];
   }
 
@@ -2454,8 +2312,8 @@ class ReadRecordRequestDto {
   static ReadRecordRequestDto decode(Object result) {
     result as List<Object?>;
     return ReadRecordRequestDto(
-      dataType: result[0]! as HealthDataTypeDto,
-      recordId: result[1]! as String,
+      recordId: result[0]! as String,
+      dataType: result[1]! as HealthDataTypeDto,
     );
   }
 
@@ -2478,92 +2336,17 @@ class ReadRecordRequestDto {
 }
 
 /// Response containing a single health record.
-///
-/// Uses explicit typed fields for compile-time safety.
-/// Only ONE field will be non-null based on the dataType requested.
 class ReadRecordResponseDto {
   ReadRecordResponseDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateMeasurementRecord,
+    this.record,
   });
 
-  /// The type of health data that was read.
-  HealthDataTypeDto dataType;
-
-  /// Active calories burned record
-  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
-  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record
-  /// (non-null when dataType == DISTANCE).
-  DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record
-  /// (non-null when dataType == FLOORS_CLIMBED).
-  FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record
-  /// (non-null when dataType == HEIGHT).
-  HeightRecordDto? heightRecord;
-
-  /// Hydration record
-  /// (non-null when dataType == HYDRATION).
-  HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record
-  /// (non-null when dataType == LEAN_BODY_MASS).
-  LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record
-  /// (non-null when dataType == STEPS).
-  StepRecordDto? stepsRecord;
-
-  /// Weight record
-  /// (non-null when dataType == WEIGHT).
-  WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record
-  /// (non-null when dataType == BODY_FAT_PERCENTAGE).
-  BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record
-  /// (non-null when dataType == BODY_TEMPERATURE).
-  BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record
-  /// (non-null when dataType == WHEELCHAIR_PUSHES).
-  WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate measurement record
-  /// (non-null when dataType == HEART_RATE_MEASUREMENT_RECORD).
-  HeartRateMeasurementRecordDto? heartRateMeasurementRecord;
+  /// The health record that was read.
+  HealthRecordDto? record;
 
   List<Object?> _toList() {
     return <Object?>[
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateMeasurementRecord,
+      record,
     ];
   }
 
@@ -2573,19 +2356,7 @@ class ReadRecordResponseDto {
   static ReadRecordResponseDto decode(Object result) {
     result as List<Object?>;
     return ReadRecordResponseDto(
-      dataType: result[0]! as HealthDataTypeDto,
-      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
-      distanceRecord: result[2] as DistanceRecordDto?,
-      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
-      heightRecord: result[4] as HeightRecordDto?,
-      hydrationRecord: result[5] as HydrationRecordDto?,
-      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
-      stepsRecord: result[7] as StepRecordDto?,
-      weightRecord: result[8] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
-      heartRateMeasurementRecord: result[12] as HeartRateMeasurementRecordDto?,
+      record: result[0] as HealthRecordDto?,
     );
   }
 
@@ -2610,22 +2381,16 @@ class ReadRecordResponseDto {
 /// Request to read multiple health records within a time range.
 class ReadRecordsRequestDto {
   ReadRecordsRequestDto({
-    this.dataOriginPackageNames = const [],
     required this.dataType,
-    required this.endTime,
     required this.pageSize,
     this.pageToken,
     required this.startTime,
+    required this.endTime,
+    this.dataOriginPackageNames = const [],
   });
-
-  /// List of package names to filter by.
-  List<String> dataOriginPackageNames;
 
   /// The type of health data to read.
   HealthDataTypeDto dataType;
-
-  /// End of time range in milliseconds since epoch (UTC), exclusive.
-  int endTime;
 
   /// Maximum number of records to return per page (1-10,000).
   int pageSize;
@@ -2638,14 +2403,20 @@ class ReadRecordsRequestDto {
   /// Start of time range in milliseconds since epoch (UTC), inclusive.
   int startTime;
 
+  /// End of time range in milliseconds since epoch (UTC), exclusive.
+  int endTime;
+
+  /// List of package names to filter by.
+  List<String> dataOriginPackageNames;
+
   List<Object?> _toList() {
     return <Object?>[
-      dataOriginPackageNames,
       dataType,
-      endTime,
       pageSize,
       pageToken,
       startTime,
+      endTime,
+      dataOriginPackageNames,
     ];
   }
 
@@ -2655,12 +2426,12 @@ class ReadRecordsRequestDto {
   static ReadRecordsRequestDto decode(Object result) {
     result as List<Object?>;
     return ReadRecordsRequestDto(
-      dataOriginPackageNames: (result[0] as List<Object?>?)!.cast<String>(),
-      dataType: result[1]! as HealthDataTypeDto,
-      endTime: result[2]! as int,
-      pageSize: result[3]! as int,
-      pageToken: result[4] as String?,
-      startTime: result[5]! as int,
+      dataType: result[0]! as HealthDataTypeDto,
+      pageSize: result[1]! as int,
+      pageToken: result[2] as String?,
+      startTime: result[3]! as int,
+      endTime: result[4]! as int,
+      dataOriginPackageNames: (result[5] as List<Object?>?)!.cast<String>(),
     );
   }
 
@@ -2683,97 +2454,22 @@ class ReadRecordsRequestDto {
 }
 
 /// Response containing paginated health records.
-///
-/// Uses explicit typed lists for compile-time safety.
-/// Only ONE list will be non-null based on the dataType requested.
 class ReadRecordsResponseDto {
   ReadRecordsResponseDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecords,
-    this.distanceRecords,
-    this.floorsClimbedRecords,
-    this.heightRecords,
-    this.hydrationRecords,
-    this.leanBodyMassRecords,
     this.nextPageToken,
-    this.stepsRecords,
-    this.weightRecords,
-    this.bodyFatPercentageRecords,
-    this.bodyTemperatureRecords,
-    this.wheelchairPushesRecords,
-    this.heartRateMeasurementRecords,
+    required this.records,
   });
-
-  /// The type of health data that was read.
-  HealthDataTypeDto dataType;
-
-  /// List of active calories burned records
-  /// (non-null when dataType == ACTIVE_CALORIES_BURNED).
-  List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
-
-  /// List of distance records
-  /// (non-null when dataType == DISTANCE).
-  List<DistanceRecordDto>? distanceRecords;
-
-  /// List of floors climbed records
-  /// (non-null when dataType == FLOORS_CLIMBED).
-  List<FloorsClimbedRecordDto>? floorsClimbedRecords;
-
-  /// List of height records
-  /// (non-null when dataType == HEIGHT).
-  List<HeightRecordDto>? heightRecords;
-
-  /// List of hydration records
-  /// (non-null when dataType == HYDRATION).
-  List<HydrationRecordDto>? hydrationRecords;
-
-  /// List of lean body mass records
-  /// (non-null when dataType == LEAN_BODY_MASS).
-  List<LeanBodyMassRecordDto>? leanBodyMassRecords;
 
   /// Token for fetching next page, null if no more pages exist.
   String? nextPageToken;
 
-  /// List of step records
-  /// (non-null when dataType == STEPS).
-  List<StepRecordDto>? stepsRecords;
-
-  /// List of weight records
-  /// (non-null when dataType == WEIGHT).
-  List<WeightRecordDto>? weightRecords;
-
-  /// List of body fat percentage records
-  /// (non-null when dataType == BODY_FAT_PERCENTAGE).
-  List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
-
-  /// List of body temperature records
-  /// (non-null when dataType == BODY_TEMPERATURE).
-  List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
-
-  /// List of wheelchair pushes records
-  /// (non-null when dataType == WHEELCHAIR_PUSHES).
-  List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
-
-  /// List of heart rate measurement records
-  /// (non-null when dataType == HEART_RATE_MEASUREMENT_RECORD).
-  List<HeartRateMeasurementRecordDto>? heartRateMeasurementRecords;
+  /// List of health records that were read.
+  List<HealthRecordDto> records;
 
   List<Object?> _toList() {
     return <Object?>[
-      dataType,
-      activeCaloriesBurnedRecords,
-      distanceRecords,
-      floorsClimbedRecords,
-      heightRecords,
-      hydrationRecords,
-      leanBodyMassRecords,
       nextPageToken,
-      stepsRecords,
-      weightRecords,
-      bodyFatPercentageRecords,
-      bodyTemperatureRecords,
-      wheelchairPushesRecords,
-      heartRateMeasurementRecords,
+      records,
     ];
   }
 
@@ -2783,20 +2479,8 @@ class ReadRecordsResponseDto {
   static ReadRecordsResponseDto decode(Object result) {
     result as List<Object?>;
     return ReadRecordsResponseDto(
-      dataType: result[0]! as HealthDataTypeDto,
-      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)?.cast<ActiveCaloriesBurnedRecordDto>(),
-      distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      floorsClimbedRecords: (result[3] as List<Object?>?)?.cast<FloorsClimbedRecordDto>(),
-      heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      hydrationRecords: (result[5] as List<Object?>?)?.cast<HydrationRecordDto>(),
-      leanBodyMassRecords: (result[6] as List<Object?>?)?.cast<LeanBodyMassRecordDto>(),
-      nextPageToken: result[7] as String?,
-      stepsRecords: (result[8] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[9] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[10] as List<Object?>?)?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[11] as List<Object?>?)?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[12] as List<Object?>?)?.cast<WheelchairPushesRecordDto>(),
-      heartRateMeasurementRecords: (result[13] as List<Object?>?)?.cast<HeartRateMeasurementRecordDto>(),
+      nextPageToken: result[0] as String?,
+      records: (result[1] as List<Object?>?)!.cast<HealthRecordDto>(),
     );
   }
 
@@ -2819,92 +2503,17 @@ class ReadRecordsResponseDto {
 }
 
 /// Request to write a single health record.
-///
-/// Uses explicit typed fields for compile-time safety.
-/// Only ONE field should be non-null per request.
 class WriteRecordRequestDto {
   WriteRecordRequestDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateMeasurementRecord,
+    required this.record,
   });
 
-  /// The type of health data being written.
-  HealthDataTypeDto dataType;
-
-  /// Active calories burned record
-  /// (only non-null when dataType == ACTIVE_CALORIES_BURNED).
-  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record
-  /// (only non-null when dataType == DISTANCE).
-  DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record
-  /// (only non-null when dataType == FLOORS_CLIMBED).
-  FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record
-  /// (only non-null when dataType == HEIGHT).
-  HeightRecordDto? heightRecord;
-
-  /// Hydration record
-  /// (only non-null when dataType == HYDRATION).
-  HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record
-  /// (only non-null when dataType == LEAN_BODY_MASS).
-  LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record
-  /// (only non-null when dataType == STEPS).
-  StepRecordDto? stepsRecord;
-
-  /// Weight record
-  /// (only non-null when dataType == WEIGHT).
-  WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record
-  /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
-  BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record
-  /// (only non-null when dataType == BODY_TEMPERATURE).
-  BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record
-  /// (only non-null when dataType == WHEELCHAIR_PUSHES).
-  WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate measurement record
-  /// (only non-null when dataType == HEART_RATE_MEASUREMENT_RECORD).
-  HeartRateMeasurementRecordDto? heartRateMeasurementRecord;
+  /// Health record.
+  HealthRecordDto record;
 
   List<Object?> _toList() {
     return <Object?>[
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateMeasurementRecord,
+      record,
     ];
   }
 
@@ -2914,19 +2523,7 @@ class WriteRecordRequestDto {
   static WriteRecordRequestDto decode(Object result) {
     result as List<Object?>;
     return WriteRecordRequestDto(
-      dataType: result[0]! as HealthDataTypeDto,
-      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
-      distanceRecord: result[2] as DistanceRecordDto?,
-      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
-      heightRecord: result[4] as HeightRecordDto?,
-      hydrationRecord: result[5] as HydrationRecordDto?,
-      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
-      stepsRecord: result[7] as StepRecordDto?,
-      weightRecord: result[8] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
-      heartRateMeasurementRecord: result[12] as HeartRateMeasurementRecordDto?,
+      record: result[0]! as HealthRecordDto,
     );
   }
 
@@ -2992,96 +2589,17 @@ class WriteRecordResponseDto {
 }
 
 /// Request to write multiple health records atomically.
-///
-/// Uses explicit typed lists for compile-time safety.
-/// Multiple lists can be non-null, each corresponding to a different data type.
-/// All records must be valid for the operation to succeed (atomic).
 class WriteRecordsRequestDto {
   WriteRecordsRequestDto({
-    required this.dataTypes,
-    this.activeCaloriesBurnedRecords,
-    this.distanceRecords,
-    this.floorsClimbedRecords,
-    this.heightRecords,
-    this.hydrationRecords,
-    this.leanBodyMassRecords,
-    this.stepsRecords,
-    this.weightRecords,
-    this.bodyFatPercentageRecords,
-    this.bodyTemperatureRecords,
-    this.wheelchairPushesRecords,
-    this.heartRateMeasurementRecords,
+    required this.records,
   });
 
-  /// The types of health data being written.
-  ///
-  /// This list indicates which record type lists contain data.
-  /// Each data type in this list corresponds to a non-null list field.
-  List<HealthDataTypeDto> dataTypes;
-
-  /// List of active calories burned records
-  /// (non-null when dataTypes contains ACTIVE_CALORIES_BURNED).
-  List<ActiveCaloriesBurnedRecordDto>? activeCaloriesBurnedRecords;
-
-  /// List of distance records
-  /// (non-null when dataTypes contains DISTANCE).
-  List<DistanceRecordDto>? distanceRecords;
-
-  /// List of floors climbed records
-  /// (non-null when dataTypes contains FLOORS_CLIMBED).
-  List<FloorsClimbedRecordDto>? floorsClimbedRecords;
-
-  /// List of height records
-  /// (non-null when dataTypes contains HEIGHT).
-  List<HeightRecordDto>? heightRecords;
-
-  /// List of hydration records
-  /// (non-null when dataTypes contains HYDRATION).
-  List<HydrationRecordDto>? hydrationRecords;
-
-  /// List of lean body mass records
-  /// (non-null when dataTypes contains LEAN_BODY_MASS).
-  List<LeanBodyMassRecordDto>? leanBodyMassRecords;
-
-  /// List of step records
-  /// (non-null when dataTypes contains STEPS).
-  List<StepRecordDto>? stepsRecords;
-
-  /// List of weight records
-  /// (non-null when dataTypes contains WEIGHT).
-  List<WeightRecordDto>? weightRecords;
-
-  /// List of body fat percentage records
-  /// (non-null when dataTypes contains BODY_FAT_PERCENTAGE).
-  List<BodyFatPercentageRecordDto>? bodyFatPercentageRecords;
-
-  /// List of body temperature records
-  /// (non-null when dataTypes contains BODY_TEMPERATURE).
-  List<BodyTemperatureRecordDto>? bodyTemperatureRecords;
-
-  /// List of wheelchair pushes records
-  /// (non-null when dataTypes contains WHEELCHAIR_PUSHES).
-  List<WheelchairPushesRecordDto>? wheelchairPushesRecords;
-
-  /// List of heart rate measurement records
-  /// (non-null when dataTypes contains HEART_RATE_MEASUREMENT_RECORD).
-  List<HeartRateMeasurementRecordDto>? heartRateMeasurementRecords;
+  /// Records being written.
+  List<HealthRecordDto> records;
 
   List<Object?> _toList() {
     return <Object?>[
-      dataTypes,
-      activeCaloriesBurnedRecords,
-      distanceRecords,
-      floorsClimbedRecords,
-      heightRecords,
-      hydrationRecords,
-      leanBodyMassRecords,
-      stepsRecords,
-      weightRecords,
-      bodyFatPercentageRecords,
-      bodyTemperatureRecords,
-      wheelchairPushesRecords,
-      heartRateMeasurementRecords,
+      records,
     ];
   }
 
@@ -3091,19 +2609,7 @@ class WriteRecordsRequestDto {
   static WriteRecordsRequestDto decode(Object result) {
     result as List<Object?>;
     return WriteRecordsRequestDto(
-      dataTypes: (result[0] as List<Object?>?)!.cast<HealthDataTypeDto>(),
-      activeCaloriesBurnedRecords: (result[1] as List<Object?>?)?.cast<ActiveCaloriesBurnedRecordDto>(),
-      distanceRecords: (result[2] as List<Object?>?)?.cast<DistanceRecordDto>(),
-      floorsClimbedRecords: (result[3] as List<Object?>?)?.cast<FloorsClimbedRecordDto>(),
-      heightRecords: (result[4] as List<Object?>?)?.cast<HeightRecordDto>(),
-      hydrationRecords: (result[5] as List<Object?>?)?.cast<HydrationRecordDto>(),
-      leanBodyMassRecords: (result[6] as List<Object?>?)?.cast<LeanBodyMassRecordDto>(),
-      stepsRecords: (result[7] as List<Object?>?)?.cast<StepRecordDto>(),
-      weightRecords: (result[8] as List<Object?>?)?.cast<WeightRecordDto>(),
-      bodyFatPercentageRecords: (result[9] as List<Object?>?)?.cast<BodyFatPercentageRecordDto>(),
-      bodyTemperatureRecords: (result[10] as List<Object?>?)?.cast<BodyTemperatureRecordDto>(),
-      wheelchairPushesRecords: (result[11] as List<Object?>?)?.cast<WheelchairPushesRecordDto>(),
-      heartRateMeasurementRecords: (result[12] as List<Object?>?)?.cast<HeartRateMeasurementRecordDto>(),
+      records: (result[0] as List<Object?>?)!.cast<HealthRecordDto>(),
     );
   }
 
@@ -3132,8 +2638,6 @@ class WriteRecordsResponseDto {
   });
 
   /// Platform-assigned unique identifiers for written records.
-  ///
-  /// Order matches the order of records in the request.
   List<String> recordIds;
 
   List<Object?> _toList() {
@@ -3171,106 +2675,17 @@ class WriteRecordsResponseDto {
 }
 
 /// Request to update a single health record.
-///
-/// Uses explicit typed fields for compile-time safety.
-/// Only ONE field should be non-null per request.
-///
-/// Unlike write operations, the record must have a valid existing ID.
 class UpdateRecordRequestDto {
   UpdateRecordRequestDto({
-    required this.dataType,
-    this.activeCaloriesBurnedRecord,
-    this.distanceRecord,
-    this.floorsClimbedRecord,
-    this.heightRecord,
-    this.hydrationRecord,
-    this.leanBodyMassRecord,
-    this.stepsRecord,
-    this.weightRecord,
-    this.bodyFatPercentageRecord,
-    this.bodyTemperatureRecord,
-    this.wheelchairPushesRecord,
-    this.heartRateMeasurementRecord,
+    required this.record,
   });
 
-  /// The type of health data being updated.
-  HealthDataTypeDto dataType;
-
-  /// Active calories burned record
-  /// (only non-null when dataType == ACTIVE_CALORIES_BURNED).
-  /// The record must have a valid existing ID.
-  ActiveCaloriesBurnedRecordDto? activeCaloriesBurnedRecord;
-
-  /// Distance record
-  /// (only non-null when dataType == DISTANCE).
-  /// The record must have a valid existing ID.
-  DistanceRecordDto? distanceRecord;
-
-  /// Floors climbed record
-  /// (only non-null when dataType == FLOORS_CLIMBED).
-  /// The record must have a valid existing ID.
-  FloorsClimbedRecordDto? floorsClimbedRecord;
-
-  /// Height record
-  /// (only non-null when dataType == HEIGHT).
-  /// The record must have a valid existing ID.
-  HeightRecordDto? heightRecord;
-
-  /// Hydration record
-  /// (only non-null when dataType == HYDRATION).
-  /// The record must have a valid existing ID.
-  HydrationRecordDto? hydrationRecord;
-
-  /// Lean body mass record
-  /// (only non-null when dataType == LEAN_BODY_MASS).
-  /// The record must have a valid existing ID.
-  LeanBodyMassRecordDto? leanBodyMassRecord;
-
-  /// Step count record
-  /// (only non-null when dataType == STEPS).
-  /// The record must have a valid existing ID.
-  StepRecordDto? stepsRecord;
-
-  /// Weight record
-  /// (only non-null when dataType == WEIGHT).
-  /// The record must have a valid existing ID.
-  WeightRecordDto? weightRecord;
-
-  /// Body fat percentage record
-  /// (only non-null when dataType == BODY_FAT_PERCENTAGE).
-  /// The record must have a valid existing ID.
-  BodyFatPercentageRecordDto? bodyFatPercentageRecord;
-
-  /// Body temperature record
-  /// (only non-null when dataType == BODY_TEMPERATURE).
-  /// The record must have a valid existing ID.
-  BodyTemperatureRecordDto? bodyTemperatureRecord;
-
-  /// Wheelchair pushes record
-  /// (only non-null when dataType == WHEELCHAIR_PUSHES).
-  /// The record must have a valid existing ID.
-  WheelchairPushesRecordDto? wheelchairPushesRecord;
-
-  /// Heart rate measurement record
-  /// (only non-null when dataType == HEART_RATE_MEASUREMENT_RECORD).
-  /// The record must have a valid existing ID.
-  HeartRateMeasurementRecordDto? heartRateMeasurementRecord;
+  /// The health record to update.
+  HealthRecordDto record;
 
   List<Object?> _toList() {
     return <Object?>[
-      dataType,
-      activeCaloriesBurnedRecord,
-      distanceRecord,
-      floorsClimbedRecord,
-      heightRecord,
-      hydrationRecord,
-      leanBodyMassRecord,
-      stepsRecord,
-      weightRecord,
-      bodyFatPercentageRecord,
-      bodyTemperatureRecord,
-      wheelchairPushesRecord,
-      heartRateMeasurementRecord,
+      record,
     ];
   }
 
@@ -3280,19 +2695,7 @@ class UpdateRecordRequestDto {
   static UpdateRecordRequestDto decode(Object result) {
     result as List<Object?>;
     return UpdateRecordRequestDto(
-      dataType: result[0]! as HealthDataTypeDto,
-      activeCaloriesBurnedRecord: result[1] as ActiveCaloriesBurnedRecordDto?,
-      distanceRecord: result[2] as DistanceRecordDto?,
-      floorsClimbedRecord: result[3] as FloorsClimbedRecordDto?,
-      heightRecord: result[4] as HeightRecordDto?,
-      hydrationRecord: result[5] as HydrationRecordDto?,
-      leanBodyMassRecord: result[6] as LeanBodyMassRecordDto?,
-      stepsRecord: result[7] as StepRecordDto?,
-      weightRecord: result[8] as WeightRecordDto?,
-      bodyFatPercentageRecord: result[9] as BodyFatPercentageRecordDto?,
-      bodyTemperatureRecord: result[10] as BodyTemperatureRecordDto?,
-      wheelchairPushesRecord: result[11] as WheelchairPushesRecordDto?,
-      heartRateMeasurementRecord: result[12] as HeartRateMeasurementRecordDto?,
+      record: result[0]! as HealthRecordDto,
     );
   }
 
@@ -3321,8 +2724,6 @@ class UpdateRecordResponseDto {
   });
 
   /// Platform-assigned unique identifier for the updated record.
-  ///
-  /// On Health Connect, this will be the same as the input record ID.
   String recordId;
 
   List<Object?> _toList() {
@@ -3367,58 +2768,58 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is AggregationMetricDto) {
+    }    else if (value is HealthConnectorErrorCodeDto) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is BloodGlucoseUnitDto) {
+    }    else if (value is HealthPlatformStatusDto) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is EnergyUnitDto) {
+    }    else if (value is BloodGlucoseUnitDto) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is HealthConnectorErrorCodeDto) {
+    }    else if (value is EnergyUnitDto) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is HealthDataTypeDto) {
+    }    else if (value is LengthUnitDto) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is HealthPlatformStatusDto) {
+    }    else if (value is MassUnitDto) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is LengthUnitDto) {
+    }    else if (value is NumericUnitDto) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is MassUnitDto) {
+    }    else if (value is PercentageUnitDto) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is NumericUnitDto) {
+    }    else if (value is PermissionAccessTypeDto) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PercentageUnitDto) {
+    }    else if (value is PermissionStatusDto) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PermissionAccessTypeDto) {
+    }    else if (value is PressureUnitDto) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is PermissionStatusDto) {
+    }    else if (value is PowerUnitDto) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    }    else if (value is PressureUnitDto) {
+    }    else if (value is TemperatureUnitDto) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    }    else if (value is PowerUnitDto) {
+    }    else if (value is VelocityUnitDto) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    }    else if (value is RecordingMethodDto) {
+    }    else if (value is VolumeUnitDto) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is TemperatureUnitDto) {
+    }    else if (value is RecordingMethodDto) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is VelocityUnitDto) {
+    }    else if (value is HealthDataTypeDto) {
       buffer.putUint8(145);
       writeValue(buffer, value.index);
-    }    else if (value is VolumeUnitDto) {
+    }    else if (value is AggregationMetricDto) {
       buffer.putUint8(146);
       writeValue(buffer, value.index);
     }    else if (value is BloodGlucoseDto) {
@@ -3466,52 +2867,52 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is HealthDataPermissionDto) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is HealthDataPermissionRequestResultDto) {
+    }    else if (value is ActiveCaloriesBurnedRecordDto) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PermissionsRequestDto) {
+    }    else if (value is DistanceRecordDto) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PermissionsRequestResponseDto) {
+    }    else if (value is FloorsClimbedRecordDto) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is ActiveCaloriesBurnedRecordDto) {
+    }    else if (value is WheelchairPushesRecordDto) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is DistanceRecordDto) {
+    }    else if (value is StepRecordDto) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is FloorsClimbedRecordDto) {
+    }    else if (value is WeightRecordDto) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is WheelchairPushesRecordDto) {
+    }    else if (value is LeanBodyMassRecordDto) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is StepRecordDto) {
+    }    else if (value is HeightRecordDto) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is WeightRecordDto) {
+    }    else if (value is BodyFatPercentageRecordDto) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is LeanBodyMassRecordDto) {
+    }    else if (value is BodyTemperatureRecordDto) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is HeightRecordDto) {
+    }    else if (value is HydrationRecordDto) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is BodyFatPercentageRecordDto) {
+    }    else if (value is HeartRateMeasurementDto) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is BodyTemperatureRecordDto) {
+    }    else if (value is HeartRateMeasurementRecordDto) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is HydrationRecordDto) {
+    }    else if (value is HealthDataPermissionRequestResultDto) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is HeartRateMeasurementDto) {
+    }    else if (value is PermissionsRequestDto) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is HeartRateMeasurementRecordDto) {
+    }    else if (value is PermissionsRequestResponseDto) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
     }    else if (value is AggregateRequestDto) {
@@ -3566,58 +2967,58 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : AggregationMetricDto.values[value];
+        return value == null ? null : HealthConnectorErrorCodeDto.values[value];
       case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : BloodGlucoseUnitDto.values[value];
+        return value == null ? null : HealthPlatformStatusDto.values[value];
       case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : EnergyUnitDto.values[value];
+        return value == null ? null : BloodGlucoseUnitDto.values[value];
       case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : HealthConnectorErrorCodeDto.values[value];
+        return value == null ? null : EnergyUnitDto.values[value];
       case 133: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : HealthDataTypeDto.values[value];
+        return value == null ? null : LengthUnitDto.values[value];
       case 134: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : HealthPlatformStatusDto.values[value];
+        return value == null ? null : MassUnitDto.values[value];
       case 135: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : LengthUnitDto.values[value];
+        return value == null ? null : NumericUnitDto.values[value];
       case 136: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : MassUnitDto.values[value];
+        return value == null ? null : PercentageUnitDto.values[value];
       case 137: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : NumericUnitDto.values[value];
+        return value == null ? null : PermissionAccessTypeDto.values[value];
       case 138: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PercentageUnitDto.values[value];
+        return value == null ? null : PermissionStatusDto.values[value];
       case 139: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PermissionAccessTypeDto.values[value];
+        return value == null ? null : PressureUnitDto.values[value];
       case 140: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PermissionStatusDto.values[value];
+        return value == null ? null : PowerUnitDto.values[value];
       case 141: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PressureUnitDto.values[value];
+        return value == null ? null : TemperatureUnitDto.values[value];
       case 142: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PowerUnitDto.values[value];
+        return value == null ? null : VelocityUnitDto.values[value];
       case 143: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : RecordingMethodDto.values[value];
+        return value == null ? null : VolumeUnitDto.values[value];
       case 144: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : TemperatureUnitDto.values[value];
+        return value == null ? null : RecordingMethodDto.values[value];
       case 145: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : VelocityUnitDto.values[value];
+        return value == null ? null : HealthDataTypeDto.values[value];
       case 146: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : VolumeUnitDto.values[value];
+        return value == null ? null : AggregationMetricDto.values[value];
       case 147: 
         return BloodGlucoseDto.decode(readValue(buffer)!);
       case 148: 
@@ -3649,37 +3050,37 @@ class _PigeonCodec extends StandardMessageCodec {
       case 161: 
         return HealthDataPermissionDto.decode(readValue(buffer)!);
       case 162: 
-        return HealthDataPermissionRequestResultDto.decode(readValue(buffer)!);
-      case 163: 
-        return PermissionsRequestDto.decode(readValue(buffer)!);
-      case 164: 
-        return PermissionsRequestResponseDto.decode(readValue(buffer)!);
-      case 165: 
         return ActiveCaloriesBurnedRecordDto.decode(readValue(buffer)!);
-      case 166: 
+      case 163: 
         return DistanceRecordDto.decode(readValue(buffer)!);
-      case 167: 
+      case 164: 
         return FloorsClimbedRecordDto.decode(readValue(buffer)!);
-      case 168: 
+      case 165: 
         return WheelchairPushesRecordDto.decode(readValue(buffer)!);
-      case 169: 
+      case 166: 
         return StepRecordDto.decode(readValue(buffer)!);
-      case 170: 
+      case 167: 
         return WeightRecordDto.decode(readValue(buffer)!);
-      case 171: 
+      case 168: 
         return LeanBodyMassRecordDto.decode(readValue(buffer)!);
-      case 172: 
+      case 169: 
         return HeightRecordDto.decode(readValue(buffer)!);
-      case 173: 
+      case 170: 
         return BodyFatPercentageRecordDto.decode(readValue(buffer)!);
-      case 174: 
+      case 171: 
         return BodyTemperatureRecordDto.decode(readValue(buffer)!);
-      case 175: 
+      case 172: 
         return HydrationRecordDto.decode(readValue(buffer)!);
-      case 176: 
+      case 173: 
         return HeartRateMeasurementDto.decode(readValue(buffer)!);
-      case 177: 
+      case 174: 
         return HeartRateMeasurementRecordDto.decode(readValue(buffer)!);
+      case 175: 
+        return HealthDataPermissionRequestResultDto.decode(readValue(buffer)!);
+      case 176: 
+        return PermissionsRequestDto.decode(readValue(buffer)!);
+      case 177: 
+        return PermissionsRequestResponseDto.decode(readValue(buffer)!);
       case 178: 
         return AggregateRequestDto.decode(readValue(buffer)!);
       case 179: 
@@ -3715,8 +3116,6 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 /// The main API for communicating with the health platform.
-///
-/// This API is implemented on Android and called from Dart.
 class HealthConnectorPlatformApi {
   /// Constructor for [HealthConnectorPlatformApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -3730,23 +3129,6 @@ class HealthConnectorPlatformApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Performs an aggregation query on health records.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type, aggregation metric, and time range.
-  ///
-  /// ## Returns
-  ///
-  /// - Response containing aggregated value and data point count.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   read permission not granted.
-  /// - PlatformException with code `UNSUPPORTED_OPERATION` if
-  ///   aggregation not supported.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<AggregateResponseDto> aggregate(AggregateRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.aggregate$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3775,17 +3157,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Deletes specific records by their IDs.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type and list of record IDs to delete.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   write permission not granted.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<void> deleteRecordsByIds(DeleteRecordsByIdsRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByIds$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3809,17 +3180,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Deletes all records of a data type within a time range.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type and time range for deletion.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   write permission not granted.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<void> deleteRecordsByTimeRange(DeleteRecordsByTimeRangeRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.deleteRecordsByTimeRange$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3843,10 +3203,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Gets the current status of the health platform.
-  ///
-  /// Returns information about whether the health platform is available,
-  /// installed, and ready to use.
   Future<HealthPlatformStatusDto> getHealthPlatformStatus() async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.getHealthPlatformStatus$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3875,13 +3231,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Requests the specified permissions from the user.
-  ///
-  /// The [request] contains a list of health data permissions.
-  ///
-  /// Returns a response with results for each health data permission requested.
-  ///
-  /// Throws a PlatformException if the request fails.
   Future<PermissionsRequestResponseDto> requestPermissions(PermissionsRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.requestPermissions$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3910,25 +3259,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Reads a single health record by ID.
-  ///
-  /// Returns a DTO with the appropriate typed field populated.
-  /// Returns null if the record doesn't exist or cannot be accessed.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains the data type and record ID to read.
-  ///
-  /// ## Returns
-  ///
-  /// - ReadRecordResponseDto with the appropriate typed field populated,
-  ///   or null if not found.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   read permission not granted.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<ReadRecordResponseDto?> readRecord(ReadRecordRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecord$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3952,26 +3282,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Reads multiple health records within a time range.
-  ///
-  /// Returns paginated results.
-  /// Use the nextPageToken to fetch subsequent pages.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type, time range, page size, and
-  ///   optional page token.
-  ///
-  /// ## Returns
-  ///
-  /// - ReadRecordsResponseDto with the appropriate typed list populated
-  ///   and optional next page token.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   read permission not granted.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<ReadRecordsResponseDto> readRecords(ReadRecordsRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.readRecords$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4000,26 +3310,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Writes a single health record.
-  ///
-  /// Returns the platform-assigned record ID.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type and typed record field.
-  ///   Only ONE field should be non-null based on the dataType.
-  ///
-  /// ## Returns
-  ///
-  /// - Platform-assigned unique identifier for the written record.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   write permission not granted.
-  /// - PlatformException with code `INVALID_ARGUMENT` if
-  ///   record data is invalid.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<WriteRecordResponseDto> writeRecord(WriteRecordRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecord$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4048,27 +3338,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Writes multiple health records atomically.
-  ///
-  /// All records must be valid for the operation to succeed.
-  /// If any record is invalid, the entire batch is rejected.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type and typed list field.
-  ///   Only ONE list should be non-null based on the dataType.
-  ///
-  /// ## Returns
-  ///
-  /// - Platform-assigned unique identifiers for all written records.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   write permission not granted.
-  /// - PlatformException with code `INVALID_ARGUMENT` if
-  ///   any record data is invalid.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<WriteRecordsResponseDto> writeRecords(WriteRecordsRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.writeRecords$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4097,30 +3366,6 @@ class HealthConnectorPlatformApi {
     }
   }
 
-  /// Updates a single health record.
-  ///
-  /// The record must have a valid existing ID.
-  ///
-  /// Uses delete-then-insert internally, as HealthKit does not support updates.
-  /// A new UUID is assigned to the replacement record.
-  ///
-  /// ## Parameters
-  ///
-  /// - [request]: Contains data type and typed record field.
-  ///   The record must have a valid existing ID (not empty or "none").
-  ///
-  /// ## Returns
-  ///
-  /// - Platform-assigned unique identifier for the updated record.
-  ///   This might be not the same as the input record ID.
-  ///
-  /// ## Throws
-  ///
-  /// - PlatformException with code `PERMISSION_DENIED` if
-  ///   write/delete permission not granted.
-  /// - PlatformException with code `INVALID_ARGUMENT` if
-  ///   record ID is invalid or record data is invalid.
-  /// - PlatformException with code `UNKNOWN` for other errors.
   Future<UpdateRecordResponseDto> updateRecord(UpdateRecordRequestDto request) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.health_connector_hk_ios.HealthConnectorPlatformApi.updateRecord$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(

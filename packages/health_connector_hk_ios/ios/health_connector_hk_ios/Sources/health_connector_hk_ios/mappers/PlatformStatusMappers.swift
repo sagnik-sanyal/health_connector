@@ -24,4 +24,3 @@ extension HealthPlatformStatusDto {
         return isAvailable ? .available: .notAvailable
     }
 }
-

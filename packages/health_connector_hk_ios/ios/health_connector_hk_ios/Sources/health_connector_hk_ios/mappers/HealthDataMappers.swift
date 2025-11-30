@@ -54,4 +54,3 @@ extension HealthDataTypeDto {
         return toHealthKitQuantityType()
     }
 }
-

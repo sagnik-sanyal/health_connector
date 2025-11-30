@@ -347,5 +347,3 @@ extension HKQuantity {
         return PercentageDto(unit: .decimal, value: decimalValue)
     }
 }
-
-

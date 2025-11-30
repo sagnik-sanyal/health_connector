@@ -269,7 +269,7 @@ internal class HealthConnectorClient {
      * Reads a single health record by ID.
      *
      * - Parameter request: Contains the data type and record ID to read
-     * - Returns: ReadRecordResponseDto with the appropriate typed field populated, or nil if not found
+     * - Returns: ReadRecordResponseDto with the record populated, or nil if not found
      *
      * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if the record ID format is invalid
      * - Throws: `HealthConnectorError` with code `SECURITY_ERROR` if authorization is denied
@@ -331,241 +331,35 @@ internal class HealthConnectorClient {
                     }
 
                     // Convert SDK sample to DTO using typed mappers
-                    let responseDto: ReadRecordResponseDto?
+                    let recordDto: HealthRecordDto?
                     switch request.dataType {
                     case .activeCaloriesBurned:
-                        if let activeCaloriesBurnedRecord = sample.toActiveCaloriesBurnedRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .activeCaloriesBurned,
-                                activeCaloriesBurnedRecord: activeCaloriesBurnedRecord,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toActiveCaloriesBurnedRecordDto()
                     case .distance:
-                        if let distanceRecord = sample.toDistanceRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .distance,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: distanceRecord,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toDistanceRecordDto()
                     case .floorsClimbed:
-                        if let floorsClimbedRecord = sample.toFloorsClimbedRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .floorsClimbed,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: floorsClimbedRecord,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toFloorsClimbedRecordDto()
                     case .steps:
-                        if let stepRecord = sample.toStepRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .steps,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: stepRecord,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toStepRecordDto()
                     case .weight:
-                        if let weightRecord = sample.toWeightRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .weight,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: weightRecord,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toWeightRecordDto()
                     case .height:
-                        if let heightRecord = sample.toHeightRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .height,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: heightRecord,
-                                hydrationRecord: nil,
-                                leanBodyMassRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toHeightRecordDto()
                     case .hydration:
-                        if let hydrationRecord = sample.toHydrationRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .hydration,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: hydrationRecord,
-                                leanBodyMassRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toHydrationRecordDto()
                     case .leanBodyMass:
-                        if let leanBodyMassRecord = sample.toLeanBodyMassRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .leanBodyMass,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                leanBodyMassRecord: leanBodyMassRecord,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toLeanBodyMassRecordDto()
                     case .bodyFatPercentage:
-                        if let bodyFatPercentageRecord = sample.toBodyFatPercentageRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .bodyFatPercentage,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: bodyFatPercentageRecord,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toBodyFatPercentageRecordDto()
                     case .bodyTemperature:
-                        if let bodyTemperatureRecord = sample.toBodyTemperatureRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .bodyTemperature,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: bodyTemperatureRecord,
-                                wheelchairPushesRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toBodyTemperatureRecordDto()
                     case .wheelchairPushes:
-                        if let wheelchairPushesRecord = sample.toWheelchairPushesRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .wheelchairPushes,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: wheelchairPushesRecord,
-                                heartRateMeasurementRecord: nil
-                            )
-                        } else {
-                            responseDto = nil
-                        }
-
+                        recordDto = sample.toWheelchairPushesRecordDto()
                     case .heartRateMeasurementRecord:
-                        if let heartRateMeasurementRecord = sample.toHeartRateMeasurementRecordDto() {
-                            responseDto = ReadRecordResponseDto(
-                                dataType: .heartRateMeasurementRecord,
-                                activeCaloriesBurnedRecord: nil,
-                                distanceRecord: nil,
-                                floorsClimbedRecord: nil,
-                                heightRecord: nil,
-                                hydrationRecord: nil,
-                                stepsRecord: nil,
-                                weightRecord: nil,
-                                bodyFatPercentageRecord: nil,
-                                bodyTemperatureRecord: nil,
-                                wheelchairPushesRecord: nil,
-                                heartRateMeasurementRecord: heartRateMeasurementRecord
-                            )
-                        } else {
-                            responseDto = nil
-                        }
+                        recordDto = sample.toHeartRateMeasurementRecordDto()
                     }
+                    
+                    let responseDto: ReadRecordResponseDto? = recordDto.map { ReadRecordResponseDto(record: $0) }
 
                     continuation.resume(returning: responseDto)
                 }
@@ -661,7 +455,7 @@ internal class HealthConnectorClient {
      *
      * - Parameter request: Contains data type, time range, page size, optional page token,
      *                     and optional data origin package names for filtering
-     * - Returns: ReadRecordsResponseDto with the appropriate typed list populated and optional next page token.
+     * - Returns: ReadRecordsResponseDto with the records list populated and optional next page token.
      *            The list will contain at most `pageSize` records. `nextPageToken` is nil when no more pages exist.
      *
      * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if time range or page size is invalid
@@ -821,160 +615,112 @@ internal class HealthConnectorClient {
                     let responseDto: ReadRecordsResponseDto
                     switch request.dataType {
                     case .activeCaloriesBurned:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toActiveCaloriesBurnedRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toActiveCaloriesBurnedRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.endTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .activeCaloriesBurned,
-                            activeCaloriesBurnedRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .distance:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toDistanceRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toDistanceRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.endTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .distance,
-                            distanceRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .floorsClimbed:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toFloorsClimbedRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toFloorsClimbedRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.endTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .floorsClimbed,
-                            floorsClimbedRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .steps:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toStepRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toStepRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.endTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .steps,
-                            stepsRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .weight:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toWeightRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toWeightRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .weight,
-                            weightRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .height:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toHeightRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toHeightRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .height,
-                            heightRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .hydration:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toHydrationRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toHydrationRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.startTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .hydration,
-                            hydrationRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .leanBodyMass:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toLeanBodyMassRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toLeanBodyMassRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .leanBodyMass,
-                            leanBodyMassRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .bodyFatPercentage:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toBodyFatPercentageRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toBodyFatPercentageRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .bodyFatPercentage,
-                            bodyFatPercentageRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .bodyTemperature:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toBodyTemperatureRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toBodyTemperatureRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .bodyTemperature,
-                            bodyTemperatureRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .wheelchairPushes:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toWheelchairPushesRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toWheelchairPushesRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.endTime }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .wheelchairPushes,
-                            wheelchairPushesRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
 
                     case .heartRateMeasurementRecord:
-                        let records = samples.compactMap { ($0 as? HKQuantitySample)?.toHeartRateMeasurementRecordDto() }
+                        let typedRecords = samples.compactMap { ($0 as? HKQuantitySample)?.toHeartRateMeasurementRecordDto() }
                         let (trimmedRecords, nextPageToken) = self.applyPagination(
-                            records: records,
+                            records: typedRecords,
                             pageSize: request.pageSize,
                             timestampExtractor: { $0.time }
                         )
-                        responseDto = self.buildReadRecordsResponse(
-                            dataType: .heartRateMeasurementRecord,
-                            heartRateMeasurementRecords: trimmedRecords,
-                            nextPageToken: nextPageToken
-                        )
+                        responseDto = ReadRecordsResponseDto(nextPageToken: nextPageToken, records: trimmedRecords.map { $0 as HealthRecordDto })
                     }
 
                     continuation.resume(returning: responseDto)
@@ -1078,58 +824,6 @@ internal class HealthConnectorClient {
         return (mutableRecords, nextPageToken)
     }
 
-    /**
-     * Builds ReadRecordsResponseDto with the appropriate typed field populated.
-     *
-     * - Parameters:
-     *   - dataType: The health data type
-     *   - activeCaloriesBurnedRecords: Records for ACTIVE_CALORIES_BURNED (nil otherwise)
-     *   - distanceRecords: Records for DISTANCE (nil otherwise)
-     *   - floorsClimbedRecords: Records for FLOORS_CLIMBED (nil otherwise)
-     *   - heightRecords: Records for HEIGHT (nil otherwise)
-     *   - hydrationRecords: Records for HYDRATION (nil otherwise)
-     *   - leanBodyMassRecords: Records for LEAN_BODY_MASS (nil otherwise)
-     *   - stepsRecords: Records for STEPS (nil otherwise)
-     *   - weightRecords: Records for WEIGHT (nil otherwise)
-     *   - bodyFatPercentageRecords: Records for BODY_FAT_PERCENTAGE (nil otherwise)
-     *   - bodyTemperatureRecords: Records for BODY_TEMPERATURE (nil otherwise)
-     *   - wheelchairPushesRecords: Records for WHEELCHAIR_PUSHES (nil otherwise)
-     *   - nextPageToken: Optional pagination token
-     * - Returns: ReadRecordsResponseDto with appropriate field populated
-     */
-    private func buildReadRecordsResponse(
-        dataType: HealthDataTypeDto,
-        activeCaloriesBurnedRecords: [ActiveCaloriesBurnedRecordDto]? = nil,
-        distanceRecords: [DistanceRecordDto]? = nil,
-        floorsClimbedRecords: [FloorsClimbedRecordDto]? = nil,
-        heightRecords: [HeightRecordDto]? = nil,
-        hydrationRecords: [HydrationRecordDto]? = nil,
-        leanBodyMassRecords: [LeanBodyMassRecordDto]? = nil,
-        stepsRecords: [StepRecordDto]? = nil,
-        weightRecords: [WeightRecordDto]? = nil,
-        bodyFatPercentageRecords: [BodyFatPercentageRecordDto]? = nil,
-        bodyTemperatureRecords: [BodyTemperatureRecordDto]? = nil,
-        wheelchairPushesRecords: [WheelchairPushesRecordDto]? = nil,
-        heartRateMeasurementRecords: [HeartRateMeasurementRecordDto]? = nil,
-        nextPageToken: String? = nil
-    ) -> ReadRecordsResponseDto {
-        return ReadRecordsResponseDto(
-            dataType: dataType,
-            activeCaloriesBurnedRecords: activeCaloriesBurnedRecords,
-            distanceRecords: distanceRecords,
-            floorsClimbedRecords: floorsClimbedRecords,
-            heightRecords: heightRecords,
-            hydrationRecords: hydrationRecords,
-            leanBodyMassRecords: leanBodyMassRecords,
-            nextPageToken: nextPageToken,
-            stepsRecords: stepsRecords,
-            weightRecords: weightRecords,
-            bodyFatPercentageRecords: bodyFatPercentageRecords,
-            bodyTemperatureRecords: bodyTemperatureRecords,
-            wheelchairPushesRecords: wheelchairPushesRecords,
-            heartRateMeasurementRecords: heartRateMeasurementRecords
-        )
-    }
 
     /**
      * Queries HealthKit for sources matching the given bundle identifiers.
@@ -1180,206 +874,10 @@ internal class HealthConnectorClient {
      * Creates an empty response DTO for the given data type.
      *
      * - Parameter dataType: The data type for the empty response
-     * - Returns: ReadRecordsResponseDto with empty lists
+     * - Returns: ReadRecordsResponseDto with empty records list
      */
     private func createEmptyResponse(for dataType: HealthDataTypeDto) -> ReadRecordsResponseDto {
-        switch dataType {
-        case .activeCaloriesBurned:
-            return ReadRecordsResponseDto(
-                dataType: .activeCaloriesBurned,
-                activeCaloriesBurnedRecords: [],
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .distance:
-            return ReadRecordsResponseDto(
-                dataType: .distance,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: [],
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .floorsClimbed:
-            return ReadRecordsResponseDto(
-                dataType: .floorsClimbed,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: [],
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .height:
-            return ReadRecordsResponseDto(
-                dataType: .height,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: [],
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .hydration:
-            return ReadRecordsResponseDto(
-                dataType: .hydration,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: [],
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .bodyFatPercentage:
-            return ReadRecordsResponseDto(
-                dataType: .bodyFatPercentage,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: [],
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .bodyTemperature:
-            return ReadRecordsResponseDto(
-                dataType: .bodyTemperature,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: [],
-                wheelchairPushesRecords: nil
-            )
-        case .steps:
-            return ReadRecordsResponseDto(
-                dataType: .steps,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: [],
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .weight:
-            return ReadRecordsResponseDto(
-                dataType: .weight,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: [],
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil
-            )
-        case .wheelchairPushes:
-            return ReadRecordsResponseDto(
-                dataType: .wheelchairPushes,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: [],
-                heartRateMeasurementRecords: nil
-            )
-        case .heartRateMeasurementRecord:
-            return ReadRecordsResponseDto(
-                dataType: .heartRateMeasurementRecord,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: nil,
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil,
-                heartRateMeasurementRecords: []
-            )
-        case .leanBodyMass:
-            return ReadRecordsResponseDto(
-                dataType: .leanBodyMass,
-                activeCaloriesBurnedRecords: nil,
-                distanceRecords: nil,
-                floorsClimbedRecords: nil,
-                heightRecords: nil,
-                hydrationRecords: nil,
-                leanBodyMassRecords: [],
-                nextPageToken: nil,
-                stepsRecords: nil,
-                weightRecords: nil,
-                bodyFatPercentageRecords: nil,
-                bodyTemperatureRecords: nil,
-                wheelchairPushesRecords: nil,
-                heartRateMeasurementRecords: nil
-            )
-        }
+        return ReadRecordsResponseDto(nextPageToken: nil, records: [])
     }
 
     // ==================== WRITE OPERATIONS ====================
@@ -1387,7 +885,7 @@ internal class HealthConnectorClient {
     /**
      * Writes a single health record.
      *
-     * - Parameter request: Contains the data type and the typed record to write
+     * - Parameter request: Contains the health record to write
      * - Returns: WriteRecordResponseDto containing the platform-assigned record ID
      *
      * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if record data is invalid
@@ -1407,116 +905,38 @@ internal class HealthConnectorClient {
                 ]
             )
 
-            // Extract typed record from request DTO and convert to HealthKit sample
+            // Extract record from request and convert to HealthKit sample using pattern matching
             let sample: HKSample
-            switch request.dataType {
-            case .activeCaloriesBurned:
-                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
-                        details: nil
-                    )
-                }
-                sample = try activeCaloriesBurnedRecord.toHealthKit()
-
-            case .distance:
-                guard let distanceRecord = request.distanceRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "distanceRecord must not be nil for DISTANCE type",
-                        details: nil
-                    )
-                }
-                sample = try distanceRecord.toHealthKit()
-
-            case .floorsClimbed:
-                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
-                        details: nil
-                    )
-                }
-                sample = try floorsClimbedRecord.toHealthKit()
-
-            case .steps:
-                guard let stepsRecord = request.stepsRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "stepsRecord must not be nil for STEPS type",
-                        details: nil
-                    )
-                }
-                sample = try stepsRecord.toHealthKit()
-
-            case .weight:
-                guard let weightRecord = request.weightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "weightRecord must not be nil for WEIGHT type",
-                        details: nil
-                    )
-                }
-                sample = try weightRecord.toHealthKit()
-
-            case .height:
-                guard let heightRecord = request.heightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heightRecord must not be nil for HEIGHT type",
-                        details: nil
-                    )
-                }
-                sample = try heightRecord.toHealthKit()
-
-            case .hydration:
-                guard let hydrationRecord = request.hydrationRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "hydrationRecord must not be nil for HYDRATION type",
-                        details: nil
-                    )
-                }
-                sample = try hydrationRecord.toHealthKit()
-
-            case .leanBodyMass:
-                guard let leanBodyMassRecord = request.leanBodyMassRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "leanBodyMassRecord must not be nil for LEAN_BODY_MASS type",
-                        details: nil
-                    )
-                }
-                sample = try leanBodyMassRecord.toHealthKit()
-
-            case .bodyFatPercentage:
-                guard let bodyFatPercentageRecord = request.bodyFatPercentageRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyFatPercentageRecord must not be nil for BODY_FAT_PERCENTAGE type",
-                        details: nil
-                    )
-                }
-                sample = try bodyFatPercentageRecord.toHealthKit()
-
-            case .bodyTemperature:
-                guard let bodyTemperatureRecord = request.bodyTemperatureRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyTemperatureRecord must not be nil for BODY_TEMPERATURE type",
-                        details: nil
-                    )
-                }
-                sample = try bodyTemperatureRecord.toHealthKit()
-
-            case .wheelchairPushes:
-                guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "wheelchairPushesRecord must not be nil for WHEELCHAIR_PUSHES type",
-                        details: nil
-                    )
-                }
-                sample = try wheelchairPushesRecord.toHealthKit()
-
-            case .heartRateMeasurementRecord:
-                guard let heartRateMeasurementRecord = request.heartRateMeasurementRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heartRateMeasurementRecord must not be nil for HEART_RATE_MEASUREMENT_RECORD type",
-                        details: nil
-                    )
-                }
-                sample = try heartRateMeasurementRecord.toHealthKit()
+            switch request.record {
+            case let record as ActiveCaloriesBurnedRecordDto:
+                sample = try record.toHealthKit()
+            case let record as DistanceRecordDto:
+                sample = try record.toHealthKit()
+            case let record as FloorsClimbedRecordDto:
+                sample = try record.toHealthKit()
+            case let record as StepRecordDto:
+                sample = try record.toHealthKit()
+            case let record as WeightRecordDto:
+                sample = try record.toHealthKit()
+            case let record as HeightRecordDto:
+                sample = try record.toHealthKit()
+            case let record as HydrationRecordDto:
+                sample = try record.toHealthKit()
+            case let record as LeanBodyMassRecordDto:
+                sample = try record.toHealthKit()
+            case let record as BodyFatPercentageRecordDto:
+                sample = try record.toHealthKit()
+            case let record as BodyTemperatureRecordDto:
+                sample = try record.toHealthKit()
+            case let record as WheelchairPushesRecordDto:
+                sample = try record.toHealthKit()
+            case let record as HeartRateMeasurementRecordDto:
+                sample = try record.toHealthKit()
+            default:
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "Unsupported record type: \(type(of: request.record))",
+                    details: nil
+                )
             }
 
             // Write to HealthKit using pseudo-atomic transaction
@@ -1605,7 +1025,7 @@ internal class HealthConnectorClient {
      * Since HealthKit assigns a new UUID to each sample, the returned record ID will
      * be different from the input ID. This is expected HealthKit behavior.
      *
-     * - Parameter request: Contains the data type and the typed record to update
+     * - Parameter request: Contains the health record to update
      * - Returns: UpdateRecordResponseDto containing the new record ID (different from input)
      *
      * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if record ID is invalid or record data is invalid
@@ -1625,212 +1045,58 @@ internal class HealthConnectorClient {
                 ]
             )
 
-            // Validate record ID
-            let recordId: String?
-            switch request.dataType {
-            case .activeCaloriesBurned:
-                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
-                        details: nil
-                    )
-                }
-                recordId = activeCaloriesBurnedRecord.id
+            // Extract record ID and determine data type from record using pattern matching
+            let (recordId, dataType): (String?, HealthDataTypeDto)
+            switch request.record {
+            case let record as ActiveCaloriesBurnedRecordDto:
+                recordId = record.id
+                dataType = .activeCaloriesBurned
+            case let record as DistanceRecordDto:
+                recordId = record.id
+                dataType = .distance
+            case let record as FloorsClimbedRecordDto:
+                recordId = record.id
+                dataType = .floorsClimbed
+            case let record as StepRecordDto:
+                recordId = record.id
+                dataType = .steps
+            case let record as WeightRecordDto:
+                recordId = record.id
+                dataType = .weight
+            case let record as HeightRecordDto:
+                recordId = record.id
+                dataType = .height
+            case let record as HydrationRecordDto:
+                recordId = record.id
+                dataType = .hydration
+            case let record as LeanBodyMassRecordDto:
+                recordId = record.id
+                dataType = .leanBodyMass
+            case let record as BodyFatPercentageRecordDto:
+                recordId = record.id
+                dataType = .bodyFatPercentage
+            case let record as BodyTemperatureRecordDto:
+                recordId = record.id
+                dataType = .bodyTemperature
+            case let record as WheelchairPushesRecordDto:
+                recordId = record.id
+                dataType = .wheelchairPushes
+            case let record as HeartRateMeasurementRecordDto:
+                recordId = record.id
+                dataType = .heartRateMeasurementRecord
+            default:
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "Unsupported record type: \(type(of: request.record))",
+                    details: nil
+                )
+            }
 
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .distance:
-                guard let distanceRecord = request.distanceRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "distanceRecord must not be nil for DISTANCE type",
-                        details: nil
-                    )
-                }
-                recordId = distanceRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .floorsClimbed:
-                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
-                        details: nil
-                    )
-                }
-                recordId = floorsClimbedRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .steps:
-                guard let stepsRecord = request.stepsRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "stepsRecord must not be nil for STEPS type",
-                        details: nil
-                    )
-                }
-                recordId = stepsRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .weight:
-                guard let weightRecord = request.weightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "weightRecord must not be nil for WEIGHT type",
-                        details: nil
-                    )
-                }
-                recordId = weightRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .height:
-                guard let heightRecord = request.heightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heightRecord must not be nil for HEIGHT type",
-                        details: nil
-                    )
-                }
-                recordId = heightRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .hydration:
-                guard let hydrationRecord = request.hydrationRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "hydrationRecord must not be nil for HYDRATION type",
-                        details: nil
-                    )
-                }
-                recordId = hydrationRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .leanBodyMass:
-                guard let leanBodyMassRecord = request.leanBodyMassRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "leanBodyMassRecord must not be nil for LEAN_BODY_MASS type",
-                        details: nil
-                    )
-                }
-                recordId = leanBodyMassRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .bodyFatPercentage:
-                guard let bodyFatPercentageRecord = request.bodyFatPercentageRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyFatPercentageRecord must not be nil for BODY_FAT_PERCENTAGE type",
-                        details: nil
-                    )
-                }
-                recordId = bodyFatPercentageRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .bodyTemperature:
-                guard let bodyTemperatureRecord = request.bodyTemperatureRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyTemperatureRecord must not be nil for BODY_TEMPERATURE type",
-                        details: nil
-                    )
-                }
-                recordId = bodyTemperatureRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .wheelchairPushes:
-                guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "wheelchairPushesRecord must not be nil for WHEELCHAIR_PUSHES type",
-                        details: nil
-                    )
-                }
-                recordId = wheelchairPushesRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
-
-            case .heartRateMeasurementRecord:
-                guard let heartRateMeasurementRecord = request.heartRateMeasurementRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heartRateMeasurementRecord must not be nil for HEART_RATE_MEASUREMENT_RECORD type",
-                        details: nil
-                    )
-                }
-                recordId = heartRateMeasurementRecord.id
-
-                // Validate record ID is not empty
-                if recordId?.isEmpty ?? true {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
-                        details: "Record ID: \(recordId ?? "nil")"
-                    )
-                }
+            // Validate record ID is not empty
+            if recordId?.isEmpty ?? true {
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.",
+                    details: "Record ID: \(recordId ?? "nil")"
+                )
             }
 
             // Convert record ID to UUID
@@ -1843,7 +1109,7 @@ internal class HealthConnectorClient {
             }
 
             // Convert data type to HealthKit quantity type
-            let quantityType = request.dataType.toHealthKitQuantityType()
+            let quantityType = dataType.toHealthKitQuantityType()
 
             // Step 1: Read existing record to verify it exists and get the sample object
             let existingSample: HKSample = try await withCheckedThrowingContinuation { continuation in
@@ -1872,7 +1138,7 @@ internal class HealthConnectorClient {
                         continuation.resume(
                             throwing: HealthConnectorErrors.invalidArgument(
                                 message: "Record not found: \(recordIdString)",
-                                details: "No record found with ID \(recordIdString) for dataType \(request.dataType)"
+                                details: "No record found with ID \(recordIdString) for dataType \(dataType)"
                             )
                         )
                         return
@@ -1884,128 +1150,39 @@ internal class HealthConnectorClient {
                 self.store.execute(query)
             }
 
-            // Step 2: Extract typed record from request DTO and convert to HealthKit sample
+            // Step 2: Convert record to HealthKit sample using pattern matching
+            // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
             let newSample: HKSample
-            switch request.dataType {
-            case .activeCaloriesBurned:
-                guard let activeCaloriesBurnedRecord = request.activeCaloriesBurnedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "activeCaloriesBurnedRecord must not be nil for ACTIVE_CALORIES_BURNED type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try activeCaloriesBurnedRecord.toHealthKit()
-
-            case .distance:
-                guard let distanceRecord = request.distanceRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "distanceRecord must not be nil for DISTANCE type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try distanceRecord.toHealthKit()
-
-            case .floorsClimbed:
-                guard let floorsClimbedRecord = request.floorsClimbedRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "floorsClimbedRecord must not be nil for FLOORS_CLIMBED type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try floorsClimbedRecord.toHealthKit()
-
-            case .steps:
-                guard let stepsRecord = request.stepsRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "stepsRecord must not be nil for STEPS type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try stepsRecord.toHealthKit()
-
-            case .weight:
-                guard let weightRecord = request.weightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "weightRecord must not be nil for WEIGHT type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try weightRecord.toHealthKit()
-
-            case .height:
-                guard let heightRecord = request.heightRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heightRecord must not be nil for HEIGHT type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try heightRecord.toHealthKit()
-
-            case .hydration:
-                guard let hydrationRecord = request.hydrationRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "hydrationRecord must not be nil for HYDRATION type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try hydrationRecord.toHealthKit()
-
-            case .bodyFatPercentage:
-                guard let bodyFatPercentageRecord = request.bodyFatPercentageRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyFatPercentageRecord must not be nil for BODY_FAT_PERCENTAGE type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try bodyFatPercentageRecord.toHealthKit()
-
-            case .bodyTemperature:
-                guard let bodyTemperatureRecord = request.bodyTemperatureRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "bodyTemperatureRecord must not be nil for BODY_TEMPERATURE type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try bodyTemperatureRecord.toHealthKit()
-
-            case .wheelchairPushes:
-                guard let wheelchairPushesRecord = request.wheelchairPushesRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "wheelchairPushesRecord must not be nil for WHEELCHAIR_PUSHES type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try wheelchairPushesRecord.toHealthKit()
-
-            case .heartRateMeasurementRecord:
-                guard let heartRateMeasurementRecord = request.heartRateMeasurementRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "heartRateMeasurementRecord must not be nil for HEART_RATE_MEASUREMENT_RECORD type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try heartRateMeasurementRecord.toHealthKit()
-
-            case .leanBodyMass:
-                guard let leanBodyMassRecord = request.leanBodyMassRecord else {
-                    throw HealthConnectorErrors.invalidArgument(
-                        message: "leanBodyMassRecord must not be nil for LEAN_BODY_MASS type",
-                        details: nil
-                    )
-                }
-                // Convert to HealthKit sample, but with new UUID (will be assigned by HealthKit)
-                newSample = try leanBodyMassRecord.toHealthKit()
+            switch request.record {
+            case let record as ActiveCaloriesBurnedRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as DistanceRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as FloorsClimbedRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as StepRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as WeightRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as HeightRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as HydrationRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as LeanBodyMassRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as BodyFatPercentageRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as BodyTemperatureRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as WheelchairPushesRecordDto:
+                newSample = try record.toHealthKit()
+            case let record as HeartRateMeasurementRecordDto:
+                newSample = try record.toHealthKit()
+            default:
+                throw HealthConnectorErrors.invalidArgument(
+                    message: "Unsupported record type: \(type(of: request.record))",
+                    details: nil
+                )
             }
 
             // Step 3: Delete the old sample
@@ -2117,7 +1294,7 @@ internal class HealthConnectorClient {
     /**
      * Writes multiple health records atomically.
      *
-     * - Parameter request: Contains the data types and the list of typed records to write
+     * - Parameter request: Contains the list of health records to write
      * - Returns: WriteRecordsResponseDto containing the platform-assigned record IDs
      *
      * - Throws: `HealthConnectorError` with code `INVALID_ARGUMENT` if any record data is invalid
@@ -2137,131 +1314,43 @@ internal class HealthConnectorClient {
                 ]
             )
 
-            // Extract typed records from request DTO and convert to HealthKit samples
+            // Extract records from request and convert to HealthKit samples using pattern matching
             var samples: [HKSample] = []
 
-            for dataTypeDto in request.dataTypes {
-                switch dataTypeDto {
-                case .activeCaloriesBurned:
-                    guard let activeCaloriesBurnedRecords = request.activeCaloriesBurnedRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "activeCaloriesBurnedRecords must not be nil for ACTIVE_CALORIES_BURNED type",
-                            details: nil
-                        )
-                    }
-                    let activeCaloriesBurnedSamples = try activeCaloriesBurnedRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: activeCaloriesBurnedSamples)
-
-                case .distance:
-                    guard let distanceRecords = request.distanceRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "distanceRecords must not be nil for DISTANCE type",
-                            details: nil
-                        )
-                    }
-                    let distanceSamples = try distanceRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: distanceSamples)
-
-                case .floorsClimbed:
-                    guard let floorsClimbedRecords = request.floorsClimbedRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "floorsClimbedRecords must not be nil for FLOORS_CLIMBED type",
-                            details: nil
-                        )
-                    }
-                    let floorsClimbedSamples = try floorsClimbedRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: floorsClimbedSamples)
-
-                case .steps:
-                    guard let stepsRecords = request.stepsRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "stepsRecords must not be nil for STEPS type",
-                            details: nil
-                        )
-                    }
-                    let stepSamples = try stepsRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: stepSamples)
-
-                case .weight:
-                    guard let weightRecords = request.weightRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "weightRecords must not be nil for WEIGHT type",
-                            details: nil
-                        )
-                    }
-                    let weightSamples = try weightRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: weightSamples)
-
-                case .height:
-                    guard let heightRecords = request.heightRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "heightRecords must not be nil for HEIGHT type",
-                            details: nil
-                        )
-                    }
-                    let heightSamples = try heightRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: heightSamples)
-
-                case .hydration:
-                    guard let hydrationRecords = request.hydrationRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "hydrationRecords must not be nil for HYDRATION type",
-                            details: nil
-                        )
-                    }
-                    let hydrationSamples = try hydrationRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: hydrationSamples)
-
-                case .leanBodyMass:
-                    guard let leanBodyMassRecords = request.leanBodyMassRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "leanBodyMassRecords must not be nil for LEAN_BODY_MASS type",
-                            details: nil
-                        )
-                    }
-                    let leanBodyMassSamples = try leanBodyMassRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: leanBodyMassSamples)
-
-                case .bodyFatPercentage:
-                    guard let bodyFatPercentageRecords = request.bodyFatPercentageRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "bodyFatPercentageRecords must not be nil for BODY_FAT_PERCENTAGE type",
-                            details: nil
-                        )
-                    }
-                    let bodyFatPercentageSamples = try bodyFatPercentageRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: bodyFatPercentageSamples)
-
-                case .bodyTemperature:
-                    guard let bodyTemperatureRecords = request.bodyTemperatureRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "bodyTemperatureRecords must not be nil for BODY_TEMPERATURE type",
-                            details: nil
-                        )
-                    }
-                    let bodyTemperatureSamples = try bodyTemperatureRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: bodyTemperatureSamples)
-
-                case .wheelchairPushes:
-                    guard let wheelchairPushesRecords = request.wheelchairPushesRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "wheelchairPushesRecords must not be nil for WHEELCHAIR_PUSHES type",
-                            details: nil
-                        )
-                    }
-                    let wheelchairPushesSamples = try wheelchairPushesRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: wheelchairPushesSamples)
-
-                case .heartRateMeasurementRecord:
-                    guard let heartRateMeasurementRecords = request.heartRateMeasurementRecords else {
-                        throw HealthConnectorErrors.invalidArgument(
-                            message: "heartRateMeasurementRecords must not be nil for HEART_RATE_MEASUREMENT_RECORD type",
-                            details: nil
-                        )
-                    }
-                    let heartRateMeasurementSamples = try heartRateMeasurementRecords.map { try $0.toHealthKit() }
-                    samples.append(contentsOf: heartRateMeasurementSamples)
+            for record in request.records {
+                let sample: HKSample
+                switch record {
+                case let record as ActiveCaloriesBurnedRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as DistanceRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as FloorsClimbedRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as StepRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as WeightRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as HeightRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as HydrationRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as LeanBodyMassRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as BodyFatPercentageRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as BodyTemperatureRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as WheelchairPushesRecordDto:
+                    sample = try record.toHealthKit()
+                case let record as HeartRateMeasurementRecordDto:
+                    sample = try record.toHealthKit()
+                default:
+                    throw HealthConnectorErrors.invalidArgument(
+                        message: "Unsupported record type: \(type(of: record))",
+                        details: nil
+                    )
                 }
+                samples.append(sample)
             }
 
             // Atomic batch write using HealthKit's pseudo-atomic transaction
@@ -2480,20 +1569,9 @@ internal class HealthConnectorClient {
                 }
 
                 guard let statistics = statistics else {
-                    // No data available
-                    let response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    // No data available - create empty numeric value
+                    let emptyNumericDto = NumericDto(unit: .numeric, value: 0.0)
+                    let response = AggregateResponseDto(value: emptyNumericDto)
                     continuation.resume(returning: response)
                     return
                 }
@@ -2505,71 +1583,25 @@ internal class HealthConnectorClient {
                 case .activeCaloriesBurned:
                     // For active calories burned, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyEnergyDto = EnergyDto(unit: .kilocalories, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyEnergyDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
                     let energyDto = sumQuantity.toEnergyDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: energyDto,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: energyDto)
 
                 case .steps:
                     // For steps, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyNumericDto = NumericDto(unit: .numeric, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyNumericDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
                     let stepCount = Int64(sumQuantity.doubleValue(for: .count()))
                     let numericDto = stepCount.toNumericDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: numericDto.value,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: numericDto)
 
                 case .weight:
                     // For weight, we use discreteAverage, discreteMin, or discreteMax
@@ -2586,37 +1618,14 @@ internal class HealthConnectorClient {
                     }
 
                     guard let quantity = weightQuantity else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyMassDto = MassDto(unit: .kilograms, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyMassDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
 
                     let massDto = quantity.toMassDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: massDto,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: massDto)
 
                 case .height:
                     // For height, we use discreteAverage, discreteMin, or discreteMax
@@ -2633,71 +1642,26 @@ internal class HealthConnectorClient {
                     }
 
                     guard let quantity = heightQuantity else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyLengthDto = LengthDto(unit: .meters, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyLengthDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
 
                     let lengthDto = quantity.toLengthDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: lengthDto,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: lengthDto)
 
                 case .hydration:
                     // For hydration (dietaryWater), we use cumulativeSum for sum only
                     guard let quantity = statistics.sumQuantity() else {
-                        let emptyResponse = AggregateResponseDto(
-                            aggregationMetric: metric,
-                            dataType: dataType,
-                            activeCaloriesBurnedValue: nil,
-                            bodyTemperatureValue: nil,
-                            doubleValue: nil,
-                            hydrationValue: nil,
-                            lengthValue: nil,
-                            massValue: nil,
-                            leanBodyMassValue: nil,
-                            wheelchairPushesValue: nil
-                        )
+                        let emptyVolumeDto = VolumeDto(unit: .liters, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyVolumeDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
 
                     let volumeDto = quantity.toVolumeDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: volumeDto,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: volumeDto)
 
                 case .leanBodyMass:
                     // For lean body mass, we use discreteAverage, discreteMin, or discreteMax
@@ -2714,134 +1678,49 @@ internal class HealthConnectorClient {
                     }
 
                     guard let quantity = leanBodyMassQuantity else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyMassDto = MassDto(unit: .kilograms, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyMassDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
 
                     let massDto = quantity.toMassDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: massDto,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: massDto)
 
                 case .distance:
                     // For distance, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                        let emptyLengthDto = LengthDto(unit: .meters, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyLengthDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
                     let lengthDto = sumQuantity.toLengthDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        lengthValue: lengthDto,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: lengthDto)
 
                 case .floorsClimbed:
                     // For floors climbed, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
-                        let emptyResponse = AggregateResponseDto(
-                            aggregationMetric: metric,
-                            dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil
-                        )
+                        let emptyNumericDto = NumericDto(unit: .numeric, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyNumericDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
                     let floorsCount = sumQuantity.doubleValue(for: .count())
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: floorsCount,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    let numericDto = NumericDto(unit: .numeric, value: floorsCount)
+                    response = AggregateResponseDto(value: numericDto)
 
                 case .wheelchairPushes:
                     // For wheelchair pushes, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
-                        let emptyResponse = AggregateResponseDto(
-                            aggregationMetric: metric,
-                            dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                        )
+                        let emptyNumericDto = NumericDto(unit: .numeric, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyNumericDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
                     let pushesCount = Int64(sumQuantity.doubleValue(for: .count()))
                     let numericDto = pushesCount.toNumericDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: numericDto,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: numericDto)
 
                 case .heartRateMeasurementRecord:
                     // For heart rate, we use discreteAverage, discreteMin, or discreteMax
@@ -2858,19 +1737,8 @@ internal class HealthConnectorClient {
                     }
 
                     guard let quantity = heartRateQuantity else {
-                        let emptyResponse = AggregateResponseDto(
-                            aggregationMetric: metric,
-                            dataType: dataType,
-                            activeCaloriesBurnedValue: nil,
-                            bodyTemperatureValue: nil,
-                            doubleValue: nil,
-                            hydrationValue: nil,
-                            lengthValue: nil,
-                            massValue: nil,
-                            leanBodyMassValue: nil,
-                            wheelchairPushesValue: nil,
-                            heartRateMeasurementRecordValue: nil
-                        )
+                        let emptyNumericDto = NumericDto(unit: .numeric, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyNumericDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
@@ -2879,19 +1747,7 @@ internal class HealthConnectorClient {
                     let unit = HKUnit.count().unitDivided(by: .minute())
                     let bpmValue = quantity.doubleValue(for: unit)
                     let numericDto = NumericDto(unit: .numeric, value: bpmValue)
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: numericDto
-                    )
+                    response = AggregateResponseDto(value: numericDto)
 
                 case .bodyTemperature:
                     // For body temperature, we use discreteAverage, discreteMin, or discreteMax
@@ -2908,50 +1764,19 @@ internal class HealthConnectorClient {
                     }
 
                     guard let quantity = temperatureQuantity else {
-                        let emptyResponse = AggregateResponseDto(
-                            aggregationMetric: metric,
-                            dataType: dataType,
-                            activeCaloriesBurnedValue: nil,
-                            bodyTemperatureValue: nil,
-                            doubleValue: nil,
-                            lengthValue: nil,
-                            massValue: nil,
-                            leanBodyMassValue: nil,
-                            wheelchairPushesValue: nil
-                        )
+                        let emptyTemperatureDto = TemperatureDto(unit: .celsius, value: 0.0)
+                        let emptyResponse = AggregateResponseDto(value: emptyTemperatureDto)
                         continuation.resume(returning: emptyResponse)
                         return
                     }
 
                     let temperatureDto = quantity.toTemperatureDto()
-                    response = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: temperatureDto,
-                        doubleValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    response = AggregateResponseDto(value: temperatureDto)
 
                 case .bodyFatPercentage:
                     // Body fat percentage does not support aggregation
-                    let emptyResponse = AggregateResponseDto(
-                        aggregationMetric: metric,
-                        dataType: dataType,
-                        activeCaloriesBurnedValue: nil,
-                        bodyTemperatureValue: nil,
-                        doubleValue: nil,
-                        hydrationValue: nil,
-                        lengthValue: nil,
-                        massValue: nil,
-                        leanBodyMassValue: nil,
-                        wheelchairPushesValue: nil,
-                        heartRateMeasurementRecordValue: nil
-                    )
+                    let emptyPercentageDto = PercentageDto(unit: .decimal, value: 0.0)
+                    let emptyResponse = AggregateResponseDto(value: emptyPercentageDto)
                     continuation.resume(returning: emptyResponse)
                     return
                 }
@@ -3230,4 +2055,3 @@ internal class HealthConnectorClient {
         }
     }
 }
-

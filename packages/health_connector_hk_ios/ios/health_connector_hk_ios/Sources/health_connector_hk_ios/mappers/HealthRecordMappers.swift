@@ -762,5 +762,3 @@ extension HKQuantitySample {
         )
     }
 }
-
-

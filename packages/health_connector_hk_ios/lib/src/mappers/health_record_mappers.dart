@@ -4,14 +4,25 @@ import 'package:health_connector_core/health_connector_core.dart'
         BodyFatPercentageRecord,
         BodyTemperatureRecord,
         DistanceRecord,
+        Energy,
         FloorsClimbedRecord,
+        HealthRecord,
         HealthRecordId,
         HeartRateMeasurement,
         HeartRateMeasurementRecord,
+        HeartRateSeriesRecord,
         HeightRecord,
         HydrationRecord,
         LeanBodyMassRecord,
+        Length,
+        Mass,
+        Numeric,
+        Percentage,
+        SleepSessionRecord,
+        SleepStageRecord,
         StepRecord,
+        Temperature,
+        Volume,
         WeightRecord,
         WheelchairPushesRecord;
 import 'package:health_connector_hk_ios/src/mappers/'
@@ -23,13 +34,21 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         BodyFatPercentageRecordDto,
         BodyTemperatureRecordDto,
         DistanceRecordDto,
+        EnergyDto,
         FloorsClimbedRecordDto,
+        HealthRecordDto,
         HeartRateMeasurementDto,
         HeartRateMeasurementRecordDto,
         HeightRecordDto,
         HydrationRecordDto,
         LeanBodyMassRecordDto,
+        LengthDto,
+        MassDto,
+        NumericDto,
+        PercentageDto,
         StepRecordDto,
+        TemperatureDto,
+        VolumeDto,
         WeightRecordDto,
         WheelchairPushesRecordDto;
 import 'package:meta/meta.dart' show internal;
@@ -51,346 +70,13 @@ extension HealthRecordIdFromDtoToDomain on String {
   }
 }
 
-/// Converts [ActiveCaloriesBurnedRecord] to [ActiveCaloriesBurnedRecordDto].
-@internal
-extension ActiveCaloriesBurnedRecordDomainToDto on ActiveCaloriesBurnedRecord {
-  ActiveCaloriesBurnedRecordDto toDto() {
-    return ActiveCaloriesBurnedRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      energy: energy.toDto(),
-    );
-  }
-}
-
-/// Converts [ActiveCaloriesBurnedRecordDto] to [ActiveCaloriesBurnedRecord].
-@internal
-extension ActiveCaloriesBurnedRecordDtoToDomain
-    on ActiveCaloriesBurnedRecordDto {
-  ActiveCaloriesBurnedRecord toDomain() {
-    return ActiveCaloriesBurnedRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      energy: energy.toDomain(),
-    );
-  }
-}
-
-/// Converts [DistanceRecord] to [DistanceRecordDto].
-@internal
-extension DistanceRecordDomainToDto on DistanceRecord {
-  DistanceRecordDto toDto() {
-    return DistanceRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      distance: distance.toDto(),
-    );
-  }
-}
-
-/// Converts [DistanceRecordDto] to [DistanceRecord].
-@internal
-extension DistanceRecordDtoToDomain on DistanceRecordDto {
-  DistanceRecord toDomain() {
-    return DistanceRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      distance: distance.toDomain(),
-    );
-  }
-}
-
-/// Converts [FloorsClimbedRecord] to [FloorsClimbedRecordDto].
-@internal
-extension FloorsClimbedRecordDomainToDto on FloorsClimbedRecord {
-  FloorsClimbedRecordDto toDto() {
-    return FloorsClimbedRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      floors: floors.toDto(),
-    );
-  }
-}
-
-/// Converts [FloorsClimbedRecordDto] to [FloorsClimbedRecord].
-@internal
-extension FloorsClimbedRecordDtoToDomain on FloorsClimbedRecordDto {
-  FloorsClimbedRecord toDomain() {
-    return FloorsClimbedRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      floors: floors.toDomain(),
-    );
-  }
-}
-
-/// Converts [StepRecord] to [StepRecordDto].
-@internal
-extension StepRecordDomainToDto on StepRecord {
-  StepRecordDto toDto() {
-    return StepRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      count: count.toDto(),
-    );
-  }
-}
-
-/// Converts [StepRecordDto] to [StepRecord].
-@internal
-extension StepRecordDtoToDomain on StepRecordDto {
-  StepRecord toDomain() {
-    return StepRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      count: count.toDomain(),
-    );
-  }
-}
-
-/// Converts [WeightRecord] to [WeightRecordDto].
-@internal
-extension WeightRecordDomainToDto on WeightRecord {
-  WeightRecordDto toDto() {
-    return WeightRecordDto(
-      id: id.toDto(),
-      time: time.millisecondsSinceEpoch,
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      weight: weight.toDto(),
-    );
-  }
-}
-
-/// Converts [WeightRecordDto] to [WeightRecord].
-@internal
-extension WeightRecordDtoToDomain on WeightRecordDto {
-  WeightRecord toDomain() {
-    return WeightRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      time: DateTime.fromMillisecondsSinceEpoch(time),
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      weight: weight.toDomain(),
-    );
-  }
-}
-
-/// Converts [LeanBodyMassRecord] to [LeanBodyMassRecordDto].
-@internal
-extension LeanBodyMassRecordDomainToDto on LeanBodyMassRecord {
-  LeanBodyMassRecordDto toDto() {
-    return LeanBodyMassRecordDto(
-      id: id.toDto(),
-      time: time.millisecondsSinceEpoch,
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      mass: mass.toDto(),
-    );
-  }
-}
-
-/// Converts [LeanBodyMassRecordDto] to [LeanBodyMassRecord].
-@internal
-extension LeanBodyMassRecordDtoToDomain on LeanBodyMassRecordDto {
-  LeanBodyMassRecord toDomain() {
-    return LeanBodyMassRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      time: DateTime.fromMillisecondsSinceEpoch(time),
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      mass: mass.toDomain(),
-    );
-  }
-}
-
-/// Converts [HeightRecord] to [HeightRecordDto].
-@internal
-extension HeightRecordDomainToDto on HeightRecord {
-  HeightRecordDto toDto() {
-    return HeightRecordDto(
-      id: id.toDto(),
-      time: time.millisecondsSinceEpoch,
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      height: height.toDto(),
-    );
-  }
-}
-
-/// Converts [HeightRecordDto] to [HeightRecord].
-@internal
-extension HeightRecordDtoToDomain on HeightRecordDto {
-  HeightRecord toDomain() {
-    return HeightRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      time: DateTime.fromMillisecondsSinceEpoch(time),
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      height: height.toDomain(),
-    );
-  }
-}
-
-/// Converts [BodyFatPercentageRecord] to [BodyFatPercentageRecordDto].
-@internal
-extension BodyFatPercentageRecordDomainToDto on BodyFatPercentageRecord {
-  BodyFatPercentageRecordDto toDto() {
-    return BodyFatPercentageRecordDto(
-      id: id.toDto(),
-      time: time.millisecondsSinceEpoch,
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      percentage: percentage.toDto(),
-    );
-  }
-}
-
-/// Converts [BodyFatPercentageRecordDto] to [BodyFatPercentageRecord].
-@internal
-extension BodyFatPercentageRecordDtoToDomain on BodyFatPercentageRecordDto {
-  BodyFatPercentageRecord toDomain() {
-    return BodyFatPercentageRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      time: DateTime.fromMillisecondsSinceEpoch(time),
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      percentage: percentage.toDomain(),
-    );
-  }
-}
-
-/// Converts [BodyTemperatureRecord] to [BodyTemperatureRecordDto].
-@internal
-extension BodyTemperatureRecordDomainToDto on BodyTemperatureRecord {
-  BodyTemperatureRecordDto toDto() {
-    return BodyTemperatureRecordDto(
-      id: id.toDto(),
-      time: time.millisecondsSinceEpoch,
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      temperature: temperature.toDto(),
-    );
-  }
-}
-
-/// Converts [BodyTemperatureRecordDto] to [BodyTemperatureRecord].
-@internal
-extension BodyTemperatureRecordDtoToDomain on BodyTemperatureRecordDto {
-  BodyTemperatureRecord toDomain() {
-    return BodyTemperatureRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      time: DateTime.fromMillisecondsSinceEpoch(time),
-      zoneOffsetSeconds: zoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      temperature: temperature.toDomain(),
-    );
-  }
-}
-
-/// Converts [WheelchairPushesRecord] to [WheelchairPushesRecordDto].
-@internal
-extension WheelchairPushesRecordDomainToDto on WheelchairPushesRecord {
-  WheelchairPushesRecordDto toDto() {
-    return WheelchairPushesRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      pushes: pushes.toDto(),
-    );
-  }
-}
-
-/// Converts [WheelchairPushesRecordDto] to [WheelchairPushesRecord].
-@internal
-extension WheelchairPushesRecordDtoToDomain on WheelchairPushesRecordDto {
-  WheelchairPushesRecord toDomain() {
-    return WheelchairPushesRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      pushes: pushes.toDomain(),
-    );
-  }
-}
-
-/// Converts [HydrationRecord] to [HydrationRecordDto].
-@internal
-extension HydrationRecordDomainToDto on HydrationRecord {
-  HydrationRecordDto toDto() {
-    return HydrationRecordDto(
-      id: id.toDto(),
-      startTime: startTime.millisecondsSinceEpoch,
-      endTime: endTime.millisecondsSinceEpoch,
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDto(),
-      volume: volume.toDto(),
-    );
-  }
-}
-
-/// Converts [HydrationRecordDto] to [HydrationRecord].
-@internal
-extension HydrationRecordDtoToDomain on HydrationRecordDto {
-  HydrationRecord toDomain() {
-    return HydrationRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      startTime: DateTime.fromMillisecondsSinceEpoch(startTime),
-      endTime: DateTime.fromMillisecondsSinceEpoch(endTime),
-      startZoneOffsetSeconds: startZoneOffsetSeconds,
-      endZoneOffsetSeconds: endZoneOffsetSeconds,
-      metadata: metadata.toDomain(),
-      volume: volume.toDomain(),
-    );
-  }
-}
-
 /// Converts [HeartRateMeasurement] to [HeartRateMeasurementDto].
 @internal
 extension HeartRateMeasurementDomainToDto on HeartRateMeasurement {
   HeartRateMeasurementDto toDto() {
     return HeartRateMeasurementDto(
       time: time.millisecondsSinceEpoch,
-      beatsPerMinute: beatsPerMinute.toDto(),
+      beatsPerMinute: beatsPerMinute.toDto() as NumericDto,
     );
   }
 }
@@ -401,33 +87,250 @@ extension HeartRateMeasurementDtoToDomain on HeartRateMeasurementDto {
   HeartRateMeasurement toDomain() {
     return HeartRateMeasurement(
       time: DateTime.fromMillisecondsSinceEpoch(time),
-      beatsPerMinute: beatsPerMinute.toDomain(),
+      beatsPerMinute: beatsPerMinute.toDomain() as Numeric,
     );
   }
 }
 
-/// Converts [HeartRateMeasurementRecord] to [HeartRateMeasurementRecordDto].
+/// Converts [HealthRecord] to [HealthRecordDto].
 @internal
-extension HeartRateMeasurementRecordDomainToDto on HeartRateMeasurementRecord {
-  HeartRateMeasurementRecordDto toDto() {
-    return HeartRateMeasurementRecordDto(
-      id: id.toDto(),
-      time: measurement.time.millisecondsSinceEpoch,
-      metadata: metadata.toDto(),
-      measurement: measurement.toDto(),
-    );
+extension HealthRecordToDto on HealthRecord {
+  HealthRecordDto toDto() {
+    switch (this) {
+      case final ActiveCaloriesBurnedRecord record:
+        return ActiveCaloriesBurnedRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          energy: record.energy.toDto() as EnergyDto,
+        );
+      case final DistanceRecord record:
+        return DistanceRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          distance: record.distance.toDto() as LengthDto,
+        );
+      case final FloorsClimbedRecord record:
+        return FloorsClimbedRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          floors: record.floors.toDto() as NumericDto,
+        );
+      case final StepRecord record:
+        return StepRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          count: record.count.toDto() as NumericDto,
+        );
+      case final WeightRecord record:
+        return WeightRecordDto(
+          id: record.id.toDto(),
+          time: record.time.millisecondsSinceEpoch,
+          zoneOffsetSeconds: record.zoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          weight: record.weight.toDto() as MassDto,
+        );
+      case final LeanBodyMassRecord record:
+        return LeanBodyMassRecordDto(
+          id: record.id.toDto(),
+          time: record.time.millisecondsSinceEpoch,
+          zoneOffsetSeconds: record.zoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          mass: record.mass.toDto() as MassDto,
+        );
+      case final HeightRecord record:
+        return HeightRecordDto(
+          id: record.id.toDto(),
+          time: record.time.millisecondsSinceEpoch,
+          zoneOffsetSeconds: record.zoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          height: record.height.toDto() as LengthDto,
+        );
+      case final BodyFatPercentageRecord record:
+        return BodyFatPercentageRecordDto(
+          id: record.id.toDto(),
+          time: record.time.millisecondsSinceEpoch,
+          zoneOffsetSeconds: record.zoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          percentage: record.percentage.toDto() as PercentageDto,
+        );
+      case final BodyTemperatureRecord record:
+        return BodyTemperatureRecordDto(
+          id: record.id.toDto(),
+          time: record.time.millisecondsSinceEpoch,
+          zoneOffsetSeconds: record.zoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          temperature: record.temperature.toDto() as TemperatureDto,
+        );
+      case final HydrationRecord record:
+        return HydrationRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          volume: record.volume.toDto() as VolumeDto,
+        );
+      case final WheelchairPushesRecord record:
+        return WheelchairPushesRecordDto(
+          id: record.id.toDto(),
+          startTime: record.startTime.millisecondsSinceEpoch,
+          endTime: record.endTime.millisecondsSinceEpoch,
+          startZoneOffsetSeconds: record.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: record.endZoneOffsetSeconds,
+          metadata: record.metadata.toDto(),
+          pushes: record.pushes.toDto() as NumericDto,
+        );
+      case final HeartRateMeasurementRecord record:
+        return HeartRateMeasurementRecordDto(
+          id: record.id.toDto(),
+          time: record.measurement.time.millisecondsSinceEpoch,
+          metadata: record.metadata.toDto(),
+          measurement: record.measurement.toDto(),
+        );
+      case final SleepStageRecord _:
+        throw UnimplementedError();
+      case final SleepSessionRecord _:
+        throw UnsupportedError(
+          'SleepSessionRecord is not supported on iOS. '
+          'Use SleepStageRecord instead.',
+        );
+      case final HeartRateSeriesRecord _:
+        throw UnsupportedError(
+          'HeartRateSeriesRecord is not supported on iOS. '
+          'Use HeartRateMeasurementRecord instead.',
+        );
+    }
   }
 }
 
-/// Converts [HeartRateMeasurementRecordDto] to [HeartRateMeasurementRecord].
+/// Converts [HealthRecordDto] to [HealthRecord].
 @internal
-extension HeartRateMeasurementRecordDtoToDomain
-    on HeartRateMeasurementRecordDto {
-  HeartRateMeasurementRecord toDomain() {
-    return HeartRateMeasurementRecord(
-      id: id?.toDomain() ?? HealthRecordId.none,
-      metadata: metadata.toDomain(),
-      measurement: measurement.toDomain(),
-    );
+extension HealthRecordDtoToDomain on HealthRecordDto {
+  HealthRecord toDomain() {
+    switch (this) {
+      case final ActiveCaloriesBurnedRecordDto dto:
+        return ActiveCaloriesBurnedRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          energy: dto.energy.toDomain() as Energy,
+        );
+      case final DistanceRecordDto dto:
+        return DistanceRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          distance: dto.distance.toDomain() as Length,
+        );
+      case final FloorsClimbedRecordDto dto:
+        return FloorsClimbedRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          floors: dto.floors.toDomain() as Numeric,
+        );
+      case final StepRecordDto dto:
+        return StepRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          count: dto.count.toDomain() as Numeric,
+        );
+      case final WeightRecordDto dto:
+        return WeightRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          time: DateTime.fromMillisecondsSinceEpoch(dto.time),
+          zoneOffsetSeconds: dto.zoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          weight: dto.weight.toDomain() as Mass,
+        );
+      case final LeanBodyMassRecordDto dto:
+        return LeanBodyMassRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          time: DateTime.fromMillisecondsSinceEpoch(dto.time),
+          zoneOffsetSeconds: dto.zoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          mass: dto.mass.toDomain() as Mass,
+        );
+      case final HeightRecordDto dto:
+        return HeightRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          time: DateTime.fromMillisecondsSinceEpoch(dto.time),
+          zoneOffsetSeconds: dto.zoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          height: dto.height.toDomain() as Length,
+        );
+      case final BodyFatPercentageRecordDto dto:
+        return BodyFatPercentageRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          time: DateTime.fromMillisecondsSinceEpoch(dto.time),
+          zoneOffsetSeconds: dto.zoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          percentage: dto.percentage.toDomain() as Percentage,
+        );
+      case final BodyTemperatureRecordDto dto:
+        return BodyTemperatureRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          time: DateTime.fromMillisecondsSinceEpoch(dto.time),
+          zoneOffsetSeconds: dto.zoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          temperature: dto.temperature.toDomain() as Temperature,
+        );
+      case final HydrationRecordDto dto:
+        return HydrationRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          volume: dto.volume.toDomain() as Volume,
+        );
+      case final WheelchairPushesRecordDto dto:
+        return WheelchairPushesRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          startTime: DateTime.fromMillisecondsSinceEpoch(dto.startTime),
+          endTime: DateTime.fromMillisecondsSinceEpoch(dto.endTime),
+          startZoneOffsetSeconds: dto.startZoneOffsetSeconds,
+          endZoneOffsetSeconds: dto.endZoneOffsetSeconds,
+          metadata: dto.metadata.toDomain(),
+          pushes: dto.pushes.toDomain() as Numeric,
+        );
+      case final HeartRateMeasurementRecordDto dto:
+        return HeartRateMeasurementRecord(
+          id: dto.id?.toDomain() ?? HealthRecordId.none,
+          metadata: dto.metadata.toDomain(),
+          measurement: dto.measurement.toDomain(),
+        );
+    }
   }
 }

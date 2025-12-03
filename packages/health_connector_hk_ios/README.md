@@ -61,7 +61,7 @@ Or manually add:
 
 ```yaml
 dependencies:
-  health_connector_hk_ios: ^0.1.0
+  health_connector_hk_ios: [latest_version]
 ```
 
 ### ⚙️ iOS Setup

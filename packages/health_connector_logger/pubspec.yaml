@@ -8,12 +8,11 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
-  health_connector_annotation:
-    path: ../health_connector_annotation
+  health_connector_annotation: ^1.0.0
   meta: ^1.16.0
 
 dev_dependencies:
-  health_connector_lint: ^0.1.1
+  health_connector_lint: ^1.0.0
   test: ^1.24.0
 
 license: Apache-2.0

@@ -37,7 +37,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  health_connector_logger: ^0.1.0
+  health_connector_logger: [latest_version]
 ```
 
 ---

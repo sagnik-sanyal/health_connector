@@ -11,18 +11,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  health_connector_annotation:
-    path: ../health_connector_annotation
-  health_connector_core:
-    path: ../health_connector_core
-  health_connector_logger:
-    path: ../health_connector_logger
+  health_connector_annotation: ^1.0.0
+  health_connector_core: ^1.0.0
+  health_connector_logger: ^1.0.0
   meta: ^1.16.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  health_connector_lint: ^0.1.1
+  health_connector_lint: ^1.0.0
   pigeon: ^26.1.0
 
 flutter:

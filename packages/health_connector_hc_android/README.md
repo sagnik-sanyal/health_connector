@@ -49,7 +49,7 @@ Or manually add:
 
 ```yaml
 dependencies:
-  health_connector_hc_android: ^0.1.0
+  health_connector_hc_android: [latest_version]
 ```
 
 ### ⚙️ Android Setup

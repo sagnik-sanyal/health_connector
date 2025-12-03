@@ -1,10 +1,11 @@
-import 'package:health_connector_annotation/src/internal_use.dart'
-    show internalUse;
-import 'package:health_connector_annotation/src/meta_targets.dart'
-    show memberAndTypeTargets;
-import 'package:health_connector_annotation/src/since.dart' show sinceV1_0_0;
 import 'package:health_connector_core/health_connector_core.dart'
     show HealthPlatform;
+import 'package:health_connector_core/src/annotations//internal_use.dart'
+    show internalUse;
+import 'package:health_connector_core/src/annotations//meta_targets.dart'
+    show memberAndTypeTargets;
+import 'package:health_connector_core/src/annotations//since.dart'
+    show sinceV1_0_0;
 import 'package:meta/meta.dart' show immutable;
 
 /// Documents platform-specific behaviors for health platform APIs.

@@ -1,4 +1,4 @@
-import 'package:health_connector_annotation/health_connector_annotation.dart'
+import 'package:health_connector_core/src/annotations/annotations.dart'
     show sinceV1_0_0, internalUse;
 
 /// Validates that a condition holds for a function argument.

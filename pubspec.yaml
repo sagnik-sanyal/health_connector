@@ -9,7 +9,6 @@ environment:
 workspace:
   - packages/health_connector
   - packages/health_connector/example
-  - packages/health_connector_annotation
   - packages/health_connector_core
   - packages/health_connector_lint
   - packages/health_connector_logger

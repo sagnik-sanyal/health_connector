@@ -1,12 +1,6 @@
 import 'dart:io' show Platform;
 
 import 'package:health_connector/src/health_connector_config.dart';
-import 'package:health_connector_annotation/health_connector_annotation.dart'
-    show
-        PlatformSpecificBehaviors,
-        supportedOnHealthConnect,
-        sinceV1_0_0,
-        ExperimentalOn;
 import 'package:health_connector_core/health_connector_core.dart'
     show
         AggregateRequest,
@@ -31,7 +25,11 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsRequest,
         ReadRecordsResponse,
         require,
-        requireEndTimeAfterStartTime;
+        requireEndTimeAfterStartTime,
+        sinceV1_0_0,
+        PlatformSpecificBehaviors,
+        supportedOnHealthConnect,
+        ExperimentalOn;
 import 'package:health_connector_hc_android/health_connector_hc_android.dart'
     show HealthConnectorHCClient;
 import 'package:health_connector_logger/health_connector_logger.dart'

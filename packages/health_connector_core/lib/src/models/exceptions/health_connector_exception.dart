@@ -1,4 +1,4 @@
-import 'package:health_connector_annotation/health_connector_annotation.dart'
+import 'package:health_connector_core/src/annotations/annotations.dart'
     show sinceV1_0_0;
 import 'package:health_connector_core/src/models/exceptions/health_connector_error_code.dart'
     show HealthConnectorErrorCode;

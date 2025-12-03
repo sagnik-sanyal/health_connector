@@ -1,6 +1,6 @@
-import 'package:health_connector_annotation/health_connector_annotation.dart'
-    show sinceV1_0_0;
 import 'package:health_connector_core/health_connector_core.dart' show require;
+import 'package:health_connector_core/src/annotations/annotations.dart'
+    show sinceV1_0_0;
 import 'package:health_connector_core/src/models/health_data_types/health_data_type.dart'
     show HealthDataType;
 import 'package:health_connector_core/src/models/health_records/health_record.dart'

@@ -1,11 +1,11 @@
-import 'package:health_connector_annotation/health_connector_annotation.dart'
+import 'package:health_connector_core/health_connector_core.dart'
+    show Permission;
+import 'package:health_connector_core/src/annotations/annotations.dart'
     show
         sinceV1_0_0,
         supportedOnHealthConnect,
         supportedOnAppleHealth,
         availableOnAppleHealth;
-import 'package:health_connector_core/health_connector_core.dart'
-    show Permission;
 import 'package:health_connector_core/src/config/health_connector_config_constants.dart'
     show HealthConnectorConfigConstants;
 import 'package:health_connector_core/src/models/health_data_types/health_data_type_capabilities/health_data_type_capabilities.dart';

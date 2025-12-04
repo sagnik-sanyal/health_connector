@@ -150,11 +150,11 @@ final class SleepStage {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is SleepStage &&
-              runtimeType == other.runtimeType &&
-              startTime == other.startTime &&
-              endTime == other.endTime &&
-              stageType == other.stageType;
+      other is SleepStage &&
+          runtimeType == other.runtimeType &&
+          startTime == other.startTime &&
+          endTime == other.endTime &&
+          stageType == other.stageType;
 
   @override
   int get hashCode =>

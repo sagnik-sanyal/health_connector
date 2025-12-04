@@ -289,7 +289,8 @@ class MetadataDto {
   /// A local identifier for the device that recorded the data (optional).
   final String? deviceLocalIdentifier;
 
-  /// The UDI (Unique Device Identifier) for the device that recorded the data (optional).
+  /// The UDI (Unique Device Identifier) for the device that recorded
+  /// the data (optional).
   final String? deviceUdiDeviceIdentifier;
 
   /// Whether this data was manually entered by the user.
@@ -745,8 +746,9 @@ class HeartRateMeasurementRecordDto extends HealthRecordDto {
 
 /// Represents a sleep stage record for platform transfer (iOS).
 ///
-/// Sleep data in HealthKit uses HKCategorySample with categoryType .sleepAnalysis.
-/// Each record represents a single continuous period in one stage.
+/// Sleep data in HealthKit uses HKCategorySample with categoryType
+/// .sleepAnalysis. Each record represents a single continuous period in one
+/// stage.
 class SleepStageRecordDto extends HealthRecordDto {
   SleepStageRecordDto({
     required this.id,

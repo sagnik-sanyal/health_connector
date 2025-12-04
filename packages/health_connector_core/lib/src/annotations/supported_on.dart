@@ -1,8 +1,8 @@
 import 'package:health_connector_core/health_connector_core.dart'
     show HealthPlatform, HealthConnectorErrorCode, HealthConnectorException;
-import 'package:health_connector_core/src/annotations//meta_targets.dart'
+import 'package:health_connector_core/src/annotations/meta_targets.dart'
     show memberAndTypeTargets;
-import 'package:health_connector_core/src/annotations//since.dart'
+import 'package:health_connector_core/src/annotations/since.dart'
     show sinceV1_0_0;
 import 'package:meta/meta.dart' show immutable, internal;
 

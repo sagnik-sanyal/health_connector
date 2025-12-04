@@ -1,4 +1,4 @@
-import 'package:health_connector_core/src/annotations//meta_targets.dart'
+import 'package:health_connector_core/src/annotations/meta_targets.dart'
     show allTargets;
 import 'package:meta/meta.dart' show immutable, internal;
 

@@ -23,6 +23,35 @@ needed.
 | 🗑️ **Deleting Health Records** | Remove specific records by their IDs  or within a date/time range                                                      |
 | ➕ **Aggregating Health Data**   | Sum/Avg/Min/Max Aggregation                                                                                            |
 
+Explore the plugin's capabilities using
+the [Health Connector Toolbox](../../examples/health_connector_toolbox) example app:
+
+<div style="text-align: center">
+    <table>
+        <tr>
+            <th style="text-align: center">Permission Request</th>
+            <th>Read Health Data</th>
+            <th>Write Health Data</th>
+            <th>Aggregate Health Data</th>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                <img src="../../doc/assets/ios_permission_request.gif" width="200"/>
+                <img src="../../doc/assets/android_permission_request.gif" width="200"/>
+            </td>    
+            <td style="text-align: center">
+                <img src="../../doc/assets/ios_read_health_data.gif" width="200"/>
+            </td>    
+            <td style="text-align: center">
+                <img src="../../doc/assets/android_write_health_data.gif" width="200"/>
+            </td>
+            <td style="text-align: center">
+                <img src="../../doc/assets/ios_aggregate_health_data.gif" width="200"/>
+            </td>    
+        </tr>
+    </table>
+</div>
+
 ---
 
 ## 🎯 Requirements

@@ -5,7 +5,6 @@ publish_to: none
 environment:
   sdk: ^3.9.2
 
-# Explicitly list all packages (no globs in Dart 3.9.2)
 workspace:
   - packages/health_connector
   - packages/health_connector/example
@@ -21,113 +20,173 @@ workspace:
 dev_dependencies:
   melos: ^7.3.0
 
-# Melos configuration
 melos:
   name: health_connector
   repository: https://github.com/fam-tung-lam/health_connector
   sdkPath: .fvm/flutter_sdk
 
   command:
+    bootstrap:
+      environment:
+        sdk: ^3.9.2
+        flutter: '>=3.3.0'
+
+      dependencies:
+        meta: ^1.16.0
+
+      dev_dependencies:
+        pigeon: ^26.1.0
+        test: ^1.24.0
+
+    publish:
+      hooks:
+        pre: melos run analyze:strict
+
     version:
       # Only allow versioning to happen on main branch.
       branch: main
+
       # Generates a link to a prefilled GitHub release creation page.
       releaseUrl: true
       includeCommitId: true
       linkToCommits: true
 
+      # Hooks to run before version commit
+      hooks:
+        preCommit: |
+          melos run pigeon:generate
+          melos run format
+
   scripts:
     # Analysis
     analyze:
-      description: Run static analysis across all packages
-      run: melos exec -- fvm dart analyze .
+      description: Run `dart analyze` for all packages.
+      run: dart analyze .
+      exec:
+        concurrency: 5
+        failFast: false
+      packageFilters:
+        dirExists: lib
 
     analyze:strict:
-      description: Run static analysis with fatal warnings
-      run: melos exec -- fvm dart analyze --fatal-infos --fatal-warnings .
+      description: Run static analysis with fatal warnings for all packages
+      run: dart analyze --fatal-infos --fatal-warnings .
+      exec:
+        concurrency: 5
+        failFast: true
+      packageFilters:
+        dirExists: lib
 
     # Code formatting
     format:
-      description: Format all Dart code
-      run: melos exec -- dart format .
+      description: Format all Dart code in the workspace
+      run: dart format .
+      exec:
+        concurrency: 5
+      packageFilters:
+        dirExists: lib
 
     format:check:
-      description: Check code formatting
-      run: melos exec -- dart format --set-exit-if-changed .
+      description: Check code formatting without making changes
+      run: dart format --set-exit-if-changed .
+      exec:
+        concurrency: 5
+        failFast: true
+      packageFilters:
+        dirExists: lib
 
     # Testing
     test:
-      description: Run all Dart tests
-      run: melos exec --dir-exists=test -- fvm flutter test
+      description: Run all Flutter tests in this project.
+      run: melos run test:select --no-select
+      packageFilters:
+        dirExists: test
+
+    test:select:
+      description: Run Flutter tests for selected packages with test directories.
+      run: flutter test
+      exec:
+        concurrency: 1
+        failFast: false
+      packageFilters:
+        dirExists: test
 
     test:coverage:
-      description: Generate test coverage
-      run: |
-        melos exec --dir-exists=test -- fvm flutter test --coverage
-        melos exec --dir-exists=test -- genhtml coverage/lcov.info -o coverage/html
+      description: Generate coverage for the selected package.
+      steps:
+        - flutter test --coverage
+        - genhtml coverage/lcov.info --output-directory=coverage/
+      packageFilters:
+        dirExists: test
+
+    # Versioning and Publishing
+    publish:dry-run:
+      description: Test publishing packages without actually publishing to pub.dev
+      run: melos publish --dry-run --no-private
+
+    version:dry-run:
+      description: Preview version changes and changelog updates without committing
+      run: melos version --dry-run --no-private
+
+    # Quality Checks
+    pre-commit:
+      description: Run all checks before committing (format, analyze, test)
+      steps:
+        - melos run format:check
+        - melos run analyze:strict
+        - melos run test
+
+    # Build
+    build:toolbox:
+      description: Build the health_connector_toolbox app
+      run: flutter build apk
+      exec:
+        concurrency: 1
+      packageFilters:
+        scope: "health_connector_toolbox"
 
     # Code generation
     pigeon:generate:
-      description: Generate Pigeon code for all platform packages
-      run: |
-        melos exec --scope="health_connector_hc_android" -- dart run pigeon --input pigeons/health_connector_platform_api.dart       
-        melos exec --scope="health_connector_hk_ios" -- dart run pigeon --input pigeons/health_connector_platform_api.dart
-        cd packages/health_connector_hk_ios
-        python3 scripts/add_public_keyword_to_swift_code.py ios/health_connector_hk_ios/Sources/health_connector_hk_ios/pigeon/HealthConnectorPlatformApi.g.swift
+      description: Generate Pigeon platform channel code for Android and iOS packages
+      steps:
+        - melos exec --scope="health_connector_hc_android" -- dart run pigeon --input pigeons/health_connector_platform_api.dart
+        - melos exec --scope="health_connector_hk_ios" -- dart run pigeon --input pigeons/health_connector_platform_api.dart
+        - cd packages/health_connector_hk_ios && python3 scripts/add_public_keyword_to_swift_code.py ios/health_connector_hk_ios/Sources/health_connector_hk_ios/pigeon/HealthConnectorPlatformApi.g.swift
 
     # Clean
     clean:
-      description: Clean all packages
-      run: melos exec -- flutter clean
+      description: Clean build artifacts for all packages
+      run: flutter clean
+      exec:
+        concurrency: 5
+      packageFilters:
+        flutter: true
 
     clean:deep:
-      description: Deep clean including build artifacts
-      run: |
-        melos clean
-        rm -rf **/.dart_tool
-        rm -rf **/build
-        rm -rf **/.flutter-plugins
-        rm -rf **/.flutter-plugins-dependencies
+      description: Deep clean including build artifacts and generated files
+      steps:
+        - melos clean
+        - rm -rf **/.dart_tool
+        - rm -rf **/build
+        - rm -rf **/.flutter-plugins
+        - rm -rf **/.flutter-plugins-dependencies
 
     # Dependencies
     get:
-      description: Run pub get for all packages
-      run: melos exec -- flutter pub get
+      description: Run `flutter pub get` for all packages
+      run: flutter pub get
+      exec:
+        concurrency: 5
+      packageFilters:
+        dirExists: lib
 
     upgrade:
       description: Upgrade dependencies for all packages
-      run: melos exec -- flutter pub upgrade
-
-    # Publishing (manual - requires pub.dev credentials)
-    publish:dry:
-      description: Dry run publish for all packages
-      run: melos publish --dry-run --no-private --ignore="**/example/**"
-
-    publish:lint:
-      description: Publish lint package (must be published first)
-      run: melos publish --scope="health_connector_lint" --no-private
-
-    publish:core:
-      description: Publish core packages (lint first, then core)
-      run: |
-        melos publish --scope="health_connector_lint" --no-private
-        melos publish --scope="health_connector_core" --no-private
-
-    publish:platforms:
-      description: Publish platform implementations (requires core packages published first)
-      run: melos publish --scope="health_connector_hc_android,health_connector_hk_ios" --no-private
-
-    publish:main:
-      description: Publish main package (requires all dependencies published first)
-      run: melos publish --scope="health_connector" --no-private
-
-    publish:all:
-      description: Publish all packages in correct dependency order
-      run: |
-        melos publish --scope="health_connector_lint" --no-private
-        melos publish --scope="health_connector_core" --no-private
-        melos publish --scope="health_connector_hc_android,health_connector_hk_ios" --no-private
-        melos publish --scope="health_connector" --no-private
+      run: flutter pub upgrade
+      exec:
+        concurrency: 5
+      packageFilters:
+        dirExists: lib
 
   # IDE configuration
   ide:

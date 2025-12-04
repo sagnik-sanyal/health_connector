@@ -1,3 +1,3 @@
-## 0.1.0
+## 1.0.0
 
-* Initial release.
+* **FEAT**: Introduce new `health_connector_logger` package for structured logging across platforms.

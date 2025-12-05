@@ -18,7 +18,10 @@ A unified, type-safe Flutter plugin for accessing health data across Android and
 
 ## 📖 Overview
 
-**Health Connector** provides a unified interface to access health data from **Android Health Connect** and **iOS HealthKit**. It abstracts platform differences while preserving platform-specific capabilities, offering a consistent API for reading, writing, updating, deleting, and aggregating health records.
+**Health Connector** provides a unified interface to access health data from **Android Health
+Connect** and **iOS HealthKit**. It abstracts platform differences while preserving
+platform-specific capabilities, offering a consistent API for reading, writing, updating, deleting,
+and aggregating health records.
 
 ---
 
@@ -29,14 +32,16 @@ Health Connector is organized as a monorepo containing multiple packages:
 ### Core Packages
 
 - **[health_connector](packages/health_connector)** - Main facade package providing the unified API
-- **[health_connector_core](packages/health_connector_core)** - Core types, abstractions, and domain models
-- **[health_connector_hc_android](packages/health_connector_hc_android)** - Android Health Connect implementation
+- **[health_connector_core](packages/health_connector_core)** - Core types, abstractions, and domain
+  models
+- **[health_connector_hc_android](packages/health_connector_hc_android)** - Android Health Connect
+  implementation
 - **[health_connector_hk_ios](packages/health_connector_hk_ios)** - iOS HealthKit implementation
 
 ### Utility Packages
 
-- **[health_connector_annotation](packages/health_connector_annotation)** - Annotations for API versioning and platform support
-- **[health_connector_lint](packages/health_connector_lint)** - Shared lint rules and analysis options
+- **[health_connector_lint](packages/health_connector_lint)** - Shared lint rules and analysis
+  options
 - **[health_connector_logger](packages/health_connector_logger)** - Structured logging utilities
 
 ---
@@ -53,7 +58,8 @@ Contributions are welcome! To contribute:
 
 Before submitting:
 
-- Ensure code follows the lint rules defined in [health_connector_lint][health_connector_lint]
+- Ensure code follows the lint rules defined
+  in [health_connector_lint](packages/health_connector_lint)
 - Add tests for new functionality
 - Update documentation as needed
 
@@ -63,7 +69,8 @@ For major changes, please open an issue first to discuss what you would like to 
 
 ## 🐛 Issues & Feature Requests
 
-Found a bug or have a feature request? Please open an issue on our [GitHub Issues](https://github.com/fam-tung-lam/health_connector/issues) page.
+Found a bug or have a feature request? Please open an issue on
+our [GitHub Issues](https://github.com/fam-tung-lam/health_connector/issues) page.
 
 When reporting issues, please include:
 
@@ -77,3 +84,4 @@ When reporting issues, please include:
 ## 📄 License
 
 This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
+

@@ -427,7 +427,7 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 | Data Type                      | Supported | Documentation                                                                                                              |
 |--------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------|
 | **Hydration / Water**          | ✅         | [`HydrationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HydrationRecord) |
-| **Nutrition / Dietary Energy** | ❌         | [`NutritionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/NutritionRecord) |
+| **Nutrition / Dietary Energy** | ✅         | [`NutritionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/NutritionRecord) |
 
 ### 😴 Sleep
 

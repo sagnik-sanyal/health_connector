@@ -742,8 +742,7 @@ abstract final class AppTexts {
   // Nutrition Form Field Labels
   // ==========================================================================
   static const String foodNameOptional = 'Food Name (optional)';
-  static const String foodNameOptionalHelper =
-      'Optional name of the food item';
+  static const String foodNameOptionalHelper = 'Optional name of the food item';
   static const String nutrientsAllOptional = 'Nutrients (all optional)';
   static const String energyAndMacronutrients = 'Energy & Macronutrients';
   static const String vitamins = 'Vitamins';

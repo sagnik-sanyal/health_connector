@@ -164,9 +164,7 @@ final readRequest = HealthDataType.steps.readRecord(recordId);
 final record = await connector.readRecord(readRequest);
 
 if (record != null) {
-  final stepRecord = record as StepRecord;
-  print('Steps: ${stepRecord.count.value}');
-  print('Time: ${stepRecord.startTime} to ${stepRecord.endTime}');
+  print('Steps: ${record.count.value} from ${record.startTime} to ${record.endTime}');
 } else {
   print('Record not found');
 }
@@ -185,9 +183,7 @@ final request = HealthDataType.steps.readRecords(
 final response = await connector.readRecords(request);
 
 for (final record in response.records) {
-  final stepRecord = record as StepRecord;
-  print('Steps: ${stepRecord.count.value} '
-        'from ${stepRecord.startTime} to ${stepRecord.endTime}');
+  print('Steps: ${record.count.value} from ${record.startTime} to ${record.endTime}');
 }
 ```
 

@@ -60,7 +60,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         /**
          * Tag used for logging throughout the client.
          */
-        private val TAG = HealthConnectorClient::class.simpleName
+        private val TAG = HealthConnectorClient::class.simpleName ?: "HealthConnectorClient"
 
         /**
          * Gets or creates a [HealthConnectorClient] instance.
@@ -79,7 +79,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                 return HealthConnectorClient(HealthConnectClient.getOrCreate(context))
             } catch (e: UnsupportedOperationException) {
                 HealthConnectorLogger.error(
-                    tag = TAG ?: "HealthConnectorClient",
+                    tag = TAG,
                     operation = "getOrCreate",
                     phase = "failed",
                     message = "Failed to create Health Connect client due to SDK version too low or running in a profile mode",
@@ -88,7 +88,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
                 throw HealthConnectorErrorCodeDto.INSTALLATION_OR_UPDATE_REQUIRED.toError(details = e.message)
             } catch (e: IllegalStateException) {
                 HealthConnectorLogger.error(
-                    tag = TAG ?: "HealthConnectorClient",
+                    tag = TAG,
                     operation = "getOrCreate",
                     phase = "failed",
                     message = "Failed to create Health Connect client due to service not available",
@@ -106,7 +106,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
          */
         fun getHealthPlatformStatus(context: Context): HealthPlatformStatusDto {
             HealthConnectorLogger.debug(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getHealthPlatformStatus",
                 phase = "entry",
                 message = "Getting Health Connect SDK status",
@@ -116,7 +116,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val statusDto = statusCode.toHealthPlatformStatusDto()
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getHealthPlatformStatus",
                 phase = "completed",
                 message = "Health Connect platform status retrieved",
@@ -139,7 +139,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
      *         and feature permissions
      *
      * @throws HealthConnectorError with code `INVALID_PLATFORM_CONFIGURATION` if any requested
-     *         permissions/features are not declared in AndroidManifest.xml (caught from 
+     *         permissions/features are not declared in AndroidManifest.xml (caught from
      *         [IllegalStateException] thrown by validation)
      * @throws HealthConnectorError with code `UNKNOWN` if an unexpected error occurs
      */
@@ -149,7 +149,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         request: PermissionsRequestDto,
     ): PermissionsRequestResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "requestPermissions",
             phase = "entry",
             message = "Requesting Health Connect permissions",
@@ -173,7 +173,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "requestPermissions",
                 phase = "completed",
                 message = "Health Connect permissions requested successfully",
@@ -188,7 +188,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: IllegalStateException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "requestPermissions",
                 phase = "failed",
                 message = e.message,
@@ -203,7 +203,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             throw HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(details = e.message)
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "requestPermissions",
                 phase = "failed",
                 message = "Failed to request Health Connect permissions",
@@ -236,7 +236,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     fun getFeatureStatus(context: Context, feature: HealthPlatformFeatureDto): HealthPlatformFeatureStatusDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "getFeatureStatus",
             phase = "entry",
             message = "Checking Health Connect feature status",
@@ -257,7 +257,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val statusDto = statusCode.toHealthPlatformFeatureStatusDto()
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getFeatureStatus",
                 phase = "completed",
                 message = "Health Connect feature status retrieved",
@@ -268,9 +268,19 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             return statusDto
+        } catch (e: IllegalStateException) {
+            HealthConnectorLogger.error(
+                tag = TAG,
+                operation = "getFeatureStatus",
+                phase = "failed",
+                message = e.message,
+                context = mapOf("feature" to feature),
+                exception = e,
+            )
+            throw HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(details = e.message)
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getFeatureStatus",
                 phase = "failed",
                 message = "Failed to get Health Connect feature status",
@@ -295,7 +305,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun readRecord(request: ReadRecordRequestDto): ReadRecordResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "readRecord",
             phase = "entry",
             message = "Reading Health Connect record",
@@ -314,7 +324,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val responseDto = ReadRecordResponseDto(record = recordDto)
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecord",
                 phase = "completed",
                 message = "Health Connect record read successfully",
@@ -327,7 +337,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return responseDto
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecord",
                 phase = "failed",
                 message = "Failed to read Health Connect record",
@@ -339,7 +349,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecord",
                 phase = "failed",
                 message = "Failed to read Health Connect record",
@@ -363,7 +373,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun readRecords(request: ReadRecordsRequestDto): ReadRecordsResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "readRecords",
             phase = "entry",
             message = "Reading Health Connect records",
@@ -409,7 +419,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecords",
                 phase = "completed",
                 message = "Health Connect records read successfully",
@@ -422,7 +432,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return responseDto
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecords",
                 phase = "failed",
                 message = "Failed to read Health Connect records",
@@ -434,7 +444,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "readRecords",
                 phase = "failed",
                 message = "Failed to read Health Connect records",
@@ -457,7 +467,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun writeRecord(request: WriteRecordRequestDto): WriteRecordResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "writeRecord",
             phase = "entry",
             message = "Writing Health Connect record",
@@ -473,7 +483,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val recordId = response.recordIdsList.first()
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecord",
                 phase = "completed",
                 message = "Health Connect record written successfully",
@@ -486,7 +496,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return WriteRecordResponseDto(recordId = recordId)
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecord",
                 phase = "failed",
                 message = "Failed to write Health Connect record",
@@ -498,7 +508,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecord",
                 phase = "failed",
                 message = "Failed to write Health Connect record",
@@ -521,7 +531,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun writeRecords(request: WriteRecordsRequestDto): WriteRecordsResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "writeRecords",
             phase = "entry",
             message = "Writing Health Connect records",
@@ -537,7 +547,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val recordIds = response.recordIdsList
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecords",
                 phase = "completed",
                 message = "Health Connect records written successfully",
@@ -550,7 +560,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return WriteRecordsResponseDto(recordIds = recordIds)
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecords",
                 phase = "failed",
                 message = "Failed to write Health Connect records",
@@ -562,7 +572,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "writeRecords",
                 phase = "failed",
                 message = "Failed to write Health Connect records",
@@ -586,7 +596,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun updateRecord(request: UpdateRecordRequestDto): UpdateRecordResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "updateRecord",
             phase = "entry",
             message = "Updating Health Connect record",
@@ -608,7 +618,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val recordId = record.metadata.id
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "updateRecord",
                 phase = "completed",
                 message = "Health Connect record updated successfully",
@@ -618,7 +628,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return UpdateRecordResponseDto(recordId = recordId)
         } catch (e: IllegalArgumentException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "updateRecord",
                 phase = "failed",
                 message = "Failed to update Health Connect record",
@@ -630,7 +640,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "updateRecord",
                 phase = "failed",
                 message = "Failed to update Health Connect record",
@@ -642,7 +652,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "updateRecord",
                 phase = "failed",
                 message = "Failed to update Health Connect record",
@@ -666,7 +676,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun aggregate(request: AggregateRequestDto): AggregateResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "aggregate",
             phase = "entry",
             message = "Aggregating Health Connect data",
@@ -701,7 +711,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             val responseDto = AggregateResponseDto(value = valueDto)
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "completed",
                 message = "Health Connect data aggregated successfully",
@@ -714,7 +724,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return responseDto
         } catch (e: UnsupportedOperationException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "failed",
                 message = "Unsupported aggregation operation",
@@ -726,7 +736,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: IllegalStateException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "failed",
                 message = "Invalid aggregation state - null result from Health Connect",
@@ -738,7 +748,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: IllegalArgumentException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "failed",
                 message = "Failed to aggregate Health Connect data",
@@ -748,7 +758,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(details = e.message)
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "failed",
                 message = "Failed to aggregate Health Connect data",
@@ -760,7 +770,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "aggregate",
                 phase = "failed",
                 message = "Failed to aggregate Health Connect data",
@@ -783,7 +793,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun deleteRecordsByTimeRange(request: DeleteRecordsByTimeRangeRequestDto) {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "deleteRecords",
             phase = "entry",
             message = "Deleting Health Connect records by time range",
@@ -803,7 +813,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecords",
                 phase = "completed",
                 message = "Health Connect records deleted successfully",
@@ -811,7 +821,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecords",
                 phase = "failed",
                 message = "Failed to delete Health Connect records",
@@ -823,7 +833,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecords",
                 phase = "failed",
                 message = "Failed to delete Health Connect records",
@@ -844,7 +854,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun deleteRecordsByIds(request: DeleteRecordsByIdsRequestDto) {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "deleteRecordsByIds",
             phase = "entry",
             message = "Deleting Health Connect records by IDs",
@@ -853,7 +863,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
         if (request.recordIds.isEmpty()) {
             HealthConnectorLogger.warning(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecordsByIds",
                 phase = "completed",
                 message = "No records to delete (empty IDs list)",
@@ -871,7 +881,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecordsByIds",
                 phase = "completed",
                 message = "Health Connect records deleted successfully",
@@ -879,7 +889,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: SecurityException) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecordsByIds",
                 phase = "failed",
                 message = "Failed to delete Health Connect records by IDs",
@@ -891,7 +901,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "deleteRecordsByIds",
                 phase = "failed",
                 message = "Failed to delete Health Connect records by IDs",
@@ -913,7 +923,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun getGrantedPermissions(): PermissionsRequestResponseDto {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "getGrantedPermissions",
             phase = "entry",
             message = "Getting granted Health Connect permissions",
@@ -948,7 +958,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             }
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getGrantedPermissions",
                 phase = "completed",
                 message = "Granted Health Connect permissions retrieved",
@@ -964,7 +974,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "getGrantedPermissions",
                 phase = "failed",
                 message = "Failed to get granted Health Connect permissions",
@@ -984,7 +994,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
     @Throws(HealthConnectorError::class)
     suspend fun revokeAllPermissions() {
         HealthConnectorLogger.debug(
-            tag = TAG ?: "HealthConnectorClient",
+            tag = TAG,
             operation = "revokeAllPermissions",
             phase = "entry",
             message = "Revoking all Health Connect permissions",
@@ -995,14 +1005,14 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             client.permissionController.revokeAllPermissions()
 
             HealthConnectorLogger.info(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "revokeAllPermissions",
                 phase = "completed",
                 message = "All Health Connect permissions revoked successfully",
             )
         } catch (e: Exception) {
             HealthConnectorLogger.error(
-                tag = TAG ?: "HealthConnectorClient",
+                tag = TAG,
                 operation = "revokeAllPermissions",
                 phase = "failed",
                 message = "Failed to revoke all Health Connect permissions",

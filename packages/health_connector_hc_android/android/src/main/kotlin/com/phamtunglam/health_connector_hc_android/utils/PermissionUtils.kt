@@ -2,7 +2,6 @@ package com.phamtunglam.health_connector_hc_android.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.health.connect.client.PermissionController
 import com.phamtunglam.health_connector_hc_android.mappers.toError
@@ -27,7 +26,7 @@ internal object PermissionUtils {
     /**
      * Tag used for logging throughout the permission utilities.
      */
-    private val TAG = PermissionUtils::class.simpleName
+    private val TAG = PermissionUtils::class.simpleName ?: "PermissionUtils"
 
     /**
      * Key used for registering the permission request activity result contract.
@@ -48,7 +47,13 @@ internal object PermissionUtils {
         context: Context,
         feature: HealthPlatformFeatureDto,
     ) {
-        Log.d(TAG, "Validating feature permission declared in AndroidManifest for: $feature")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validateFeaturePermissionDeclaredInManifest",
+            phase = "entry",
+            message = "Validating feature permission declared in AndroidManifest",
+            context = mapOf("feature" to feature),
+        )
 
         // Get all permissions declared in AndroidManifest
         val definedPermissions = context.packageManager.getPackageInfo(
@@ -62,13 +67,28 @@ internal object PermissionUtils {
         if (!definedPermissions.contains(featurePermissionString)) {
             val errorMessage =
                 "Feature permission '$featurePermissionString' for $feature is not declared in AndroidManifest.xml"
-            Log.e(TAG, errorMessage)
+            HealthConnectorLogger.error(
+                tag = TAG,
+                operation = "validateFeaturePermissionDeclaredInManifest",
+                phase = "failed",
+                message = errorMessage,
+                context = mapOf(
+                    "feature" to feature,
+                    "feature_permission_string" to featurePermissionString,
+                ),
+            )
             throw HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(
                 details = "Please add the permission '$featurePermissionString' to your AndroidManifest.xml file.",
             )
         }
 
-        Log.d(TAG, "Feature permission for $feature is properly declared in AndroidManifest")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validateFeaturePermissionDeclaredInManifest",
+            phase = "completed",
+            message = "Feature permission properly declared in AndroidManifest",
+            context = mapOf("feature" to feature),
+        )
     }
 
     /**
@@ -80,7 +100,7 @@ internal object PermissionUtils {
      * @param context The Android application context
      * @param request The permissions request containing health data and feature permissions to validate
      *
-     * @throws IllegalStateException if any requested permissions/features are not declared in 
+     * @throws IllegalStateException if any requested permissions/features are not declared in
      *         AndroidManifest.xml. The error message lists all missing declarations.
      */
     @Throws(IllegalStateException::class)
@@ -88,14 +108,29 @@ internal object PermissionUtils {
         context: Context,
         request: PermissionsRequestDto,
     ) {
-        Log.d(TAG, "Validating permissions declared in AndroidManifest...")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validatePermissionsDeclaredInManifest",
+            phase = "entry",
+            message = "Validating permissions declared in AndroidManifest",
+            context = mapOf(
+                "health_data_permissions" to request.healthDataPermissions,
+                "feature_permissions" to request.featurePermissions,
+            ),
+        )
 
         // Get all permissions declared in AndroidManifest
         val definedPermissions = context.packageManager.getPackageInfo(
             context.packageName, PackageManager.GET_PERMISSIONS
         ).requestedPermissions.orEmpty().toSet()
 
-        Log.d(TAG, "Found ${definedPermissions.size} permissions declared in AndroidManifest")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validatePermissionsDeclaredInManifest",
+            phase = "in_progress",
+            message = "Found permissions declared in AndroidManifest",
+            context = mapOf("declared_permissions_count" to definedPermissions.size),
+        )
 
         // Convert DTOs to Health Connect permission strings
         val healthDataPermissionStrings = request.healthDataPermissions.map { it.toHealthConnectPermission() }
@@ -107,18 +142,41 @@ internal object PermissionUtils {
             definedPermissions.contains(it)
         }
 
-        Log.d(TAG, "Validation result: ${defined.size} defined, ${notDefined.size} not defined")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validatePermissionsDeclaredInManifest",
+            phase = "in_progress",
+            message = "Validation result",
+            context = mapOf(
+                "defined_count" to defined.size,
+                "not_defined_count" to notDefined.size,
+            ),
+        )
 
         // Throw error if any permissions are not defined
         if (notDefined.isNotEmpty()) {
-            val errorMessage = "The following permissions/features are not declared in AndroidManifest.xml: ${notDefined.joinToString(", ")}. " +
-                "Please add these permissions to your AndroidManifest.xml file. " +
-                "Defined permissions: ${defined.joinToString(", ")}"
-            Log.e(TAG, errorMessage)
+            val errorMessage = "The following permissions/features are not declared in " +
+                    "AndroidManifest.xml: ${notDefined.joinToString(", ")}. " +
+                    "Please add these permissions to your AndroidManifest.xml file."
+            HealthConnectorLogger.error(
+                tag = TAG,
+                operation = "validatePermissionsDeclaredInManifest",
+                phase = "failed",
+                message = errorMessage,
+                context = mapOf(
+                    "not_defined" to notDefined,
+                    "defined" to defined,
+                ),
+            )
             throw IllegalStateException(errorMessage)
         }
 
-        Log.d(TAG, "All requested permissions are properly declared in AndroidManifest")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "validatePermissionsDeclaredInManifest",
+            phase = "completed",
+            message = "All requested permissions are properly declared in AndroidManifest",
+        )
     }
 
     /**
@@ -137,7 +195,13 @@ internal object PermissionUtils {
         val featurePermissionStrings = request.featurePermissions.map { it.toHealthConnectPermission() }
         val allPermissions = healthDataPermissionStrings.union(featurePermissionStrings)
 
-        Log.d(TAG, "Launching permission request for ${allPermissions.size} permissions")
+        HealthConnectorLogger.debug(
+            tag = TAG,
+            operation = "requestPermissionsFromSystem",
+            phase = "entry",
+            message = "Launching permission request",
+            context = mapOf("permissions_count" to allPermissions.size),
+        )
 
         // Launch permission request and wait for result
         val completer = CompletableDeferred<Set<String>>()
@@ -150,7 +214,13 @@ internal object PermissionUtils {
         launcher.launch(allPermissions)
         val grantedPermissions = completer.await()
 
-        Log.d(TAG, "Permission request completed: ${grantedPermissions.size} granted")
+        HealthConnectorLogger.info(
+            tag = TAG,
+            operation = "requestPermissionsFromSystem",
+            phase = "completed",
+            message = "Permission request completed",
+            context = mapOf("granted_permissions_count" to grantedPermissions.size),
+        )
         return grantedPermissions
     }
 

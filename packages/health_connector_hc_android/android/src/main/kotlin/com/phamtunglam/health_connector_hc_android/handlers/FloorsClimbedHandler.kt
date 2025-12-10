@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.FloorsClimbedRecord
 import androidx.health.connect.client.records.Record
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.toDto
@@ -41,22 +42,20 @@ object FloorsClimbedHandler : IntervalRecordHandler, AggregationSupportingHandle
 
     override fun getRecordClass(): KClass<out Record> = FloorsClimbedRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(AggregationMetricDto.SUM)
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.SUM -> FloorsClimbedRecord.FLOORS_CLIMBED_TOTAL
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for FloorsClimbed. Supported: SUM")
+            AggregationMetricDto.AVG, AggregationMetricDto.MIN, AggregationMetricDto.MAX, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} for FloorsClimbed. Supported: SUM")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val floors = (aggregatedValue as? Double) ?: 0.0
+        val floors = aggregationResult[aggregateMetric] as? Double
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
         return floors.toNumericDto()
     }
 }

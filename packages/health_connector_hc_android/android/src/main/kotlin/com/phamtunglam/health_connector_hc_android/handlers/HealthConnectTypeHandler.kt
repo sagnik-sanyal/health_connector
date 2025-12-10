@@ -1,10 +1,10 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.Record
 import com.phamtunglam.health_connector_hc_android.HealthConnectDataCategory
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregateRequestDto
-import com.phamtunglam.health_connector_hc_android.pigeon.AggregationMetricDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MeasurementUnitDto
@@ -40,7 +40,9 @@ sealed interface HealthConnectRecordHandler : HealthConnectTypeHandler {
      *
      * @param record The Health Connect record to convert
      * @return The converted DTO, or null if the record type doesn't match
+     * @throws IllegalArgumentException if the record type doesn't match the expected type
      */
+    @Throws(IllegalArgumentException::class)
     fun toDto(record: Record): HealthRecordDto?
 
     /**
@@ -50,6 +52,7 @@ sealed interface HealthConnectRecordHandler : HealthConnectTypeHandler {
      * @return The Health Connect record
      * @throws IllegalArgumentException if the DTO type doesn't match the expected type
      */
+    @Throws(IllegalArgumentException::class)
     fun toHealthConnect(dto: HealthRecordDto): Record
 
     /**
@@ -114,19 +117,13 @@ sealed interface SessionRecordHandler : HealthConnectRecordHandler {
  */
 interface AggregationSupportingHandler<R : AggregateRequestDto> : HealthConnectRecordHandler {
     /**
-     * Returns the list of aggregation metrics this handler supports.
-     *
-     * @return List of supported aggregation metrics (e.g., SUM, AVG, MIN, MAX)
-     */
-    fun supportedAggregations(): List<AggregationMetricDto>
-
-    /**
      * Converts a platform aggregation metric to a Health Connect AggregateMetric.
      *
      * @param request The aggregate request DTO
      * @return The corresponding Health Connect AggregateMetric
-     * @throws IllegalArgumentException if the metric is not supported
+     * @throws UnsupportedOperationException if the metric is not supported
      */
+    @Throws(UnsupportedOperationException::class)
     fun toAggregateMetric(request: R): AggregateMetric<*>
 
     /**
@@ -134,12 +131,13 @@ interface AggregationSupportingHandler<R : AggregateRequestDto> : HealthConnectR
      *
      * This method handles type-specific value extraction and conversion to platform DTOs.
      *
-     * @param aggregatedValue The raw aggregated value from Health Connect
-     * @param metric The aggregation metric that was used
+     * @param aggregationResult The Health Connect aggregation result
+     * @param aggregateMetric The aggregate metric to extract from the result
      * @return The converted measurement unit DTO
+     * @throws IllegalStateException if [aggregationResult] for [aggregateMetric] is null or handler contains invalid data type
      */
+    @Throws(IllegalStateException::class)
     fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult, aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto
 }

@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.toDto
@@ -41,22 +42,20 @@ object StepsHandler : IntervalRecordHandler, AggregationSupportingHandler<Common
 
     override fun getRecordClass(): KClass<out Record> = StepsRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(AggregationMetricDto.SUM)
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.SUM -> StepsRecord.COUNT_TOTAL
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for Steps. Supported: SUM")
+            AggregationMetricDto.AVG, AggregationMetricDto.MIN, AggregationMetricDto.MAX, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} is not supported for steps (cumulative data). Only SUM is supported.")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val count = (aggregatedValue as? Long) ?: 0L
+        val count = aggregationResult[aggregateMetric] as? Long
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
         return count.toNumericDto()
     }
 }

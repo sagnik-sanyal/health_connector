@@ -567,19 +567,6 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     exception = e,
                 )
                 complete(callback, Result.failure(e))
-            } catch (e: Exception) {
-                HealthConnectorLogger.error(
-                    tag = TAG,
-                    operation = "deleteRecordsByIds",
-                    phase = "failed",
-                    message = "Unexpected error deleting Health Connect records by IDs",
-                    context = mapOf(
-                        "dataType" to request.dataType.toString(),
-                        "recordIdsCount" to request.recordIds.size,
-                    ),
-                    exception = e,
-                )
-                complete(callback, Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }
     }
@@ -620,20 +607,6 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     exception = e,
                 )
                 complete(callback, Result.failure(e))
-            } catch (e: Exception) {
-                HealthConnectorLogger.error(
-                    tag = TAG,
-                    operation = "deleteRecordsByTimeRange",
-                    phase = "failed",
-                    message = "Unexpected error deleting Health Connect records by time range",
-                    context = mapOf(
-                        "dataType" to request.dataType.toString(),
-                        "startTime" to request.startTime,
-                        "endTime" to request.endTime,
-                    ),
-                    exception = e,
-                )
-                complete(callback, Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }
     }
@@ -674,21 +647,6 @@ class HealthConnectorHCAndroidPlugin : FlutterPlugin, ActivityAware, HealthConne
                     exception = e,
                 )
                 complete(callback, Result.failure(e))
-            } catch (e: Exception) {
-                HealthConnectorLogger.error(
-                    tag = TAG,
-                    operation = "aggregate",
-                    phase = "failed",
-                    message = "Unexpected error aggregating Health Connect data",
-                    context = mapOf(
-                        "dataType" to request.dataType.toString(),
-                        "aggregationMetric" to request.aggregationMetric.toString(),
-                        "startTime" to request.startTime,
-                        "endTime" to request.endTime,
-                    ),
-                    exception = e,
-                )
-                complete(callback, Result.failure(HealthConnectorErrorCodeDto.UNKNOWN.toError(details = e.message)))
             }
         }
     }

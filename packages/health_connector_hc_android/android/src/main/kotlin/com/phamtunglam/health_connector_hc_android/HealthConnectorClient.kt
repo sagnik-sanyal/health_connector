@@ -9,17 +9,16 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import com.phamtunglam.health_connector_hc_android.handlers.HealthConnectTypeHandlerRegistry
-import com.phamtunglam.health_connector_hc_android.mappers.aggregationMetric
 import com.phamtunglam.health_connector_hc_android.mappers.dataType
 import com.phamtunglam.health_connector_hc_android.mappers.endTime
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.id
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.toHealthConnect
 import com.phamtunglam.health_connector_hc_android.mappers.isFeaturePermission
 import com.phamtunglam.health_connector_hc_android.mappers.startTime
+import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.mappers.toError
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthConnectFeature
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthConnectRecordClass
-import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthPlatformFeatureDto
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthPlatformFeatureStatusDto
 import com.phamtunglam.health_connector_hc_android.mappers.toHealthPlatformStatusDto
@@ -140,7 +139,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
      *         and feature permissions
      *
      * @throws HealthConnectorError with code `INVALID_PLATFORM_CONFIGURATION` if any requested
-     *         permissions/features are not declared in AndroidManifest.xml
+     *         permissions/features are not declared in AndroidManifest.xml (caught from 
+     *         [IllegalStateException] thrown by validation)
      * @throws HealthConnectorError with code `UNKNOWN` if an unexpected error occurs
      */
     @Throws(HealthConnectorError::class)
@@ -186,6 +186,21 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             return PermissionsRequestResponseDto(
                 healthDataPermissionResults = healthDataResults, featurePermissionResults = featureResults
             )
+        } catch (e: IllegalStateException) {
+            HealthConnectorLogger.error(
+                tag = TAG ?: "HealthConnectorClient",
+                operation = "requestPermissions",
+                phase = "failed",
+                message = e.message,
+                context = mapOf(
+                    "requested_permissions" to mapOf(
+                        "health_data_permissions" to request.healthDataPermissions,
+                        "feature_permissions" to request.featurePermissions,
+                    ),
+                ),
+                exception = e,
+            )
+            throw HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(details = e.message)
         } catch (e: Exception) {
             HealthConnectorLogger.error(
                 tag = TAG ?: "HealthConnectorClient",
@@ -290,9 +305,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Get handler for this data type
             val handler = HealthConnectTypeHandlerRegistry.getRecordHandler(request.dataType)
-                ?: throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Unsupported data type: ${request.dataType}"
-                )
+                ?: throw IllegalArgumentException("Unsupported data type: ${request.dataType}")
 
             val recordClass = handler.getRecordClass()
             val response = client.readRecord(recordClass, request.recordId)
@@ -378,9 +391,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
 
             // Get handler for this data type
             val handler = HealthConnectTypeHandlerRegistry.getRecordHandler(request.dataType)
-                ?: throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Unsupported data type: ${request.dataType}"
-                )
+                ?: throw IllegalArgumentException("Unsupported data type: ${request.dataType}")
 
             val response = client.readRecords(readRequest)
             val nextPageToken = if (response.pageToken.isNullOrEmpty()) {
@@ -585,9 +596,7 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             val recordDto = request.record
             if (recordDto.id.isNullOrEmpty()) {
-                throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Record ID must be a valid existing ID for update operations. Use writeRecord() for new records."
-                )
+                throw IllegalArgumentException("Record ID must be a valid existing ID for update operations. Use writeRecord() for new records.")
             }
 
             // Convert record DTO to Health Connect Record
@@ -631,9 +640,6 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             throw HealthConnectorErrorCodeDto.SECURITY_ERROR.toError(
                 details = "Permission access denied while processing $request: ${e.message ?: "Access denied"}",
             )
-        } catch (e: HealthConnectorError) {
-            // Re-throw HealthConnectorError as-is
-            throw e
         } catch (e: Exception) {
             HealthConnectorLogger.error(
                 tag = TAG ?: "HealthConnectorClient",
@@ -670,23 +676,12 @@ internal class HealthConnectorClient private constructor(private val client: Hea
         try {
             // Validate time range
             if (request.startTime >= request.endTime) {
-                throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Invalid time range: startTime must be before endTime. startTime=${request.startTime}, endTime=${request.endTime}"
-                )
+                throw IllegalArgumentException("Invalid time range: startTime must be before endTime. startTime=${request.startTime}, endTime=${request.endTime}")
             }
 
             // Get aggregation handler for this data type
             val handler = HealthConnectTypeHandlerRegistry.getAggregationHandler(request.dataType)
-                ?: throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Data type ${request.dataType} does not support aggregation"
-                )
-
-            // Validate that the requested metric is supported
-            if (request.aggregationMetric !in handler.supportedAggregations()) {
-                throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
-                    details = "Aggregation metric ${request.aggregationMetric} not supported for ${request.dataType}. Supported: ${handler.supportedAggregations()}"
-                )
-            }
+                ?: throw IllegalArgumentException("Data type ${request.dataType} does not support aggregation")
 
             val metric = handler.toAggregateMetric(request)
             val aggregateRequest = AggregateRequest(
@@ -700,12 +695,8 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             // Execute aggregate request
             val response = client.aggregate(aggregateRequest)
 
-            // Extract aggregated value from response
-            // The result may be null if no data is available in the time range
-            val aggregatedValue = response[metric]
-
             // Convert result to MeasurementUnitDto using handler
-            val valueDto = handler.extractAggregateValue(aggregatedValue, request.aggregationMetric)
+            val valueDto = handler.extractAggregateValue(response, metric)
 
             val responseDto = AggregateResponseDto(value = valueDto)
 
@@ -721,6 +712,30 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             )
 
             return responseDto
+        } catch (e: UnsupportedOperationException) {
+            HealthConnectorLogger.error(
+                tag = TAG ?: "HealthConnectorClient",
+                operation = "aggregate",
+                phase = "failed",
+                message = "Unsupported aggregation operation",
+                context = mapOf("request" to request),
+                exception = e,
+            )
+            throw HealthConnectorErrorCodeDto.UNSUPPORTED_HEALTH_PLATFORM_API.toError(
+                details = "Unsupported aggregation metric for ${request.dataType}: ${e.message ?: "Operation not supported"}",
+            )
+        } catch (e: IllegalStateException) {
+            HealthConnectorLogger.error(
+                tag = TAG ?: "HealthConnectorClient",
+                operation = "aggregate",
+                phase = "failed",
+                message = "Invalid aggregation state - null result from Health Connect",
+                context = mapOf("request" to request),
+                exception = e,
+            )
+            throw HealthConnectorErrorCodeDto.INVALID_ARGUMENT.toError(
+                details = "Health Connect returned null for aggregation metric. This may indicate no data available for the specified time range or an unexpected API response: ${e.message}",
+            )
         } catch (e: IllegalArgumentException) {
             HealthConnectorLogger.error(
                 tag = TAG ?: "HealthConnectorClient",
@@ -743,9 +758,6 @@ internal class HealthConnectorClient private constructor(private val client: Hea
             throw HealthConnectorErrorCodeDto.SECURITY_ERROR.toError(
                 details = "Permission access denied while processing $request: ${e.message ?: "Access denied"}",
             )
-        } catch (e: HealthConnectorError) {
-            // Re-throw HealthConnectorError as-is
-            throw e
         } catch (e: Exception) {
             HealthConnectorLogger.error(
                 tag = TAG ?: "HealthConnectorClient",

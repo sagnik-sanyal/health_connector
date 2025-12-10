@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.WheelchairPushesRecord
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.toDto
@@ -41,22 +42,20 @@ object WheelchairPushesHandler : IntervalRecordHandler, AggregationSupportingHan
 
     override fun getRecordClass(): KClass<out Record> = WheelchairPushesRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(AggregationMetricDto.SUM)
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.SUM -> WheelchairPushesRecord.COUNT_TOTAL
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for WheelchairPushes. Supported: SUM")
+            AggregationMetricDto.AVG, AggregationMetricDto.MIN, AggregationMetricDto.MAX, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} for WheelchairPushes. Supported: SUM")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val count = (aggregatedValue as? Long) ?: 0L
+        val count = aggregationResult[aggregateMetric] as? Long
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
         return count.toNumericDto()
     }
 }

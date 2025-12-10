@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.units.Mass
@@ -11,8 +12,6 @@ import com.phamtunglam.health_connector_hc_android.pigeon.AggregationMetricDto
 import com.phamtunglam.health_connector_hc_android.pigeon.CommonAggregateRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
-import com.phamtunglam.health_connector_hc_android.pigeon.MassDto
-import com.phamtunglam.health_connector_hc_android.pigeon.MassUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MeasurementUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.WeightRecordDto
 import kotlin.reflect.KClass
@@ -44,28 +43,22 @@ object WeightHandler : InstantRecordHandler, AggregationSupportingHandler<Common
 
     override fun getRecordClass(): KClass<out Record> = WeightRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(
-            AggregationMetricDto.AVG,
-            AggregationMetricDto.MIN,
-            AggregationMetricDto.MAX
-        )
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.AVG -> WeightRecord.WEIGHT_AVG
             AggregationMetricDto.MIN -> WeightRecord.WEIGHT_MIN
             AggregationMetricDto.MAX -> WeightRecord.WEIGHT_MAX
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for Weight. Supported: AVG, MIN, MAX")
+            AggregationMetricDto.SUM, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} for Weight. Supported: AVG, MIN, MAX")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val mass = aggregatedValue as? Mass
-        return mass?.toDto() ?: MassDto(value = 0.0, unit = MassUnitDto.KILOGRAMS)
+        val mass = aggregationResult[aggregateMetric] as? Mass
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
+        return mass.toDto()
     }
 }

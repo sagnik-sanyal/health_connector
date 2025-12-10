@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.units.Energy
@@ -10,8 +11,6 @@ import com.phamtunglam.health_connector_hc_android.mappers.toDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ActiveCaloriesBurnedRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.AggregationMetricDto
 import com.phamtunglam.health_connector_hc_android.pigeon.CommonAggregateRequestDto
-import com.phamtunglam.health_connector_hc_android.pigeon.EnergyDto
-import com.phamtunglam.health_connector_hc_android.pigeon.EnergyUnitDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MeasurementUnitDto
@@ -44,22 +43,20 @@ object ActiveCaloriesBurnedHandler : IntervalRecordHandler, AggregationSupportin
 
     override fun getRecordClass(): KClass<out Record> = ActiveCaloriesBurnedRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(AggregationMetricDto.SUM)
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.SUM -> ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for ActiveCaloriesBurned. Supported: SUM")
+            AggregationMetricDto.AVG, AggregationMetricDto.MIN, AggregationMetricDto.MAX, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} for ActiveCaloriesBurned. Supported: SUM")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val energy = aggregatedValue as? Energy
-        return energy?.toDto() ?: EnergyDto(value = 0.0, unit = EnergyUnitDto.KILOCALORIES)
+        val energy = aggregationResult[aggregateMetric] as? Energy
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
+        return energy.toDto()
     }
 }

@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.SleepSessionRecord
 import com.phamtunglam.health_connector_hc_android.mappers.health_record_mappers.toDto
@@ -42,24 +43,22 @@ object SleepSessionHandler : SessionRecordHandler, AggregationSupportingHandler<
 
     override fun getRecordClass(): KClass<out Record> = SleepSessionRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(AggregationMetricDto.SUM)
-    }
-
     override fun toAggregateMetric(request: CommonAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.SUM -> SleepSessionRecord.SLEEP_DURATION_TOTAL
-            else -> error("Unsupported aggregation metric ${request.aggregationMetric} for SleepSession. Supported: SUM")
+            AggregationMetricDto.AVG, AggregationMetricDto.MIN, AggregationMetricDto.MAX, AggregationMetricDto.COUNT ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} is not supported for sleep session (cumulative sum). Only SUM is supported.")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?,
-        metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
         // Sleep duration is returned as java.time.Duration, convert to seconds
-        val duration = aggregatedValue as? Duration
-        val seconds = duration?.seconds?.toDouble() ?: 0.0
+        val duration = aggregationResult[aggregateMetric] as? Duration
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
+        val seconds = duration.seconds.toDouble()
         return seconds.toNumericDto()
     }
 }

@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android.handlers
 
 import androidx.health.connect.client.aggregate.AggregateMetric
+import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.records.BloodPressureRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.units.Pressure
@@ -14,8 +15,6 @@ import com.phamtunglam.health_connector_hc_android.pigeon.BloodPressureRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthDataTypeDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
 import com.phamtunglam.health_connector_hc_android.pigeon.MeasurementUnitDto
-import com.phamtunglam.health_connector_hc_android.pigeon.PressureDto
-import com.phamtunglam.health_connector_hc_android.pigeon.PressureUnitDto
 import kotlin.reflect.KClass
 
 /**
@@ -45,14 +44,6 @@ object BloodPressureHandler : InstantRecordHandler, AggregationSupportingHandler
 
     override fun getRecordClass(): KClass<out Record> = BloodPressureRecord::class
 
-    override fun supportedAggregations(): List<AggregationMetricDto> {
-        return listOf(
-            AggregationMetricDto.AVG,
-            AggregationMetricDto.MAX,
-            AggregationMetricDto.MIN,
-        )
-    }
-
     override fun toAggregateMetric(request: BloodPressureAggregateRequestDto): AggregateMetric<*> {
         return when (request.aggregationMetric) {
             AggregationMetricDto.AVG -> {
@@ -76,14 +67,17 @@ object BloodPressureHandler : InstantRecordHandler, AggregationSupportingHandler
                 }
             }
 
-            AggregationMetricDto.COUNT, AggregationMetricDto.SUM -> throw IllegalArgumentException()
+            AggregationMetricDto.COUNT, AggregationMetricDto.SUM ->
+                throw UnsupportedOperationException("Aggregation metric ${request.aggregationMetric} is not supported for blood pressure (discrete data). Supported metrics: AVG, MIN, MAX.")
         }
     }
 
     override fun extractAggregateValue(
-        aggregatedValue: Any?, metric: AggregationMetricDto
+        aggregationResult: AggregationResult,
+        aggregateMetric: AggregateMetric<*>
     ): MeasurementUnitDto {
-        val pressure = aggregatedValue as? Pressure
-        return pressure?.toDto() ?: PressureDto(value = 0.0, unit = PressureUnitDto.MILLIMETERS_OF_MERCURY)
+        val pressure = aggregationResult[aggregateMetric] as? Pressure
+            ?: throw IllegalStateException("Aggregation result for $aggregateMetric is null")
+        return pressure.toDto()
     }
 }

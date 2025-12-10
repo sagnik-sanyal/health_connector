@@ -80,10 +80,10 @@ internal object PermissionUtils {
      * @param context The Android application context
      * @param request The permissions request containing health data and feature permissions to validate
      *
-     * @throws HealthConnectorError with code `INVALID_PLATFORM_CONFIGURATION` if any requested permissions/features
-     *         are not declared in AndroidManifest.xml. The error message lists all missing declarations.
+     * @throws IllegalStateException if any requested permissions/features are not declared in 
+     *         AndroidManifest.xml. The error message lists all missing declarations.
      */
-    @Throws(HealthConnectorError::class)
+    @Throws(IllegalStateException::class)
     fun validatePermissionsDeclaredInManifest(
         context: Context,
         request: PermissionsRequestDto,
@@ -111,17 +111,11 @@ internal object PermissionUtils {
 
         // Throw error if any permissions are not defined
         if (notDefined.isNotEmpty()) {
-            Log.e(
-                TAG,
-                "The following permissions/features are not declared in AndroidManifest.xml: ${notDefined.joinToString(", ")}"
-            )
-            throw HealthConnectorErrorCodeDto.INVALID_PLATFORM_CONFIGURATION.toError(
-                details = "Please add these permissions to your AndroidManifest.xml file. " + "Defined permissions: ${
-                    defined.joinToString(
-                        ", "
-                    )
-                }",
-            )
+            val errorMessage = "The following permissions/features are not declared in AndroidManifest.xml: ${notDefined.joinToString(", ")}. " +
+                "Please add these permissions to your AndroidManifest.xml file. " +
+                "Defined permissions: ${defined.joinToString(", ")}"
+            Log.e(TAG, errorMessage)
+            throw IllegalStateException(errorMessage)
         }
 
         Log.d(TAG, "All requested permissions are properly declared in AndroidManifest")

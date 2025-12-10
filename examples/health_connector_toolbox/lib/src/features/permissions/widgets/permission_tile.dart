@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_connector_core/health_connector_core.dart'
+import 'package:health_connector/health_connector.dart'
     show Permission, PermissionStatus;
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/theme/app_colors.dart';

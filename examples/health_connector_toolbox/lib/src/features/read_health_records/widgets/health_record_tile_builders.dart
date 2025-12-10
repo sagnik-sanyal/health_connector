@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_connector_core/health_connector_core.dart'
-    show HealthRecord;
+import 'package:health_connector/health_connector.dart' show HealthRecord;
 
 /// Builder function type for creating a title string from a health record.
 typedef RecordTitleBuilder<T extends HealthRecord> = String Function(T record);

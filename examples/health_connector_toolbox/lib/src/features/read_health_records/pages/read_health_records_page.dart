@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_connector/health_connector.dart' show HealthPlatform;
-import 'package:health_connector_core/health_connector_core.dart'
+import 'package:health_connector/health_connector.dart'
     show
         ActiveCaloriesBurnedHealthDataType,
         BiotinNutrientDataType,
@@ -59,6 +58,7 @@ import 'package:health_connector_core/health_connector_core.dart'
         ZincNutrientDataType,
         SleepSessionHealthDataType,
         SleepStageHealthDataType;
+import 'package:health_connector/health_connector.dart' show HealthPlatform;
 import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/pages/date_time_range_page_state.dart';

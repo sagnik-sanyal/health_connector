@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_connector_core/health_connector_core.dart'
+import 'package:health_connector/health_connector.dart'
     show SleepStage, SleepStageType;
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 import 'package:health_connector_toolbox/src/common/utils/date_format_utils.dart';

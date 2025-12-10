@@ -17,6 +17,7 @@ import HealthKit
 /// **Example:**
 /// - Walking 1000 steps from 9:00 AM to 9:15 AM
 /// - startTime: 9:00 AM, endTime: 9:15 AM, steps: 1000
+
 struct StepsHandler: HealthKitQuantityHandler {
     // MARK: - HealthKitTypeHandler
 
@@ -30,15 +31,20 @@ struct StepsHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         // Type guard: Verify this is a quantity sample
         guard let quantitySample = sample as? HKQuantitySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKQuantitySample, got \(type(of: sample))"
+            )
         }
 
         // Delegate to existing mapper extension
         // This mapper is already implemented in HealthRecordMappers.swift
-        return quantitySample.toStepRecordDto()
+        guard let dto = quantitySample.toStepRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to StepRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -59,10 +65,12 @@ struct StepsHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .stepCount)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         // Type guard: Verify this is a StepRecordDto
         guard let stepDto = dto as? StepRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected StepRecordDto, got \(type(of: dto))"
+            )
         }
 
         // Interval records use endTime for pagination
@@ -72,20 +80,41 @@ struct StepsHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitQuantityHandler (Aggregation Support)
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        // Steps are cumulative - only sum makes sense
-        // (e.g., "Total steps walked today")
-        return [.sum]
-    }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .sum:
             // Cumulative sum for total step count
             return .cumulativeSum
-        default:
-            // Other metrics (avg, min, max) don't make sense for cumulative data
-            return []
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for steps (cumulative data)",
+                details: "Only 'sum' is supported"
+            )
         }
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .sum:
+            statistics.sumQuantity()
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for steps",
+                details: "Only 'sum' is supported"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for stepCount"
+            )
+        }
+        
+        let count = quantity.doubleValue(for: .count())
+        return NumericDto(unit: .numeric, value: count)
     }
 }

@@ -20,13 +20,23 @@ import HealthKit
 ///
 /// **Note:** Active calories exclude basal metabolic rate (BMR).
 /// For total calories, use activeEnergyBurned + basalEnergyBurned.
-struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
-    static var supportedType: HealthDataTypeDto { .activeCaloriesBurned }
-    static var category: HealthKitDataCategory { .quantitySample }
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
-        guard let quantitySample = sample as? HKQuantitySample else { return nil }
-        return quantitySample.toActiveCaloriesBurnedRecordDto()
+struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
+    static var supportedType: HealthDataTypeDto {
+        .activeCaloriesBurned
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        guard let quantitySample = sample as? HKQuantitySample else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected HKQuantitySample, got \(type(of: sample))")
+        }
+        guard let dto = quantitySample.toActiveCaloriesBurnedRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to ActiveCaloriesBurnedRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -42,16 +52,46 @@ struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
-        guard let caloriesDto = dto as? ActiveCaloriesBurnedRecordDto else { return 0 }
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        guard let caloriesDto = dto as? ActiveCaloriesBurnedRecordDto else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected ActiveCaloriesBurnedRecordDto, got \(type(of: dto))")
+        }
         return caloriesDto.endTime
     }
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        return [.sum]
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        switch metric {
+        case .sum:
+            return .cumulativeSum
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for active calories (cumulative data)",
+                details: "Only 'sum' is supported"
+            )
+        }
     }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
-        return metric == .sum ? .cumulativeSum : []
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .sum:
+            statistics.sumQuantity()
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for active calories",
+                details: "Only 'sum' is supported"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for activeEnergyBurned"
+            )
+        }
+        
+        return quantity.toEnergyDto()
     }
 }

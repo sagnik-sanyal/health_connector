@@ -20,13 +20,23 @@ import HealthKit
 ///
 /// **Note:** This metric is specifically for manual wheelchair users.
 /// Measured by Apple Watch with wheelchair mode enabled.
-struct WheelchairPushesHandler: HealthKitQuantityHandler {
-    static var supportedType: HealthDataTypeDto { .wheelchairPushes }
-    static var category: HealthKitDataCategory { .quantitySample }
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
-        guard let quantitySample = sample as? HKQuantitySample else { return nil }
-        return quantitySample.toWheelchairPushesRecordDto()
+struct WheelchairPushesHandler: HealthKitQuantityHandler {
+    static var supportedType: HealthDataTypeDto {
+        .wheelchairPushes
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        guard let quantitySample = sample as? HKQuantitySample else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected HKQuantitySample, got \(type(of: sample))")
+        }
+        guard let dto = quantitySample.toWheelchairPushesRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to WheelchairPushesRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -42,16 +52,47 @@ struct WheelchairPushesHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .pushCount)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
-        guard let pushesDto = dto as? WheelchairPushesRecordDto else { return 0 }
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        guard let pushesDto = dto as? WheelchairPushesRecordDto else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected WheelchairPushesRecordDto, got \(type(of: dto))")
+        }
         return pushesDto.endTime
     }
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        return [.sum]
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        switch metric {
+        case .sum:
+            return .cumulativeSum
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for wheelchair pushes (cumulative data)",
+                details: "Only 'sum' is supported"
+            )
+        }
     }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
-        return metric == .sum ? .cumulativeSum : []
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .sum:
+            statistics.sumQuantity()
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for wheelchair pushes",
+                details: "Only 'sum' is supported"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for pushCount"
+            )
+        }
+        
+        let count = quantity.doubleValue(for: .count())
+        return NumericDto(unit: .numeric, value: count)
     }
 }

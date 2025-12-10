@@ -22,6 +22,7 @@ import HealthKit
 /// - Instant records have same startDate and endDate
 /// - Uses `.time` field for pagination (not `.endTime`)
 /// - Aggregation uses discrete statistics (not cumulative)
+
 struct WeightHandler: HealthKitQuantityHandler {
     // MARK: - HealthKitTypeHandler
 
@@ -35,15 +36,20 @@ struct WeightHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         // Type guard: Verify this is a quantity sample
         guard let quantitySample = sample as? HKQuantitySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKQuantitySample, got \(type(of: sample))"
+            )
         }
 
         // Delegate to existing mapper extension
         // This mapper is already implemented in HealthRecordMappers.swift
-        return quantitySample.toWeightRecordDto()
+        guard let dto = quantitySample.toWeightRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to WeightRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -64,10 +70,12 @@ struct WeightHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .bodyMass)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         // Type guard: Verify this is a WeightRecordDto
         guard let weightDto = dto as? WeightRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected WeightRecordDto, got \(type(of: dto))"
+            )
         }
 
         // Instant records use 'time' field for pagination (NOT endTime!)
@@ -77,16 +85,10 @@ struct WeightHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitQuantityHandler (Aggregation Support)
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        // Weight is discrete data - average, min, max make sense
-        // (e.g., "Average weight this month", "Lowest weight recorded")
-        return [.avg, .min, .max]
-    }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .avg:
-            // Discrete average for average weight
+            //Discrete average for average weight
             return .discreteAverage
         case .min:
             // Discrete minimum for lowest weight
@@ -94,9 +96,40 @@ struct WeightHandler: HealthKitQuantityHandler {
         case .max:
             // Discrete maximum for highest weight
             return .discreteMax
-        default:
-            // Sum doesn't make sense for weight (not cumulative)
-            return []
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for weight (discrete data)",
+                details: "Supported metrics: avg, min, max"
+            )
         }
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .avg:
+            statistics.averageQuantity()
+        case .min:
+            statistics.minimumQuantity()
+        case .max:
+            statistics.maximumQuantity()
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for weight",
+                details: "Supported metrics: avg, min, max"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for bodyMass"
+            )
+        }
+        
+        let kilograms = quantity.doubleValue(for: .gramUnit(with: .kilo))
+        return MassDto(unit: .kilograms, value: kilograms)
     }
 }

@@ -6,6 +6,7 @@ import HealthKit
 /// **Note:** This struct does not directly conform to HealthKitQuantityHandler because
 /// it uses instance methods. The wrapper structs (e.g., EnergyNutrientHandler) provide
 /// the static protocol conformance by delegating to instance methods of NutrientHandler.
+
 struct NutrientHandler {
     // MARK: - Properties
 
@@ -24,6 +25,7 @@ struct NutrientHandler {
      *   - nutrientType: The HealthDataTypeDto for the nutrient
      *   - quantityTypeIdentifier: The corresponding HealthKit quantity type identifier
      */
+
     init(nutrientType: HealthDataTypeDto, quantityTypeIdentifier: HKQuantityTypeIdentifier) {
         self.nutrientType = nutrientType
         self.quantityTypeIdentifier = quantityTypeIdentifier
@@ -46,19 +48,26 @@ struct NutrientHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         // Type guard: Verify this is a quantity sample
         guard let quantitySample = sample as? HKQuantitySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKQuantitySample, got \(type(of: sample))"
+            )
         }
 
         // Verify this is the correct nutrient type
         guard quantitySample.quantityType.identifier == quantityTypeIdentifier.rawValue else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected nutrient type \(quantityTypeIdentifier.rawValue), got \(quantitySample.quantityType.identifier)"
+            )
         }
 
         // Delegate to the appropriate nutrient-specific mapper
-        return quantitySample.toNutrientDto(for: nutrientType)
+        guard let dto = quantitySample.toNutrientDto(for: nutrientType) else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to nutrient DTO for type \(nutrientType)")
+        }
+        return dto
     }
 
     func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -70,26 +79,53 @@ struct NutrientHandler {
         return HKQuantityType.quantityType(forIdentifier: quantityTypeIdentifier)!
     }
 
-    func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         // All nutrients are instant records with a 'time' field
+        // This will throw if dto doesn't have the expected nutrient time field
         return dto.extractNutrientTime()
     }
 
     // MARK: - HealthKitQuantityHandler (Aggregation Support)
 
-    func supportedAggregations() -> [AggregationMetricDto] {
-        // All nutrients support sum aggregation (total consumed over time)
-        return [.sum]
-    }
-
-    func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
+    func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .sum:
             // Cumulative sum for total nutrients consumed
             return .cumulativeSum
-        default:
-            // Other metrics don't make sense for nutrients
-            return []
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for nutrients (cumulative data)",
+                details: "Only 'sum' is supported"
+            )
+        }
+    }
+    
+    func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .sum:
+            statistics.sumQuantity()
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for nutrients",
+                details: "Only 'sum' is supported"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for \(quantityTypeIdentifier.rawValue)"
+            )
+        }
+        
+        // EnergyNutrient uses EnergyDto, all other nutrients use MassDto
+        if nutrientType == .energyNutrient {
+            return quantity.toEnergyDto()
+        } else {
+            return quantity.toMassDto()
         }
     }
 
@@ -103,6 +139,7 @@ struct NutrientHandler {
      *
      * - Returns: Array of NutrientHandler instances
      */
+
     static func createAllNutrientHandlers() -> [NutrientHandler] {
         return [
             NutrientHandler(nutrientType: .energyNutrient, quantityTypeIdentifier: .dietaryEnergyConsumed),
@@ -152,463 +189,1354 @@ struct NutrientHandler {
  */
 
 // Energy nutrient
+
 struct EnergyNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .energyNutrient, quantityTypeIdentifier: .dietaryEnergyConsumed)
 
-    static var supportedType: HealthDataTypeDto { .energyNutrient }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .energyNutrient
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Caffeine
+
 struct CaffeineNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .caffeine, quantityTypeIdentifier: .dietaryCaffeine)
 
-    static var supportedType: HealthDataTypeDto { .caffeine }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .caffeine
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Protein
+
 struct ProteinNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .protein, quantityTypeIdentifier: .dietaryProtein)
 
-    static var supportedType: HealthDataTypeDto { .protein }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .protein
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Total Carbohydrate
+
 struct TotalCarbohydrateNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .totalCarbohydrate, quantityTypeIdentifier: .dietaryCarbohydrates)
 
-    static var supportedType: HealthDataTypeDto { .totalCarbohydrate }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .totalCarbohydrate
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Total Fat
+
 struct TotalFatNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .totalFat, quantityTypeIdentifier: .dietaryFatTotal)
 
-    static var supportedType: HealthDataTypeDto { .totalFat }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .totalFat
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Saturated Fat
+
 struct SaturatedFatNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .saturatedFat, quantityTypeIdentifier: .dietaryFatSaturated)
 
-    static var supportedType: HealthDataTypeDto { .saturatedFat }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .saturatedFat
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Monounsaturated Fat
+
 struct MonounsaturatedFatNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .monounsaturatedFat, quantityTypeIdentifier: .dietaryFatMonounsaturated)
 
-    static var supportedType: HealthDataTypeDto { .monounsaturatedFat }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .monounsaturatedFat
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Polyunsaturated Fat
+
 struct PolyunsaturatedFatNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .polyunsaturatedFat, quantityTypeIdentifier: .dietaryFatPolyunsaturated)
 
-    static var supportedType: HealthDataTypeDto { .polyunsaturatedFat }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .polyunsaturatedFat
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Cholesterol
+
 struct CholesterolNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .cholesterol, quantityTypeIdentifier: .dietaryCholesterol)
 
-    static var supportedType: HealthDataTypeDto { .cholesterol }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .cholesterol
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Dietary Fiber
+
 struct DietaryFiberNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .dietaryFiber, quantityTypeIdentifier: .dietaryFiber)
 
-    static var supportedType: HealthDataTypeDto { .dietaryFiber }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .dietaryFiber
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Sugar
+
 struct SugarNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .sugar, quantityTypeIdentifier: .dietarySugar)
 
-    static var supportedType: HealthDataTypeDto { .sugar }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .sugar
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin A
+
 struct VitaminANutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminA, quantityTypeIdentifier: .dietaryVitaminA)
 
-    static var supportedType: HealthDataTypeDto { .vitaminA }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminA
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin B6
+
 struct VitaminB6NutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminB6, quantityTypeIdentifier: .dietaryVitaminB6)
 
-    static var supportedType: HealthDataTypeDto { .vitaminB6 }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminB6
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin B12
+
 struct VitaminB12NutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminB12, quantityTypeIdentifier: .dietaryVitaminB12)
 
-    static var supportedType: HealthDataTypeDto { .vitaminB12 }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminB12
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin C
+
 struct VitaminCNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminC, quantityTypeIdentifier: .dietaryVitaminC)
 
-    static var supportedType: HealthDataTypeDto { .vitaminC }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminC
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin D
+
 struct VitaminDNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminD, quantityTypeIdentifier: .dietaryVitaminD)
 
-    static var supportedType: HealthDataTypeDto { .vitaminD }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminD
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin E
+
 struct VitaminENutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminE, quantityTypeIdentifier: .dietaryVitaminE)
 
-    static var supportedType: HealthDataTypeDto { .vitaminE }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminE
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Vitamin K
+
 struct VitaminKNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .vitaminK, quantityTypeIdentifier: .dietaryVitaminK)
 
-    static var supportedType: HealthDataTypeDto { .vitaminK }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .vitaminK
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Thiamin
+
 struct ThiaminNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .thiamin, quantityTypeIdentifier: .dietaryThiamin)
 
-    static var supportedType: HealthDataTypeDto { .thiamin }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .thiamin
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Riboflavin
+
 struct RiboflavinNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .riboflavin, quantityTypeIdentifier: .dietaryRiboflavin)
 
-    static var supportedType: HealthDataTypeDto { .riboflavin }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .riboflavin
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Niacin
+
 struct NiacinNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .niacin, quantityTypeIdentifier: .dietaryNiacin)
 
-    static var supportedType: HealthDataTypeDto { .niacin }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .niacin
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Folate
+
 struct FolateNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .folate, quantityTypeIdentifier: .dietaryFolate)
 
-    static var supportedType: HealthDataTypeDto { .folate }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .folate
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Biotin
+
 struct BiotinNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .biotin, quantityTypeIdentifier: .dietaryBiotin)
 
-    static var supportedType: HealthDataTypeDto { .biotin }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .biotin
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Pantothenic Acid
+
 struct PantothenicAcidNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .pantothenicAcid, quantityTypeIdentifier: .dietaryPantothenicAcid)
 
-    static var supportedType: HealthDataTypeDto { .pantothenicAcid }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .pantothenicAcid
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Calcium
+
 struct CalciumNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .calcium, quantityTypeIdentifier: .dietaryCalcium)
 
-    static var supportedType: HealthDataTypeDto { .calcium }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .calcium
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Iron
+
 struct IronNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .iron, quantityTypeIdentifier: .dietaryIron)
 
-    static var supportedType: HealthDataTypeDto { .iron }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .iron
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Magnesium
+
 struct MagnesiumNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .magnesium, quantityTypeIdentifier: .dietaryMagnesium)
 
-    static var supportedType: HealthDataTypeDto { .magnesium }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .magnesium
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Manganese
+
 struct ManganeseNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .manganese, quantityTypeIdentifier: .dietaryManganese)
 
-    static var supportedType: HealthDataTypeDto { .manganese }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .manganese
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Phosphorus
+
 struct PhosphorusNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .phosphorus, quantityTypeIdentifier: .dietaryPhosphorus)
 
-    static var supportedType: HealthDataTypeDto { .phosphorus }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .phosphorus
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Potassium
+
 struct PotassiumNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .potassium, quantityTypeIdentifier: .dietaryPotassium)
 
-    static var supportedType: HealthDataTypeDto { .potassium }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .potassium
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Selenium
+
 struct SeleniumNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .selenium, quantityTypeIdentifier: .dietarySelenium)
 
-    static var supportedType: HealthDataTypeDto { .selenium }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .selenium
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Sodium
+
 struct SodiumNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .sodium, quantityTypeIdentifier: .dietarySodium)
 
-    static var supportedType: HealthDataTypeDto { .sodium }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .sodium
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }
 
 // Zinc
+
 struct ZincNutrientHandler: HealthKitQuantityHandler {
     private static let handler = NutrientHandler(nutrientType: .zinc, quantityTypeIdentifier: .dietaryZinc)
 
-    static var supportedType: HealthDataTypeDto { .zinc }
-    static var category: HealthKitDataCategory { .quantitySample }
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? { try handler.toDTO(sample) }
-    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample { try handler.toHealthKit(dto) }
-    static func getSampleType() -> HKSampleType { handler.getSampleType() }
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 { handler.extractTimestamp(dto) }
-    static func supportedAggregations() -> [AggregationMetricDto] { handler.supportedAggregations() }
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions { handler.toStatisticsOptions(metric) }
+    static var supportedType: HealthDataTypeDto {
+        .zinc
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        try handler.toDTO(sample)
+    }
+
+    static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
+        try handler.toHealthKit(dto)
+    }
+
+    static func getSampleType() -> HKSampleType {
+        handler.getSampleType()
+    }
+
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        try handler.extractTimestamp(dto)
+    }
+
+
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        try handler.toStatisticsOptions(metric)
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        try handler.extractAggregateValue(from: statistics, metric: metric)
+    }
 }

@@ -21,13 +21,23 @@ import HealthKit
 /// **Note:** Body temperature is typically measured orally, rectally, or via ear thermometer.
 /// Aggregating temperature readings (avg/min/max) is not medically meaningful,
 /// so this handler returns empty array for supported aggregations.
-struct BodyTemperatureHandler: HealthKitQuantityHandler {
-    static var supportedType: HealthDataTypeDto { .bodyTemperature }
-    static var category: HealthKitDataCategory { .quantitySample }
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
-        guard let quantitySample = sample as? HKQuantitySample else { return nil }
-        return quantitySample.toBodyTemperatureRecordDto()
+struct BodyTemperatureHandler: HealthKitQuantityHandler {
+    static var supportedType: HealthDataTypeDto {
+        .bodyTemperature
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        guard let quantitySample = sample as? HKQuantitySample else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected HKQuantitySample, got \(type(of: sample))")
+        }
+        guard let dto = quantitySample.toBodyTemperatureRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to BodyTemperatureRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -43,19 +53,29 @@ struct BodyTemperatureHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
-        guard let temperatureDto = dto as? BodyTemperatureRecordDto else { return 0 }
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        guard let temperatureDto = dto as? BodyTemperatureRecordDto else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected BodyTemperatureRecordDto, got \(type(of: dto))")
+        }
         return temperatureDto.time
     }
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         // Body temperature aggregations are not medically meaningful
         // Individual readings at specific times are what matters
-        return []
+        throw HealthConnectorErrors.invalidArgument(
+            message: "Aggregation metric '\(metric)' not supported for body temperature",
+            details: "Individual readings at specific times should be used instead"
+        )
     }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
-        // No aggregations supported
-        return []
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        throw HealthConnectorErrors.invalidArgument(
+            message: "Aggregation metric '\(metric)' not supported for body temperature",
+            details: "Individual readings at specific times should be used instead"
+        )
     }
 }

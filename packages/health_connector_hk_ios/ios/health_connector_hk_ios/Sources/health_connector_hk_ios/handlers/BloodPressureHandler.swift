@@ -38,12 +38,17 @@ struct BloodPressureHandler: HealthKitCorrelationHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         guard let correlation = sample as? HKCorrelation,
-            correlation.correlationType.identifier == HKCorrelationTypeIdentifier.bloodPressure.rawValue else {
-            return nil
+        correlation.correlationType.identifier == HKCorrelationTypeIdentifier.bloodPressure.rawValue else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKCorrelation with bloodPressure type, got \(type(of: sample))"
+            )
         }
-        return correlation.toBloodPressureRecordDto()
+        guard let dto = correlation.toBloodPressureRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKCorrelation to BloodPressureRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -59,9 +64,11 @@ struct BloodPressureHandler: HealthKitCorrelationHandler {
         return HKCorrelationType.correlationType(forIdentifier: .bloodPressure)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         guard let bpDto = dto as? BloodPressureRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected BloodPressureRecordDto, got \(type(of: dto))"
+            )
         }
         return bpDto.time
     }

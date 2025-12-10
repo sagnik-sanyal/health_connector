@@ -10,6 +10,7 @@ import HealthKit
 ///
 /// **Compatibility:** iOS 15+
 /// **Verified:** December 1, 2025
+
 protocol HealthKitTypeHandler {
     /// The HealthDataTypeDto enum case this handler supports
     static var supportedType: HealthDataTypeDto { get }
@@ -26,16 +27,17 @@ protocol HealthKitTypeHandler {
 /// All sample-based types can be created, read, updated, and deleted.
 ///
 /// **Note:** Characteristics do NOT implement this protocol (they use direct API access)
+
 protocol HealthKitSampleHandler: HealthKitTypeHandler {
     /// Convert HealthKit sample to Pigeon DTO
     ///
     /// - Parameter sample: The HKSample to convert
-    /// - Returns: The corresponding HealthRecordDto, or nil if type mismatch
-    /// - Throws: HealthConnectorError if conversion fails
+    /// - Returns: The corresponding HealthRecordDto
+    /// - Throws: HealthConnectorError if conversion fails or type mismatch occurs
     ///
     /// **Implementation Note:** Always verify the sample type before conversion.
-    /// Return nil for type mismatches rather than throwing.
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto?
+    /// Throw HealthConnectorErrors.invalidArgument for type mismatches.
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto
 
     /// Convert Pigeon DTO to HealthKit sample
     ///
@@ -63,9 +65,11 @@ protocol HealthKitSampleHandler: HealthKitTypeHandler {
     ///
     /// - Parameter dto: The HealthRecordDto to extract timestamp from
     /// - Returns: Timestamp in milliseconds since epoch
+    /// - Throws: HealthConnectorError if DTO type mismatch occurs
     ///
+    /// **Implementation Note:** Throw HealthConnectorErrors.invalidArgument for type mismatches.
     /// **Used by:** readRecords() pagination logic to determine page tokens
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64
 }
 
 // MARK: - Quantity-Specific
@@ -78,28 +82,35 @@ protocol HealthKitSampleHandler: HealthKitTypeHandler {
 /// - Discrete types (weight, heart rate): .avg, .min, .max
 ///
 /// **Examples:** Steps, weight, heart rate, distance, calories
-protocol HealthKitQuantityHandler: HealthKitSampleHandler {
-    /// List of supported aggregation metrics for this type
-    ///
-    /// - Returns: Array of AggregationMetricDto values this type supports
-    ///
-    /// **Examples:**
-    /// - Steps: `[.sum]`
-    /// - Weight: `[.avg, .min, .max]`
-    /// - Body Temperature: `[]` (no aggregation)
-    static func supportedAggregations() -> [AggregationMetricDto]
 
+protocol HealthKitQuantityHandler: HealthKitSampleHandler {
     /// Convert aggregation metric to HKStatisticsOptions
     ///
     /// - Parameter metric: The aggregation metric requested
     /// - Returns: Corresponding HKStatisticsOptions for the query
+    /// - Throws: HealthConnectorError if the metric is not supported for this data type
     ///
     /// **Mapping:**
     /// - `.sum` → `.cumulativeSum`
     /// - `.avg` → `.discreteAverage`
     /// - `.min` → `.discreteMin`
     /// - `.max` → `.discreteMax`
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions
+    ///
+    /// **Implementation Note:** Throw `HealthConnectorErrors.invalidArgument` for unsupported metrics
+    /// instead of returning empty options.
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions
+    
+    /// Extract aggregated value from HKStatistics
+    ///
+    /// - Parameters:
+    ///   - statistics: The HKStatistics result from the query
+    ///   - metric: The aggregation metric requested
+    /// - Returns: The measurement unit DTO (MassDto, LengthDto, NumericDto, etc.)
+    /// - Throws: HealthConnectorError.invalidArgument if metric is unsupported or result is null
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto
 }
 
 // MARK: - Correlation-Specific
@@ -112,6 +123,7 @@ protocol HealthKitQuantityHandler: HealthKitSampleHandler {
 ///
 /// **Reference:** Apple HealthKit documentation on HKCorrelation deletion
 /// **Examples:** Blood pressure (systolic + diastolic), food (nutrients)
+
 protocol HealthKitCorrelationHandler: HealthKitSampleHandler {
     /// Delete correlation and all contained samples
     ///
@@ -149,6 +161,7 @@ protocol HealthKitCorrelationHandler: HealthKitSampleHandler {
 /// - No delete support (permanent)
 /// - No query support (direct property access)
 /// - No time range filtering
+
 protocol HealthKitCharacteristicHandler: HealthKitTypeHandler {
     /// Read characteristic value directly from store
     ///

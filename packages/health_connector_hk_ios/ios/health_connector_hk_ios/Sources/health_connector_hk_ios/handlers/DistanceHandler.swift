@@ -20,13 +20,23 @@ import HealthKit
 ///
 /// **Note:** This tracks walking and running distance. Cycling and other activities
 /// have separate distance types in HealthKit.
-struct DistanceHandler: HealthKitQuantityHandler {
-    static var supportedType: HealthDataTypeDto { .distance }
-    static var category: HealthKitDataCategory { .quantitySample }
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
-        guard let quantitySample = sample as? HKQuantitySample else { return nil }
-        return quantitySample.toDistanceRecordDto()
+struct DistanceHandler: HealthKitQuantityHandler {
+    static var supportedType: HealthDataTypeDto {
+        .distance
+    }
+    static var category: HealthKitDataCategory {
+        .quantitySample
+    }
+
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
+        guard let quantitySample = sample as? HKQuantitySample else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected HKQuantitySample, got \(type(of: sample))")
+        }
+        guard let dto = quantitySample.toDistanceRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to DistanceRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -42,16 +52,47 @@ struct DistanceHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
-        guard let distanceDto = dto as? DistanceRecordDto else { return 0 }
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
+        guard let distanceDto = dto as? DistanceRecordDto else {
+            throw HealthConnectorErrors.invalidArgument(message: "Expected DistanceRecordDto, got \(type(of: dto))")
+        }
         return distanceDto.endTime
     }
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        return [.sum]
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
+        switch metric {
+        case .sum:
+            return .cumulativeSum
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for distance (cumulative data)",
+                details: "Only 'sum' is supported"
+            )
+        }
     }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
-        return metric == .sum ? .cumulativeSum : []
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .sum:
+            statistics.sumQuantity()
+        case .avg, .min, .max, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for distance",
+                details: "Only 'sum' is supported"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for distanceWalkingRunning"
+            )
+        }
+        
+        let meters = quantity.doubleValue(for: .meter())
+        return LengthDto(unit: .meters, value: meters)
     }
 }

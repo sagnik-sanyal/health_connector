@@ -29,6 +29,7 @@ import HealthKit
 ///
 /// **Compatibility:** iOS 15+
 /// **Verified:** December 1, 2025
+
 struct SleepStageHandler: HealthKitSampleHandler {
     // MARK: - HealthKitTypeHandler
 
@@ -42,20 +43,27 @@ struct SleepStageHandler: HealthKitSampleHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         // Type guard: Verify this is a category sample
         guard let categorySample = sample as? HKCategorySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKCategorySample, got \(type(of: sample))"
+            )
         }
 
         // Verify it's a sleep analysis sample
         guard categorySample.categoryType.identifier == HKCategoryTypeIdentifier.sleepAnalysis.rawValue else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected sleep analysis category, got \(categorySample.categoryType.identifier)"
+            )
         }
 
         // Delegate to existing mapper extension
         // This mapper will be implemented in HKCategorySample+SleepStageMappers.swift
-        return categorySample.toSleepStageRecordDto()
+        guard let dto = categorySample.toSleepStageRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKCategorySample to SleepStageRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -76,10 +84,12 @@ struct SleepStageHandler: HealthKitSampleHandler {
         return HKCategoryType.categoryType(forIdentifier: .sleepAnalysis)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         // Type guard: Verify this is a SleepStageRecordDto
         guard let sleepDto = dto as? SleepStageRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected SleepStageRecordDto, got \(type(of: dto))"
+            )
         }
 
         // Interval records use endTime for pagination

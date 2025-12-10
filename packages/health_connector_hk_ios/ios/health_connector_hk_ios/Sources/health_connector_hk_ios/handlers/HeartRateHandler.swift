@@ -25,6 +25,7 @@ import HealthKit
 ///
 /// **Note:** This is different from Heart Rate Variability (HRV) or Resting Heart Rate,
 /// which are separate HealthKit data types.
+
 struct HeartRateHandler: HealthKitQuantityHandler {
     // MARK: - HealthKitTypeHandler
 
@@ -38,15 +39,20 @@ struct HeartRateHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         // Type guard: Verify this is a quantity sample
         guard let quantitySample = sample as? HKQuantitySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKQuantitySample, got \(type(of: sample))"
+            )
         }
 
         // Delegate to existing mapper extension
         // This mapper is already implemented in HealthRecordMappers.swift
-        return quantitySample.toHeartRateMeasurementRecordDto()
+        guard let dto = quantitySample.toHeartRateMeasurementRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to HeartRateMeasurementRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -68,10 +74,12 @@ struct HeartRateHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .heartRate)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         // Type guard: Verify this is a HeartRateMeasurementRecordDto
         guard let heartRateDto = dto as? HeartRateMeasurementRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HeartRateMeasurementRecordDto, got \(type(of: dto))"
+            )
         }
 
         // Instant records use 'time' field for pagination (NOT endTime!)
@@ -81,16 +89,7 @@ struct HeartRateHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitQuantityHandler (Aggregation Support)
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        // Heart rate is discrete data - average, min, max make sense
-        // Examples:
-        // - .avg: "Resting heart rate" or "Average heart rate during workout"
-        // - .min: "Lowest heart rate recorded"
-        // - .max: "Peak heart rate during exercise"
-        return [.avg, .min, .max]
-    }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .avg:
             // Discrete average for average heart rate
@@ -101,9 +100,40 @@ struct HeartRateHandler: HealthKitQuantityHandler {
         case .max:
             // Discrete maximum for highest/peak heart rate
             return .discreteMax
-        default:
-            // Sum doesn't make sense for heart rate (not cumulative)
-            return []
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for heart rate (discrete data)",
+                details: "Supported metrics: avg, min, max"
+            )
         }
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .avg:
+            statistics.averageQuantity()
+        case .min:
+            statistics.minimumQuantity()
+        case .max:
+            statistics.maximumQuantity()
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for heart rate",
+                details: "Supported metrics: avg, min, max"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for heartRate"
+            )
+        }
+        
+        let bpm = quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
+        return NumericDto(unit: .numeric, value: bpm)
     }
 }

@@ -333,16 +333,24 @@ internal class HealthConnectorClient {
 
                 case .write:
                     // Check authorization status for all object types
-                    let sampleTypes = objectTypes.compactMap { $0 as? HKSampleType }
-                    
+                    let sampleTypes = objectTypes.compactMap {
+                        $0 as? HKSampleType
+                    }
+
                     if sampleTypes.isEmpty {
                         status = .unknown
                     } else {
-                        let authStatuses = sampleTypes.map { store.authorizationStatus(for: $0) }
-                        
-                        let allAuthorized = authStatuses.allSatisfy { $0 == .sharingAuthorized }
-                        let allDenied = authStatuses.allSatisfy { $0 == .sharingDenied }
-                        
+                        let authStatuses = sampleTypes.map {
+                            store.authorizationStatus(for: $0)
+                        }
+
+                        let allAuthorized = authStatuses.allSatisfy {
+                            $0 == .sharingAuthorized
+                        }
+                        let allDenied = authStatuses.allSatisfy {
+                            $0 == .sharingDenied
+                        }
+
                         if allAuthorized {
                             status = .granted
                         } else if allDenied {
@@ -481,9 +489,7 @@ internal class HealthConnectorClient {
                     // Convert using handler - single dispatch point!
                     do {
                         let recordDto = try handler.toDTO(sample)
-                        let responseDto: ReadRecordResponseDto? = recordDto.map {
-                            ReadRecordResponseDto(record: $0)
-                        }
+                        let responseDto = ReadRecordResponseDto(record: recordDto)
                         continuation.resume(returning: responseDto)
                     } catch {
                         continuation.resume(throwing: error)
@@ -678,7 +684,7 @@ internal class HealthConnectorClient {
             let predicate: NSPredicate
             if !request.dataOriginPackageNames.isEmpty {
                 // Query for sources to get HKSource objects from bundle identifiers
-                let sources = try await querySources(for: handler.getSampleType(), bundleIdentifiers: request.dataOriginPackageNames)
+                let sources = try await querySources(forsampleType: handler.getSampleType(), bundleIdentifiers: request.dataOriginPackageNames)
 
                 if sources.isEmpty {
                     // No sources found for the given bundle identifiers, return empty result
@@ -714,7 +720,7 @@ internal class HealthConnectorClient {
             let responseDto = try await withCheckedThrowingContinuation {
                 (continuation: CheckedContinuation<ReadRecordsResponseDto, Error>) in
                 // Query pageSize + 1 records to determine if more pages exist.
-                // 
+                //
                 // Rationale: HealthKit doesn't provide a way to check if more records exist beyond
                 // the current page. By querying one extra record, we can distinguish between:
                 // - Exactly pageSize records returned → last page (no more data)
@@ -747,16 +753,16 @@ internal class HealthConnectorClient {
 
                     // Convert all samples using handler - single dispatch point!
                     do {
-                        let recordDtos = try samples.compactMap {
+                        let recordDtos = try samples.map {
                             try handler.toDTO($0)
                         }
 
                         // Apply pagination using handler's timestamp extractor
-                        let (trimmedRecords, nextPageToken) = self.applyPagination(
+                        let (trimmedRecords, nextPageToken) = try self.applyPagination(
                             records: recordDtos,
                             pageSize: request.pageSize,
                             timestampExtractor: {
-                                handler.extractTimestamp($0)
+                                try handler.extractTimestamp($0)
                             }  // Type-aware!
                         )
 
@@ -846,7 +852,7 @@ internal class HealthConnectorClient {
 
     private func applyPagination<T>(records: [T],
     pageSize: Int64,
-    timestampExtractor: (T) -> Int64) -> (records: [T], nextPageToken: String?) {
+    timestampExtractor: (T) throws -> Int64) rethrows -> (records: [T], nextPageToken: String?) {
         var mutableRecords = records
         let nextPageToken: String?
 
@@ -857,7 +863,7 @@ internal class HealthConnectorClient {
             mutableRecords.removeLast()
             // Generate nextPageToken from the last record we're actually returning (not the removed one).
             // This ensures the next page starts from the correct position.
-            nextPageToken = String(timestampExtractor(mutableRecords.last!))
+            nextPageToken = try String(timestampExtractor(mutableRecords.last!))
         } else {
             // This is the last page: we received pageSize or fewer records, meaning no more data exists.
             // Return all records as-is and indicate no more pages with nil nextPageToken.
@@ -887,13 +893,13 @@ internal class HealthConnectorClient {
      * - Throws: Errors from HealthKit queries
      */
 
-    private func querySources(for sampleType: HKSampleType, bundleIdentifiers: [String]) async throws -> Set<HKSource> {
+    private func querySources(forsampleType: HKSampleType, bundleIdentifiers: [String]) async throws -> Set<HKSource> {
         return try await withCheckedThrowingContinuation {
             continuation in
             // Query a sample of records to collect sources
             // Use a reasonable limit to balance between completeness and performance
             let query = HKSampleQuery(
-                sampleType: sampleType,
+                sampleType: forsampleType,
                 predicate: nil,
                 limit: 1000, // Query up to 1000 samples to find sources
                 sortDescriptors: nil
@@ -1428,15 +1434,6 @@ internal class HealthConnectorClient {
                 )
             }
 
-            // Validate metric is supported by this handler
-            let supportedMetrics = handler.supportedAggregations()
-            guard supportedMetrics.contains(request.aggregationMetric) else {
-                throw HealthConnectorErrors.invalidArgument(
-                    message: "Aggregation metric \(request.aggregationMetric) not supported for \(request.dataType)",
-                    details: "Supported metrics: \(supportedMetrics)"
-                )
-            }
-
             // Get HealthKit quantity type from handler
             guard let quantityType = handler.getSampleType() as? HKQuantityType else {
                 throw HealthConnectorErrors.invalidArgument(
@@ -1525,8 +1522,8 @@ internal class HealthConnectorClient {
     metric: AggregationMetricDto,
     dataType: HealthDataTypeDto,
     handler: HealthKitQuantityHandler.Type) async throws -> AggregateResponseDto {
-        // Get statistics options from handler
-        let options = handler.toStatisticsOptions(metric)
+        // Get statistics options from handler - throws if metric not supported
+        let options = try handler.toStatisticsOptions(metric)
 
         return try await withCheckedThrowingContinuation {
             continuation in
@@ -1976,7 +1973,7 @@ internal class HealthConnectorClient {
             default:
                 // For iOS 16+ detailed stages (core/light, deep, REM)
                 // Check raw values: .core=5, .deep=3, .REM=4
-                if #available(iOS 16.0, *) {
+                if #available (iOS 16.0, *) {
                     switch sample.value {
                     case 3, 4, 5:  // deep, REM, core
                         isActualSleep = true

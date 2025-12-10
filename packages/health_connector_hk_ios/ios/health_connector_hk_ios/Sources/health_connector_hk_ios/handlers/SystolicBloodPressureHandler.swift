@@ -25,11 +25,16 @@ struct SystolicBloodPressureHandler: HealthKitQuantityHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         guard let quantitySample = sample as? HKQuantitySample else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKQuantitySample, got \(type(of: sample))"
+            )
         }
-        return quantitySample.toSystolicBloodPressureRecordDto()
+        guard let dto = quantitySample.toSystolicBloodPressureRecordDto() else {
+            throw HealthConnectorErrors.invalidArgument(message: "Failed to convert HKQuantitySample to SystolicBloodPressureRecordDto")
+        }
+        return dto
     }
 
     static func toHealthKit(_ dto: HealthRecordDto) throws -> HKSample {
@@ -45,20 +50,18 @@ struct SystolicBloodPressureHandler: HealthKitQuantityHandler {
         return HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         guard let systolicDto = dto as? SystolicBloodPressureRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected SystolicBloodPressureRecordDto, got \(type(of: dto))"
+            )
         }
         return systolicDto.time
     }
 
     // MARK: - HealthKitQuantityHandler (Aggregation Support)
 
-    static func supportedAggregations() -> [AggregationMetricDto] {
-        return [.avg, .min, .max]
-    }
-
-    static func toStatisticsOptions(_ metric: AggregationMetricDto) -> HKStatisticsOptions {
+    static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .avg:
             return .discreteAverage
@@ -66,8 +69,39 @@ struct SystolicBloodPressureHandler: HealthKitQuantityHandler {
             return .discreteMin
         case .max:
             return .discreteMax
-        default:
-            return []
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for systolic blood pressure (discrete data)",
+                details: "Supported metrics: avg, min, max"
+            )
         }
+    }
+    
+    static func extractAggregateValue(
+        from statistics: HKStatistics,
+        metric: AggregationMetricDto
+    ) throws -> MeasurementUnitDto {
+        let quantity: HKQuantity? = switch metric {
+        case .avg:
+            statistics.averageQuantity()
+        case .min:
+            statistics.minimumQuantity()
+        case .max:
+            statistics.maximumQuantity()
+        case .sum, .count:
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Aggregation metric '\(metric)' not supported for systolic blood pressure",
+                details: "Supported metrics: avg, min, max"
+            )
+        }
+        
+        guard let quantity else {
+            throw HealthConnectorErrors.invalidArgument(
+                message: "No aggregation result for metric '\(metric)'",
+                details: "Statistics returned nil for bloodPressureSystolic"
+            )
+        }
+        
+        return quantity.toPressureDto()
     }
 }

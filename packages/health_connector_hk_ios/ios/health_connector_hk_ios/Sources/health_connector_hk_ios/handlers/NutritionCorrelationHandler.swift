@@ -41,10 +41,12 @@ struct NutritionCorrelationHandler: HealthKitCorrelationHandler {
 
     // MARK: - HealthKitSampleHandler
 
-    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto? {
+    static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         guard let correlation = sample as? HKCorrelation,
         correlation.correlationType.identifier == HKCorrelationTypeIdentifier.food.rawValue else {
-            return nil
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected HKCorrelation with food type, got \(type(of: sample))"
+            )
         }
         return correlation.toNutritionRecordDto()
     }
@@ -62,9 +64,11 @@ struct NutritionCorrelationHandler: HealthKitCorrelationHandler {
         return HKCorrelationType.correlationType(forIdentifier: .food)!
     }
 
-    static func extractTimestamp(_ dto: HealthRecordDto) -> Int64 {
+    static func extractTimestamp(_ dto: HealthRecordDto) throws -> Int64 {
         guard let nutritionDto = dto as? NutritionRecordDto else {
-            return 0
+            throw HealthConnectorErrors.invalidArgument(
+                message: "Expected NutritionRecordDto, got \(type(of: dto))"
+            )
         }
         return nutritionDto.endTime
     }

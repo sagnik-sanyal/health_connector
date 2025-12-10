@@ -1,3 +1,8 @@
+## 1.2.1
+
+ - **FIX**(health_connector_hk_ios): Ensure Pigeon completion callbacks execute on main thread. ([bc8c1d98](https://github.com/fam-tung-lam/health_connector/commit/bc8c1d98e6520b3bb8d5f8cb1264eae49f21e64c))
+ - **FIX**(health_connector_hk_ios): Map blood pressure types to corresponding HealthKit types. ([ff057529](https://github.com/fam-tung-lam/health_connector/commit/ff057529d7397b80196b6063036526842973ff8d))
+
 ## 1.2.0
 
  - **FEAT**(health_connector_hk_ios): Add support for blood pressure records and data types. ([7c3d9525](https://github.com/fam-tung-lam/health_connector/commit/7c3d9525f880e13e893b7831c35185997b1b46cf))

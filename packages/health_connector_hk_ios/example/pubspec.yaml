@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   health_connector_core: ^1.2.0
-  health_connector_hk_ios: ^1.2.0
+  health_connector_hk_ios: ^1.2.1
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,7 @@
+## 1.2.1
+
+ - **REFACTOR**(health_connector_hc_android): Add `complete()` helper for Pigeon callbacks. ([d72e1bfc](https://github.com/fam-tung-lam/health_connector/commit/d72e1bfcd661b4df9c3540ea4f5c38e87638d5b1))
+
 ## 1.2.0
 
  - **FEAT**(health_connector_hc_android): Introduce specialized aggregation requests. ([55f00e29](https://github.com/fam-tung-lam/health_connector/commit/55f00e294d41f91c95d034768d99315baebd7208))

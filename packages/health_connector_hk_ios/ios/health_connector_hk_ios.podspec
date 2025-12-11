@@ -19,7 +19,7 @@ A new Flutter plugin project.
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-  s.swift_version = '5.0'
+  s.swift_version = '5.9'
 
   # Privacy manifest for HealthKit usage
   s.resource_bundles = {'health_connector_privacy' => ['health_connector/Sources/health_connector/PrivacyInfo.xcprivacy']}

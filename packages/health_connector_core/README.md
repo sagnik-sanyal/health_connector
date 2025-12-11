@@ -1,7 +1,9 @@
 # health_connector_core
 
-[![pub package](https://img.shields.io/pub/v/health_connector_core.svg)](https://pub.dev/packages/health_connector_core)
-[![pub points](https://img.shields.io/pub/points/health_connector_core?color=2E8B57&label=pub%20points)](https://pub.dev/packages/health_connector_core/score)
+<p align="center">
+  <a title="Pub" href="https://pub.dev/packages/health_connector_core"><img src="https://img.shields.io/pub/v/health_connector_core.svg?style=popout"/></a>
+  <a title="Pub Points" href="https://pub.dev/packages/health_connector_core/score"><img src="https://img.shields.io/pub/points/health_connector_core?color=2E8B57&label=pub%20points"/></a>
+</p>
 
 ---
 

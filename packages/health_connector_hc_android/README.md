@@ -1,7 +1,9 @@
 # health_connector_hc_android
 
-[![pub package](https://img.shields.io/pub/v/health_connector_hc_android.svg)](https://pub.dev/packages/health_connector_hc_android)
-[![pub points](https://img.shields.io/pub/points/health_connector_hc_android?color=2E8B57&label=pub%20points)](https://pub.dev/packages/health_connector_hc_android/score)
+<p align="center">
+  <a title="Pub" href="https://pub.dev/packages/health_connector_hc_android"><img src="https://img.shields.io/pub/v/health_connector_hc_android.svg?style=popout"/></a>
+  <a title="Pub Points" href="https://pub.dev/packages/health_connector_hc_android/score"><img src="https://img.shields.io/pub/points/health_connector_hc_android?color=2E8B57&label=pub%20points"/></a>
+</p>
 
 ---
 
@@ -434,16 +436,16 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 
 ### ❤️ Vitals
 
-| Data Type              | Supported | Documentation                                                                                                                            |
-|------------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
-| **Heart Rate (Series)** | ✅         | [`HeartRateSeriesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeartRateSeriesRecord)               |
-| **Resting Heart Rate** | ❌         | [`RestingHeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RestingHeartRateRecord) |
-| **Blood Pressure**     | ❌         | [`BloodPressureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodPressureRecord)       |
-| **Body Temperature**   | ✅         | [`BodyTemperatureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyTemperatureRecord)   |
-| **Blood Glucose**      | ❌         | [`BloodGlucoseRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodGlucoseRecord)         |
-| **Oxygen Saturation**  | ❌         | [`OxygenSaturationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/OxygenSaturationRecord) |
-| **Respiratory Rate**   | ❌         | [`RespiratoryRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RespiratoryRateRecord)   |
-| **Vo2 Max**            | ❌         | [`Vo2MaxRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/Vo2MaxRecord)                     |
+| Data Type               | Supported | Documentation                                                                                                                            |
+|-------------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
+| **Heart Rate (Series)** | ✅         | [`HeartRateSeriesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeartRateSeriesRecord)   |
+| **Resting Heart Rate**  | ❌         | [`RestingHeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RestingHeartRateRecord) |
+| **Blood Pressure**      | ✅         | [`BloodPressureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodPressureRecord)       |
+| **Body Temperature**    | ✅         | [`BodyTemperatureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyTemperatureRecord)   |
+| **Blood Glucose**       | ❌         | [`BloodGlucoseRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodGlucoseRecord)         |
+| **Oxygen Saturation**   | ❌         | [`OxygenSaturationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/OxygenSaturationRecord) |
+| **Respiratory Rate**    | ❌         | [`RespiratoryRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RespiratoryRateRecord)   |
+| **Vo2 Max**             | ❌         | [`Vo2MaxRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/Vo2MaxRecord)                     |
 
 ### 🧘 Wellness / Mental Health
 

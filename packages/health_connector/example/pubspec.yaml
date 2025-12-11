@@ -12,12 +12,11 @@ dependencies:
 
   health_connector:
     path: ../
-  health_connector_core: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  health_connector_lint: ^1.0.0
+  health_connector_lint: ^1.1.0
   integration_test:
     sdk: flutter
 

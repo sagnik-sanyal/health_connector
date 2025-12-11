@@ -1,7 +1,9 @@
 # health_connector_logger
 
-[![pub package](https://img.shields.io/pub/v/health_connector_logger.svg)](https://pub.dev/packages/health_connector_logger)
-[![pub points](https://img.shields.io/pub/points/health_connector_logger?color=2E8B57&label=pub%20points)](https://pub.dev/packages/health_connector_logger/score)
+<p align="center">
+  <a title="Pub" href="https://pub.dev/packages/health_connector_logger"><img src="https://img.shields.io/pub/v/health_connector_logger.svg?style=popout"/></a>
+  <a title="Pub Points" href="https://pub.dev/packages/health_connector_logger/score"><img src="https://img.shields.io/pub/points/health_connector_logger?color=2E8B57&label=pub%20points"/></a>
+</p>
 
 Structured logging utility for Health Connector packages.
 

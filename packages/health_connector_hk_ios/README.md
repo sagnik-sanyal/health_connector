@@ -1,7 +1,9 @@
 # health_connector_hk_ios
 
-[![pub package](https://img.shields.io/pub/v/health_connector_hk_ios.svg)](https://pub.dev/packages/health_connector_hk_ios)
-[![pub points](https://img.shields.io/pub/points/health_connector_hk_ios?color=2E8B57&label=pub%20points)](https://pub.dev/packages/health_connector_hk_ios/score)
+<p align="center">
+  <a title="Pub" href="https://pub.dev/packages/health_connector_hk_ios"><img src="https://img.shields.io/pub/v/health_connector_hk_ios.svg?style=popout"/></a>
+  <a title="Pub Points" href="https://pub.dev/packages/health_connector_hk_ios/score"><img src="https://img.shields.io/pub/points/health_connector_hk_ios?color=2E8B57&label=pub%20points"/></a>
+</p>
 
 ---
 
@@ -476,7 +478,7 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 |---------------------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Heart Rate (Measurement)**    | ✅         | [`HKQuantityTypeIdentifier.heartRate`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/heartrate)                                                                                                                                                                                   |
 | **Resting Heart Rate**          | ❌         | [`HKQuantityTypeIdentifier.restingHeartRate`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/restingheartrate)                                                                                                                                                                     |
-| **Blood Pressure**              | ❌         | [`HKQuantityTypeIdentifier.bloodPressureSystolic`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bloodpressuresystolic), [`HKQuantityTypeIdentifier.bloodPressureDiastolic`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bloodpressurediastolic) |
+| **Blood Pressure**              | ✅         | [`HKQuantityTypeIdentifier.bloodPressureSystolic`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bloodpressuresystolic), [`HKQuantityTypeIdentifier.bloodPressureDiastolic`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bloodpressurediastolic) |
 | **Body Temperature**            | ✅         | [`HKQuantityTypeIdentifier.bodyTemperature`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bodytemperature)                                                                                                                                                                       |
 | **Blood Glucose**               | ❌         | [`HKQuantityTypeIdentifier.bloodGlucose`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/bloodglucose)                                                                                                                                                                             |
 | **Oxygen Saturation**           | ❌         | [`HKQuantityTypeIdentifier.oxygenSaturation`](https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/oxygenaturation)                                                                                                                                                                      |

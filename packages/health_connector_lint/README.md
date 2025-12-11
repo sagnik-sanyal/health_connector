@@ -1,7 +1,9 @@
 # health_connector_lint
 
-[![pub package](https://img.shields.io/pub/v/health_connector_lint.svg)](https://pub.dev/packages/health_connector_lint)
-[![pub points](https://img.shields.io/pub/points/health_connector_lint?color=2E8B57&label=pub%20points)](https://pub.dev/packages/health_connector_lint/score)
+<p align="center">
+  <a title="Pub" href="https://pub.dev/packages/health_connector_lint"><img src="https://img.shields.io/pub/v/health_connector_lint.svg?style=popout"/></a>
+  <a title="Pub Points" href="https://pub.dev/packages/health_connector_lint/score"><img src="https://img.shields.io/pub/points/health_connector_lint?color=2E8B57&label=pub%20points"/></a>
+</p>
 
 Shared lint rules and analysis options for all `health_connector` packages, enforcing consistent
 code quality across the monorepo.

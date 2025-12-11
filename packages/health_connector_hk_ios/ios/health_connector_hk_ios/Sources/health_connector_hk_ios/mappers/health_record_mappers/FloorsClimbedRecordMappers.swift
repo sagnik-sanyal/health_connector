@@ -51,7 +51,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return FloorsClimbedRecordDto(
             floors: NumericDto(unit: NumericUnitDto.numeric, value: value),
             endTime: Int64(endDate.timeIntervalSince1970 * 1000),

@@ -130,8 +130,7 @@ class HealthKitTypeRegistry {
 
     /// Private initializer to enforce singleton pattern
 
-    private init() {
-    }
+    private init() {}
 
     // MARK: - Handler Registration
 
@@ -162,13 +161,13 @@ class HealthKitTypeRegistry {
         register(WeightHandler.self)
         register(HeightHandler.self)
         register(BodyFatPercentageHandler.self)
-        register(BodyTemperatureHandler.self)  // No aggregation
-        register(LeanBodyMassHandler.self)  // No aggregation
+        register(BodyTemperatureHandler.self) // No aggregation
+        register(LeanBodyMassHandler.self) // No aggregation
         register(HeartRateHandler.self)
 
         // MARK: Category Types
 
-        register(SleepStageHandler.self)  // ✅ IMPLEMENTED
+        register(SleepStageHandler.self) // ✅ IMPLEMENTED
 
         // Future category types:
         // register(MenstrualFlowHandler.self)
@@ -250,7 +249,7 @@ class HealthKitTypeRegistry {
             .steps, .activeCaloriesBurned, .distance, .floorsClimbed,
             .wheelchairPushes, .hydration, .weight, .height,
             .bodyFatPercentage, .bodyTemperature, .leanBodyMass,
-            .heartRateMeasurementRecord, .sleepStageRecord
+            .heartRateMeasurementRecord, .sleepStageRecord,
         ]
 
         HealthConnectorLogger.debug(

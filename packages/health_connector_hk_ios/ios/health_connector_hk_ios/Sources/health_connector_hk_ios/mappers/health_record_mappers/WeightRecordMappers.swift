@@ -47,7 +47,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return WeightRecordDto(
             id: uuid.uuidString,
             metadata: metadataDict.toMetadataDto(

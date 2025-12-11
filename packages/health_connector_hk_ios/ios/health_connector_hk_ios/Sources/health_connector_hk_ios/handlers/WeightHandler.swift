@@ -88,7 +88,7 @@ struct WeightHandler: HealthKitQuantityHandler {
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         switch metric {
         case .avg:
-            //Discrete average for average weight
+            // Discrete average for average weight
             return .discreteAverage
         case .min:
             // Discrete minimum for lowest weight
@@ -103,7 +103,7 @@ struct WeightHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -121,14 +121,14 @@ struct WeightHandler: HealthKitQuantityHandler {
                 details: "Supported metrics: avg, min, max"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for bodyMass"
             )
         }
-        
+
         let kilograms = quantity.doubleValue(for: .gramUnit(with: .kilo))
         return MassDto(unit: .kilograms, value: kilograms)
     }

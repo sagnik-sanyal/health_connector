@@ -27,6 +27,7 @@ struct LeanBodyMassHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .leanBodyMass
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -67,9 +68,9 @@ struct LeanBodyMassHandler: HealthKitQuantityHandler {
             details: "Individual measurements should be tracked over time instead"
         )
     }
-    
+
     static func extractAggregateValue(
-        from statistics: HKStatistics,
+        from _: HKStatistics,
         metric: AggregationMetricDto
     ) throws -> MeasurementUnitDto {
         throw HealthConnectorErrors.invalidArgument(

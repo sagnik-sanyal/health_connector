@@ -48,7 +48,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return DistanceRecordDto(
             distance: quantity.toLengthDto(),
             endTime: Int64(endDate.timeIntervalSince1970 * 1000),

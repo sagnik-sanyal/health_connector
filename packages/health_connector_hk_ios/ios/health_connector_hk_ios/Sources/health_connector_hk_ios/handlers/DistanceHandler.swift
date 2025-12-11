@@ -25,6 +25,7 @@ struct DistanceHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .distance
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -70,7 +71,7 @@ struct DistanceHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -84,14 +85,14 @@ struct DistanceHandler: HealthKitQuantityHandler {
                 details: "Only 'sum' is supported"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for distanceWalkingRunning"
             )
         }
-        
+
         let meters = quantity.doubleValue(for: .meter())
         return LengthDto(unit: .meters, value: meters)
     }

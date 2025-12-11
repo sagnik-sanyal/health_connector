@@ -50,7 +50,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return StepRecordDto(
             count: count.toNumericDto(),
             endTime: Int64(endDate.timeIntervalSince1970 * 1000),

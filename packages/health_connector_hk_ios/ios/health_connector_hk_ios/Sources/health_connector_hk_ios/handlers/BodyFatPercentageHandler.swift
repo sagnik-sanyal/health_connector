@@ -25,6 +25,7 @@ struct BodyFatPercentageHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .bodyFatPercentage
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -74,7 +75,7 @@ struct BodyFatPercentageHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -92,14 +93,14 @@ struct BodyFatPercentageHandler: HealthKitQuantityHandler {
                 details: "Supported metrics: avg, min, max"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for bodyFatPercentage"
             )
         }
-        
+
         return quantity.toPercentageDto()
     }
 }

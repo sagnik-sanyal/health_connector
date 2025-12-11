@@ -99,7 +99,7 @@ struct NutrientHandler {
             )
         }
     }
-    
+
     func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -113,14 +113,14 @@ struct NutrientHandler {
                 details: "Only 'sum' is supported"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for \(quantityTypeIdentifier.rawValue)"
             )
         }
-        
+
         // EnergyNutrient uses EnergyDto, all other nutrients use MassDto
         if nutrientType == .energyNutrient {
             return quantity.toEnergyDto()
@@ -174,7 +174,7 @@ struct NutrientHandler {
             NutrientHandler(nutrientType: .potassium, quantityTypeIdentifier: .dietaryPotassium),
             NutrientHandler(nutrientType: .selenium, quantityTypeIdentifier: .dietarySelenium),
             NutrientHandler(nutrientType: .sodium, quantityTypeIdentifier: .dietarySodium),
-            NutrientHandler(nutrientType: .zinc, quantityTypeIdentifier: .dietaryZinc)
+            NutrientHandler(nutrientType: .zinc, quantityTypeIdentifier: .dietaryZinc),
         ]
     }
 }
@@ -196,6 +196,7 @@ struct EnergyNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .energyNutrient
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -216,11 +217,10 @@ struct EnergyNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -237,6 +237,7 @@ struct CaffeineNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .caffeine
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -257,11 +258,10 @@ struct CaffeineNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -278,6 +278,7 @@ struct ProteinNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .protein
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -298,11 +299,10 @@ struct ProteinNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -319,6 +319,7 @@ struct TotalCarbohydrateNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .totalCarbohydrate
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -339,11 +340,10 @@ struct TotalCarbohydrateNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -360,6 +360,7 @@ struct TotalFatNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .totalFat
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -380,11 +381,10 @@ struct TotalFatNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -401,6 +401,7 @@ struct SaturatedFatNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .saturatedFat
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -421,11 +422,10 @@ struct SaturatedFatNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -442,6 +442,7 @@ struct MonounsaturatedFatNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .monounsaturatedFat
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -462,11 +463,10 @@ struct MonounsaturatedFatNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -483,6 +483,7 @@ struct PolyunsaturatedFatNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .polyunsaturatedFat
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -503,11 +504,10 @@ struct PolyunsaturatedFatNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -524,6 +524,7 @@ struct CholesterolNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .cholesterol
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -544,11 +545,10 @@ struct CholesterolNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -565,6 +565,7 @@ struct DietaryFiberNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .dietaryFiber
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -585,11 +586,10 @@ struct DietaryFiberNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -606,6 +606,7 @@ struct SugarNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .sugar
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -626,11 +627,10 @@ struct SugarNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -647,6 +647,7 @@ struct VitaminANutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminA
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -667,11 +668,10 @@ struct VitaminANutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -688,6 +688,7 @@ struct VitaminB6NutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminB6
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -708,11 +709,10 @@ struct VitaminB6NutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -729,6 +729,7 @@ struct VitaminB12NutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminB12
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -749,11 +750,10 @@ struct VitaminB12NutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -770,6 +770,7 @@ struct VitaminCNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminC
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -790,11 +791,10 @@ struct VitaminCNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -811,6 +811,7 @@ struct VitaminDNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminD
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -831,11 +832,10 @@ struct VitaminDNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -852,6 +852,7 @@ struct VitaminENutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminE
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -872,11 +873,10 @@ struct VitaminENutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -893,6 +893,7 @@ struct VitaminKNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .vitaminK
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -913,11 +914,10 @@ struct VitaminKNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -934,6 +934,7 @@ struct ThiaminNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .thiamin
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -954,11 +955,10 @@ struct ThiaminNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -975,6 +975,7 @@ struct RiboflavinNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .riboflavin
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -995,11 +996,10 @@ struct RiboflavinNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1016,6 +1016,7 @@ struct NiacinNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .niacin
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1036,11 +1037,10 @@ struct NiacinNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1057,6 +1057,7 @@ struct FolateNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .folate
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1077,11 +1078,10 @@ struct FolateNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1098,6 +1098,7 @@ struct BiotinNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .biotin
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1118,11 +1119,10 @@ struct BiotinNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1139,6 +1139,7 @@ struct PantothenicAcidNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .pantothenicAcid
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1159,11 +1160,10 @@ struct PantothenicAcidNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1180,6 +1180,7 @@ struct CalciumNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .calcium
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1200,11 +1201,10 @@ struct CalciumNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1221,6 +1221,7 @@ struct IronNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .iron
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1241,11 +1242,10 @@ struct IronNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1262,6 +1262,7 @@ struct MagnesiumNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .magnesium
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1282,11 +1283,10 @@ struct MagnesiumNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1303,6 +1303,7 @@ struct ManganeseNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .manganese
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1323,11 +1324,10 @@ struct ManganeseNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1344,6 +1344,7 @@ struct PhosphorusNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .phosphorus
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1364,11 +1365,10 @@ struct PhosphorusNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1385,6 +1385,7 @@ struct PotassiumNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .potassium
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1405,11 +1406,10 @@ struct PotassiumNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1426,6 +1426,7 @@ struct SeleniumNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .selenium
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1446,11 +1447,10 @@ struct SeleniumNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1467,6 +1467,7 @@ struct SodiumNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .sodium
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1487,11 +1488,10 @@ struct SodiumNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -1508,6 +1508,7 @@ struct ZincNutrientHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .zinc
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -1528,11 +1529,10 @@ struct ZincNutrientHandler: HealthKitQuantityHandler {
         try handler.extractTimestamp(dto)
     }
 
-
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions {
         try handler.toStatisticsOptions(metric)
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto

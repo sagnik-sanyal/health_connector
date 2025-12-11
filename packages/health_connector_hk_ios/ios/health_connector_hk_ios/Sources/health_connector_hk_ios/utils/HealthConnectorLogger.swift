@@ -8,7 +8,7 @@ import OSLog
  * formatted messages across the plugin. It supports structured logging with
  * operation, phase, optional message, and context.
  */
-internal enum HealthConnectorLogger {
+enum HealthConnectorLogger {
     /**
      * OSLog subsystem identifier for Health Connector iOS plugin.
      */
@@ -62,7 +62,7 @@ internal enum HealthConnectorLogger {
      */
     private static let indentCache: [String] = {
         var cache: [String] = []
-        for depth in 0...maxCachedIndentDepth {
+        for depth in 0 ... maxCachedIndentDepth {
             cache.append(String(repeating: indentation, count: depth + 1))
         }
         return cache
@@ -173,12 +173,12 @@ internal enum HealthConnectorLogger {
      * - Returns: A formatted string in JSON-like format with indentation.
      */
     private static func formatStructuredMessage(
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil,
-    stackTrace: String? = nil
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil,
+        stackTrace: String? = nil
     ) -> String {
         var buffer = ""
 
@@ -266,13 +266,13 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object.
      */
     private static func log(
-    level: OSLogType,
-    tag: String,
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil
+        level: OSLogType,
+        tag: String,
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil
     ) {
         guard isEnabled else {
             return
@@ -354,12 +354,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func debug(
-    tag: String,
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil
+        tag: String,
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil
     ) {
         log(
             level: .debug,
@@ -387,12 +387,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func info(
-    tag: String,
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil
+        tag: String,
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil
     ) {
         log(
             level: .info,
@@ -420,12 +420,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func warning(
-    tag: String,
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil
+        tag: String,
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil
     ) {
         log(
             level: .default,
@@ -453,12 +453,12 @@ internal enum HealthConnectorLogger {
      *   - exception: Optional error object to include in the log.
      */
     static func error(
-    tag: String,
-    operation: String,
-    phase: String,
-    message: String? = nil,
-    context: [String: Any?]? = nil,
-    exception: Error? = nil
+        tag: String,
+        operation: String,
+        phase: String,
+        message: String? = nil,
+        context: [String: Any?]? = nil,
+        exception: Error? = nil
     ) {
         log(
             level: .error,

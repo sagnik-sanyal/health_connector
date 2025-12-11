@@ -46,7 +46,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return HydrationRecordDto(
             id: uuid.uuidString,
             startTime: Int64(startDate.timeIntervalSince1970 * 1000),

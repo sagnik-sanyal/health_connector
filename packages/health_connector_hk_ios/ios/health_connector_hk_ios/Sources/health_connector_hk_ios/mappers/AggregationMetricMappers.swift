@@ -109,6 +109,7 @@ extension AggregationMetricDto {
                 // HealthKit doesn't provide direct aggregation for these on wheelchair pushes
                 return []
             }
+
         case .hydration:
             switch self {
             case .sum:
@@ -117,18 +118,21 @@ extension AggregationMetricDto {
                 // Only SUM is supported for hydration (matches Android Health Connect behavior)
                 return []
             }
+
         case .leanBodyMass:
             // Lean body mass does not support aggregation
             throw HealthConnectorErrors.invalidArgument(
                 message: "Lean body mass does not support aggregation",
                 details: "Lean body mass does not support aggregation operations."
             )
+
         case .bodyTemperature:
             // Body temperature does not support aggregation
             throw HealthConnectorErrors.invalidArgument(
                 message: "Body temperature does not support aggregation",
                 details: "Body temperature does not support aggregation operations."
             )
+
         case .heartRateMeasurementRecord:
             switch self {
             case .avg:
@@ -141,6 +145,7 @@ extension AggregationMetricDto {
                 // SUM not meaningful for heart rate, COUNT requires reading records
                 return []
             }
+
         case .sleepStageRecord:
             // Sleep stages (category samples) do not support aggregation
             throw HealthConnectorErrors.invalidArgument(
@@ -149,6 +154,7 @@ extension AggregationMetricDto {
             )
 
         // MARK: Nutrients - All support SUM aggregation only
+
         case .energyNutrient, .caffeine,
              .protein, .totalCarbohydrate, .totalFat, .saturatedFat,
              .monounsaturatedFat, .polyunsaturatedFat, .cholesterol,
@@ -167,18 +173,21 @@ extension AggregationMetricDto {
             }
 
         // MARK: Correlation Types
+
         case .nutrition:
             // Nutrition (food correlation) does not support aggregation
             throw HealthConnectorErrors.invalidArgument(
                 message: "Nutrition records do not support aggregation",
                 details: "Nutrition records are correlation types and do not support aggregation operations."
             )
+
         case .bloodPressure:
             // Blood pressure (correlation) does not support aggregation
             throw HealthConnectorErrors.invalidArgument(
                 message: "Blood pressure records do not support aggregation",
                 details: "Blood pressure records are correlation types and do not support aggregation operations."
             )
+
         case .systolicBloodPressure:
             switch self {
             case .avg:
@@ -191,6 +200,7 @@ extension AggregationMetricDto {
                 // SUM not meaningful for systolic blood pressure, COUNT requires reading records
                 return []
             }
+
         case .diastolicBloodPressure:
             switch self {
             case .avg:
@@ -398,4 +408,3 @@ extension AggregationMetricDto {
         }
     }
 }
-

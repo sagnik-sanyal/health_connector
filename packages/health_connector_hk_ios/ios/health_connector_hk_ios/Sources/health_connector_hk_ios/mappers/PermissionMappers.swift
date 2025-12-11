@@ -18,7 +18,7 @@ extension HealthDataPermissionDto {
      *            For correlation types, returns the correlation type plus all component types.
      */
     func toHealthKitObjectTypes() -> [HKObjectType] {
-        switch self.healthDataType {
+        switch healthDataType {
         case .activeCaloriesBurned:
             return [HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!]
         case .distance:
@@ -47,7 +47,6 @@ extension HealthDataPermissionDto {
             return [HKCategoryType.categoryType(forIdentifier: .sleepAnalysis)!]
 
         // MARK: Nutrients
-
         case .energyNutrient:
             return [HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed)!]
         case .caffeine:
@@ -116,7 +115,6 @@ extension HealthDataPermissionDto {
             return [HKQuantityType.quantityType(forIdentifier: .dietaryZinc)!]
 
         // MARK: Correlation Types
-
         case .nutrition:
             // Nutrition is a correlation type (HKCorrelation.food) but HealthKit requires
             // requesting permissions for the individual quantity types, not the correlation type itself

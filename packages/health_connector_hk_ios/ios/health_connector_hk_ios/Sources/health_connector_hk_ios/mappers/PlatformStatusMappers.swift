@@ -21,6 +21,6 @@ extension HealthPlatformStatusDto {
      */
 
     static func fromHealthKitAvailability(_ isAvailable: Bool) -> HealthPlatformStatusDto {
-        return isAvailable ? .available: .notAvailable
+        return isAvailable ? .available : .notAvailable
     }
 }

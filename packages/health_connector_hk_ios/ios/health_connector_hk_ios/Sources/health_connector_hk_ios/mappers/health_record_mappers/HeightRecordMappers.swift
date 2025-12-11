@@ -47,7 +47,7 @@ extension HKQuantitySample {
 
         let metadataDict = metadata ?? [:]
         let zoneOffset = metadataDict.extractTimeZoneOffset(for: startDate)
-        
+
         return HeightRecordDto(
             id: uuid.uuidString,
             metadata: metadataDict.toMetadataDto(

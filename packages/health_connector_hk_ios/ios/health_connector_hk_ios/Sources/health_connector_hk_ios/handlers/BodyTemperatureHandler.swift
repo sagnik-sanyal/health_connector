@@ -26,6 +26,7 @@ struct BodyTemperatureHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .bodyTemperature
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -68,9 +69,9 @@ struct BodyTemperatureHandler: HealthKitQuantityHandler {
             details: "Individual readings at specific times should be used instead"
         )
     }
-    
+
     static func extractAggregateValue(
-        from statistics: HKStatistics,
+        from _: HKStatistics,
         metric: AggregationMetricDto
     ) throws -> MeasurementUnitDto {
         throw HealthConnectorErrors.invalidArgument(

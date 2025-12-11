@@ -30,7 +30,6 @@ import HealthKit
 /// both the correlation and all contained samples are deleted.
 
 struct NutritionCorrelationHandler: HealthKitCorrelationHandler {
-
     static var supportedType: HealthDataTypeDto {
         .nutrition
     }
@@ -43,7 +42,8 @@ struct NutritionCorrelationHandler: HealthKitCorrelationHandler {
 
     static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         guard let correlation = sample as? HKCorrelation,
-        correlation.correlationType.identifier == HKCorrelationTypeIdentifier.food.rawValue else {
+              correlation.correlationType.identifier == HKCorrelationTypeIdentifier.food.rawValue
+        else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "Expected HKCorrelation with food type, got \(type(of: sample))"
             )

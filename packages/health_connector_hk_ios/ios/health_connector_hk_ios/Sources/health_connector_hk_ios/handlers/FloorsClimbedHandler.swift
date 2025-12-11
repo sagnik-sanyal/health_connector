@@ -25,6 +25,7 @@ struct FloorsClimbedHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .floorsClimbed
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -70,7 +71,7 @@ struct FloorsClimbedHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -85,14 +86,14 @@ struct FloorsClimbedHandler: HealthKitQuantityHandler {
                 details: "Only 'sum' is supported"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for flightsClimbed"
             )
         }
-        
+
         let count = quantity.doubleValue(for: .count())
         return NumericDto(unit: .numeric, value: count)
     }

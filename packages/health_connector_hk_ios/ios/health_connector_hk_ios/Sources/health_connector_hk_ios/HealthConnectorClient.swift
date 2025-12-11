@@ -10,8 +10,7 @@ import HealthKit
  * @property store The underlying HealthKit store instance
  */
 
-internal class HealthConnectorClient {
-
+class HealthConnectorClient {
     /**
      * Tag used for logging throughout the client.
      */
@@ -262,7 +261,7 @@ internal class HealthConnectorClient {
             message: "HealthKit platform status retrieved",
             context: [
                 "isAvailable": isAvailable,
-                "statusDto": statusDto
+                "statusDto": statusDto,
             ]
         )
 
@@ -294,7 +293,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Requesting Health Connect permissions",
                 context: [
-                    "requested_health_data_permissions": healthDataPermissions
+                    "requested_health_data_permissions": healthDataPermissions,
                 ]
             )
 
@@ -370,7 +369,7 @@ internal class HealthConnectorClient {
                 phase: "completed",
                 message: "Health Connect permissions requested successfully",
                 context: [
-                    "granted_health_data_permissions": results
+                    "granted_health_data_permissions": results,
                 ]
             )
 
@@ -387,7 +386,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to request Health Connect permissions",
                 context: [
-                    "requested_permissions": healthDataPermissions
+                    "requested_permissions": healthDataPermissions,
                 ],
                 exception: error
             )
@@ -403,7 +402,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to request Health Connect permissions",
                 context: [
-                    "requested_permissions": healthDataPermissions
+                    "requested_permissions": healthDataPermissions,
                 ],
                 exception: error
             )
@@ -434,7 +433,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Reading Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -454,7 +453,7 @@ internal class HealthConnectorClient {
                     message: "Invalid record ID format",
                     context: [
                         "dataType": String(describing: request.dataType),
-                        "recordId": request.recordId
+                        "recordId": request.recordId,
                     ]
                 )
                 throw HealthConnectorErrors.invalidArgument(
@@ -506,7 +505,7 @@ internal class HealthConnectorClient {
                 message: "Health Connect record read successfully",
                 context: [
                     "request": request,
-                    "response": responseDto
+                    "response": responseDto,
                 ]
             )
 
@@ -522,7 +521,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to read Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -539,7 +538,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to read Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -604,7 +603,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Reading Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -634,7 +633,7 @@ internal class HealthConnectorClient {
                             message: "Invalid pageToken: adjusted startTime >= endTime",
                             context: [
                                 "adjustedStartTime": effectiveStartTime,
-                                "endTime": request.endTime
+                                "endTime": request.endTime,
                             ]
                         )
                         return createEmptyResponse()
@@ -647,7 +646,7 @@ internal class HealthConnectorClient {
                         message: "Using pageToken for pagination",
                         context: [
                             "originalStartTime": request.startTime,
-                            "adjustedStartTime": effectiveStartTime
+                            "adjustedStartTime": effectiveStartTime,
                         ]
                     )
                 } else {
@@ -658,7 +657,7 @@ internal class HealthConnectorClient {
                         phase: "pagination",
                         message: "Invalid pageToken format, using original startTime",
                         context: [
-                            "pageToken": pageToken
+                            "pageToken": pageToken,
                         ]
                     )
                 }
@@ -694,7 +693,7 @@ internal class HealthConnectorClient {
                         phase: "completed",
                         message: "No sources found for bundle identifiers",
                         context: [
-                            "bundleIdentifiers": request.dataOriginPackageNames
+                            "bundleIdentifiers": request.dataOriginPackageNames,
                         ]
                     )
                     return createEmptyResponse()
@@ -763,7 +762,7 @@ internal class HealthConnectorClient {
                             pageSize: request.pageSize,
                             timestampExtractor: {
                                 try handler.extractTimestamp($0)
-                            }  // Type-aware!
+                            } // Type-aware!
                         )
 
                         let responseDto = ReadRecordsResponseDto(
@@ -786,7 +785,7 @@ internal class HealthConnectorClient {
                 message: "Health Connect records read successfully",
                 context: [
                     "request": request,
-                    "response": responseDto
+                    "response": responseDto,
                 ]
             )
 
@@ -802,7 +801,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to read Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -814,7 +813,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to read Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -851,8 +850,9 @@ internal class HealthConnectorClient {
      */
 
     private func applyPagination<T>(records: [T],
-    pageSize: Int64,
-    timestampExtractor: (T) throws -> Int64) rethrows -> (records: [T], nextPageToken: String?) {
+                                    pageSize: Int64,
+                                    timestampExtractor: (T) throws -> Int64) rethrows -> (records: [T], nextPageToken: String?)
+    {
         var mutableRecords = records
         let nextPageToken: String?
 
@@ -872,7 +872,6 @@ internal class HealthConnectorClient {
 
         return (mutableRecords, nextPageToken)
     }
-
 
     /**
      * Queries HealthKit for sources matching the given bundle identifiers.
@@ -957,7 +956,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Writing Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -1003,7 +1002,7 @@ internal class HealthConnectorClient {
                             message: "Health Connect record written successfully",
                             context: [
                                 "request": request,
-                                "assignedRecordId": recordId
+                                "assignedRecordId": recordId,
                             ]
                         )
                         continuation.resume(returning: responseDto)
@@ -1028,7 +1027,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to write Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1040,7 +1039,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to write Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1079,7 +1078,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Updating Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -1097,7 +1096,8 @@ internal class HealthConnectorClient {
 
             // Convert record ID to UUID
             guard let recordIdString = recordId,
-            let recordUUID = UUID(uuidString: recordIdString) else {
+                  let recordUUID = UUID(uuidString: recordIdString)
+            else {
                 throw HealthConnectorErrors.invalidArgument(
                     message: "Invalid record ID format: \(recordId ?? "nil")",
                     details: "Record ID must be a valid UUID string"
@@ -1216,7 +1216,7 @@ internal class HealthConnectorClient {
                             phase: "completed",
                             message: "Health Connect record updated successfully",
                             context: [
-                                "request": request
+                                "request": request,
                             ]
                         )
                         continuation.resume(returning: newRecordId)
@@ -1243,7 +1243,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to update Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1255,7 +1255,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to update Health Connect record",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1286,7 +1286,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Writing Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -1340,7 +1340,7 @@ internal class HealthConnectorClient {
                             message: "Health Connect records written successfully",
                             context: [
                                 "request": request,
-                                "assignedRecordIds": recordIds
+                                "assignedRecordIds": recordIds,
                             ]
                         )
                         continuation.resume(returning: responseDto)
@@ -1365,7 +1365,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to write Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1377,7 +1377,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to write Health Connect records",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1410,7 +1410,7 @@ internal class HealthConnectorClient {
                 phase: "entry",
                 message: "Aggregating Health Connect data",
                 context: [
-                    "request": request
+                    "request": request,
                 ]
             )
 
@@ -1466,7 +1466,7 @@ internal class HealthConnectorClient {
                 message: "Health Connect data aggregated successfully",
                 context: [
                     "request": request,
-                    "response": responseDto
+                    "response": responseDto,
                 ]
             )
 
@@ -1482,7 +1482,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to aggregate Health Connect data",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1494,7 +1494,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to aggregate Health Connect data",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -1518,10 +1518,11 @@ internal class HealthConnectorClient {
      */
 
     private func aggregateWithStatisticsQuery(quantityType: HKQuantityType,
-    predicate: NSPredicate,
-    metric: AggregationMetricDto,
-    dataType: HealthDataTypeDto,
-    handler: HealthKitQuantityHandler.Type) async throws -> AggregateResponseDto {
+                                              predicate: NSPredicate,
+                                              metric: AggregationMetricDto,
+                                              dataType: HealthDataTypeDto,
+                                              handler: HealthKitQuantityHandler.Type) async throws -> AggregateResponseDto
+    {
         // Get statistics options from handler - throws if metric not supported
         let options = try handler.toStatisticsOptions(metric)
 
@@ -1772,10 +1773,10 @@ internal class HealthConnectorClient {
                     response = AggregateResponseDto(value: energyDto)
 
                 case .caffeine, .protein, .totalCarbohydrate, .totalFat, .saturatedFat,
-                .monounsaturatedFat, .polyunsaturatedFat, .cholesterol, .dietaryFiber, .sugar,
-                .vitaminA, .vitaminB6, .vitaminB12, .vitaminC, .vitaminD, .vitaminE, .vitaminK,
-                .thiamin, .riboflavin, .niacin, .folate, .biotin, .pantothenicAcid,
-                .calcium, .iron, .magnesium, .manganese, .phosphorus, .potassium, .selenium, .sodium, .zinc:
+                     .monounsaturatedFat, .polyunsaturatedFat, .cholesterol, .dietaryFiber, .sugar,
+                     .vitaminA, .vitaminB6, .vitaminB12, .vitaminC, .vitaminD, .vitaminE, .vitaminK,
+                     .thiamin, .riboflavin, .niacin, .folate, .biotin, .pantothenicAcid,
+                     .calcium, .iron, .magnesium, .manganese, .phosphorus, .potassium, .selenium, .sodium, .zinc:
                     // For all other nutrients, we use cumulativeSum which returns sumQuantity
                     guard let sumQuantity = statistics.sumQuantity() else {
                         let emptyMassDto = MassDto(unit: .grams, value: 0.0)
@@ -1973,9 +1974,9 @@ internal class HealthConnectorClient {
             default:
                 // For iOS 16+ detailed stages (core/light, deep, REM)
                 // Check raw values: .core=5, .deep=3, .REM=4
-                if #available (iOS 16.0, *) {
+                if #available(iOS 16.0, *) {
                     switch sample.value {
-                    case 3, 4, 5:  // deep, REM, core
+                    case 3, 4, 5: // deep, REM, core
                         isActualSleep = true
                     default:
                         isActualSleep = false
@@ -1996,7 +1997,6 @@ internal class HealthConnectorClient {
         let numericDto = NumericDto(unit: .numeric, value: totalSleepSeconds)
         return AggregateResponseDto(value: numericDto)
     }
-
 
     // ==================== DELETE OPERATIONS ====================
 
@@ -2019,7 +2019,7 @@ internal class HealthConnectorClient {
             phase: "entry",
             message: "Deleting Health Connect records by time range",
             context: [
-                "request": request
+                "request": request,
             ]
         )
 
@@ -2054,7 +2054,7 @@ internal class HealthConnectorClient {
             try await withCheckedThrowingContinuation {
                 (continuation: CheckedContinuation<Void, Error>) in
                 store.deleteObjects(of: sampleType, predicate: predicate) {
-                    success, count, error in
+                    success, _, error in
                     if let error = error {
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
@@ -2076,7 +2076,7 @@ internal class HealthConnectorClient {
                             phase: "completed",
                             message: "Health Connect records deleted successfully",
                             context: [
-                                "request": request
+                                "request": request,
                             ]
                         )
                         continuation.resume(returning: ())
@@ -2101,7 +2101,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to delete Health Connect records by time range",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -2113,7 +2113,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to delete Health Connect records by time range",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -2143,7 +2143,7 @@ internal class HealthConnectorClient {
             phase: "entry",
             message: "Deleting Health Connect records by IDs",
             context: [
-                "request": request
+                "request": request,
             ]
         )
 
@@ -2179,7 +2179,7 @@ internal class HealthConnectorClient {
                     limit: HKObjectQueryNoLimit,
                     sortDescriptors: nil
                 ) {
-                    query, samples, error in
+                    _, samples, error in
                     if let error = error {
                         if let nsError = error as NSError? {
                             continuation.resume(throwing: HealthConnectorClient.mapHealthKitError(nsError))
@@ -2232,7 +2232,7 @@ internal class HealthConnectorClient {
                                 phase: "completed",
                                 message: "Health Connect records deleted successfully",
                                 context: [
-                                    "request": request
+                                    "request": request,
                                 ]
                             )
                             continuation.resume(returning: ())
@@ -2265,7 +2265,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to delete Health Connect records by IDs",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )
@@ -2277,7 +2277,7 @@ internal class HealthConnectorClient {
                 phase: "failed",
                 message: "Failed to delete Health Connect records by IDs",
                 context: [
-                    "request": request
+                    "request": request,
                 ],
                 exception: error
             )

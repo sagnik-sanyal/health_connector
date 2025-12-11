@@ -326,7 +326,7 @@ extension PercentageDto {
      */
     func toHealthKit() -> HKQuantity {
         let percentValue: Double
-        switch self.unit {
+        switch unit {
         case .decimal:
             percentValue = value
         case .whole:

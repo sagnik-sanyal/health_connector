@@ -44,9 +44,9 @@ extension HKCorrelation {
             endZoneOffsetSeconds: zoneOffset,
             foodName: foodName,
             mealType: mealType,
-        // Energy
+            // Energy
             energy: extractEnergy(),
-        // Macronutrients
+            // Macronutrients
             protein: extractMass(for: .dietaryProtein),
             totalCarbohydrate: extractMass(for: .dietaryCarbohydrates),
             totalFat: extractMass(for: .dietaryFatTotal),
@@ -56,7 +56,7 @@ extension HKCorrelation {
             cholesterol: extractMass(for: .dietaryCholesterol),
             dietaryFiber: extractMass(for: .dietaryFiber),
             sugar: extractMass(for: .dietarySugar),
-        // Vitamins
+            // Vitamins
             vitaminA: extractMass(for: .dietaryVitaminA),
             vitaminB6: extractMass(for: .dietaryVitaminB6),
             vitaminB12: extractMass(for: .dietaryVitaminB12),
@@ -70,7 +70,7 @@ extension HKCorrelation {
             folate: extractMass(for: .dietaryFolate),
             biotin: extractMass(for: .dietaryBiotin),
             pantothenicAcid: extractMass(for: .dietaryPantothenicAcid),
-        // Minerals
+            // Minerals
             calcium: extractMass(for: .dietaryCalcium),
             iron: extractMass(for: .dietaryIron),
             magnesium: extractMass(for: .dietaryMagnesium),
@@ -80,7 +80,7 @@ extension HKCorrelation {
             selenium: extractMass(for: .dietarySelenium),
             sodium: extractMass(for: .dietarySodium),
             zinc: extractMass(for: .dietaryZinc),
-        // Other
+            // Other
             caffeine: extractMass(for: .dietaryCaffeine)
         )
     }
@@ -89,7 +89,8 @@ extension HKCorrelation {
 
     private func extractEnergy() -> EnergyDto? {
         guard let energyType = HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed),
-        let sample = objects(for: energyType).first as? HKQuantitySample else {
+              let sample = objects(for: energyType).first as? HKQuantitySample
+        else {
             return nil
         }
         return sample.quantity.toEnergyDto()
@@ -99,7 +100,8 @@ extension HKCorrelation {
 
     private func extractMass(for identifier: HKQuantityTypeIdentifier) -> MassDto? {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier),
-        let sample = objects(for: quantityType).first as? HKQuantitySample else {
+              let sample = objects(for: quantityType).first as? HKQuantitySample
+        else {
             return nil
         }
         return sample.quantity.toMassDto()
@@ -346,9 +348,10 @@ extension NutritionRecordDto {
     /// Creates a mass sample for a specific nutrient type
 
     private func createMassSample(_ identifier: HKQuantityTypeIdentifier,
-    _ mass: MassDto,
-    start: Date,
-    end: Date) -> HKQuantitySample? {
+                                  _ mass: MassDto,
+                                  start: Date,
+                                  end: Date) -> HKQuantitySample?
+    {
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return nil
         }

@@ -71,7 +71,7 @@ extension HealthConnectorErrorCodeDto {
  * This struct provides methods to create `HealthConnectorError` instances with consistent error codes
  * and messages that mirror the Android implementation.
  */
-internal struct HealthConnectorErrors {
+enum HealthConnectorErrors {
     /**
      * Creates a `HealthConnectorError` indicating that HealthKit is unavailable on the device.
      *
@@ -217,4 +217,3 @@ internal struct HealthConnectorErrors {
         return message == nil ? "" : ": \(message!)"
     }
 }
-

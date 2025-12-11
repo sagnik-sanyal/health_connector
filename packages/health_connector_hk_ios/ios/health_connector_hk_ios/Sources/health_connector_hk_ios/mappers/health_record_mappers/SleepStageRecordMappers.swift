@@ -67,7 +67,8 @@ extension SleepStageRecordDto {
         // If end offset differs from start, we note that in custom metadata
         // (HealthKit doesn't have native support for dual timezone offsets per sample)
         if let endOffset = endZoneOffsetSeconds,
-           endOffset != startZoneOffsetSeconds {
+           endOffset != startZoneOffsetSeconds
+        {
             metadataDict["EndTimeZoneOffset"] = endOffset
         }
 
@@ -109,27 +110,27 @@ extension HKCategoryValueSleepAnalysis {
         case .awake:
             return .awake
         #if compiler(>=5.5) // iOS 16+
-        @unknown default:
-            // Handle new iOS 16+ sleep stages
-            // Note: We need to use rawValue comparison because Swift doesn't allow
-            // switch on @unknown cases with specific values
-            if #available(iOS 16.0, *) {
-                // iOS 16 introduced new sleep stages:
-                // - HKCategoryValueSleepAnalysis.core (rawValue: 5)
-                // - HKCategoryValueSleepAnalysis.deep (rawValue: 3)
-                // - HKCategoryValueSleepAnalysis.REM (rawValue: 4)
-                switch rawValue {
-                case 3: // .deep
-                    return .deep
-                case 4: // .rem
-                    return .rem
-                case 5: // .core (light sleep)
-                    return .light
-                default:
-                    return .unknown
+            @unknown default:
+                // Handle new iOS 16+ sleep stages
+                // Note: We need to use rawValue comparison because Swift doesn't allow
+                // switch on @unknown cases with specific values
+                if #available(iOS 16.0, *) {
+                    // iOS 16 introduced new sleep stages:
+                    // - HKCategoryValueSleepAnalysis.core (rawValue: 5)
+                    // - HKCategoryValueSleepAnalysis.deep (rawValue: 3)
+                    // - HKCategoryValueSleepAnalysis.REM (rawValue: 4)
+                    switch rawValue {
+                    case 3: // .deep
+                        return .deep
+                    case 4: // .rem
+                        return .rem
+                    case 5: // .core (light sleep)
+                        return .light
+                    default:
+                        return .unknown
+                    }
                 }
-            }
-            return .unknown
+                return .unknown
         #endif
         }
     }

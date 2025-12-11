@@ -76,7 +76,7 @@ struct DiastolicBloodPressureHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -94,14 +94,14 @@ struct DiastolicBloodPressureHandler: HealthKitQuantityHandler {
                 details: "Supported metrics: avg, min, max"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for bloodPressureDiastolic"
             )
         }
-        
+
         return quantity.toPressureDto()
     }
 }

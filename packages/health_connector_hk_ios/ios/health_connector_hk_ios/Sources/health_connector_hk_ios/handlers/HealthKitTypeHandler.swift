@@ -99,7 +99,7 @@ protocol HealthKitQuantityHandler: HealthKitSampleHandler {
     /// **Implementation Note:** Throw `HealthConnectorErrors.invalidArgument` for unsupported metrics
     /// instead of returning empty options.
     static func toStatisticsOptions(_ metric: AggregationMetricDto) throws -> HKStatisticsOptions
-    
+
     /// Extract aggregated value from HKStatistics
     ///
     /// - Parameters:

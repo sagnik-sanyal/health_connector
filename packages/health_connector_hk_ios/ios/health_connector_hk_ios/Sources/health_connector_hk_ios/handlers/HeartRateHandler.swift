@@ -107,7 +107,7 @@ struct HeartRateHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -125,14 +125,14 @@ struct HeartRateHandler: HealthKitQuantityHandler {
                 details: "Supported metrics: avg, min, max"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for heartRate"
             )
         }
-        
+
         let bpm = quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
         return NumericDto(unit: .numeric, value: bpm)
     }

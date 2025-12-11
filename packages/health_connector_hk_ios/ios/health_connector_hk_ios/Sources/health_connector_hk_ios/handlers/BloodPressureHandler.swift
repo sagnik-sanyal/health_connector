@@ -27,7 +27,6 @@ import HealthKit
 /// when reading from HealthKit, and are ignored when writing.
 
 struct BloodPressureHandler: HealthKitCorrelationHandler {
-
     static var supportedType: HealthDataTypeDto {
         .bloodPressure
     }
@@ -40,7 +39,8 @@ struct BloodPressureHandler: HealthKitCorrelationHandler {
 
     static func toDTO(_ sample: HKSample) throws -> HealthRecordDto {
         guard let correlation = sample as? HKCorrelation,
-        correlation.correlationType.identifier == HKCorrelationTypeIdentifier.bloodPressure.rawValue else {
+              correlation.correlationType.identifier == HKCorrelationTypeIdentifier.bloodPressure.rawValue
+        else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "Expected HKCorrelation with bloodPressure type, got \(type(of: sample))"
             )

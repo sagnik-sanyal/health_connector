@@ -1,6 +1,6 @@
 import Flutter
-import UIKit
 import HealthKit
+import UIKit
 
 /**
  * Flutter plugin for accessing HealthKit on iOS devices.
@@ -19,7 +19,6 @@ import HealthKit
  *   - `HealthConnectorClient`
  */
 public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnectorPlatformApi {
-
     /**
      * Tag used for logging throughout the plugin.
      */
@@ -99,7 +98,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to request Health Connect permissions",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -151,7 +150,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to read Health Connect record",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -203,7 +202,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to read Health Connect records",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -255,7 +254,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to write Health Connect record",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -307,7 +306,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to write Health Connect records",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -359,7 +358,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to update Health Connect record",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -411,7 +410,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to aggregate Health Connect data",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -465,7 +464,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to delete Health Connect records by IDs",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -517,7 +516,7 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
                     message: "Failed to delete Health Connect records by time range",
                     context: [
                         "error_code": String(describing: error.code),
-                        "error_message": error.message ?? "no message"
+                        "error_message": error.message ?? "no message",
                     ],
                     exception: error
                 )
@@ -580,8 +579,8 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
      *   - result: The `Result` to pass to the completion handler.
      */
     private func complete<T>(
-    _ completion: @escaping (Result<T, Error>) -> Void,
-    with result: Result<T, Error>
+        _ completion: @escaping (Result<T, Error>) -> Void,
+        with result: Result<T, Error>
     ) {
         DispatchQueue.main.async {
             completion(result)

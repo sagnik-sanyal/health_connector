@@ -63,17 +63,17 @@ extension MetadataDto {
         // Check if at least one field is non-nil (HealthKit requirement)
         let deviceName = deviceName ?? deviceModel
         let hasAnyField = deviceName != nil ||
-                          deviceManufacturer != nil ||
-                          deviceHardwareVersion != nil ||
-                          deviceFirmwareVersion != nil ||
-                          deviceSoftwareVersion != nil ||
-                          deviceLocalIdentifier != nil ||
-                          deviceUdiDeviceIdentifier != nil
-        
+            deviceManufacturer != nil ||
+            deviceHardwareVersion != nil ||
+            deviceFirmwareVersion != nil ||
+            deviceSoftwareVersion != nil ||
+            deviceLocalIdentifier != nil ||
+            deviceUdiDeviceIdentifier != nil
+
         guard hasAnyField else {
             return nil
         }
-        
+
         return HKDevice(
             name: deviceName,
             manufacturer: deviceManufacturer,
@@ -145,7 +145,8 @@ extension Dictionary where Key == String, Value == Any {
     func extractTimeZoneOffset(for date: Date) -> Int64? {
         // Read the timezone string from sample metadata
         guard let timeZoneString = self[HKMetadataKeyTimeZone] as? String,
-              let timeZone = TimeZone(identifier: timeZoneString) else {
+              let timeZone = TimeZone(identifier: timeZoneString)
+        else {
             return nil
         }
 
@@ -156,4 +157,3 @@ extension Dictionary where Key == String, Value == Any {
         return Int64(secondsFromGMT)
     }
 }
-

@@ -25,6 +25,7 @@ struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
     static var supportedType: HealthDataTypeDto {
         .activeCaloriesBurned
     }
+
     static var category: HealthKitDataCategory {
         .quantitySample
     }
@@ -70,7 +71,7 @@ struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
             )
         }
     }
-    
+
     static func extractAggregateValue(
         from statistics: HKStatistics,
         metric: AggregationMetricDto
@@ -84,14 +85,14 @@ struct ActiveCaloriesBurnedHandler: HealthKitQuantityHandler {
                 details: "Only 'sum' is supported"
             )
         }
-        
+
         guard let quantity else {
             throw HealthConnectorErrors.invalidArgument(
                 message: "No aggregation result for metric '\(metric)'",
                 details: "Statistics returned nil for activeEnergyBurned"
             )
         }
-        
+
         return quantity.toEnergyDto()
     }
 }

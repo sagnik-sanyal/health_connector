@@ -1,3 +1,11 @@
+## 1.3.0
+
+ - **CHORE**: Update a dependency to the latest release.
+ - **FEAT**(health_connector_hc_android): Add VO2Max data type. ([3e51085a](https://github.com/fam-tung-lam/health_connector/commit/3e51085a1602e50febddde9f501002ec6867d649))
+ - **FEAT**(health_connector_hc_android): Add respiratory rate data type. ([a67dabba](https://github.com/fam-tung-lam/health_connector/commit/a67dabba093393d4064f60f99769edb71d584236))
+ - **FEAT**(health_connector_hc_android): Add oxygen saturation data type. ([b8928fc7](https://github.com/fam-tung-lam/health_connector/commit/b8928fc785128757bd57d9b07c7ce6c0d436912f))
+ - **FEAT**(health_connector_hc_android): Add resting heart rate data type. ([4972b907](https://github.com/fam-tung-lam/health_connector/commit/4972b9078563225fee0aa7b8506102d9955867e4))
+
 ## 1.2.2
 
 - **REFACTOR**(health_connector_hc_android): Simplify `TAG` initialization with null-coalescing

@@ -1,3 +1,11 @@
+## 1.3.0
+
+ - **CHORE**: Update a dependency to the latest release.
+ - **FEAT**(health_connector_hk_ios): Add VO2Max data type. ([2a61940f](https://github.com/fam-tung-lam/health_connector/commit/2a61940f010c7f8e7bfca438c5f969ed178193ad))
+ - **FEAT**(health_connector_hk_ios): Add respiratory rate data type. ([b6081fa6](https://github.com/fam-tung-lam/health_connector/commit/b6081fa6f99772e0b64b7ca272acf822854cc766))
+ - **FEAT**(health_connector_hk_ios): Add oxygen saturation data type. ([51022aa1](https://github.com/fam-tung-lam/health_connector/commit/51022aa15d7d2d1c91b3512517f1edbbb0af9473))
+ - **FEAT**(health_connector_hk_ios): Add resting heart rate data type. ([17bbf3b1](https://github.com/fam-tung-lam/health_connector/commit/17bbf3b142a15b17bf4ffb5a51ada4ca5b3fef0f))
+
 ## 1.2.2
 
 - **REFACTOR**(health_connector_hk_ios): Replace nil returns with explicit error throwing and add

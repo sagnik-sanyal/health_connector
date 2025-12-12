@@ -1,3 +1,10 @@
+## 1.3.0
+
+ - **FEAT**(health_connector_core): Add VO2Max data type. ([1f885539](https://github.com/fam-tung-lam/health_connector/commit/1f8855396649275b9bc16e62dbbd2b66ef6745e0))
+ - **FEAT**(health_connector_core): Add respiratory rate data type. ([75ba9138](https://github.com/fam-tung-lam/health_connector/commit/75ba913811f39879cb81c6eb121e1cf789ef5311))
+ - **FEAT**(health_connector_core): Add oxygen saturation data type. ([8c0876b0](https://github.com/fam-tung-lam/health_connector/commit/8c0876b04480b311a3b8d516a2977a11feaff6b8))
+ - **FEAT**(health_connector_core): Add resting heart rate data type. ([7bb5bbea](https://github.com/fam-tung-lam/health_connector/commit/7bb5bbea8b385d0915ec34257964e53f1d3fc4b5))
+
 ## 1.2.1
 
 - Update `health_connector_lint` to the latest release.

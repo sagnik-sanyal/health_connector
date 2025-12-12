@@ -439,11 +439,11 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 | Data Type               | Supported | Documentation                                                                                                                            |
 |-------------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | **Heart Rate (Series)** | ✅         | [`HeartRateSeriesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeartRateSeriesRecord)   |
-| **Resting Heart Rate**  | ❌         | [`RestingHeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RestingHeartRateRecord) |
+| **Resting Heart Rate**  | ✅         | [`RestingHeartRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RestingHeartRateRecord) |
 | **Blood Pressure**      | ✅         | [`BloodPressureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodPressureRecord)       |
 | **Body Temperature**    | ✅         | [`BodyTemperatureRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyTemperatureRecord)   |
+| **Oxygen Saturation**   | ✅         | [`OxygenSaturationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/OxygenSaturationRecord) |
 | **Blood Glucose**       | ❌         | [`BloodGlucoseRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BloodGlucoseRecord)         |
-| **Oxygen Saturation**   | ❌         | [`OxygenSaturationRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/OxygenSaturationRecord) |
 | **Respiratory Rate**    | ❌         | [`RespiratoryRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/RespiratoryRateRecord)   |
 | **Vo2 Max**             | ❌         | [`Vo2MaxRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/Vo2MaxRecord)                     |
 

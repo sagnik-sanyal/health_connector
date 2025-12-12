@@ -58,12 +58,14 @@ import 'package:health_connector_core/health_connector_core.dart'
         ZincNutrientDataType,
         BloodPressureHealthDataType,
         SystolicBloodPressureHealthDataType,
-        DiastolicBloodPressureHealthDataType;
+        DiastolicBloodPressureHealthDataType,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show HealthDataTypeDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthDataTypeDto] to [HealthDataType].
+@sinceV1_0_0
 @internal
 extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
   HealthDataType<HealthRecord, MeasurementUnit> toDomain() {
@@ -177,6 +179,7 @@ extension HealthDataTypeDtoToDomain on HealthDataTypeDto {
 }
 
 /// Converts [HealthDataType] to [HealthDataTypeDto].
+@sinceV1_0_0
 @internal
 extension HealthDataTypeToDto on HealthDataType<HealthRecord, MeasurementUnit> {
   HealthDataTypeDto toDto() {

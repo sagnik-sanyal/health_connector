@@ -13,7 +13,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         Percentage,
         RespiratoryRate,
         Vo2Max,
-        MeasurementUnit;
+        MeasurementUnit,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show
         MassDto,
@@ -44,6 +45,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [MeasurementUnit] to [MeasurementUnitDto].
+@sinceV1_0_0
 @internal
 extension MeasurementUnitToDto on MeasurementUnit {
   MeasurementUnitDto toDto() {
@@ -117,6 +119,7 @@ extension MeasurementUnitToDto on MeasurementUnit {
 }
 
 /// Converts [MeasurementUnitDto] to [MeasurementUnit].
+@sinceV1_0_0
 @internal
 extension MeasurementUnitDtoToDomain on MeasurementUnitDto {
   MeasurementUnit toDomain() {

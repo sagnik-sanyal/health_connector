@@ -1,5 +1,5 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show SleepSessionRecord, HealthRecordId;
+    show SleepSessionRecord, HealthRecordId, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/sleep_stage_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
@@ -8,6 +8,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [SleepSessionRecord] to [SleepSessionRecordDto].
+@sinceV1_0_0
 @internal
 extension SleepSessionRecordToDto on SleepSessionRecord {
   SleepSessionRecordDto toDto() {
@@ -26,6 +27,7 @@ extension SleepSessionRecordToDto on SleepSessionRecord {
 }
 
 /// Converts [SleepSessionRecordDto] to [SleepSessionRecord].
+@sinceV1_0_0
 @internal
 extension SleepSessionRecordDtoToDomain on SleepSessionRecordDto {
   SleepSessionRecord toDomain() {

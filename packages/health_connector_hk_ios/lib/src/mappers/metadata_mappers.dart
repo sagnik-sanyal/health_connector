@@ -1,10 +1,11 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show RecordingMethod, DeviceType, Device, DataOrigin, Metadata;
+    show RecordingMethod, DeviceType, Device, DataOrigin, Metadata, sinceV1_0_0;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
     show MetadataDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [Metadata] to [MetadataDto].
+@sinceV1_0_0
 @internal
 extension MetadataDtoMapper on Metadata {
   MetadataDto toDto() {
@@ -26,6 +27,7 @@ extension MetadataDtoMapper on Metadata {
 }
 
 /// Converts [MetadataDto] to [Metadata].
+@sinceV1_0_0
 @internal
 extension MetadataDtoToDomain on MetadataDto {
   Metadata toDomain() {

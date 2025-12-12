@@ -1,5 +1,5 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show HeartRateSeriesRecord, HealthRecordId;
+    show HeartRateSeriesRecord, HealthRecordId, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/heart_rate_measurement_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
@@ -8,6 +8,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HeartRateSeriesRecord] to [HeartRateSeriesRecordDto].
+@sinceV1_0_0
 @internal
 extension HeartRateSeriesRecordToDto on HeartRateSeriesRecord {
   HeartRateSeriesRecordDto toDto() {
@@ -24,6 +25,7 @@ extension HeartRateSeriesRecordToDto on HeartRateSeriesRecord {
 }
 
 /// Converts [HeartRateSeriesRecordDto] to [HeartRateSeriesRecord].
+@sinceV1_0_0
 @internal
 extension HeartRateSeriesRecordDtoToDomain on HeartRateSeriesRecordDto {
   HeartRateSeriesRecord toDomain() {

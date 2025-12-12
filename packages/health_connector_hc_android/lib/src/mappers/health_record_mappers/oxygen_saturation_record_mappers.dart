@@ -3,8 +3,11 @@ import 'package:health_connector_hc_android/src/mappers/health_record_mappers/he
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart';
+import 'package:meta/meta.dart' show internal;
 
 /// Mapper extensions for [OxygenSaturationRecord].
+@sinceV1_3_0
+@internal
 extension OxygenSaturationRecordMapper on OxygenSaturationRecord {
   /// Converts [OxygenSaturationRecord] to its [OxygenSaturationRecordDto].
   OxygenSaturationRecordDto toDto() {
@@ -19,6 +22,8 @@ extension OxygenSaturationRecordMapper on OxygenSaturationRecord {
 }
 
 /// Mapper extensions for [OxygenSaturationRecordDto].
+@sinceV1_3_0
+@internal
 extension OxygenSaturationRecordDtoMapper on OxygenSaturationRecordDto {
   /// Converts [OxygenSaturationRecordDto] to its domain representation.
   OxygenSaturationRecord toDomain() {

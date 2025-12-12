@@ -38,7 +38,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         VitaminENutrientRecord,
         VitaminKNutrientRecord,
         ZincNutrientRecord,
-        HealthRecord;
+        HealthRecord,
+        sinceV1_1_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/meal_type_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
@@ -48,12 +49,14 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [NutrientHealthRecord] to [NutritionRecordDto].
+@sinceV1_1_0
 @internal
 extension NutrientHealthRecordToDto on NutrientHealthRecord {
   NutritionRecordDto toDto() => _mapNutrientRecordToNutritionRecordDto(this);
 }
 
 /// Converts [NutritionRecord] to [NutritionRecordDto].
+@sinceV1_1_0
 @internal
 extension NutritionRecordToDto on NutritionRecord {
   NutritionRecordDto toDto() {
@@ -105,6 +108,7 @@ extension NutritionRecordToDto on NutritionRecord {
 }
 
 /// Converts [NutritionRecordDto] to domain nutrition records.
+@sinceV1_1_0
 @internal
 extension NutritionRecordDtoToDomain on NutritionRecordDto {
   HealthRecord toDomain() {

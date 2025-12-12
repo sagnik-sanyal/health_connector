@@ -1,10 +1,11 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show SleepStage, SleepStageType;
+    show SleepStage, SleepStageType, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show SleepStageDto, SleepStageTypeDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [SleepStageType] to [SleepStageTypeDto].
+@sinceV1_0_0
 @internal
 extension SleepStageTypeDomainToDto on SleepStageType {
   SleepStageTypeDto toDto() {
@@ -22,6 +23,7 @@ extension SleepStageTypeDomainToDto on SleepStageType {
 }
 
 /// Converts [SleepStageTypeDto] to [SleepStageType].
+@sinceV1_0_0
 @internal
 extension SleepStageTypeDtoToDomain on SleepStageTypeDto {
   SleepStageType toDomain() {
@@ -39,6 +41,7 @@ extension SleepStageTypeDtoToDomain on SleepStageTypeDto {
 }
 
 /// Converts [SleepStage] to [SleepStageDto].
+@sinceV1_0_0
 @internal
 extension SleepStageDomainToDto on SleepStage {
   SleepStageDto toDto() {
@@ -51,6 +54,7 @@ extension SleepStageDomainToDto on SleepStage {
 }
 
 /// Converts [SleepStageDto] to [SleepStage].
+@sinceV1_0_0
 @internal
 extension SleepStageDtoToDomain on SleepStageDto {
   SleepStage toDomain() {

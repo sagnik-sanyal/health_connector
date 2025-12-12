@@ -8,7 +8,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         MeasurementUnit,
         NutritionHealthDataType,
         PermissionStatus,
-        PermissionRequestResult;
+        PermissionRequestResult,
+        sinceV1_0_0;
 import 'package:health_connector_hk_ios/src/mappers/health_data_type_mappers.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
     show
@@ -20,6 +21,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthDataPermissionAccessType] to [PermissionAccessTypeDto].
+@sinceV1_0_0
 @internal
 extension HealthDataPermissionAccessTypeToDto
     on HealthDataPermissionAccessType {
@@ -34,6 +36,7 @@ extension HealthDataPermissionAccessTypeToDto
 }
 
 /// Converts [List<Permission>] to [PermissionsRequestDto].
+@sinceV1_0_0
 @internal
 extension PermissionsListToDto on List<HealthDataPermission> {
   /// All individual nutrient data types that make up a NutritionRecord.
@@ -122,6 +125,7 @@ extension PermissionsListToDto on List<HealthDataPermission> {
 }
 
 /// Converts [PermissionsRequestResponseDto] to [List<PermissionRequestResult>].
+@sinceV1_0_0
 @internal
 extension PermissionsRequestResponseDtoToDomain
     on PermissionsRequestResponseDto {
@@ -144,6 +148,7 @@ extension PermissionsRequestResponseDtoToDomain
 }
 
 /// Converts [PermissionStatusDto] to [PermissionStatus].
+@sinceV1_0_0
 @internal
 extension PermissionStatusDtoToDomain on PermissionStatusDto {
   PermissionStatus toDomain() {

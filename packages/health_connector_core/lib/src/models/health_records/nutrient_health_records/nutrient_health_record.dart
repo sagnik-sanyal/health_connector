@@ -27,7 +27,6 @@ sealed class NutrientHealthRecord<U extends MeasurementUnit>
 }
 
 @sinceV1_1_0
-@sinceV1_1_0
 @immutable
 final class EnergyNutrientRecord extends NutrientHealthRecord<Energy> {
   factory EnergyNutrientRecord({
@@ -64,7 +63,6 @@ final class EnergyNutrientRecord extends NutrientHealthRecord<Energy> {
   String get name => 'energy_nutrient_record';
 }
 
-@sinceV1_1_0
 @sinceV1_1_0
 @immutable
 final class CaffeineNutrientRecord extends NutrientHealthRecord<Mass> {

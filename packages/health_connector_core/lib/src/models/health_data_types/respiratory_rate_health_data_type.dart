@@ -1,7 +1,7 @@
 part of 'health_data_type.dart';
 
 /// Respiratory rate data type.
-@sinceV1_0_0
+@sinceV1_3_0
 @immutable
 final class RespiratoryRateHealthDataType
     extends HealthDataType<RespiratoryRateRecord, RespiratoryRate>

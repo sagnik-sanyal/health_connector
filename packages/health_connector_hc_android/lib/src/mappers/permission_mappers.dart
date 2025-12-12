@@ -5,7 +5,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthDataPermissionAccessType,
         HealthPlatformFeaturePermission,
         PermissionStatus,
-        PermissionRequestResult;
+        PermissionRequestResult,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_data_type_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/'
     'health_platform_feature_mappers.dart';
@@ -20,6 +21,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [List<Permission>] to [PermissionsRequestDto].
+@sinceV1_0_0
 @internal
 extension PermissionsListToDto on List<Permission> {
   /// Converts a list of [Permission] objects to a [PermissionsRequestDto].
@@ -52,6 +54,7 @@ extension PermissionsListToDto on List<Permission> {
 }
 
 /// Converts [PermissionsRequestResponseDto] to [List<PermissionRequestResult>].
+@sinceV1_0_0
 @internal
 extension PermissionsRequestResponseDtoToDomain
     on PermissionsRequestResponseDto {
@@ -90,6 +93,7 @@ extension PermissionsRequestResponseDtoToDomain
 }
 
 /// Converts [PermissionStatusDto] to [PermissionStatus].
+@sinceV1_0_0
 @internal
 extension PermissionStatusDtoToDomain on PermissionStatusDto {
   PermissionStatus toDomain() {

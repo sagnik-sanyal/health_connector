@@ -37,7 +37,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         VitaminDNutrientRecord,
         VitaminENutrientRecord,
         VitaminKNutrientRecord,
-        ZincNutrientRecord;
+        ZincNutrientRecord,
+        sinceV1_1_0;
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/meal_type_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/measurement_unit_mappers.dart';
@@ -82,9 +83,8 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
         ZincNutrientRecordDto;
 import 'package:meta/meta.dart' show internal;
 
-// MARK: Combined Nutrition Record - Domain to DTO
-
 /// Converts [NutritionRecord] to [NutritionRecordDto].
+@sinceV1_1_0
 @internal
 extension NutritionRecordToDto on NutritionRecord {
   NutritionRecordDto toDto() {
@@ -139,9 +139,8 @@ extension NutritionRecordToDto on NutritionRecord {
   }
 }
 
-// MARK: Nutrients - Domain to DTO
-
 /// Converts [EnergyNutrientRecord] to [EnergyNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension EnergyNutrientRecordToDto on EnergyNutrientRecord {
   EnergyNutrientRecordDto toDto() {
@@ -158,6 +157,7 @@ extension EnergyNutrientRecordToDto on EnergyNutrientRecord {
 }
 
 /// Converts [CaffeineNutrientRecord] to [CaffeineNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension CaffeineNutrientRecordToDto on CaffeineNutrientRecord {
   CaffeineNutrientRecordDto toDto() {
@@ -174,6 +174,7 @@ extension CaffeineNutrientRecordToDto on CaffeineNutrientRecord {
 }
 
 /// Converts [ProteinNutrientRecord] to [ProteinNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension ProteinNutrientRecordToDto on ProteinNutrientRecord {
   ProteinNutrientRecordDto toDto() {
@@ -191,6 +192,7 @@ extension ProteinNutrientRecordToDto on ProteinNutrientRecord {
 
 /// Converts [TotalCarbohydrateNutrientRecord] to
 /// [TotalCarbohydrateNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension TotalCarbohydrateNutrientRecordToDto
     on TotalCarbohydrateNutrientRecord {
@@ -208,6 +210,7 @@ extension TotalCarbohydrateNutrientRecordToDto
 }
 
 /// Converts [TotalFatNutrientRecord] to [TotalFatNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension TotalFatNutrientRecordToDto on TotalFatNutrientRecord {
   TotalFatNutrientRecordDto toDto() {
@@ -224,6 +227,7 @@ extension TotalFatNutrientRecordToDto on TotalFatNutrientRecord {
 }
 
 /// Converts [SaturatedFatNutrientRecord] to [SaturatedFatNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension SaturatedFatNutrientRecordToDto on SaturatedFatNutrientRecord {
   SaturatedFatNutrientRecordDto toDto() {
@@ -241,6 +245,7 @@ extension SaturatedFatNutrientRecordToDto on SaturatedFatNutrientRecord {
 
 /// Converts [MonounsaturatedFatNutrientRecord] to
 /// [MonounsaturatedFatNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension MonounsaturatedFatNutrientRecordToDto
     on MonounsaturatedFatNutrientRecord {
@@ -259,6 +264,7 @@ extension MonounsaturatedFatNutrientRecordToDto
 
 /// Converts [PolyunsaturatedFatNutrientRecord] to
 /// [PolyunsaturatedFatNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension PolyunsaturatedFatNutrientRecordToDto
     on PolyunsaturatedFatNutrientRecord {
@@ -276,6 +282,7 @@ extension PolyunsaturatedFatNutrientRecordToDto
 }
 
 /// Converts [CholesterolNutrientRecord] to [CholesterolNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension CholesterolNutrientRecordToDto on CholesterolNutrientRecord {
   CholesterolNutrientRecordDto toDto() {
@@ -292,6 +299,7 @@ extension CholesterolNutrientRecordToDto on CholesterolNutrientRecord {
 }
 
 /// Converts [DietaryFiberNutrientRecord] to [DietaryFiberNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension DietaryFiberNutrientRecordToDto on DietaryFiberNutrientRecord {
   DietaryFiberNutrientRecordDto toDto() {
@@ -308,6 +316,7 @@ extension DietaryFiberNutrientRecordToDto on DietaryFiberNutrientRecord {
 }
 
 /// Converts [SugarNutrientRecord] to [SugarNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension SugarNutrientRecordToDto on SugarNutrientRecord {
   SugarNutrientRecordDto toDto() {
@@ -324,6 +333,7 @@ extension SugarNutrientRecordToDto on SugarNutrientRecord {
 }
 
 /// Converts [VitaminANutrientRecord] to [VitaminANutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminANutrientRecordToDto on VitaminANutrientRecord {
   VitaminANutrientRecordDto toDto() {
@@ -340,6 +350,7 @@ extension VitaminANutrientRecordToDto on VitaminANutrientRecord {
 }
 
 /// Converts [VitaminB6NutrientRecord] to [VitaminB6NutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminB6NutrientRecordToDto on VitaminB6NutrientRecord {
   VitaminB6NutrientRecordDto toDto() {
@@ -356,6 +367,7 @@ extension VitaminB6NutrientRecordToDto on VitaminB6NutrientRecord {
 }
 
 /// Converts [VitaminB12NutrientRecord] to [VitaminB12NutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminB12NutrientRecordToDto on VitaminB12NutrientRecord {
   VitaminB12NutrientRecordDto toDto() {
@@ -372,6 +384,7 @@ extension VitaminB12NutrientRecordToDto on VitaminB12NutrientRecord {
 }
 
 /// Converts [VitaminCNutrientRecord] to [VitaminCNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminCNutrientRecordToDto on VitaminCNutrientRecord {
   VitaminCNutrientRecordDto toDto() {
@@ -388,6 +401,7 @@ extension VitaminCNutrientRecordToDto on VitaminCNutrientRecord {
 }
 
 /// Converts [VitaminDNutrientRecord] to [VitaminDNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminDNutrientRecordToDto on VitaminDNutrientRecord {
   VitaminDNutrientRecordDto toDto() {
@@ -404,6 +418,7 @@ extension VitaminDNutrientRecordToDto on VitaminDNutrientRecord {
 }
 
 /// Converts [VitaminENutrientRecord] to [VitaminENutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminENutrientRecordToDto on VitaminENutrientRecord {
   VitaminENutrientRecordDto toDto() {
@@ -420,6 +435,7 @@ extension VitaminENutrientRecordToDto on VitaminENutrientRecord {
 }
 
 /// Converts [VitaminKNutrientRecord] to [VitaminKNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension VitaminKNutrientRecordToDto on VitaminKNutrientRecord {
   VitaminKNutrientRecordDto toDto() {
@@ -436,6 +452,7 @@ extension VitaminKNutrientRecordToDto on VitaminKNutrientRecord {
 }
 
 /// Converts [ThiaminNutrientRecord] to [ThiaminNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension ThiaminNutrientRecordToDto on ThiaminNutrientRecord {
   ThiaminNutrientRecordDto toDto() {
@@ -452,6 +469,7 @@ extension ThiaminNutrientRecordToDto on ThiaminNutrientRecord {
 }
 
 /// Converts [RiboflavinNutrientRecord] to [RiboflavinNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension RiboflavinNutrientRecordToDto on RiboflavinNutrientRecord {
   RiboflavinNutrientRecordDto toDto() {
@@ -468,6 +486,7 @@ extension RiboflavinNutrientRecordToDto on RiboflavinNutrientRecord {
 }
 
 /// Converts [NiacinNutrientRecord] to [NiacinNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension NiacinNutrientRecordToDto on NiacinNutrientRecord {
   NiacinNutrientRecordDto toDto() {
@@ -484,6 +503,7 @@ extension NiacinNutrientRecordToDto on NiacinNutrientRecord {
 }
 
 /// Converts [FolateNutrientRecord] to [FolateNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension FolateNutrientRecordToDto on FolateNutrientRecord {
   FolateNutrientRecordDto toDto() {
@@ -500,6 +520,7 @@ extension FolateNutrientRecordToDto on FolateNutrientRecord {
 }
 
 /// Converts [BiotinNutrientRecord] to [BiotinNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension BiotinNutrientRecordToDto on BiotinNutrientRecord {
   BiotinNutrientRecordDto toDto() {
@@ -517,6 +538,7 @@ extension BiotinNutrientRecordToDto on BiotinNutrientRecord {
 
 /// Converts [PantothenicAcidNutrientRecord] to
 /// [PantothenicAcidNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension PantothenicAcidNutrientRecordToDto on PantothenicAcidNutrientRecord {
   PantothenicAcidNutrientRecordDto toDto() {
@@ -533,6 +555,7 @@ extension PantothenicAcidNutrientRecordToDto on PantothenicAcidNutrientRecord {
 }
 
 /// Converts [CalciumNutrientRecord] to [CalciumNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension CalciumNutrientRecordToDto on CalciumNutrientRecord {
   CalciumNutrientRecordDto toDto() {
@@ -549,6 +572,7 @@ extension CalciumNutrientRecordToDto on CalciumNutrientRecord {
 }
 
 /// Converts [IronNutrientRecord] to [IronNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension IronNutrientRecordToDto on IronNutrientRecord {
   IronNutrientRecordDto toDto() {
@@ -565,6 +589,7 @@ extension IronNutrientRecordToDto on IronNutrientRecord {
 }
 
 /// Converts [MagnesiumNutrientRecord] to [MagnesiumNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension MagnesiumNutrientRecordToDto on MagnesiumNutrientRecord {
   MagnesiumNutrientRecordDto toDto() {
@@ -581,6 +606,7 @@ extension MagnesiumNutrientRecordToDto on MagnesiumNutrientRecord {
 }
 
 /// Converts [ManganeseNutrientRecord] to [ManganeseNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension ManganeseNutrientRecordToDto on ManganeseNutrientRecord {
   ManganeseNutrientRecordDto toDto() {
@@ -597,6 +623,7 @@ extension ManganeseNutrientRecordToDto on ManganeseNutrientRecord {
 }
 
 /// Converts [PhosphorusNutrientRecord] to [PhosphorusNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension PhosphorusNutrientRecordToDto on PhosphorusNutrientRecord {
   PhosphorusNutrientRecordDto toDto() {
@@ -613,6 +640,7 @@ extension PhosphorusNutrientRecordToDto on PhosphorusNutrientRecord {
 }
 
 /// Converts [PotassiumNutrientRecord] to [PotassiumNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension PotassiumNutrientRecordToDto on PotassiumNutrientRecord {
   PotassiumNutrientRecordDto toDto() {
@@ -629,6 +657,7 @@ extension PotassiumNutrientRecordToDto on PotassiumNutrientRecord {
 }
 
 /// Converts [SeleniumNutrientRecord] to [SeleniumNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension SeleniumNutrientRecordToDto on SeleniumNutrientRecord {
   SeleniumNutrientRecordDto toDto() {
@@ -645,6 +674,7 @@ extension SeleniumNutrientRecordToDto on SeleniumNutrientRecord {
 }
 
 /// Converts [SodiumNutrientRecord] to [SodiumNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension SodiumNutrientRecordToDto on SodiumNutrientRecord {
   SodiumNutrientRecordDto toDto() {
@@ -661,6 +691,7 @@ extension SodiumNutrientRecordToDto on SodiumNutrientRecord {
 }
 
 /// Converts [ZincNutrientRecord] to [ZincNutrientRecordDto].
+@sinceV1_1_0
 @internal
 extension ZincNutrientRecordToDto on ZincNutrientRecord {
   ZincNutrientRecordDto toDto() {
@@ -676,9 +707,8 @@ extension ZincNutrientRecordToDto on ZincNutrientRecord {
   }
 }
 
-// MARK: Combined Nutrition Record - DTO to Domain
-
 /// Converts [NutritionRecordDto] to [NutritionRecord].
+@sinceV1_1_0
 @internal
 extension NutritionRecordDtoToDomain on NutritionRecordDto {
   NutritionRecord toDomain() {
@@ -733,9 +763,8 @@ extension NutritionRecordDtoToDomain on NutritionRecordDto {
   }
 }
 
-// MARK: Nutrients - DTO to Domain
-
 /// Converts [EnergyNutrientRecordDto] to [EnergyNutrientRecord].
+@sinceV1_1_0
 @internal
 extension EnergyNutrientRecordDtoToDomain on EnergyNutrientRecordDto {
   EnergyNutrientRecord toDomain() {
@@ -752,6 +781,7 @@ extension EnergyNutrientRecordDtoToDomain on EnergyNutrientRecordDto {
 }
 
 /// Converts [CaffeineNutrientRecordDto] to [CaffeineNutrientRecord].
+@sinceV1_1_0
 @internal
 extension CaffeineNutrientRecordDtoToDomain on CaffeineNutrientRecordDto {
   CaffeineNutrientRecord toDomain() {
@@ -768,6 +798,7 @@ extension CaffeineNutrientRecordDtoToDomain on CaffeineNutrientRecordDto {
 }
 
 /// Converts [ProteinNutrientRecordDto] to [ProteinNutrientRecord].
+@sinceV1_1_0
 @internal
 extension ProteinNutrientRecordDtoToDomain on ProteinNutrientRecordDto {
   ProteinNutrientRecord toDomain() {
@@ -785,6 +816,7 @@ extension ProteinNutrientRecordDtoToDomain on ProteinNutrientRecordDto {
 
 /// Converts [TotalCarbohydrateNutrientRecordDto] to
 /// [TotalCarbohydrateNutrientRecord].
+@sinceV1_1_0
 @internal
 extension TotalCarbohydrateNutrientRecordDtoToDomain
     on TotalCarbohydrateNutrientRecordDto {
@@ -802,6 +834,7 @@ extension TotalCarbohydrateNutrientRecordDtoToDomain
 }
 
 /// Converts [TotalFatNutrientRecordDto] to [TotalFatNutrientRecord].
+@sinceV1_1_0
 @internal
 extension TotalFatNutrientRecordDtoToDomain on TotalFatNutrientRecordDto {
   TotalFatNutrientRecord toDomain() {
@@ -818,6 +851,7 @@ extension TotalFatNutrientRecordDtoToDomain on TotalFatNutrientRecordDto {
 }
 
 /// Converts [SaturatedFatNutrientRecordDto] to [SaturatedFatNutrientRecord].
+@sinceV1_1_0
 @internal
 extension SaturatedFatNutrientRecordDtoToDomain
     on SaturatedFatNutrientRecordDto {
@@ -836,6 +870,7 @@ extension SaturatedFatNutrientRecordDtoToDomain
 
 /// Converts [MonounsaturatedFatNutrientRecordDto] to
 /// [MonounsaturatedFatNutrientRecord].
+@sinceV1_1_0
 @internal
 extension MonounsaturatedFatNutrientRecordDtoToDomain
     on MonounsaturatedFatNutrientRecordDto {
@@ -854,6 +889,7 @@ extension MonounsaturatedFatNutrientRecordDtoToDomain
 
 /// Converts [PolyunsaturatedFatNutrientRecordDto] to
 /// [PolyunsaturatedFatNutrientRecord].
+@sinceV1_1_0
 @internal
 extension PolyunsaturatedFatNutrientRecordDtoToDomain
     on PolyunsaturatedFatNutrientRecordDto {
@@ -871,6 +907,7 @@ extension PolyunsaturatedFatNutrientRecordDtoToDomain
 }
 
 /// Converts [CholesterolNutrientRecordDto] to [CholesterolNutrientRecord].
+@sinceV1_1_0
 @internal
 extension CholesterolNutrientRecordDtoToDomain on CholesterolNutrientRecordDto {
   CholesterolNutrientRecord toDomain() {
@@ -887,6 +924,7 @@ extension CholesterolNutrientRecordDtoToDomain on CholesterolNutrientRecordDto {
 }
 
 /// Converts [DietaryFiberNutrientRecordDto] to [DietaryFiberNutrientRecord].
+@sinceV1_1_0
 @internal
 extension DietaryFiberNutrientRecordDtoToDomain
     on DietaryFiberNutrientRecordDto {
@@ -904,6 +942,7 @@ extension DietaryFiberNutrientRecordDtoToDomain
 }
 
 /// Converts [SugarNutrientRecordDto] to [SugarNutrientRecord].
+@sinceV1_1_0
 @internal
 extension SugarNutrientRecordDtoToDomain on SugarNutrientRecordDto {
   SugarNutrientRecord toDomain() {
@@ -920,6 +959,7 @@ extension SugarNutrientRecordDtoToDomain on SugarNutrientRecordDto {
 }
 
 /// Converts [VitaminANutrientRecordDto] to [VitaminANutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminANutrientRecordDtoToDomain on VitaminANutrientRecordDto {
   VitaminANutrientRecord toDomain() {
@@ -936,6 +976,7 @@ extension VitaminANutrientRecordDtoToDomain on VitaminANutrientRecordDto {
 }
 
 /// Converts [VitaminB6NutrientRecordDto] to [VitaminB6NutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminB6NutrientRecordDtoToDomain on VitaminB6NutrientRecordDto {
   VitaminB6NutrientRecord toDomain() {
@@ -952,6 +993,7 @@ extension VitaminB6NutrientRecordDtoToDomain on VitaminB6NutrientRecordDto {
 }
 
 /// Converts [VitaminB12NutrientRecordDto] to [VitaminB12NutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminB12NutrientRecordDtoToDomain on VitaminB12NutrientRecordDto {
   VitaminB12NutrientRecord toDomain() {
@@ -968,6 +1010,7 @@ extension VitaminB12NutrientRecordDtoToDomain on VitaminB12NutrientRecordDto {
 }
 
 /// Converts [VitaminCNutrientRecordDto] to [VitaminCNutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminCNutrientRecordDtoToDomain on VitaminCNutrientRecordDto {
   VitaminCNutrientRecord toDomain() {
@@ -984,6 +1027,7 @@ extension VitaminCNutrientRecordDtoToDomain on VitaminCNutrientRecordDto {
 }
 
 /// Converts [VitaminDNutrientRecordDto] to [VitaminDNutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminDNutrientRecordDtoToDomain on VitaminDNutrientRecordDto {
   VitaminDNutrientRecord toDomain() {
@@ -1000,6 +1044,7 @@ extension VitaminDNutrientRecordDtoToDomain on VitaminDNutrientRecordDto {
 }
 
 /// Converts [VitaminENutrientRecordDto] to [VitaminENutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminENutrientRecordDtoToDomain on VitaminENutrientRecordDto {
   VitaminENutrientRecord toDomain() {
@@ -1016,6 +1061,7 @@ extension VitaminENutrientRecordDtoToDomain on VitaminENutrientRecordDto {
 }
 
 /// Converts [VitaminKNutrientRecordDto] to [VitaminKNutrientRecord].
+@sinceV1_1_0
 @internal
 extension VitaminKNutrientRecordDtoToDomain on VitaminKNutrientRecordDto {
   VitaminKNutrientRecord toDomain() {
@@ -1032,6 +1078,7 @@ extension VitaminKNutrientRecordDtoToDomain on VitaminKNutrientRecordDto {
 }
 
 /// Converts [ThiaminNutrientRecordDto] to [ThiaminNutrientRecord].
+@sinceV1_1_0
 @internal
 extension ThiaminNutrientRecordDtoToDomain on ThiaminNutrientRecordDto {
   ThiaminNutrientRecord toDomain() {
@@ -1048,6 +1095,7 @@ extension ThiaminNutrientRecordDtoToDomain on ThiaminNutrientRecordDto {
 }
 
 /// Converts [RiboflavinNutrientRecordDto] to [RiboflavinNutrientRecord].
+@sinceV1_1_0
 @internal
 extension RiboflavinNutrientRecordDtoToDomain on RiboflavinNutrientRecordDto {
   RiboflavinNutrientRecord toDomain() {
@@ -1064,6 +1112,7 @@ extension RiboflavinNutrientRecordDtoToDomain on RiboflavinNutrientRecordDto {
 }
 
 /// Converts [NiacinNutrientRecordDto] to [NiacinNutrientRecord].
+@sinceV1_1_0
 @internal
 extension NiacinNutrientRecordDtoToDomain on NiacinNutrientRecordDto {
   NiacinNutrientRecord toDomain() {
@@ -1080,6 +1129,7 @@ extension NiacinNutrientRecordDtoToDomain on NiacinNutrientRecordDto {
 }
 
 /// Converts [FolateNutrientRecordDto] to [FolateNutrientRecord].
+@sinceV1_1_0
 @internal
 extension FolateNutrientRecordDtoToDomain on FolateNutrientRecordDto {
   FolateNutrientRecord toDomain() {
@@ -1096,6 +1146,7 @@ extension FolateNutrientRecordDtoToDomain on FolateNutrientRecordDto {
 }
 
 /// Converts [BiotinNutrientRecordDto] to [BiotinNutrientRecord].
+@sinceV1_1_0
 @internal
 extension BiotinNutrientRecordDtoToDomain on BiotinNutrientRecordDto {
   BiotinNutrientRecord toDomain() {
@@ -1113,6 +1164,7 @@ extension BiotinNutrientRecordDtoToDomain on BiotinNutrientRecordDto {
 
 /// Converts [PantothenicAcidNutrientRecordDto] to
 /// [PantothenicAcidNutrientRecord].
+@sinceV1_1_0
 @internal
 extension PantothenicAcidNutrientRecordDtoToDomain
     on PantothenicAcidNutrientRecordDto {
@@ -1130,6 +1182,7 @@ extension PantothenicAcidNutrientRecordDtoToDomain
 }
 
 /// Converts [CalciumNutrientRecordDto] to [CalciumNutrientRecord].
+@sinceV1_1_0
 @internal
 extension CalciumNutrientRecordDtoToDomain on CalciumNutrientRecordDto {
   CalciumNutrientRecord toDomain() {
@@ -1146,6 +1199,7 @@ extension CalciumNutrientRecordDtoToDomain on CalciumNutrientRecordDto {
 }
 
 /// Converts [IronNutrientRecordDto] to [IronNutrientRecord].
+@sinceV1_1_0
 @internal
 extension IronNutrientRecordDtoToDomain on IronNutrientRecordDto {
   IronNutrientRecord toDomain() {
@@ -1162,6 +1216,7 @@ extension IronNutrientRecordDtoToDomain on IronNutrientRecordDto {
 }
 
 /// Converts [MagnesiumNutrientRecordDto] to [MagnesiumNutrientRecord].
+@sinceV1_1_0
 @internal
 extension MagnesiumNutrientRecordDtoToDomain on MagnesiumNutrientRecordDto {
   MagnesiumNutrientRecord toDomain() {
@@ -1178,6 +1233,7 @@ extension MagnesiumNutrientRecordDtoToDomain on MagnesiumNutrientRecordDto {
 }
 
 /// Converts [ManganeseNutrientRecordDto] to [ManganeseNutrientRecord].
+@sinceV1_1_0
 @internal
 extension ManganeseNutrientRecordDtoToDomain on ManganeseNutrientRecordDto {
   ManganeseNutrientRecord toDomain() {
@@ -1194,6 +1250,7 @@ extension ManganeseNutrientRecordDtoToDomain on ManganeseNutrientRecordDto {
 }
 
 /// Converts [PhosphorusNutrientRecordDto] to [PhosphorusNutrientRecord].
+@sinceV1_1_0
 @internal
 extension PhosphorusNutrientRecordDtoToDomain on PhosphorusNutrientRecordDto {
   PhosphorusNutrientRecord toDomain() {
@@ -1210,6 +1267,7 @@ extension PhosphorusNutrientRecordDtoToDomain on PhosphorusNutrientRecordDto {
 }
 
 /// Converts [PotassiumNutrientRecordDto] to [PotassiumNutrientRecord].
+@sinceV1_1_0
 @internal
 extension PotassiumNutrientRecordDtoToDomain on PotassiumNutrientRecordDto {
   PotassiumNutrientRecord toDomain() {
@@ -1226,6 +1284,7 @@ extension PotassiumNutrientRecordDtoToDomain on PotassiumNutrientRecordDto {
 }
 
 /// Converts [SeleniumNutrientRecordDto] to [SeleniumNutrientRecord].
+@sinceV1_1_0
 @internal
 extension SeleniumNutrientRecordDtoToDomain on SeleniumNutrientRecordDto {
   SeleniumNutrientRecord toDomain() {
@@ -1242,6 +1301,7 @@ extension SeleniumNutrientRecordDtoToDomain on SeleniumNutrientRecordDto {
 }
 
 /// Converts [SodiumNutrientRecordDto] to [SodiumNutrientRecord].
+@sinceV1_1_0
 @internal
 extension SodiumNutrientRecordDtoToDomain on SodiumNutrientRecordDto {
   SodiumNutrientRecord toDomain() {
@@ -1258,6 +1318,7 @@ extension SodiumNutrientRecordDtoToDomain on SodiumNutrientRecordDto {
 }
 
 /// Converts [ZincNutrientRecordDto] to [ZincNutrientRecord].
+@sinceV1_1_0
 @internal
 extension ZincNutrientRecordDtoToDomain on ZincNutrientRecordDto {
   ZincNutrientRecord toDomain() {

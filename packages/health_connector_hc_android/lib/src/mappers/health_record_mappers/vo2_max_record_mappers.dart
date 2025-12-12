@@ -23,6 +23,7 @@ extension Vo2MaxRecordDtoToDomain on Vo2MaxRecordDto {
 }
 
 /// Converts [Vo2MaxRecord] to [Vo2MaxRecordDto].
+@sinceV1_3_0
 @internal
 extension Vo2MaxRecordToDto on Vo2MaxRecord {
   Vo2MaxRecordDto toDto() {
@@ -41,6 +42,7 @@ extension Vo2MaxRecordToDto on Vo2MaxRecord {
 }
 
 /// Converts [Vo2MaxMeasurementMethodDto] to [Vo2MaxTestType].
+@sinceV1_3_0
 @internal
 extension Vo2MaxMeasurementMethodDtoToDomain on Vo2MaxMeasurementMethodDto {
   Vo2MaxTestType toDomain() {
@@ -59,6 +61,7 @@ extension Vo2MaxMeasurementMethodDtoToDomain on Vo2MaxMeasurementMethodDto {
 }
 
 /// Converts [Vo2MaxTestType] to [Vo2MaxMeasurementMethodDto].
+@sinceV1_3_0
 @internal
 extension Vo2MaxTestTypeToDto on Vo2MaxTestType {
   Vo2MaxMeasurementMethodDto toDto() {

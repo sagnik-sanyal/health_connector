@@ -1,7 +1,7 @@
 part of 'health_data_type.dart';
 
 /// Oxygen saturation data type.
-@sinceV1_0_0
+@sinceV1_3_0
 @immutable
 final class OxygenSaturationHealthDataType
     extends HealthDataType<OxygenSaturationRecord, Percentage>

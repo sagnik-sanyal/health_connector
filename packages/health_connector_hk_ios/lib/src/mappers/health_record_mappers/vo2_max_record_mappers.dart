@@ -6,6 +6,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [Vo2MaxRecordDto] to [Vo2MaxRecord].
+@sinceV1_3_0
 @internal
 extension Vo2MaxRecordDtoToDomain on Vo2MaxRecordDto {
   Vo2MaxRecord toDomain() {
@@ -21,6 +22,7 @@ extension Vo2MaxRecordDtoToDomain on Vo2MaxRecordDto {
 }
 
 /// Converts [Vo2MaxRecord] to [Vo2MaxRecordDto].
+@sinceV1_3_0
 @internal
 extension Vo2MaxRecordToDto on Vo2MaxRecord {
   Vo2MaxRecordDto toDto() {
@@ -36,6 +38,7 @@ extension Vo2MaxRecordToDto on Vo2MaxRecord {
 }
 
 /// Converts [Vo2MaxTestTypeDto] to [Vo2MaxTestType].
+@sinceV1_3_0
 @internal
 extension Vo2MaxTestTypeDtoToDomain on Vo2MaxTestTypeDto {
   Vo2MaxTestType toDomain() {
@@ -55,6 +58,7 @@ extension Vo2MaxTestTypeDtoToDomain on Vo2MaxTestTypeDto {
 }
 
 /// Converts [Vo2MaxTestType] to [Vo2MaxTestTypeDto].
+@sinceV1_3_0
 @internal
 extension Vo2MaxTestTypeToDto on Vo2MaxTestType {
   Vo2MaxTestTypeDto? toDto() {

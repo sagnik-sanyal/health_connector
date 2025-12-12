@@ -62,7 +62,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         FolateNutrientDataType,
         BiotinNutrientDataType,
         PantothenicAcidNutrientDataType,
-        Vo2MaxHealthDataType;
+        Vo2MaxHealthDataType,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/'
     'aggregation_metric_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/health_data_type_mappers.dart';
@@ -82,6 +83,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [ReadRecordRequest] to [ReadRecordRequestDto].
+@sinceV1_0_0
 @internal
 extension ReadRecordRequestDtoMapper<R extends HealthRecord>
     on ReadRecordRequest<R> {
@@ -94,6 +96,7 @@ extension ReadRecordRequestDtoMapper<R extends HealthRecord>
 }
 
 /// Converts [ReadRecordsRequest] to [ReadRecordsRequestDto].
+@sinceV1_0_0
 @internal
 extension ReadRecordsRequestDtoMapper<R extends HealthRecord>
     on ReadRecordsRequest<R> {
@@ -112,6 +115,7 @@ extension ReadRecordsRequestDtoMapper<R extends HealthRecord>
 }
 
 /// Converts [AggregateRequest] to [AggregateRequestDto].
+@sinceV1_0_0
 @internal
 extension AggregateRequestDtoMapper<
   R extends HealthRecord,
@@ -206,6 +210,7 @@ extension AggregateRequestDtoMapper<
 }
 
 /// Converts [HealthRecord] to [WriteRecordRequestDto].
+@sinceV1_0_0
 @internal
 extension HealthRecordToWriteRequestDto on HealthRecord {
   WriteRecordRequestDto toWriteRecordRequestDto() {
@@ -214,6 +219,7 @@ extension HealthRecordToWriteRequestDto on HealthRecord {
 }
 
 /// Converts [HealthRecord] to [UpdateRecordRequestDto].
+@sinceV1_0_0
 @internal
 extension HealthRecordToUpdateRequestDto on HealthRecord {
   UpdateRecordRequestDto toUpdateRecordRequestDto() {
@@ -222,6 +228,7 @@ extension HealthRecordToUpdateRequestDto on HealthRecord {
 }
 
 /// Converts list of domain [HealthRecord] to [WriteRecordsRequestDto].
+@sinceV1_0_0
 @internal
 extension HealthRecordListToWriteRequestDto on List<HealthRecord> {
   WriteRecordsRequestDto toWriteRecordsRequestDto() {

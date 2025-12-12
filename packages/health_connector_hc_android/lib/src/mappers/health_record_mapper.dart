@@ -1,4 +1,3 @@
-// General extensions for dispatching to specific record type mappers
 import 'package:health_connector_core/health_connector_core.dart'
     show
         ActiveCaloriesBurnedRecord,
@@ -57,7 +56,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         SodiumNutrientRecord,
         ZincNutrientRecord,
         Vo2MaxRecord,
-        RespiratoryRateRecord;
+        RespiratoryRateRecord,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show
@@ -84,6 +84,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthRecord] to [HealthRecordDto].
+@sinceV1_0_0
 @internal
 extension HealthRecordToDto on HealthRecord {
   HealthRecordDto toDto() {
@@ -217,6 +218,7 @@ extension HealthRecordToDto on HealthRecord {
 }
 
 /// Converts [HealthRecordDto] to [HealthRecord].
+@sinceV1_0_0
 @internal
 extension HealthRecordDtoToDomain on HealthRecordDto {
   HealthRecord toDomain() {

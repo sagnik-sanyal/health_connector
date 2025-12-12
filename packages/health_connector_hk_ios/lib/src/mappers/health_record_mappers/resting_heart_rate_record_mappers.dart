@@ -23,6 +23,7 @@ extension RestingHeartRateRecordToDto on RestingHeartRateRecord {
 }
 
 /// Converts [RestingHeartRateRecordDto] to [RestingHeartRateRecord].
+@sinceV1_3_0
 @internal
 extension RestingHeartRateRecordDtoToDomain on RestingHeartRateRecordDto {
   RestingHeartRateRecord toDomain() {

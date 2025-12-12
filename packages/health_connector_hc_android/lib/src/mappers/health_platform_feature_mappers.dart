@@ -3,12 +3,14 @@ import 'package:health_connector_core/health_connector_core.dart'
         HealthPlatformFeature,
         HealthPlatformFeatureReadHealthDataHistory,
         HealthPlatformFeatureReadHealthDataInBackground,
-        HealthPlatformFeatureStatus;
+        HealthPlatformFeatureStatus,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show HealthPlatformFeatureDto, HealthPlatformFeatureStatusDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthPlatformFeature] to [HealthPlatformFeatureDto].
+@sinceV1_0_0
 @internal
 extension HealthPlatformFeatureToDto on HealthPlatformFeature {
   HealthPlatformFeatureDto toDto() {
@@ -22,6 +24,7 @@ extension HealthPlatformFeatureToDto on HealthPlatformFeature {
 }
 
 /// Converts [HealthPlatformFeatureDto] to [HealthPlatformFeature].
+@sinceV1_0_0
 @internal
 extension HealthPlatformFeatureDtoToDomain on HealthPlatformFeatureDto {
   HealthPlatformFeature toDomain() {
@@ -35,6 +38,7 @@ extension HealthPlatformFeatureDtoToDomain on HealthPlatformFeatureDto {
 }
 
 /// Converts [HealthPlatformFeatureStatusDto] to [HealthPlatformFeatureStatus].
+@sinceV1_0_0
 @internal
 extension HealthPlatformFeatureStatusDtoToDomain
     on HealthPlatformFeatureStatusDto {
@@ -49,6 +53,7 @@ extension HealthPlatformFeatureStatusDtoToDomain
 }
 
 /// Converts [HealthPlatformFeatureStatus] to [HealthPlatformFeatureStatusDto].
+@sinceV1_0_0
 @internal
 extension HealthPlatformFeatureStatusToDto on HealthPlatformFeatureStatus {
   HealthPlatformFeatureStatusDto toDto() {

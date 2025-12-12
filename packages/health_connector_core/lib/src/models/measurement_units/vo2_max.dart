@@ -4,6 +4,7 @@ part of 'measurement_unit.dart';
 ///
 /// VO₂ max is expressed in milliliters of oxygen consumed per kilogram
 /// of body weight per minute (mL/kg/min).
+@sinceV1_3_0
 @immutable
 final class Vo2Max extends MeasurementUnit implements Comparable<Vo2Max> {
   const Vo2Max._(this._value);

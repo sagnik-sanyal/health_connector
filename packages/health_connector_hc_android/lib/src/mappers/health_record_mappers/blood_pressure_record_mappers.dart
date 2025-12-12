@@ -4,7 +4,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         Pressure,
         HealthRecordId,
         BloodPressureMeasurementLocation,
-        BloodPressureBodyPosition;
+        BloodPressureBodyPosition,
+        sinceV1_2_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
@@ -17,6 +18,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [BloodPressureRecord] to [BloodPressureRecordDto].
+@sinceV1_2_0
 @internal
 extension BloodPressureRecordToDto on BloodPressureRecord {
   BloodPressureRecordDto toDto() {
@@ -34,6 +36,7 @@ extension BloodPressureRecordToDto on BloodPressureRecord {
 }
 
 /// Converts [BloodPressureRecordDto] to [BloodPressureRecord].
+@sinceV1_2_0
 @internal
 extension BloodPressureRecordDtoToDomain on BloodPressureRecordDto {
   BloodPressureRecord toDomain() {
@@ -51,6 +54,7 @@ extension BloodPressureRecordDtoToDomain on BloodPressureRecordDto {
 }
 
 /// Converts [BloodPressureBodyPosition] to [BodyPositionDto].
+@sinceV1_2_0
 @internal
 extension BloodPressureBodyPositionToDto on BloodPressureBodyPosition {
   BodyPositionDto toDto() {
@@ -70,6 +74,7 @@ extension BloodPressureBodyPositionToDto on BloodPressureBodyPosition {
 }
 
 /// Converts [BodyPositionDto] to [BloodPressureBodyPosition].
+@sinceV1_2_0
 @internal
 extension BodyPositionDtoToDomain on BodyPositionDto {
   BloodPressureBodyPosition toDomain() {
@@ -89,6 +94,7 @@ extension BodyPositionDtoToDomain on BodyPositionDto {
 }
 
 /// Converts [BloodPressureMeasurementLocation] to [MeasurementLocationDto].
+@sinceV1_2_0
 @internal
 extension BloodPressureMeasurementLocationToDto
     on BloodPressureMeasurementLocation {
@@ -109,6 +115,7 @@ extension BloodPressureMeasurementLocationToDto
 }
 
 /// Converts [MeasurementLocationDto] to [BloodPressureMeasurementLocation].
+@sinceV1_2_0
 @internal
 extension MeasurementLocationDtoToDomain on MeasurementLocationDto {
   BloodPressureMeasurementLocation toDomain() {

@@ -1,5 +1,5 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show FloorsClimbedRecord, Numeric, HealthRecordId;
+    show FloorsClimbedRecord, Numeric, HealthRecordId, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
@@ -8,6 +8,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [FloorsClimbedRecord] to [FloorsClimbedRecordDto].
+@sinceV1_0_0
 @internal
 extension FloorsClimbedRecordToDto on FloorsClimbedRecord {
   FloorsClimbedRecordDto toDto() {
@@ -24,6 +25,7 @@ extension FloorsClimbedRecordToDto on FloorsClimbedRecord {
 }
 
 /// Converts [FloorsClimbedRecordDto] to [FloorsClimbedRecord].
+@sinceV1_0_0
 @internal
 extension FloorsClimbedRecordDtoToDomain on FloorsClimbedRecordDto {
   FloorsClimbedRecord toDomain() {

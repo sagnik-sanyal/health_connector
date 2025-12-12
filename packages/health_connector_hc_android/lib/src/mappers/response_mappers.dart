@@ -5,7 +5,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         ReadRecordsRequest,
         AggregateResponse,
         ReadRecordsResponse,
-        MeasurementUnit;
+        MeasurementUnit,
+        sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/'
     'measurement_unit_mappers.dart';
@@ -14,6 +15,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [ReadRecordsResponseDto] to [ReadRecordsResponse].
+@sinceV1_0_0
 @internal
 extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
   ReadRecordsResponse<R> toDomain<R extends HealthRecord>(
@@ -38,6 +40,7 @@ extension ReadRecordsResponseDtoToDomain on ReadRecordsResponseDto {
 }
 
 /// Converts [AggregateResponseDto] to [AggregateResponse].
+@sinceV1_0_0
 @internal
 extension AggregateResponseDtoToDomain on AggregateResponseDto {
   AggregateResponse<R, U> toDomain<

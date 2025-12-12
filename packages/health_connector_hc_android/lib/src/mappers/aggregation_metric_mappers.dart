@@ -1,10 +1,11 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show AggregationMetric;
+    show AggregationMetric, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show AggregationMetricDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [AggregationMetric] to [AggregationMetricDto].
+@sinceV1_0_0
 @internal
 extension AggregationMetricDtoMapper on AggregationMetric {
   AggregationMetricDto toDto() {

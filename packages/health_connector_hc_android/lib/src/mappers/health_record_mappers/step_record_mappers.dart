@@ -1,5 +1,5 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show StepRecord, Numeric, HealthRecordId;
+    show StepRecord, Numeric, HealthRecordId, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/mappers/metadata_mappers.dart';
@@ -8,6 +8,7 @@ import 'package:health_connector_hc_android/src/pigeon/health_connector_platform
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [StepRecord] to [StepRecordDto].
+@sinceV1_0_0
 @internal
 extension StepRecordToDto on StepRecord {
   StepRecordDto toDto() {
@@ -24,6 +25,7 @@ extension StepRecordToDto on StepRecord {
 }
 
 /// Converts [StepRecordDto] to [StepRecord].
+@sinceV1_0_0
 @internal
 extension StepRecordDtoToDomain on StepRecordDto {
   StepRecord toDomain() {

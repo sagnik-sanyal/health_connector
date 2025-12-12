@@ -6,7 +6,7 @@ part of 'health_record.dart';
 ///
 /// This record is an [InstantHealthRecord], representing a measurement at
 /// a single point in time.
-@sinceV1_0_0
+@sinceV1_3_0
 @immutable
 final class RespiratoryRateRecord extends InstantHealthRecord {
   const RespiratoryRateRecord({

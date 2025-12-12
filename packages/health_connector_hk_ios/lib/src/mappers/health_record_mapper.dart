@@ -56,7 +56,8 @@ import 'package:health_connector_core/health_connector_core.dart'
         ZincNutrientRecord,
         OxygenSaturationRecord,
         RespiratoryRateRecord,
-        Vo2MaxRecord;
+        Vo2MaxRecord,
+        sinceV1_0_0;
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/health_record_mappers.dart';
 
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api.g.dart'
@@ -119,6 +120,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HealthRecord] to [HealthRecordDto].
+@sinceV1_0_0
 @internal
 extension HealthRecordToDto on HealthRecord {
   HealthRecordDto toDto() {
@@ -245,6 +247,8 @@ extension HealthRecordToDto on HealthRecord {
   }
 }
 
+@sinceV1_0_0
+@internal
 extension HealthRecordDtoToDomain on HealthRecordDto {
   HealthRecord toDomain() {
     switch (this) {

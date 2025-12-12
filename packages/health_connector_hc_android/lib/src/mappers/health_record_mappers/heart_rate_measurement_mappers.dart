@@ -1,11 +1,12 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show HeartRateMeasurement, Numeric;
+    show HeartRateMeasurement, Numeric, sinceV1_0_0;
 import 'package:health_connector_hc_android/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hc_android/src/pigeon/health_connector_platform_api.g.dart'
     show HeartRateMeasurementDto, NumericDto;
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [HeartRateMeasurement] to [HeartRateMeasurementDto].
+@sinceV1_0_0
 @internal
 extension HeartRateMeasurementDtoMapper on HeartRateMeasurement {
   HeartRateMeasurementDto toDto() {
@@ -17,6 +18,7 @@ extension HeartRateMeasurementDtoMapper on HeartRateMeasurement {
 }
 
 /// Converts [HeartRateMeasurementDto] to [HeartRateMeasurement].
+@sinceV1_0_0
 @internal
 extension HeartRateMeasurementDtoToDomain on HeartRateMeasurementDto {
   HeartRateMeasurement toDomain() {

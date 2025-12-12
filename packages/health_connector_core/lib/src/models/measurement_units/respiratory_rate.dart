@@ -1,7 +1,7 @@
 part of 'measurement_unit.dart';
 
 /// A unit of measurement for respiratory rate.
-@sinceV1_0_0
+@sinceV1_3_0
 @immutable
 final class RespiratoryRate extends MeasurementUnit {
   const RespiratoryRate({

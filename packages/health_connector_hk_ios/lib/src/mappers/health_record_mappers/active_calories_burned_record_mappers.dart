@@ -1,5 +1,5 @@
 import 'package:health_connector_core/health_connector_core.dart'
-    show ActiveCaloriesBurnedRecord, Energy, HealthRecordId;
+    show ActiveCaloriesBurnedRecord, Energy, HealthRecordId, sinceV1_0_0;
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/health_record_id_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/measurement_unit_mappers.dart';
 import 'package:health_connector_hk_ios/src/mappers/metadata_mappers.dart';
@@ -8,6 +8,7 @@ import 'package:health_connector_hk_ios/src/pigeon/health_connector_platform_api
 import 'package:meta/meta.dart' show internal;
 
 /// Converts [ActiveCaloriesBurnedRecord] to [ActiveCaloriesBurnedRecordDto].
+@sinceV1_0_0
 @internal
 extension ActiveCaloriesBurnedRecordToDto on ActiveCaloriesBurnedRecord {
   ActiveCaloriesBurnedRecordDto toDto() {
@@ -23,6 +24,7 @@ extension ActiveCaloriesBurnedRecordToDto on ActiveCaloriesBurnedRecord {
 }
 
 /// Converts [ActiveCaloriesBurnedRecordDto] to [ActiveCaloriesBurnedRecord].
+@sinceV1_0_0
 @internal
 extension ActiveCaloriesBurnedRecordDtoToDomain
     on ActiveCaloriesBurnedRecordDto {

@@ -391,13 +391,13 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 | **Steps**                    | ✅         | [`StepsRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/StepsRecord)                                   |
 | **Distance**                 | ✅         | [`DistanceRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/DistanceRecord)                             |
 | **Active Calories Burned**   | ✅         | [`ActiveCaloriesBurnedRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ActiveCaloriesBurnedRecord)     |
-| **Exercise Session**         | ❌         | [`ExerciseSessionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSessionRecord)               |
 | **Floors Climbed**           | ✅         | [`FloorsClimbedRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/FloorsClimbedRecord)                   |
+| **Wheelchair Pushes**        | ✅         | [`WheelchairPushesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WheelchairPushesRecord)             |
+| **Exercise Session**         | ❌         | [`ExerciseSessionRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSessionRecord)               |
 | **Total Calories Burned**    | ❌         | [`TotalCaloriesBurnedRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/TotalCaloriesBurnedRecord)       |
 | **Cycling Pedaling Cadence** | ❌         | [`CyclingPedalingCadenceRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/CyclingPedalingCadenceRecord) |
 | **Power**                    | ❌         | [`PowerRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/PowerRecord)                                   |
 | **Speed**                    | ❌         | [`SpeedRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/SpeedRecord)                                   |
-| **Wheelchair Pushes**        | ✅         | [`WheelchairPushesRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WheelchairPushesRecord)             |
 
 ### 📏 Body Measurements
 
@@ -406,8 +406,8 @@ print('Max weight: ${maxResponse.value.inKilograms} kg');
 | **Weight**               | ✅         | [`WeightRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/WeightRecord)                         |
 | **Height**               | ✅         | [`HeightRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/HeightRecord)                         |
 | **Body Fat Percentage**  | ✅         | [`BodyFatRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BodyFatRecord)                       |
-| **Bone Mass**            | ❌         | [`BoneMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BoneMassRecord)                     |
 | **Lean Body Mass**       | ✅         | [`LeanBodyMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/LeanBodyMassRecord)             |
+| **Bone Mass**            | ❌         | [`BoneMassRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BoneMassRecord)                     |
 | **Basal Metabolic Rate** | ❌         | [`BasalMetabolicRateRecord`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/BasalMetabolicRateRecord) |
 
 ### 🩸 Cycle Tracking / Reproductive Health

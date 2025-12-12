@@ -1,3 +1,7 @@
+## 1.4.0
+
+ - **FEAT**(health_connector_core): Add blood glucose data type. ([eed289b4](https://github.com/fam-tung-lam/health_connector/commit/eed289b40c6d079b0997f16ad7f75881f84ec196))
+
 ## 1.3.0
 
  - **FEAT**(health_connector_core): Add VO2Max data type. ([1f885539](https://github.com/fam-tung-lam/health_connector/commit/1f8855396649275b9bc16e62dbbd2b66ef6745e0))

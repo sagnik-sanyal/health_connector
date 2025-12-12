@@ -1,3 +1,7 @@
+## 1.4.0
+
+ - **FEAT**(health_connector_hk_ios): Add blood glucose data type. ([18803d0f](https://github.com/fam-tung-lam/health_connector/commit/18803d0f6b182595f1dc1d747cdb8760a7423f1f))
+
 ## 1.3.0
 
  - **CHORE**: Update a dependency to the latest release.

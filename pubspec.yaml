@@ -266,5 +266,3 @@ melos:
   ide:
     intellij:
       enabled: true
-
-license: Apache-2.0

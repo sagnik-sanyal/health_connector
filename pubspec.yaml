@@ -109,9 +109,17 @@ melos:
         cd .. && \
         swiftlint analyze --compiler-log-path /tmp/xcodebuild.log
 
+    baseline:swift:
+      description: Generate SwiftLint baseline
+      run: cd packages/health_connector_hk_ios/ios && swiftlint lint --write-baseline swiftlint-baseline.json
+
     analyze:kotlin:
       description: Analyze Kotlin code for the health_connector_hc_android package
       run: cd packages/health_connector_hc_android/android && ./gradlew detekt
+
+    baseline:kotlin:
+      description: Generate Detekt baseline
+      run: cd packages/health_connector_hc_android/android && ./gradlew detektBaseline
 
     # Code formatting
     format:

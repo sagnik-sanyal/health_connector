@@ -20,6 +20,7 @@ final class HealthConnectorToolboxApp extends StatelessWidget {
       child: ChangeNotifierProvider(
         create: (_) => HomeChangeNotifier()..init(),
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: AppTexts.healthConnectorToolbox,
           theme: appThemeData,
           home: const HomePage(),

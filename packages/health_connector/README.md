@@ -241,13 +241,22 @@ Future<void> quickStart() async {
       <th>Permission Request</th>
       <th>Read Data</th>
       <th>Write Data</th>
+      <th>Delete Data</th>
       <th>Aggregate Data</th>
     </tr>
     <tr>
-      <td><img alt="Permission Request Demo" src="../../doc/assets/ios_permission_request.gif" width="600"/></td>
-      <td><img alt="Read Data Demo" src="../../doc/assets/ios_read_health_data.gif" width="600"/></td>
-      <td><img alt="Write Data Demo" src="../../doc/assets/android_write_health_data.gif" width="600"/></td>
-      <td><img alt="Aggregate Data Demo" src="../../doc/assets/ios_aggregate_health_data.gif" width="600"/></td>
+      <td><img alt="Permission Request" src="../../doc/assets/videos/ios_request_permissions_demo.gif" width="190"/></td>
+      <td><img alt="Read Data" src="../../doc/assets/videos/ios_read_health_records_demo.gif" width="200"/></td>
+      <td><img alt="Write Data" src="../../doc/assets/videos/ios_write_health_record_demo.gif" width="200"/></td>
+      <td><img alt="Delete Data" src="../../doc/assets/videos/ios_delete_health_records_demo.gif" width="200"/></td>
+      <td><img alt="Aggregate Data" src="../../doc/assets/videos/ios_aggregate_health_data_demo.gif" width="200"/></td>
+    </tr>
+    <tr>
+      <td><img alt="Permission Request" src="../../doc/assets/videos/android_request_permissions_demo.gif" width="190"/></td>
+      <td><img alt="Read Data" src="../../doc/assets/videos/android_read_health_records_demo.gif" width="200"/></td>
+      <td><img alt="Write Data" src="../../doc/assets/videos/android_write_health_record_demo.gif" width="200"/></td>
+      <td><img alt="Delete Data" src="../../doc/assets/videos/android_delete_health_records_demo.gif" width="200"/></td>
+      <td><img alt="Aggregate Data" src="../../doc/assets/videos/android_aggregate_health_data_demo.gif" width="190"/></td>
     </tr>
   </table>
 </div>

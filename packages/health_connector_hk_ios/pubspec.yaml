@@ -1,7 +1,7 @@
 name: health_connector_hk_ios
 resolution: workspace
 description: iOS implementation of health_connector using HealthKit
-version: 1.4.0
+version: 2.0.0
 repository: https://github.com/fam-tung-lam/health_connector/tree/main/packages/health_connector_hk_ios
 
 environment:
@@ -11,14 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  health_connector_core: ^1.4.0
-  health_connector_logger: ^1.0.1
+  health_connector_core: ^2.0.0
+  health_connector_logger: ^2.0.0
   meta: ^1.16.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  health_connector_lint: ^1.1.0
+  health_connector_lint: ^1.2.0
   pigeon: ^26.1.0
 
 flutter:

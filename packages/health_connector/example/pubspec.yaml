@@ -16,7 +16,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  health_connector_lint: ^1.1.0
+  health_connector_lint: ^1.2.0
   integration_test:
     sdk: flutter
 

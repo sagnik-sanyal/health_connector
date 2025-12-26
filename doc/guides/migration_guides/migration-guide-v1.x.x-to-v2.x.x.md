@@ -418,5 +418,4 @@ final iosOnlyTypes = ExerciseType.other.getExerciseTypesForPlatform(
 
 **Happy migrating! 🚀**
 
-For the latest updates and detailed API docs, visit
-the [HealthConnector documentation](https://pub.dev/packages/health_connector).
+For the latest updates and detailed API docs, visit the [HealthConnector documentation](https://pub.dev/packages/health_connector).

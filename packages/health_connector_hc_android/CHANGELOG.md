@@ -1,68 +1,49 @@
+## 2.0.0
+
+> **Note**: This release has breaking changes.
+
+- **BREAKING** **FEAT**: Introduce `TimeDuration` unit and replace `Number` with it for sleep data types. ([459798dd](https://github.com/fam-tung-lam/health_connector/commit/459798dd25d3ff014b824f4d9d7f79aa27ac0f53))
+- **BREAKING** **FEAT**: Unify deletion API with polymorphic request pattern. ([f67cf5ae](https://github.com/fam-tung-lam/health_connector/commit/f67cf5ae0cda0a513c37b844aa44e8815fde0996))
+- **BREAKING** **REFACTOR**: Remove support for individual nutrient data types on Android Health Connect. ([a9f7c9e4](https://github.com/fam-tung-lam/health_connector/commit/a9f7c9e47f9c0390ba4dc4eb3d6d7ed01e5772f1))
+- **BREAKING** **REFACTOR**: Standardize and synchronize error codes across platforms. ([121df395](https://github.com/fam-tung-lam/health_connector/commit/121df395899bf3ba919a4d51a3c29527c01ace0d))
+- **FEAT**: Implement atomic batch writes on Android Health Connect. ([c1c8c3df](https://github.com/fam-tung-lam/health_connector/commit/c1c8c3dfe32a8624e4249b2cc84f8b7e499e936c))
+- **FEAT**: Add support for exercise session data type and record. ([d36b528c](https://github.com/fam-tung-lam/health_connector/commit/d36b528c7f6ec5b7ae3a33e0e8137c557c870e46))
+- **FEAT**: Add `updateRecords` API for batch record updates. ([04e5463e](https://github.com/fam-tung-lam/health_connector/commit/04e5463e96552c04c331b8025d6e5d831e28953e))
+- **FEAT**: Add full support for distance records and data types. ([84e27c08](https://github.com/fam-tung-lam/health_connector/commit/84e27c0821bad311aaf7bf6f1d2b577b50365700))
+- **FEAT**: Add full support for speed records and data types. ([f07714db](https://github.com/fam-tung-lam/health_connector/commit/f07714db7b9302eea65e19aabab9e036bafbcab6))
+- **FIX**: Preserve record IDs in Health Connect update operations. ([298f98f0](https://github.com/fam-tung-lam/health_connector/commit/298f98f09f047bfe4f6db06fe161ae25ddba61ca))
+
 ## 1.4.0
 
- - **FEAT**(health_connector_hc_android): Add blood glucose data type. ([c018d008](https://github.com/fam-tung-lam/health_connector/commit/c018d008bbf012bfa1c609025bd41d920dd4b53a))
+- **FEAT**: Add blood glucose data type. ([c018d008](https://github.com/fam-tung-lam/health_connector/commit/c018d008bbf012bfa1c609025bd41d920dd4b53a))
 
 ## 1.3.0
 
- - **CHORE**: Update a dependency to the latest release.
- - **FEAT**(health_connector_hc_android): Add VO2Max data type. ([3e51085a](https://github.com/fam-tung-lam/health_connector/commit/3e51085a1602e50febddde9f501002ec6867d649))
- - **FEAT**(health_connector_hc_android): Add respiratory rate data type. ([a67dabba](https://github.com/fam-tung-lam/health_connector/commit/a67dabba093393d4064f60f99769edb71d584236))
- - **FEAT**(health_connector_hc_android): Add oxygen saturation data type. ([b8928fc7](https://github.com/fam-tung-lam/health_connector/commit/b8928fc785128757bd57d9b07c7ce6c0d436912f))
- - **FEAT**(health_connector_hc_android): Add resting heart rate data type. ([4972b907](https://github.com/fam-tung-lam/health_connector/commit/4972b9078563225fee0aa7b8506102d9955867e4))
+- **DEPS**: Update a dependency to the latest release.
+- **FEAT**: Add VO2Max data type. ([3e51085a](https://github.com/fam-tung-lam/health_connector/commit/3e51085a1602e50febddde9f501002ec6867d649))
+- **FEAT**: Add respiratory rate data type. ([a67dabba](https://github.com/fam-tung-lam/health_connector/commit/a67dabba093393d4064f60f99769edb71d584236))
+- **FEAT**: Add oxygen saturation data type. ([b8928fc7](https://github.com/fam-tung-lam/health_connector/commit/b8928fc785128757bd57d9b07c7ce6c0d436912f))
+- **FEAT**: Add resting heart rate data type. ([4972b907](https://github.com/fam-tung-lam/health_connector/commit/4972b9078563225fee0aa7b8506102d9955867e4))
 
 ## 1.2.2
 
-- **REFACTOR**(health_connector_hc_android): Simplify `TAG` initialization with null-coalescing
-  operator to avoid redundant null
-  checks. ([7ee0217f](https://github.com/fam-tung-lam/health_connector/commit/7ee0217fb0b87ee3ca3ab6e75f104b7070b81678))
-- **REFACTOR**(health_connector_hc_android): Replace null/0 returns with explicit error throwing for
-  type guard failures for all
-  handlers. ([ae151cf5](https://github.com/fam-tung-lam/health_connector/commit/ae151cf5eb03e55321783029eecf3f9983b4e33a))
-- **REFACTOR**(health_connector_hc_android): Improve permission mapping and error
-  handling. ([29d29b17](https://github.com/fam-tung-lam/health_connector/commit/29d29b17910c9fd100397a1aaf2d39209548b947))
-- **REFACTOR**(health_connector_hc_android): Separate health record mapper files for each health
-  record
-  type. ([e72390d2](https://github.com/fam-tung-lam/health_connector/commit/e72390d255423fb4a59af2d11c7921a43ef02daf))
-- **FIX**(health_connector_hc_android): Prevent infinite recursion in nutrient record
-  mappers. ([4f09dd9c](https://github.com/fam-tung-lam/health_connector/commit/4f09dd9c80695ff0d092bccd614d6974f7295931))
-- **FIX**(health_connector_hc_android): Add missing blood pressure permission
-  mapping. ([9728770f](https://github.com/fam-tung-lam/health_connector/commit/9728770f9e1b2dea78142deb6ae74cff78a859cb))
+- **FIX**: Prevent infinite recursion in nutrient record mappers. ([4f09dd9c](https://github.com/fam-tung-lam/health_connector/commit/4f09dd9c80695ff0d092bccd614d6974f7295931))
+- **FIX**: Add missing blood pressure permission mapping. ([9728770f](https://github.com/fam-tung-lam/health_connector/commit/9728770f9e1b2dea78142deb6ae74cff78a859cb))
 
 ## 1.2.1
 
-- **REFACTOR**(health_connector_hc_android): Add `complete()` helper for Pigeon
-  callbacks. ([d72e1bfc](https://github.com/fam-tung-lam/health_connector/commit/d72e1bfcd661b4df9c3540ea4f5c38e87638d5b1))
+- **REFACTOR**: Add `complete()` helper for Pigeon callbacks. ([d72e1bfc](https://github.com/fam-tung-lam/health_connector/commit/d72e1bfcd661b4df9c3540ea4f5c38e87638d5b1))
 
 ## 1.2.0
 
-- **FEAT**(health_connector_hc_android): Introduce specialized aggregation
-  requests. ([55f00e29](https://github.com/fam-tung-lam/health_connector/commit/55f00e294d41f91c95d034768d99315baebd7208))
-- **FEAT**(health_connector_hc_android): Add support for blood pressure records and data
-  types. ([c5dc5fc9](https://github.com/fam-tung-lam/health_connector/commit/c5dc5fc90afd2c010e77a799bb2a5a04709ecbcf))
+- **FEAT**: Introduce specialized aggregation requests. ([55f00e29](https://github.com/fam-tung-lam/health_connector/commit/55f00e294d41f91c95d034768d99315baebd7208))
+- **FEAT**: Add support for blood pressure records and data types. ([c5dc5fc9](https://github.com/fam-tung-lam/health_connector/commit/c5dc5fc90afd2c010e77a799bb2a5a04709ecbcf))
 
 ## 1.1.0
 
-- **REFACTOR**: Simplify record extraction in clients and remove unused `ReadRecordResponseDto`
-  extension. ([7303bfb0](https://github.com/fam-tung-lam/health_connector/commit/7303bfb0df6f7e87612e23e23732f2d2b694f961))
-- **FEAT**(health_connector_hc_android): Implement nutrient health data permissions based on
-  nutrition permission
-  status. ([a39ab697](https://github.com/fam-tung-lam/health_connector/commit/a39ab6970f70fe2078a60ce141edc466ac3f6dfd))
-- **FEAT**(health_connector_hc_android): Add support for nutrient and nutrition health data
-  types. ([be34f9ed](https://github.com/fam-tung-lam/health_connector/commit/be34f9eda6adb25341b1f4c4b6f0513fad97d237))
-- **FEAT**: Add nutrient and nutrition records and data
-  types. ([77e3a8d0](https://github.com/fam-tung-lam/health_connector/commit/77e3a8d00e6afaf43f56a24eb7c55621d82f63ad))
+- **FEAT**: Add support for nutrient and nutrition health data types. ([be34f9ed](https://github.com/fam-tung-lam/health_connector/commit/be34f9eda6adb25341b1f4c4b6f0513fad97d237)) ([77e3a8d0](https://github.com/fam-tung-lam/health_connector/commit/77e3a8d00e6afaf43f56a24eb7c55621d82f63ad))
 
 ## 1.0.0
 
-* **FEAT**: Implement Android Health Connect platform client.
-* **FEAT**: Add support for various health data types:
-    - Distance
-    - Active calories burned
-    - Floors climbed
-    - Wheelchair pushes
-    - Height
-    - Body temperature
-    - Lean body mass
-    - Hydration
-    - Heart rate
-    - Sleep session
+- **FEAT**: Implement Android Health Connect platform client.
+- **FEAT**: Add support for common health data types

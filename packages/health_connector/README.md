@@ -245,18 +245,18 @@ Future<void> quickStart() async {
       <th>Aggregate Data</th>
     </tr>
     <tr>
-      <td><img alt="Permission Request" src="../../doc/assets/videos/ios_request_permissions_demo.gif" width="190"/></td>
-      <td><img alt="Read Data" src="../../doc/assets/videos/ios_read_health_records_demo.gif" width="200"/></td>
-      <td><img alt="Write Data" src="../../doc/assets/videos/ios_write_health_record_demo.gif" width="200"/></td>
-      <td><img alt="Delete Data" src="../../doc/assets/videos/ios_delete_health_records_demo.gif" width="200"/></td>
-      <td><img alt="Aggregate Data" src="../../doc/assets/videos/ios_aggregate_health_data_demo.gif" width="200"/></td>
+      <td><img alt="Permission Request" src="../../doc/assets/videos/ios_request_permissions_demo.gif" width="160"/></td>
+      <td><img alt="Read Data" src="../../doc/assets/videos/ios_read_health_records_demo.gif" width="160"/></td>
+      <td><img alt="Write Data" src="../../doc/assets/videos/ios_write_health_record_demo.gif" width="160"/></td>
+      <td><img alt="Delete Data" src="../../doc/assets/videos/ios_delete_health_records_demo.gif" width="160"/></td>
+      <td><img alt="Aggregate Data" src="../../doc/assets/videos/ios_aggregate_health_data_demo.gif" width="160"/></td>
     </tr>
     <tr>
-      <td><img alt="Permission Request" src="../../doc/assets/videos/android_request_permissions_demo.gif" width="190"/></td>
-      <td><img alt="Read Data" src="../../doc/assets/videos/android_read_health_records_demo.gif" width="200"/></td>
-      <td><img alt="Write Data" src="../../doc/assets/videos/android_write_health_record_demo.gif" width="200"/></td>
-      <td><img alt="Delete Data" src="../../doc/assets/videos/android_delete_health_records_demo.gif" width="200"/></td>
-      <td><img alt="Aggregate Data" src="../../doc/assets/videos/android_aggregate_health_data_demo.gif" width="190"/></td>
+      <td><img alt="Permission Request" src="../../doc/assets/videos/android_request_permissions_demo.gif" width="160"/></td>
+      <td><img alt="Read Data" src="../../doc/assets/videos/android_read_health_records_demo.gif" width="160"/></td>
+      <td><img alt="Write Data" src="../../doc/assets/videos/android_write_health_record_demo.gif" width="160"/></td>
+      <td><img alt="Delete Data" src="../../doc/assets/videos/android_delete_health_records_demo.gif" width="160"/></td>
+      <td><img alt="Aggregate Data" src="../../doc/assets/videos/android_aggregate_health_data_demo.gif" width="160"/></td>
     </tr>
   </table>
 </div>

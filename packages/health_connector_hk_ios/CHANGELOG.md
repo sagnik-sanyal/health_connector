@@ -1,3 +1,12 @@
+## 2.1.0
+
+- **FEAT**: Add support for sexual activity and cervical mucus data types and records. ([972ea406](https://github.com/fam-tung-lam/health_connector/commit/972ea406b57846f83013bb0758046524e37311e4))
+- **FEAT**: Add support for mindfulness session type and record. ([d0490c9d](https://github.com/fam-tung-lam/health_connector/commit/d0490c9dba99ff77ef0b3b4f999810c9e1db0bbc))
+- **FEAT**: Add support for power data types and records. ([af790b23](https://github.com/fam-tung-lam/health_connector/commit/af790b237e1e8a3771b579bf0fcb62698d8b69d1))
+- **REFACTOR**: Centralize metadata mapping handling. ([1ce8daca](https://github.com/fam-tung-lam/health_connector/commit/1ce8dacabfb3b04cb34f632fe0b70e7aae39993e))
+- **FIX**: Persist blood pressure body position and measurement location data in custom metadata keys. ([32ae4e7e](https://github.com/fam-tung-lam/health_connector/commit/32ae4e7ebe1a07b0bc99a88df62aa8418b0f94e0))
+- **FIX**: Ensure health record timestamps are stored as UTC. ([7f981fc2](https://github.com/fam-tung-lam/health_connector/commit/7f981fc2868062fead0b5fa7a4ad512adf4c8f24))
+
 ## 2.0.0
 
 > **Note**: This release has breaking changes.
@@ -17,15 +26,15 @@
 
 ## 1.4.0
 
- - **FEAT**: Add blood glucose data type. ([18803d0f](https://github.com/fam-tung-lam/health_connector/commit/18803d0f6b182595f1dc1d747cdb8760a7423f1f))
+- **FEAT**: Add blood glucose data type. ([18803d0f](https://github.com/fam-tung-lam/health_connector/commit/18803d0f6b182595f1dc1d747cdb8760a7423f1f))
 
 ## 1.3.0
 
- - **DEPS**: Update a dependency to the latest release.
- - **FEAT**: Add VO2Max data type. ([2a61940f](https://github.com/fam-tung-lam/health_connector/commit/2a61940f010c7f8e7bfca438c5f969ed178193ad))
- - **FEAT**: Add respiratory rate data type. ([b6081fa6](https://github.com/fam-tung-lam/health_connector/commit/b6081fa6f99772e0b64b7ca272acf822854cc766))
- - **FEAT**: Add oxygen saturation data type. ([51022aa1](https://github.com/fam-tung-lam/health_connector/commit/51022aa15d7d2d1c91b3512517f1edbbb0af9473))
- - **FEAT**: Add resting heart rate data type. ([17bbf3b1](https://github.com/fam-tung-lam/health_connector/commit/17bbf3b142a15b17bf4ffb5a51ada4ca5b3fef0f))
+- **DEPS**: Update a dependency to the latest release.
+- **FEAT**: Add VO2Max data type. ([2a61940f](https://github.com/fam-tung-lam/health_connector/commit/2a61940f010c7f8e7bfca438c5f969ed178193ad))
+- **FEAT**: Add respiratory rate data type. ([b6081fa6](https://github.com/fam-tung-lam/health_connector/commit/b6081fa6f99772e0b64b7ca272acf822854cc766))
+- **FEAT**: Add oxygen saturation data type. ([51022aa1](https://github.com/fam-tung-lam/health_connector/commit/51022aa15d7d2d1c91b3512517f1edbbb0af9473))
+- **FEAT**: Add resting heart rate data type. ([17bbf3b1](https://github.com/fam-tung-lam/health_connector/commit/17bbf3b142a15b17bf4ffb5a51ada4ca5b3fef0f))
 
 ## 1.2.2
 

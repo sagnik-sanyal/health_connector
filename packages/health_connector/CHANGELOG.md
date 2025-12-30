@@ -1,3 +1,12 @@
+## 2.1.0
+
+- **FEAT**: Add support for sexual activity and cervical mucus data types and records. ([972ea406](https://github.com/fam-tung-lam/health_connector/commit/972ea406b57846f83013bb0758046524e37311e4))
+- **FEAT**: Add support for mindfulness session type and record. ([d0490c9d](https://github.com/fam-tung-lam/health_connector/commit/d0490c9dba99ff77ef0b3b4f999810c9e1db0bbc))
+- **FEAT**: Add support for power data types and records. ([af790b23](https://github.com/fam-tung-lam/health_connector/commit/af790b237e1e8a3771b579bf0fcb62698d8b69d1))
+- **FIX(health_connector_hk_ios)**: Persist blood pressure body position and measurement location data in custom metadata keys. ([32ae4e7e](https://github.com/fam-tung-lam/health_connector/commit/32ae4e7ebe1a07b0bc99a88df62aa8418b0f94e0))
+- **FIX**: Ensure health record timestamps are stored as UTC. ([7f981fc2](https://github.com/fam-tung-lam/health_connector/commit/7f981fc2868062fead0b5fa7a4ad512adf4c8f24))
+- **DEPS**: Update a dependency to the latest release.
+
 ## 2.0.0
 
 > **Note**: This release has breaking changes.

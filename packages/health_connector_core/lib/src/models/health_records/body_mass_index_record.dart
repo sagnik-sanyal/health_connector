@@ -3,7 +3,8 @@ part of 'health_record.dart';
 /// Represents a body mass index (BMI) measurement at a specific point in time.
 ///
 /// Body Mass Index is a value derived from the mass and height of a person.
-/// The BMI is defined as the body mass divided by the square of the body height.
+/// The BMI is defined as the body mass divided by the square of the body
+/// height.
 ///
 /// ## Platform Mapping
 ///

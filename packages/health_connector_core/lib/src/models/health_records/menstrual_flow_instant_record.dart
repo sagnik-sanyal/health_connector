@@ -35,7 +35,7 @@ final class MenstrualFlowInstantRecord extends InstantHealthRecord {
   /// Creates a menstrual flow instant record.
   ///
   /// Records the intensity of menstrual flow at a specific [time].
-  /// The [flow] indicates the flow intensity (unknown, light, medium, or heavy).
+  /// The [flow] indicates the flow intensity.
   ///
   /// Use [metadata] to describe the data source. The timezone offset can be
   /// provided via [zoneOffsetSeconds].

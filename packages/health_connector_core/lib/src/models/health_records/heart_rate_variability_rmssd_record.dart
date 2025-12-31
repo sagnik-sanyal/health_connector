@@ -3,8 +3,8 @@ part of 'health_record.dart';
 /// Represents a heart rate variability (RMSSD) record.
 ///
 /// This record captures the user's Heart Rate Variability (RMSSD), which is a
-/// measure of the variation in time between each heartbeat. RMSSD stands for the
-/// Root Mean Square of Successive Differences.
+/// measure of the variation in time between each heartbeat. RMSSD stands for
+/// the Root Mean Square of Successive Differences.
 ///
 /// ## Platform Mapping
 ///

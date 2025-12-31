@@ -497,11 +497,13 @@ extension HealthRecordToDto on HealthRecord {
         );
       case final WaistCircumferenceRecord _:
         throw UnsupportedError(
-          '$WaistCircumferenceRecord is not supported on Android Health Connect.',
+          '$WaistCircumferenceRecord is not supported on Android '
+          'Health Connect.',
         );
       case final HeartRateVariabilitySDNNRecord _:
         throw UnsupportedError(
-          '$HeartRateVariabilitySDNNRecord is not supported on Android Health Connect.',
+          '$HeartRateVariabilitySDNNRecord is not supported on Android '
+          'Health Connect.',
         );
       case final MenstrualFlowRecord _:
         throw UnsupportedError(

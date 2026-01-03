@@ -35,23 +35,6 @@ understanding new patterns.
 
 ---
 
-## Quick Migration Checklist
-
-Follow these steps sequentially:
-
-1. **Update dependencies** in `pubspec.yaml` to `^2.0.0`
-2. **Update factory method** - Remove config parameter if using defaults
-3. **Update delete operations** - Use new request-based API via `HealthDataType` capabilities
-4. **Rename read method** - Change `readRecords()` to use `readInTimeRange()`
-5. **Update exception handling** - Replace `securityError` with `notAuthorized`
-6. **Update error codes** - Replace renamed error codes in error handling
-7. **Update aggregate usage** - Extract value directly from response
-8. **Fix update record usage** - Handle `void` return type (Android only)
-9. **Update type references** - Rename request/response classes
-10. **Test thoroughly** - Verify all health data operations work correctly
-
----
-
 ## Breaking Changes
 
 ### 1. Delete Records API Redesign

@@ -1,3 +1,7 @@
+## 2.2.1
+
+ - **FEAT**: Add `@since2_3_0` annotation
+
 ## 2.2.0
 
 - **FEAT**: Add support for menstrual flow data types. ([178f272f](https://github.com/fam-tung-lam/health_connector/commit/178f272fdcfd5a13abefd4c751d42f595ee57058))

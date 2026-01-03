@@ -1,3 +1,7 @@
+## 2.3.0
+
+ - **FEAT**: Implement launching health app page in platform's app store. ([fcc93efc](https://github.com/fam-tung-lam/health_connector/commit/fcc93efca89874e7e023789e2d4e0cfddd1213f0))
+
 ## 2.2.0
 
  - **FEAT**: Add support for menstrual flow data types. ([178f272f](https://github.com/fam-tung-lam/health_connector/commit/178f272fdcfd5a13abefd4c751d42f595ee57058))

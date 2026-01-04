@@ -5,9 +5,9 @@ part of 'metadata.dart';
 @immutable
 final class DataOrigin {
   /// Creates a data origin with the specified [packageName].
-  /// 
+  ///
   /// ## Parameters
-  /// 
+  ///
   /// - [packageName]: The app's package name or bundle identifier.
   const DataOrigin(this.packageName);
 

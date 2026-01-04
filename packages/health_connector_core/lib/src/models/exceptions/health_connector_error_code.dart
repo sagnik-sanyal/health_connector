@@ -12,17 +12,17 @@ enum HealthConnectorErrorCode {
   /// The health platform needs to be installed or updated.
   ///
   /// ## Platform Behaviors
-  /// 
-  /// - **Android Health Connect**: Android Health Connect Only. 
+  ///
+  /// - **Android Health Connect**: Android Health Connect Only.
   /// - **iOS HealthKit**: Not available. On iOS Apple Health is pre-installed.
   ///
   /// ## Causes
-  /// 
+  ///
   /// - Health Connect app is not installed.
   /// - Health Connect app is outdated and requires an update.
   ///
   /// ## Action
-  /// 
+  ///
   /// - Prompt the user to install or update Health Connect from the Play Store.
   /// - Provide a direct link.
   healthPlatformNotInstalledOrUpdateRequired(
@@ -32,14 +32,14 @@ enum HealthConnectorErrorCode {
   /// The health platform is unavailable on this device.
   ///
   /// ## Causes
-  /// 
+  ///
   /// - Device does not support health API (Android < SDK 28, unsupported iPad).
   /// - Enterprise policy (MDM) or parental controls block access.
   /// - Health service is explicitly disabled by the system.
   /// - Device is in a restricted profile (Android work profile).
   ///
   /// ## Action
-  /// 
+  ///
   /// - Inform the user that health features are not available on their device.
   /// - Gracefully disable health-related functionality.
   healthPlatformUnavailable('HEALTH_PROVIDER_UNAVAILABLE'),
@@ -47,12 +47,12 @@ enum HealthConnectorErrorCode {
   /// Attempted to use an API not supported by the current platform or version.
   ///
   /// ## Causes
-  /// 
+  ///
   /// - Calling an Android-specific API on iOS (or vice versa).
   /// - Requesting a data type unsupported by the current SDK version.
   ///
   /// ## Action
-  /// 
+  ///
   /// - Check platform/version before calling the API.
   /// - This error should not occur in production if properly guarded.
   unsupportedOperation('UNSUPPORTED_OPERATION'),
@@ -60,7 +60,7 @@ enum HealthConnectorErrorCode {
   /// Missing or invalid app configuration.
   ///
   /// ## Causes
-  /// 
+  ///
   /// - **Android Health Connect**:
   ///   - Missing permissions in `AndroidManifest.xml`.
   ///   - Missing Play Console health data declarations.

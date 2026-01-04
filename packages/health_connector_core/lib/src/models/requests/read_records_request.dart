@@ -25,7 +25,7 @@ import 'package:meta/meta.dart' show immutable;
 @immutable
 sealed class ReadRecordsRequest<R extends HealthRecord> extends Request {
   /// Creates a base read records request.
-  /// 
+  ///
   /// ## Parameters
   ///
   /// - [dataType]: The type of health data to read.

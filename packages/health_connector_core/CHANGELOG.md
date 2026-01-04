@@ -1,3 +1,7 @@
+## 2.2.2
+
+ - **REFACTOR**: Use `ListEquality` from collection` package instead of custom implementation. ([9e99bac0](https://github.com/fam-tung-lam/health_connector/commit/9e99bac0bb75cb8a554517721c79a82a39e63322))
+
 ## 2.2.1
 
  - **FEAT**: Add `@since2_3_0` annotation

@@ -1,10 +1,14 @@
+## 2.2.3
+
+- **FIX**: Set `BasalEnergyBurnedHealthDataType` as supported on Apple Health only. ([550cdb56](https://github.com/fam-tung-lam/health_connector/commit/550cdb565d0a3a152319117f8686fa010867a1f7))
+
 ## 2.2.2
 
- - **REFACTOR**: Use `ListEquality` from collection` package instead of custom implementation. ([9e99bac0](https://github.com/fam-tung-lam/health_connector/commit/9e99bac0bb75cb8a554517721c79a82a39e63322))
+- **REFACTOR**: Use `ListEquality` from collection` package instead of custom implementation. ([9e99bac0](https://github.com/fam-tung-lam/health_connector/commit/9e99bac0bb75cb8a554517721c79a82a39e63322))
 
 ## 2.2.1
 
- - **FEAT**: Add `@since2_3_0` annotation
+- **FEAT**: Add `@since2_3_0` annotation
 
 ## 2.2.0
 

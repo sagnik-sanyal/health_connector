@@ -1,10 +1,15 @@
+## 2.3.2
+
+- **FIX**: Add missing time zone offset DTO fields and correct offset mapping logic. ([26b1253c](https://github.com/fam-tung-lam/health_connector/commit/26b1253c8f22f9286a6a9b8fff620dbafd086789))
+- **FIX**: Set `BasalEnergyBurnedHealthDataType` as supported on Apple Health only. ([550cdb56](https://github.com/fam-tung-lam/health_connector/commit/550cdb565d0a3a152319117f8686fa010867a1f7))
+
 ## 2.3.1
 
- - **DOC**: Update `README.md` documentation. ([92b74719](https://github.com/fam-tung-lam/health_connector/commit/92b747198c4e4b8a97b205c86c5dfb1cf1ad0a83))
+- **DOC**: Update `README.md` documentation. ([92b74719](https://github.com/fam-tung-lam/health_connector/commit/92b747198c4e4b8a97b205c86c5dfb1cf1ad0a83))
 
 ## 2.3.0
 
- - **FEAT**(health_connector_hc_android): Implement launching health app page in platform's app store. ([fcc93efc](https://github.com/fam-tung-lam/health_connector/commit/fcc93efca89874e7e023789e2d4e0cfddd1213f0))
+- **FEAT**(health_connector_hc_android): Implement launching health app page in platform's app store. ([fcc93efc](https://github.com/fam-tung-lam/health_connector/commit/fcc93efca89874e7e023789e2d4e0cfddd1213f0))
 
 ## 2.2.0
 

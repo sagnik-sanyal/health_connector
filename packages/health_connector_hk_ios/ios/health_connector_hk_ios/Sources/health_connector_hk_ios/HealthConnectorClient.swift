@@ -109,7 +109,7 @@ actor HealthConnectorClient: Taggable {
             operation: "requestPermissions",
             message: "Requesting HealthKit permissions via permission service",
             context: [
-                "health_data_permission_count": healthDataPermissions.count
+                "health_data_permission_count": healthDataPermissions.count,
             ]
         )
 
@@ -135,7 +135,7 @@ actor HealthConnectorClient: Taggable {
             operation: "getPermissionStatus",
             message: "Getting HealthKit permission status via permission service",
             context: [
-                "permission_type": String(describing: type(of: permission))
+                "permission_type": String(describing: type(of: permission)),
             ]
         )
 
@@ -259,7 +259,7 @@ actor HealthConnectorClient: Taggable {
                 throw HealthConnectorError.invalidArgument(
                     message: "Invalid time range: startTime must be before endTime",
                     context: [
-                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)"
+                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)",
                     ]
                 )
             }
@@ -326,7 +326,7 @@ actor HealthConnectorClient: Taggable {
         try await process(
             operation: "writeRecord",
             context: [
-                "record_type": String(describing: type(of: record))
+                "record_type": String(describing: type(of: record)),
             ]
         ) {
             HealthConnectorLogger.debug(
@@ -334,7 +334,7 @@ actor HealthConnectorClient: Taggable {
                 operation: "writeRecord",
                 message: "Writing HealthKit record",
                 context: [
-                    "record_type": String(describing: type(of: record))
+                    "record_type": String(describing: type(of: record)),
                 ]
             )
 
@@ -383,7 +383,7 @@ actor HealthConnectorClient: Taggable {
                 operation: "writeRecords",
                 message: "Writing Health Connect records atomically",
                 context: [
-                    "totalRecords": records.count
+                    "totalRecords": records.count,
                 ]
             )
 
@@ -418,7 +418,7 @@ actor HealthConnectorClient: Taggable {
                 operation: "writeRecords",
                 message: "All records validated and converted to samples",
                 context: [
-                    "sampleCount": samples.count
+                    "sampleCount": samples.count,
                 ]
             )
 
@@ -437,7 +437,7 @@ actor HealthConnectorClient: Taggable {
                 operation: "writeRecords",
                 message: "Health Connect records written successfully",
                 context: [
-                    "recordCount": recordIds.count
+                    "recordCount": recordIds.count,
                 ]
             )
 
@@ -476,7 +476,7 @@ actor HealthConnectorClient: Taggable {
                 throw HealthConnectorError.invalidArgument(
                     message: "Invalid time range: startTime must be before endTime",
                     context: [
-                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)"
+                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)",
                     ]
                 )
             }
@@ -539,7 +539,7 @@ actor HealthConnectorClient: Taggable {
                 throw HealthConnectorError.invalidArgument(
                     message: "Invalid time range: startTime must be before endTime",
                     context: [
-                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)"
+                        "details": "startTime=\(request.startTime), endTime=\(request.endTime)",
                     ]
                 )
             }

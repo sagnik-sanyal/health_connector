@@ -1,3 +1,11 @@
+## 2.4.0
+
+- **FEAT**: Expose logger through main package exports. ([003a98b8](https://github.com/fam-tung-lam/health_connector/commit/003a98b8b31f0147b91aa65d03c672bf0a3c7998))
+- **FEAT**: Centralize Dart, Swift, and Kotlin logging in Flutter layer. ([6e071974](https://github.com/fam-tung-lam/health_connector/commit/6e07197463800a576f303bfd791a8f10995356ec))
+- **REFACTOR**: Remove sensitive data from logs. ([bbde572c](https://github.com/fam-tung-lam/health_connector/commit/bbde572c3f1abcb42c43c98d675ad91029a797ee)) ([8a8ee3ea](https://github.com/fam-tung-lam/health_connector/commit/8a8ee3eaba51d58295c866d272def757f1275d6a))
+- **FIX**: Set supported on iOS Apple Health only for nutrient data types. ([e8796482](https://github.com/fam-tung-lam/health_connector/commit/e8796482b8b296e495d8cb96091c486e7176f651))
+- **FIX**: Fix infinite mapping loop when convert measurement unit DTO to domain model. ([93cce205](https://github.com/fam-tung-lam/health_connector/commit/93cce2059b0cbdd94212772071a029c131343c79))
+
 ## 2.3.2
 
 - **FIX**: Add missing time zone offset DTO fields and correct offset mapping logic. ([26b1253c](https://github.com/fam-tung-lam/health_connector/commit/26b1253c8f22f9286a6a9b8fff620dbafd086789))

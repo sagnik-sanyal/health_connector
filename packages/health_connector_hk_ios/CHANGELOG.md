@@ -1,3 +1,8 @@
+## 2.2.3
+
+ - **REFACTOR**: Remove sensitive data from logs. ([bbde572c](https://github.com/fam-tung-lam/health_connector/commit/bbde572c3f1abcb42c43c98d675ad91029a797ee))
+ - **FIX**: Fix infinite mapping loop when convert measurement unit DTO to domain model. ([93cce205](https://github.com/fam-tung-lam/health_connector/commit/93cce2059b0cbdd94212772071a029c131343c79))
+
 ## 2.2.2
 
 - **FIX**: Add missing time zone offset DTO fields and correct offset mapping logic. ([26b1253c](https://github.com/fam-tung-lam/health_connector/commit/26b1253c8f22f9286a6a9b8fff620dbafd086789))

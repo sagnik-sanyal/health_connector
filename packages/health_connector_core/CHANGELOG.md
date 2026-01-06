@@ -1,3 +1,7 @@
+## 2.2.4
+
+ - **FIX**: Set supported on iOS Apple Health only for nutrient data types. ([e8796482](https://github.com/fam-tung-lam/health_connector/commit/e8796482b8b296e495d8cb96091c486e7176f651))
+
 ## 2.2.3
 
 - **FIX**: Set `BasalEnergyBurnedHealthDataType` as supported on Apple Health only. ([550cdb56](https://github.com/fam-tung-lam/health_connector/commit/550cdb565d0a3a152319117f8686fa010867a1f7))

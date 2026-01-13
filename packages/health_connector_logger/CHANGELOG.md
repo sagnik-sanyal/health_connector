@@ -1,3 +1,9 @@
+## 4.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: Replace stream-based logging with processor pattern. ([c0903bdf](https://github.com/fam-tung-lam/health_connector/commit/c0903bdfe60e8c20915f86438fa5fbc027c4df3c))
+
 ## 3.0.0
 
 > Note: This release has breaking changes.

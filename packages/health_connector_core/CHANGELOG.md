@@ -1,6 +1,22 @@
+## 3.0.0
+
+> Note: This release has breaking changes.
+
+- **FEAT**: Add new `ExperimentalApi` annotation. ([b22c4236](https://github.com/fam-tung-lam/health_connector/commit/b22c42366f8686ed6388a398f188cb33ec2d331f))
+- **FEAT**: Add incremental sync API. ([b6c8e67b](https://github.com/fam-tung-lam/health_connector/commit/b6c8e67b4055a0168b35ad26a29c553732e24193)) ([966312be](https://github.com/fam-tung-lam/health_connector/commit/966312be8ac848d56224dc85ad404e51e77d896e))
+- **FEAT**: Introduce sorting capability for read-records API. ([c2d82fa1](https://github.com/fam-tung-lam/health_connector/commit/c2d82fa160c0ea4fd4b4d623fadbce1ea731b05f))
+- **FEAT**: Introduce `HealthDataTypeCategory` enum to group health data types into meaningful categories. ([1d11eb43](https://github.com/fam-tung-lam/health_connector/commit/1d11eb4395e1115c3295ac253e8391cb4fb9d78c))
+- **BREAKING** **REFACTOR**: Standardize naming conventions across health data models and APIs. ([aa824f72](https://github.com/fam-tung-lam/health_connector/commit/aa824f72c79fc6aac717c40c0dbbf784c2da9136), [ce45f8dc](https://github.com/fam-tung-lam/health_connector/commit/ce45f8dc884305bcddfa38ef1a5b785448fb0b6b), [1ba99856](https://github.com/fam-tung-lam/health_connector/commit/1ba99856a29f11f59fa04548da83d7fdd536ced1), [059c9ea0](https://github.com/fam-tung-lam/health_connector/commit/059c9ea071c9f122e8450f098703ea4b124288db), [399ebbe5](https://github.com/fam-tung-lam/health_connector/commit/399ebbe54f68fc27dd684ba1cf0df7002344a712), [6dd617fa](https://github.com/fam-tung-lam/health_connector/commit/6dd617fa02038900ab6bdcb42b2461b9d5b55c91), [50cbe79b](https://github.com/fam-tung-lam/health_connector/commit/50cbe79baf89d00edaa1de6d7368e0bee17e6818), [d83fc055](https://github.com/fam-tung-lam/health_connector/commit/d83fc055410d7780a33b4c5195a0bef223712062), [371d3679](https://github.com/fam-tung-lam/health_connector/commit/371d367926ffc5807e8aefe57df018ec7c29d63c), [29d9faac](https://github.com/fam-tung-lam/health_connector/commit/29d9faac930b1a4d52390551b45fb4e99f1274c1))
+- **BREAKING** **REFACTOR**: Unify meal type enums across records. ([c70c336c](https://github.com/fam-tung-lam/health_connector/commit/c70c336c2021b9c19e26ac1e8902c28bfe70333c))
+- **BREAKING** **REFACTOR**: Flatten `HeartRateMeasurementRecord` structure. ([4e0b5a7f](https://github.com/fam-tung-lam/health_connector/commit/4e0b5a7ffdfdd577234ba3750d9742ce76ffe9bc))
+- **BREAKING** **FIX**: Remove non-functional `dataOrigin` parameters from `Metadata` constructors. ([1c90b4f5](https://github.com/fam-tung-lam/health_connector/commit/1c90b4f5caec9c6964ef3f856b17ec39de9b6fad))
+- **BREAKING** **FEAT**: Enhance exception hierarchy. ([ddb4b8ae](https://github.com/fam-tung-lam/health_connector/commit/ddb4b8ae96008fdb5900e106fcb48e1d758619fd))
+- **BREAKING** **FEAT**: Introduce `Frequency` measurement unit for heart/respiratory rates. ([80092ba3](https://github.com/fam-tung-lam/health_connector/commit/80092ba370fd989d150f9e62cafd54d5338ac8d3))
+- **BREAKING** **FEAT**: Add validation range enforcement at instance creation. ([76cf37b6](https://github.com/fam-tung-lam/health_connector/commit/76cf37b6a2ab9a96fa80cf75a99254233ac47a09))
+
 ## 2.2.4
 
- - **FIX**: Set supported on iOS Apple Health only for nutrient data types. ([e8796482](https://github.com/fam-tung-lam/health_connector/commit/e8796482b8b296e495d8cb96091c486e7176f651))
+- **FIX**: Set supported on iOS Apple Health only for nutrient data types. ([e8796482](https://github.com/fam-tung-lam/health_connector/commit/e8796482b8b296e495d8cb96091c486e7176f651))
 
 ## 2.2.3
 

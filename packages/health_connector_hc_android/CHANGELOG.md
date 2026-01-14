@@ -1,3 +1,7 @@
+## 3.0.1
+
+- **PERF**: Flatten Pigeon DTO to improve communication performance between Flutter and native layers. ([cca96c1d](https://github.com/fam-tung-lam/health_connector/commit/cca96c1da60ecf51f097941c25aeb1c7b00d94cb))
+
 ## 3.0.0
 
 > Note: This release has breaking changes.

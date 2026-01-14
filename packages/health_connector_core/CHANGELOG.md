@@ -1,3 +1,7 @@
+## 3.0.1
+
+- **FIX**: Add missing device parameter to `manualEntry` factory. ([81ada9ed](https://github.com/fam-tung-lam/health_connector/commit/81ada9edb01d3fb0f623e054dae8098d27810936))
+
 ## 3.0.0
 
 > Note: This release has breaking changes.

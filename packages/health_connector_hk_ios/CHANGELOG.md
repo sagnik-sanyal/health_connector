@@ -1,3 +1,17 @@
+## 3.1.0
+
+- **FEAT**: Add support for forced vital capacity data type. ([fc61f630](https://github.com/fam-tung-lam/health_connector/commit/fc61f6304e77beaa4b3a2cc521042f71d05c2a1c))
+- **FEAT**: Add support for peripheral perfusion index data type. ([d65e7a64](https://github.com/fam-tung-lam/health_connector/commit/d65e7a64801740e1e9ca590c8ec1d9d73aaf8d31))
+- **FEAT**: Add support for blood alcohol content data type. ([b51edfa3](https://github.com/fam-tung-lam/health_connector/commit/b51edfa30fc65584a30360773fd12658480c0c32))
+- **FEAT**: Add support for swimming strokes data type. ([003e3962](https://github.com/fam-tung-lam/health_connector/commit/003e39628a51fd801b1cd6fabc66c5aaa873655a))
+- **FEAT**: Add support for alcoholic beverages data type. ([f181f0c8](https://github.com/fam-tung-lam/health_connector/commit/f181f0c82037b6e3c4eaa21cbdf4217683694c82))
+- **FEAT**: Add support for contraceptive data type. ([bb1c4a2b](https://github.com/fam-tung-lam/health_connector/commit/bb1c4a2be7ffa26e54970a5d75d074913e7a0a68))
+- **FEAT**: Add support for pregnancy data type. ([cd76cadd](https://github.com/fam-tung-lam/health_connector/commit/cd76caddf578842920bbfa8a173d01a0e744569f))
+- **FEAT**: Add support for lactation data type. ([7bc3e945](https://github.com/fam-tung-lam/health_connector/commit/7bc3e945bc0ca993d52927a848ebd360cfbd3dbf))
+- **FEAT**: Add support for progesterone test data type. ([85da283d](https://github.com/fam-tung-lam/health_connector/commit/85da283db70785e35e02a7d3e59c952766de37c9))
+- **FEAT**: Add support for pregnancy test data type. ([7cfc4ed2](https://github.com/fam-tung-lam/health_connector/commit/7cfc4ed2b2a1991fad67f1fb4d11efd319a5e462))
+- **FEAT**: Add support for running power data type. ([2a27d5d7](https://github.com/fam-tung-lam/health_connector/commit/2a27d5d7b60a17fe274d84456274f41cecf259f9))
+
 ## 3.0.1
 
 - **PERF**: Flatten Pigeon DTO to improve communication performance between Flutter and native layers. ([cca96c1d](https://github.com/fam-tung-lam/health_connector/commit/cca96c1da60ecf51f097941c25aeb1c7b00d94cb))

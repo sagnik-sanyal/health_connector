@@ -1,3 +1,8 @@
+## 3.1.0
+
+- **FEAT**: Add support for elevation gained data type. ([9e6b1ddf](https://github.com/fam-tung-lam/health_connector/commit/9e6b1ddf309da961e403720a1305f532d3d94479))
+- **FEAT**: Add support for steps cadence data type. ([7e82ea09](https://github.com/fam-tung-lam/health_connector/commit/7e82ea099d0cb992b03b5442baa68cd433d16b84))
+
 ## 3.0.1
 
 - **PERF**: Flatten Pigeon DTO to improve communication performance between Flutter and native layers. ([cca96c1d](https://github.com/fam-tung-lam/health_connector/commit/cca96c1da60ecf51f097941c25aeb1c7b00d94cb))

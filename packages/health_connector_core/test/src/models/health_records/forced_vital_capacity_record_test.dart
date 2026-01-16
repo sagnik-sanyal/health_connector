@@ -5,7 +5,7 @@ void main() {
   group('ForcedVitalCapacityRecord', () {
     final now = DateTime(2026, 1, 11);
     final metadata = Metadata.manualEntry();
-    final volume = Volume.liters(3.5);
+    const volume = Volume.liters(3.5);
 
     test('can be instantiated with valid parameters', () {
       final record = ForcedVitalCapacityRecord(
@@ -27,7 +27,7 @@ void main() {
       );
 
       final newTime = now.add(const Duration(minutes: 5));
-      final newVolume = Volume.liters(4.0);
+      const newVolume = Volume.liters(4.0);
       final newMetadata = Metadata.manualEntry();
 
       final updated = record.copyWith(
@@ -57,7 +57,7 @@ void main() {
 
       final record3 = ForcedVitalCapacityRecord(
         time: now,
-        volume: Volume.liters(3.0),
+        volume: const Volume.liters(3.0),
         metadata: metadata,
       );
 

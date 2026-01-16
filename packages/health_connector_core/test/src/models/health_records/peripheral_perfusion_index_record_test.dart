@@ -5,7 +5,7 @@ void main() {
   group('PeripheralPerfusionIndexRecord', () {
     final now = DateTime(2026, 1, 11);
     final metadata = Metadata.manualEntry();
-    final percentage = Percentage.fromWhole(95);
+    const percentage = Percentage.fromWhole(95);
 
     test('can be instantiated with valid parameters', () {
       final record = PeripheralPerfusionIndexRecord(
@@ -27,7 +27,7 @@ void main() {
       );
 
       final newTime = now.add(const Duration(minutes: 5));
-      final newPercentage = Percentage.fromWhole(98);
+      const newPercentage = Percentage.fromWhole(98);
       final newMetadata = Metadata.manualEntry();
 
       final updated = record.copyWith(
@@ -57,7 +57,7 @@ void main() {
 
       final record3 = PeripheralPerfusionIndexRecord(
         time: now,
-        percentage: Percentage.fromWhole(90),
+        percentage: const Percentage.fromWhole(90),
         metadata: metadata,
       );
 

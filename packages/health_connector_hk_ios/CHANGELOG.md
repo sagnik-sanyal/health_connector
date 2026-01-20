@@ -1,3 +1,14 @@
+## 3.2.0
+
+- **FEAT**: Add support for sleeping wrist temperature data type. ([db9b4993](https://github.com/fam-tung-lam/health_connector/commit/db9b4993dcfdc16e922e5e96a5628b9aaf1230e9))
+- **FEAT**: Add support for walking step length data type. ([f3f9bfac](https://github.com/fam-tung-lam/health_connector/commit/f3f9bfacb2343c37fa727c577ffe246d8b498866))
+- **FEAT**: Add support for apple walking double support percentage data type. ([fafc83d0](https://github.com/fam-tung-lam/health_connector/commit/fafc83d0b395eb9f979dca28f19e42c16ec79715))
+- **FEAT**: Add support for apple walking asymmetry percentage data type. ([bd6592ea](https://github.com/fam-tung-lam/health_connector/commit/bd6592ea3d8312a1084ada140bbbe979cb8a91e0))
+- **FEAT**: Add support for apple walking steadiness data type. ([11147080](https://github.com/fam-tung-lam/health_connector/commit/11147080babf700748dc495c3929c074074859b9))
+- **FEAT**: Add support for apple stand time data type. ([bd654375](https://github.com/fam-tung-lam/health_connector/commit/bd6543759e179d43efae470e61b4c93576c15447))
+- **FEAT**: Add support for apple move time data type. ([72fa7772](https://github.com/fam-tung-lam/health_connector/commit/72fa7772bf559fe3caf0a75669702ab7be597885))
+- **FEAT**: Add support for apple exercise time data type. ([11bf1067](https://github.com/fam-tung-lam/health_connector/commit/11bf1067b0f2ecbd03a55fff1b41eaed45c82408))
+
 ## 3.1.0
 
 - **FEAT**: Add support for forced vital capacity data type. ([fc61f630](https://github.com/fam-tung-lam/health_connector/commit/fc61f6304e77beaa4b3a2cc521042f71d05c2a1c))

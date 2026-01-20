@@ -533,7 +533,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   ///
   /// Represents the amount of time spent exercising that contributes towards
   /// the user's daily exercise goals. Activity evaluated as exercise by Apple.
-  /// 
+  ///
   /// **Note**: This is a read-only data type.
   @sinceV3_2_0
   @supportedOnAppleHealth
@@ -543,7 +543,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   /// Apple Move Time data type.
   ///
   /// Represents the amount of time the user has been moving.
-  /// 
+  ///
   /// **Note**: This is a read-only data type.
   @sinceV3_2_0
   @supportedOnAppleHealth
@@ -554,7 +554,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   ///
   /// Represents the amount of time the user has stood still for at least
   /// one minute in an hour.
-  /// 
+  ///
   /// **Note**: This is a read-only data type.
   @sinceV3_2_0
   @supportedOnAppleHealth
@@ -565,7 +565,7 @@ sealed class HealthDataType<R extends HealthRecord, U extends MeasurementUnit>
   ///
   /// Represents the user's walking steadiness as a percentage, measuring the
   /// stability and regularity of a person's gait.
-  /// 
+  ///
   /// **Note**: This is a read-only data type.
   @sinceV3_2_0
   @supportedOnAppleHealth

@@ -1,3 +1,7 @@
+## 3.2.0
+
+- **FEAT**: Add support for activity intensity data type. ([153e6a7f](https://github.com/fam-tung-lam/health_connector/commit/153e6a7f6654e1ec747c53cd3d2f42758dbb0c37))
+
 ## 3.1.0
 
 - **FEAT**: Add support for elevation gained data type. ([9e6b1ddf](https://github.com/fam-tung-lam/health_connector/commit/9e6b1ddf309da961e403720a1305f532d3d94479))

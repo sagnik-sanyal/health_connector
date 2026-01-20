@@ -1,18 +1,30 @@
+## 3.2.0
+
+- **FEAT(health_connector_hk_ios)**: Add support for sleeping wrist temperature data type. ([db9b4993](https://github.com/fam-tung-lam/health_connector/commit/db9b4993dcfdc16e922e5e96a5628b9aaf1230e9))
+- **FEAT(health_connector_hk_ios)**: Add support for walking step length data type. ([f3f9bfac](https://github.com/fam-tung-lam/health_connector/commit/f3f9bfacb2343c37fa727c577ffe246d8b498866))
+- **FEAT(health_connector_hk_ios)**: Add support for apple walking double support percentage data type. ([fafc83d0](https://github.com/fam-tung-lam/health_connector/commit/fafc83d0b395eb9f979dca28f19e42c16ec79715))
+- **FEAT(health_connector_hk_ios)**: Add support for apple walking asymmetry percentage data type. ([bd6592ea](https://github.com/fam-tung-lam/health_connector/commit/bd6592ea3d8312a1084ada140bbbe979cb8a91e0))
+- **FEAT(health_connector_hk_ios)**: Add support for apple walking steadiness data type. ([11147080](https://github.com/fam-tung-lam/health_connector/commit/11147080babf700748dc495c3929c074074859b9))
+- **FEAT(health_connector_hk_ios)**: Add support for apple stand time data type. ([bd654375](https://github.com/fam-tung-lam/health_connector/commit/bd6543759e179d43efae470e61b4c93576c15447))
+- **FEAT(health_connector_hk_ios)**: Add support for apple move time data type. ([72fa7772](https://github.com/fam-tung-lam/health_connector/commit/72fa7772bf559fe3caf0a75669702ab7be597885))
+- **FEAT(health_connector_hk_ios)**: Add support for apple exercise time data type. ([11bf1067](https://github.com/fam-tung-lam/health_connector/commit/11bf1067b0f2ecbd03a55fff1b41eaed45c82408))
+- **FEAT(health_connector_hc_android)**: Add support for activity intensity data type. ([153e6a7f](https://github.com/fam-tung-lam/health_connector/commit/153e6a7f6654e1ec747c53cd3d2f42758dbb0c37))
+
 ## 3.1.0
 
-- **FEAT**: Add support for forced vital capacity data type. ([fc61f630](https://github.com/fam-tung-lam/health_connector/commit/fc61f6304e77beaa4b3a2cc521042f71d05c2a1c))
-- **FEAT**: Add support for peripheral perfusion index data type. ([d65e7a64](https://github.com/fam-tung-lam/health_connector/commit/d65e7a64801740e1e9ca590c8ec1d9d73aaf8d31))
-- **FEAT**: Add support for blood alcohol content data type. ([b51edfa3](https://github.com/fam-tung-lam/health_connector/commit/b51edfa30fc65584a30360773fd12658480c0c32))
-- **FEAT**: Add support for swimming strokes data type. ([003e3962](https://github.com/fam-tung-lam/health_connector/commit/003e39628a51fd801b1cd6fabc66c5aaa873655a))
-- **FEAT**: Add support for alcoholic beverages data type. ([f181f0c8](https://github.com/fam-tung-lam/health_connector/commit/f181f0c82037b6e3c4eaa21cbdf4217683694c82))
-- **FEAT**: Add support for contraceptive data type. ([bb1c4a2b](https://github.com/fam-tung-lam/health_connector/commit/bb1c4a2be7ffa26e54970a5d75d074913e7a0a68))
-- **FEAT**: Add support for pregnancy data type. ([cd76cadd](https://github.com/fam-tung-lam/health_connector/commit/cd76caddf578842920bbfa8a173d01a0e744569f))
-- **FEAT**: Add support for lactation data type. ([7bc3e945](https://github.com/fam-tung-lam/health_connector/commit/7bc3e945bc0ca993d52927a848ebd360cfbd3dbf))
-- **FEAT**: Add support for progesterone test data type. ([85da283d](https://github.com/fam-tung-lam/health_connector/commit/85da283db70785e35e02a7d3e59c952766de37c9))
-- **FEAT**: Add support for pregnancy test data type. ([7cfc4ed2](https://github.com/fam-tung-lam/health_connector/commit/7cfc4ed2b2a1991fad67f1fb4d11efd319a5e462))
-- **FEAT**: Add support for running power data type. ([2a27d5d7](https://github.com/fam-tung-lam/health_connector/commit/2a27d5d7b60a17fe274d84456274f41cecf259f9))
-- **FEAT**: Add support for elevation gained data type. ([9e6b1ddf](https://github.com/fam-tung-lam/health_connector/commit/9e6b1ddf309da961e403720a1305f532d3d94479))
-- **FEAT**: Add support for steps cadence data type. ([7e82ea09](https://github.com/fam-tung-lam/health_connector/commit/7e82ea099d0cb992b03b5442baa68cd433d16b84))
+- **FEAT(health_connector_hk_ios)**: Add support for forced vital capacity data type. ([fc61f630](https://github.com/fam-tung-lam/health_connector/commit/fc61f6304e77beaa4b3a2cc521042f71d05c2a1c))
+- **FEAT(health_connector_hk_ios)**: Add support for peripheral perfusion index data type. ([d65e7a64](https://github.com/fam-tung-lam/health_connector/commit/d65e7a64801740e1e9ca590c8ec1d9d73aaf8d31))
+- **FEAT(health_connector_hk_ios)**: Add support for blood alcohol content data type. ([b51edfa3](https://github.com/fam-tung-lam/health_connector/commit/b51edfa30fc65584a30360773fd12658480c0c32))
+- **FEAT(health_connector_hk_ios)**: Add support for swimming strokes data type. ([003e3962](https://github.com/fam-tung-lam/health_connector/commit/003e39628a51fd801b1cd6fabc66c5aaa873655a))
+- **FEAT(health_connector_hk_ios)**: Add support for alcoholic beverages data type. ([f181f0c8](https://github.com/fam-tung-lam/health_connector/commit/f181f0c82037b6e3c4eaa21cbdf4217683694c82))
+- **FEAT(health_connector_hk_ios)**: Add support for contraceptive data type. ([bb1c4a2b](https://github.com/fam-tung-lam/health_connector/commit/bb1c4a2be7ffa26e54970a5d75d074913e7a0a68))
+- **FEAT(health_connector_hk_ios)**: Add support for pregnancy data type. ([cd76cadd](https://github.com/fam-tung-lam/health_connector/commit/cd76caddf578842920bbfa8a173d01a0e744569f))
+- **FEAT(health_connector_hk_ios)**: Add support for lactation data type. ([7bc3e945](https://github.com/fam-tung-lam/health_connector/commit/7bc3e945bc0ca993d52927a848ebd360cfbd3dbf))
+- **FEAT(health_connector_hk_ios)**: Add support for progesterone test data type. ([85da283d](https://github.com/fam-tung-lam/health_connector/commit/85da283db70785e35e02a7d3e59c952766de37c9))
+- **FEAT(health_connector_hk_ios)**: Add support for pregnancy test data type. ([7cfc4ed2](https://github.com/fam-tung-lam/health_connector/commit/7cfc4ed2b2a1991fad67f1fb4d11efd319a5e462))
+- **FEAT(health_connector_hk_ios)**: Add support for running power data type. ([2a27d5d7](https://github.com/fam-tung-lam/health_connector/commit/2a27d5d7b60a17fe274d84456274f41cecf259f9))
+- **FEAT(health_connector_hc_android)**: Add support for elevation gained data type. ([9e6b1ddf](https://github.com/fam-tung-lam/health_connector/commit/9e6b1ddf309da961e403720a1305f532d3d94479))
+- **FEAT(health_connector_hc_android)**: Add support for steps cadence data type. ([7e82ea09](https://github.com/fam-tung-lam/health_connector/commit/7e82ea099d0cb992b03b5442baa68cd433d16b84))
 
 ## 3.0.1
 

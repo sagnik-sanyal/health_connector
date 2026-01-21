@@ -5,8 +5,9 @@ part of '../health_data_type.dart';
 /// Represents the temperature measured at the wrist during sleep.
 ///
 /// > [!NOTE]
-/// > This data type is **read-only**. Records of this type are generated automatically
-/// > by Apple Watch during sleep and cannot be written by third-party applications.
+/// > This data type is **read-only**. Records of this type are generated
+/// > automatically by Apple Watch during sleep and cannot be written by
+/// > third-party applications.
 ///
 /// ## Measurement Unit
 ///

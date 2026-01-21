@@ -20,7 +20,7 @@ void main() {
           expect(dataType, isA<HighHeartRateEventDataType>());
           expect(dataType, isA<ReadableHealthDataType>());
           expect(dataType, isA<ReadableInTimeRangeHealthDataType>());
-          expect(dataType, isNot(isA<ReadableByIdHealthDataType>()));
+          expect(dataType, isA<ReadableByIdHealthDataType>());
 
           // Verify it is NOT writeable or deletable
           expect(dataType, isNot(isA<WriteableHealthDataType>()));

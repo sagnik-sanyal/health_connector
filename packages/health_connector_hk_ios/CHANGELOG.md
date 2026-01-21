@@ -1,3 +1,14 @@
+## 3.4.0
+
+- **FEAT**: Add support for forced expiratory volume data type. ([4abcf879](https://github.com/fam-tung-lam/health_connector/commit/4abcf8791ff0dc6d32f07fab5db55c9550fbdd88))
+- **FEAT**: Add support for walking heart rate average data type. ([bf3d2e26](https://github.com/fam-tung-lam/health_connector/commit/bf3d2e261bf72e4500d27775423bb429a879a41f))
+- **FEAT**: Add support for atrial fibrillation burden data type. ([9c9048c8](https://github.com/fam-tung-lam/health_connector/commit/9c9048c883bdb1d3d72ca931256273ed21391b65))
+- **FEAT**: Add support for prolonged menstrual period event data type. ([419d825c](https://github.com/fam-tung-lam/health_connector/commit/419d825c02e09880f2ba726c76ba33d4790dea49))
+- **FEAT**: Add support for persistent intermenstrual bleeding event data type. ([125df1d2](https://github.com/fam-tung-lam/health_connector/commit/125df1d247ab22c6e447afb7c46cede4d227bd4b))
+- **FEAT**: Add support for irregular menstrual cycle event data type. ([ff15998d](https://github.com/fam-tung-lam/health_connector/commit/ff15998d0c40b7b02fc65cc1cd3e6f7c3e1d6bda))
+- **FEAT**: Add support for infrequent menstrual cycle event data type. ([e4f533fe](https://github.com/fam-tung-lam/health_connector/commit/e4f533fe1709730ad4402d79904cd9564e866380))
+- **FEAT**: Add support for walking steadiness event data types. ([6e140efb](https://github.com/fam-tung-lam/health_connector/commit/6e140efb85d128ce6c36e7054ffc1d592ef4aa02))
+
 ## 3.3.0
 
 - **FEAT**: Add support for high heart event data type. ([8125ab49](https://github.com/fam-tung-lam/health_connector/commit/8125ab4987d062aa8eceebeb392999aa7e1542a2))

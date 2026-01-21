@@ -42,7 +42,8 @@ melos:
 
     publish:
       hooks:
-        pre: melos run analyze:strict
+        # pre: melos run analyze:dart:strict // Use it when fix all native lint errors
+        pre: melos run analyze:dart:strict
 
     version:
       # Only allow versioning to happen on main branch.

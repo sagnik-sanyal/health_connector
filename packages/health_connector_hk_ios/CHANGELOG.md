@@ -1,3 +1,9 @@
+## 3.3.0
+
+- **FEAT**: Add support for high heart event data type. ([8125ab49](https://github.com/fam-tung-lam/health_connector/commit/8125ab4987d062aa8eceebeb392999aa7e1542a2))
+- **FEAT**: Add support for low heart event data type. ([8125ab49](https://github.com/fam-tung-lam/health_connector/commit/8125ab4987d062aa8eceebeb392999aa7e1542a2))
+- **FEAT**: Add support for irregular heart rhythm event data type. ([8125ab49](https://github.com/fam-tung-lam/health_connector/commit/8125ab4987d062aa8eceebeb392999aa7e1542a2))
+
 ## 3.2.0
 
 - **FEAT**: Add support for sleeping wrist temperature data type. ([db9b4993](https://github.com/fam-tung-lam/health_connector/commit/db9b4993dcfdc16e922e5e96a5628b9aaf1230e9))

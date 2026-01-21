@@ -11,14 +11,14 @@ import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/cyclin
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/distance/distance_activity_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/energy_burned/active_energy_burned_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/energy_burned/basal_energy_burned_record_mapper.dart';
+import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/high_heart_rate_event_record_mapper.dart';
+import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/irregular_heart_rhythm_event_record_mapper.dart';
+import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/low_heart_rate_event_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/exercise/exercise_session_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/floors_climbed_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/forced_vital_capacity_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/heart_rate/heart_rate_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/heart_rate/heart_rate_variability_sdnn_record_mapper.dart';
-import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/high_heart_rate_event_record_mapper.dart';
-import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/irregular_heart_rhythm_event_record_mapper.dart';
-import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/events/low_heart_rate_event_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/heart_rate/resting_heart_rate_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/height_record_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_record_mappers/hydration_record_mapper.dart';

@@ -9,7 +9,8 @@ part of '../health_data_type.dart';
 ///
 /// > [!NOTE]
 /// > This data type is **read-only**. Records of this type are calculated by
-/// > Apple's internal algorithms and cannot be written or deleted by third-party apps.
+/// > Apple's internal algorithms and cannot be written or deleted by
+/// > third-party apps.
 ///
 /// ## Platform Mapping
 ///

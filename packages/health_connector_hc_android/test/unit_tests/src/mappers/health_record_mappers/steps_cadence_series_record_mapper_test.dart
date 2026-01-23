@@ -100,7 +100,7 @@ void main() {
               );
               expect(record.samples, hasLength(1));
               expect(record.samples[0].cadence.inPerMinute, 115);
-              expect(record.samples[0].time, fakeSampleTime.toLocal());
+              expect(record.samples[0].time, fakeSampleTime);
             },
           );
 

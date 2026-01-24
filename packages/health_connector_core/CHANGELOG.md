@@ -1,3 +1,15 @@
+## 3.5.0
+
+> Note: This release has breaking changes.
+
+- **FEAT**(health_connector_hk_ios): Add support for running stride length and ground contact data types. ([204aa90b](https://github.com/fam-tung-lam/health_connector/commit/204aa90b7c5abc48e722accd4b137e9cf605ef89)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **FEAT**(health_connector_hk_ios): Add support for heart rate recovery one minute data type. ([6659d324](https://github.com/fam-tung-lam/health_connector/commit/6659d324405690a73938a47c595f7ff85455ac0a)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **FEAT**(health_connector_hk_ios): Add support for inhaler usage data type. ([85b48b3e](https://github.com/fam-tung-lam/health_connector/commit/85b48b3e444dfc4c0609682fb7214d409b1ec35f)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **FEAT**(health_connector_hk_ios): Add support for electrodermal activity data type. ([01287c2e](https://github.com/fam-tung-lam/health_connector/commit/01287c2e2ffbb5beaa8a7df327389a7b84b96b20)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **FEAT**(health_connector_hk_ios): Add support for insulin delivery data type. ([18970e7b](https://github.com/fam-tung-lam/health_connector/commit/18970e7b82ca32a27e1bd5dd42820fb673bcd196)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **FEAT**(health_connector_hk_ios): Add support for number of times fallen data type. ([1dcfc1ca](https://github.com/fam-tung-lam/health_connector/commit/1dcfc1ca5db255c76b0835e876da526394f4032a)) ([e1031455](https://github.com/fam-tung-lam/health_connector/commit/e1031455b997d79d6337e573f3ecb05cb818870d))
+- **BREAKING** **FIX**: Use correct measurement unit types for health record aggregation results. ([273025e3](https://github.com/fam-tung-lam/health_connector/commit/273025e340122744afc06455a89fd29582d39e47))
+
 ## 3.4.0
 
 - **FEAT**(health_connector_hk_ios): Add support for forced expiratory volume data type. ([4abcf879](https://github.com/fam-tung-lam/health_connector/commit/4abcf8791ff0dc6d32f07fab5db55c9550fbdd88))

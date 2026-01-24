@@ -1,3 +1,7 @@
+## 3.2.1
+
+- **DEPS**: Update `health_connector_core` to `v3.5.0`.
+
 ## 3.2.0
 
 - **FEAT**: Add support for activity intensity data type. ([153e6a7f](https://github.com/fam-tung-lam/health_connector/commit/153e6a7f6654e1ec747c53cd3d2f42758dbb0c37))

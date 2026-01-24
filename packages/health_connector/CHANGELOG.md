@@ -1,3 +1,7 @@
+## 3.5.1
+
+- **DOC**: Add retraction notice for `v3.3.0` and `v3.4.0` in CHANGELOG. [6041450f](https://github.com/fam-tung-lam/health_connector/commit/6041450fb54c0c4e4aa3d87442a550730b2a48b5)
+
 ## 3.5.0
 
 > Note: This release has a minor breaking change.

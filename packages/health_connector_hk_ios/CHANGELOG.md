@@ -1,4 +1,11 @@
-# Changelog
+## 3.6.0
+
+- **FEAT**: Add support for peak expiratory flow rate data type. ([4e6c7145](https://github.com/fam-tung-lam/health_connector/commit/4e6c7145962598a4e89fb704413dd52e3ea302ac))
+- **FEAT**: Add support for headphone audio exposure event data type. ([9deb01f3](https://github.com/fam-tung-lam/health_connector/commit/9deb01f36f2ada8e23d79262326af85070869ba9))
+- **FEAT**: Add support for headphone audio exposure data type. ([c670cb6f](https://github.com/fam-tung-lam/health_connector/commit/c670cb6f52ab7484cd1d8d50e123a0afd9e6b970))
+- **FEAT**: Add support for environmental audio exposure data type. ([a337fb61](https://github.com/fam-tung-lam/health_connector/commit/a337fb61da83adb431cb253609754df6dcb9635e))
+- **FEAT**: Add support for low environmental audio exposure event data type. ([a629a7c1](https://github.com/fam-tung-lam/health_connector/commit/a629a7c1420536724bda801f83c9044933968ae4))
+- **FEAT**: Add support for low cardio fitness event data type. ([0ae65a47](https://github.com/fam-tung-lam/health_connector/commit/0ae65a47af55db58d9ed1aa8147adc07bb485538))
 
 ## 3.5.0
 

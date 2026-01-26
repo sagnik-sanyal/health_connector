@@ -1,4 +1,8 @@
-# Changelog
+## 3.3.0
+
+- **FEAT**: Add support for menstruation period data type. ([d45c46b9](https://github.com/fam-tung-lam/health_connector/commit/d45c46b94a2ce306feb14571225de8a1489912f8))
+- **FEAT**: Add support for skin temperature data type. ([d757efdc](https://github.com/fam-tung-lam/health_connector/commit/d757efdcab03c783b7865b5d8f59c3c3579f0de8)) ([f3c49796](https://github.com/fam-tung-lam/health_connector/commit/f3c49796f6ee17703dac10bc0d1fb5d3404f3a52))
+- **FEAT**: Add support for basal metabolic rate data type. ([871e4cf7](https://github.com/fam-tung-lam/health_connector/commit/871e4cf766209cf23801a8acb32dd109291c1ffb))
 
 ## 3.2.1
 

@@ -7,7 +7,8 @@
 - **FEAT**(health_connector_hk_iOS): Add support for low environmental audio exposure event data type. ([a629a7c1](https://github.com/fam-tung-lam/health_connector/commit/a629a7c1420536724bda801f83c9044933968ae4))
 - **FEAT**(health_connector_hk_iOS): Add support for low cardio fitness event data type. ([0ae65a47](https://github.com/fam-tung-lam/health_connector/commit/0ae65a47af55db58d9ed1aa8147adc07bb485538))
 - **FEAT**(health_connector_hc_Android): Add support for menstruation period data type. ([d45c46b9](https://github.com/fam-tung-lam/health_connector/commit/d45c46b94a2ce306feb14571225de8a1489912f8))
-- **FEAT**(health_connector_hc_Android): Add support for skin temperature data type. ([d757efdc](https://github.com/fam-tung-lam/health_connector/commit/d757efdcab03c783b7865b5d8f59c3c3579f0de8)) ([f3c49796](https://github.com/fam-tung-lam/health_connector/commit/f3c49796f6ee17703dac10bc0d1fb5d3404f3a52))
+- **FEAT**(health_connector_hc_Android): Add support for skin temperature data type.
+  ([d757efdc](https://github.com/fam-tung-lam/health_connector/commit/d757efdcab03c783b7865b5d8f59c3c3579f0de8)) ([f3c49796](https://github.com/fam-tung-lam/health_connector/commit/f3c49796f6ee17703dac10bc0d1fb5d3404f3a52))
 - **FEAT**(health_connector_hc_Android): Add support for basal metabolic rate data type. ([871e4cf7](https://github.com/fam-tung-lam/health_connector/commit/871e4cf766209cf23801a8acb32dd109291c1ffb))
 
 ## 3.5.1

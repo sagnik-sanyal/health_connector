@@ -1,3 +1,7 @@
+## 3.8.0
+
+- **FEAT**: Add support for exercise session route. ([ecbe4f0a](https://github.com/fam-tung-lam/health_connector/commit/ecbe4f0a75164d120acf644a07dc408f9cfd3d8c))
+
 ## 3.7.0
 
 - **FEAT**: Add support for exercise session events. ([3feda513](https://github.com/fam-tung-lam/health_connector/commit/3feda5132980266c72fd3ba4a26b6330532bd8ff))

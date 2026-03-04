@@ -146,9 +146,19 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
             case let characteristic as HealthCharacteristicPermissionRequestDto:
                 switch characteristic.characteristicType {
                 case .biologicalSex:
-                    types.insert(HKCharacteristicType(.biologicalSex))
+                    guard let type = HKObjectType.characteristicType(forIdentifier: .biologicalSex) else {
+                        throw HealthConnectorError.invalidArgument(
+                            "Could not create biologicalSex characteristic type"
+                        )
+                    }
+                    types.insert(type)
                 case .dateOfBirth:
-                    types.insert(HKCharacteristicType(.dateOfBirth))
+                    guard let type = HKObjectType.characteristicType(forIdentifier: .dateOfBirth) else {
+                        throw HealthConnectorError.invalidArgument(
+                            "Could not create dateOfBirth characteristic type"
+                        )
+                    }
+                    types.insert(type)
                 }
             default:
                 continue

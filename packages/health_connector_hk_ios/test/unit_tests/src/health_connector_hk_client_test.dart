@@ -78,6 +78,7 @@ void main() {
           ),
         ),
       );
+      registerFallbackValue(HealthCharacteristicTypeDto.biologicalSex);
     },
   );
 
@@ -750,6 +751,78 @@ void main() {
                         startTime: now.subtract(const Duration(days: 1)),
                         endTime: now,
                       ),
+                    ),
+                    throwsA(isA<HealthConnectorException>()),
+                  );
+                },
+              );
+            },
+          );
+
+          group(
+            'readCharacteristic',
+            () {
+              test(
+                'returns BiologicalSexCharacteristic '
+                'for biologicalSex type',
+                () async {
+                  when(() => mockApi.readCharacteristic(any())).thenAnswer(
+                    (_) async => BiologicalSexCharacteristicDto(
+                      biologicalSex: BiologicalSexDto.female,
+                    ),
+                  );
+
+                  final result = await client.readCharacteristic(
+                    HealthCharacteristicType.biologicalSex,
+                  );
+
+                  expect(result, isA<BiologicalSexCharacteristic>());
+                  final characteristic = result as BiologicalSexCharacteristic;
+                  expect(characteristic.biologicalSex, BiologicalSex.female);
+                  verify(
+                    () => mockApi.readCharacteristic(
+                      HealthCharacteristicTypeDto.biologicalSex,
+                    ),
+                  ).called(1);
+                },
+              );
+
+              test(
+                'returns DateOfBirthCharacteristic '
+                'for dateOfBirth type',
+                () async {
+                  when(() => mockApi.readCharacteristic(any())).thenAnswer(
+                    (_) async => DateOfBirthCharacteristicDto(
+                      dateOfBirthMillisecondsSinceEpoch: 631152000000,
+                    ),
+                  );
+
+                  final result = await client.readCharacteristic(
+                    HealthCharacteristicType.dateOfBirth,
+                  );
+
+                  expect(result, isA<DateOfBirthCharacteristic>());
+                  final characteristic = result as DateOfBirthCharacteristic;
+                  expect(characteristic.dateOfBirth, isNotNull);
+                  verify(
+                    () => mockApi.readCharacteristic(
+                      HealthCharacteristicTypeDto.dateOfBirth,
+                    ),
+                  ).called(1);
+                },
+              );
+
+              test(
+                'throws HealthConnectorException '
+                'on PlatformException',
+                () async {
+                  when(() => mockApi.readCharacteristic(any())).thenThrow(
+                    PlatformException(code: 'unknown', message: 'Test error'),
+                  );
+
+                  expect(
+                    () => client.readCharacteristic(
+                      HealthCharacteristicType.biologicalSex,
                     ),
                     throwsA(isA<HealthConnectorException>()),
                   );

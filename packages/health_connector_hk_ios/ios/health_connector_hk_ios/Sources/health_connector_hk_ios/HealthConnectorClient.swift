@@ -1093,8 +1093,9 @@ actor HealthConnectorClient: Taggable {
     private func readDateOfBirth(operation: String) throws -> HealthCharacteristicDto {
         do {
             let dateComponents = try healthStore.dateOfBirthComponents()
-            let calendar = Calendar.current
-            let date = calendar.date(from: dateComponents)
+            var utcCalendar = Calendar(identifier: .gregorian)
+            utcCalendar.timeZone = TimeZone(identifier: "UTC")!
+            let date = utcCalendar.date(from: dateComponents)
 
             let milliseconds: Int64? = date.map { d in
                 Int64(d.timeIntervalSince1970 * 1000)

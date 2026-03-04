@@ -75,7 +75,6 @@ linter:
     - empty_catches
     - empty_constructor_bodies
     - empty_statements
-    - enable_null_safety
     - exhaustive_cases
     - file_names
     - flutter_style_todos
@@ -98,7 +97,6 @@ linter:
     - omit_local_variable_types
     - only_throw_errors
     - package_names
-    - package_api_docs
     - parameter_assignments
     - prefer_adjacent_string_concatenation
     - prefer_asserts_in_initializer_lists

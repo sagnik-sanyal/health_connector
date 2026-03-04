@@ -21,6 +21,12 @@ void main() {
           HealthPlatformFeature
               .readHealthDataHistory, // Duplicate type for test
         ),
+        HealthCharacteristicPermission(
+          HealthCharacteristicType.biologicalSex,
+        ),
+        HealthCharacteristicPermission(
+          HealthCharacteristicType.dateOfBirth,
+        ),
       ];
 
       group(
@@ -86,6 +92,48 @@ void main() {
                 ),
               ];
               expect(onlyData.featurePermissions, isEmpty);
+            },
+          );
+        },
+      );
+
+      group(
+        'characteristicPermissions',
+        () {
+          test(
+            'returns only HealthCharacteristicPermission instances',
+            () {
+              final characteristicPermissions =
+                  permissions.characteristicPermissions;
+              expect(characteristicPermissions.length, 2);
+              expect(
+                characteristicPermissions,
+                everyElement(isA<HealthCharacteristicPermission>()),
+              );
+              expect(
+                characteristicPermissions[0].characteristicType,
+                HealthCharacteristicType.biologicalSex,
+              );
+              expect(
+                characteristicPermissions[1].characteristicType,
+                HealthCharacteristicType.dateOfBirth,
+              );
+            },
+          );
+
+          test(
+            'returns empty list if no HealthCharacteristicPermission',
+            () {
+              const onlyData = <Permission>[
+                HealthDataPermission(
+                  dataType: HealthDataType.steps,
+                  accessType: HealthDataPermissionAccessType.read,
+                ),
+              ];
+              expect(
+                onlyData.characteristicPermissions,
+                isEmpty,
+              );
             },
           );
         },

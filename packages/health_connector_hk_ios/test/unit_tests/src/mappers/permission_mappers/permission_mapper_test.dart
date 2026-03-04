@@ -94,6 +94,49 @@ void main() {
           );
         },
       );
+
+      group(
+        'PermissionToDto - HealthCharacteristicPermission',
+        () {
+          test(
+            'maps HealthCharacteristicPermission for biologicalSex to '
+            'HealthCharacteristicPermissionRequestDto',
+            () {
+              const permission = HealthCharacteristicPermission(
+                HealthCharacteristicType.biologicalSex,
+              );
+
+              final dto =
+                  permission.toDto()
+                      as HealthCharacteristicPermissionRequestDto;
+
+              expect(
+                dto.characteristicType,
+                HealthCharacteristicTypeDto.biologicalSex,
+              );
+            },
+          );
+
+          test(
+            'maps HealthCharacteristicPermission for dateOfBirth to '
+            'HealthCharacteristicPermissionRequestDto',
+            () {
+              const permission = HealthCharacteristicPermission(
+                HealthCharacteristicType.dateOfBirth,
+              );
+
+              final dto =
+                  permission.toDto()
+                      as HealthCharacteristicPermissionRequestDto;
+
+              expect(
+                dto.characteristicType,
+                HealthCharacteristicTypeDto.dateOfBirth,
+              );
+            },
+          );
+        },
+      );
     },
   );
 }

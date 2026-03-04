@@ -1074,8 +1074,7 @@ actor HealthConnectorClient: Taggable {
             HealthConnectorLogger.info(
                 tag: Self.tag,
                 operation: operation,
-                message: "Biological sex read successfully",
-                context: ["value": String(describing: biologicalSex)]
+                message: "Biological sex read successfully"
             )
 
             return BiologicalSexCharacteristicDto(biologicalSex: dto)
@@ -1094,12 +1093,10 @@ actor HealthConnectorClient: Taggable {
         do {
             let dateComponents = try healthStore.dateOfBirthComponents()
             var utcCalendar = Calendar(identifier: .gregorian)
-            utcCalendar.timeZone = TimeZone(identifier: "UTC")!
+            utcCalendar.timeZone = TimeZone(secondsFromGMT: 0)!
             let date = utcCalendar.date(from: dateComponents)
 
-            let milliseconds: Int64? = date.map { d in
-                Int64(d.timeIntervalSince1970 * 1000)
-            }
+            let milliseconds: Int64? = date.map { $0.millisecondsSince1970 }
 
             HealthConnectorLogger.info(
                 tag: Self.tag,

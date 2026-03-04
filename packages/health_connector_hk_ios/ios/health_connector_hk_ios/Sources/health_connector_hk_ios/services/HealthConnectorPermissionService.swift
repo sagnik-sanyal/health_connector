@@ -61,6 +61,10 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
             return try getHealthDataPermissionStatus(for: healthData)
         case let exerciseRoute as ExerciseRoutePermissionRequestDto:
             return try getExerciseRoutePermissionStatus(for: exerciseRoute)
+        case is HealthCharacteristicPermissionRequestDto:
+            // Characteristic permissions are read-only.
+            // iOS HealthKit always returns unknown for read permissions.
+            return .unknown
         default:
             throw HealthConnectorError.invalidArgument(
                 message: "Unknown permission type: \(type(of: permission))"
@@ -139,6 +143,13 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
                 types.formUnion(hkTypes)
             case let exerciseRoute as ExerciseRoutePermissionRequestDto where exerciseRoute.accessType == .read:
                 types.insert(HKSeriesType.workoutRoute())
+            case let characteristic as HealthCharacteristicPermissionRequestDto:
+                switch characteristic.characteristicType {
+                case .biologicalSex:
+                    types.insert(HKCharacteristicType(.biologicalSex))
+                case .dateOfBirth:
+                    types.insert(HKCharacteristicType(.dateOfBirth))
+                }
             default:
                 continue
             }
@@ -177,6 +188,12 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
         case let exerciseRoute as ExerciseRoutePermissionRequestDto:
             let status = try getExerciseRoutePermissionStatus(for: exerciseRoute)
             return ExerciseRoutePermissionRequestResultDto(permission: exerciseRoute, status: status)
+        case let characteristic as HealthCharacteristicPermissionRequestDto:
+            // Characteristic permissions are read-only. iOS always returns unknown
+            // for read permissions per HealthKit privacy model.
+            return HealthCharacteristicPermissionRequestResultDto(
+                permission: characteristic, status: .unknown
+            )
         default:
             throw HealthConnectorError.invalidArgument(
                 message: "Unknown permission type: \(type(of: permission))"

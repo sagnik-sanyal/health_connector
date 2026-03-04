@@ -311,6 +311,25 @@ public class HealthConnectorHkIosPlugin: NSObject, FlutterPlugin, HealthConnecto
         }
     }
 
+    /// Reads a health characteristic from HealthKit.
+    ///
+    /// - Parameters:
+    ///   - characteristicType: The type of characteristic to read
+    ///   - completion: Called with a `Result` containing the characteristic value
+    func readCharacteristic(
+        characteristicType: HealthCharacteristicTypeDto,
+        completion: @escaping (Result<HealthCharacteristicDto, Error>) -> Void
+    ) {
+        let operation = "readCharacteristic"
+        let context: [String: Any] = [
+            "characteristicType": String(describing: characteristicType),
+        ]
+
+        process(operation: operation, context: context, completion: completion) {
+            try await self.healthClient.readCharacteristic(characteristicType: characteristicType)
+        }
+    }
+
     /// Processes an async operation with standardized error handling and logging.
     ///
     /// This method wraps async closures with try-catch, converting errors to DTOs and

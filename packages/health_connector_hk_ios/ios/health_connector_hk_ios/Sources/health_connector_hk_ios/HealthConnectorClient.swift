@@ -1028,4 +1028,95 @@ actor HealthConnectorClient: Taggable {
             return routeDto
         }
     }
+
+    // MARK: - Health Characteristics
+
+    /// Reads a health characteristic from HealthKit.
+    ///
+    /// Health characteristics are static user profile data that are read
+    /// via synchronous HKHealthStore methods (not HKSampleQuery).
+    ///
+    /// - Parameter characteristicType: The type of characteristic to read
+    /// - Returns: The characteristic value as a DTO
+    /// - Throws: `HealthConnectorError` if the read fails (e.g., not authorized)
+    func readCharacteristic(
+        characteristicType: HealthCharacteristicTypeDto
+    ) async throws -> HealthCharacteristicDto {
+        try await process(
+            operation: "readCharacteristic",
+            context: ["characteristicType": String(describing: characteristicType)]
+        ) {
+            let operation = "readCharacteristic"
+
+            switch characteristicType {
+            case .biologicalSex:
+                return try readBiologicalSex(operation: operation)
+            case .dateOfBirth:
+                return try readDateOfBirth(operation: operation)
+            }
+        }
+    }
+
+    /// Reads the user's biological sex from HealthKit.
+    private func readBiologicalSex(operation: String) throws -> HealthCharacteristicDto {
+        do {
+            let biologicalSexObject = try healthStore.biologicalSex()
+            let biologicalSex = biologicalSexObject.biologicalSex
+
+            let dto: BiologicalSexDto = switch biologicalSex {
+            case .notSet: .notSet
+            case .female: .female
+            case .male: .male
+            case .other: .other
+            @unknown default: .notSet
+            }
+
+            HealthConnectorLogger.info(
+                tag: Self.tag,
+                operation: operation,
+                message: "Biological sex read successfully",
+                context: ["value": String(describing: biologicalSex)]
+            )
+
+            return BiologicalSexCharacteristicDto(biologicalSex: dto)
+        } catch let error as HKError {
+            throw HealthConnectorError.create(from: error)
+        } catch {
+            throw HealthConnectorError.unknownError(
+                message: "Failed to read biological sex: \(error.localizedDescription)",
+                cause: error
+            )
+        }
+    }
+
+    /// Reads the user's date of birth from HealthKit.
+    private func readDateOfBirth(operation: String) throws -> HealthCharacteristicDto {
+        do {
+            let dateComponents = try healthStore.dateOfBirthComponents()
+            let calendar = Calendar.current
+            let date = calendar.date(from: dateComponents)
+
+            let milliseconds: Int64? = date.map { d in
+                Int64(d.timeIntervalSince1970 * 1000)
+            }
+
+            HealthConnectorLogger.info(
+                tag: Self.tag,
+                operation: operation,
+                message: "Date of birth read successfully",
+                context: ["hasValue": date != nil]
+            )
+
+            return DateOfBirthCharacteristicDto(
+                dateOfBirthMillisecondsSinceEpoch: milliseconds
+            )
+        } catch let error as HKError {
+            throw HealthConnectorError.create(from: error)
+        } catch {
+            throw HealthConnectorError.unknownError(
+                message: "Failed to read date of birth: \(error.localizedDescription)",
+                cause: error
+            )
+        }
+    }
 }

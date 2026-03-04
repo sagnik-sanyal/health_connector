@@ -887,6 +887,51 @@ final class HealthConnectorImpl implements HealthConnector {
     }
   }
 
+  @override
+  Future<HealthCharacteristic> readCharacteristic(
+    HealthCharacteristicType characteristicType,
+  ) async {
+    final context = {
+      'characteristic_type': characteristicType.id,
+    };
+
+    HealthConnectorLogger.debug(
+      tag,
+      operation: 'readCharacteristic',
+      message: 'Reading health characteristic',
+      context: context,
+    );
+
+    try {
+      final characteristic = await _client.readCharacteristic(
+        characteristicType,
+      );
+
+      HealthConnectorLogger.info(
+        tag,
+        operation: 'readCharacteristic',
+        message: 'Health characteristic read successfully',
+        context: {
+          ...context,
+          'result_type': characteristic.runtimeType.toString(),
+        },
+      );
+
+      return characteristic;
+    } on HealthConnectorException catch (e, st) {
+      HealthConnectorLogger.error(
+        tag,
+        operation: 'readCharacteristic',
+        message: 'Failed to read health characteristic',
+        context: context,
+        exception: e,
+        stackTrace: st,
+      );
+
+      rethrow;
+    }
+  }
+
   void _validatePlatformSupport(HealthRecord record) {
     // Validate platform support
     require(

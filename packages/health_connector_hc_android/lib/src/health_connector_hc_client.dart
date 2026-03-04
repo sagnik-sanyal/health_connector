@@ -1079,6 +1079,16 @@ class HealthConnectorHCClient implements HealthConnectorPlatformClient {
     }
   }
 
+  @override
+  Future<HealthCharacteristic> readCharacteristic(
+    HealthCharacteristicType characteristicType,
+  ) async {
+    throw const UnsupportedOperationException(
+      'readCharacteristic is not supported on Android Health Connect. '
+      'Health characteristics are only available on iOS HealthKit.',
+    );
+  }
+
   /// Handles the special case where Health Connect uses a single permission
   /// for nutrition and all data types.
   List<PermissionRequestResult> _handleNutritionNutrientPermissions({

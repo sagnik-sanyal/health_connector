@@ -2,9 +2,11 @@ import 'package:health_connector_core/health_connector_core_internal.dart'
     show
         ExerciseRoutePermission,
         HealthDataPermission,
+        HealthCharacteristicPermission,
         HealthDataPermissionAccessType,
         HealthPlatformFeaturePermission,
         Permission,
+        UnsupportedOperationException,
         sinceV2_0_0;
 import 'package:health_connector_hc_android/src/mappers/health_data_type_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/health_platform_feature_mapper.dart';
@@ -38,6 +40,12 @@ extension PermissionToDto on Permission {
             ? PermissionAccessTypeDto.read
             : PermissionAccessTypeDto.write,
       ),
+      final HealthCharacteristicPermission _ =>
+        throw const UnsupportedOperationException(
+          'Health characteristic permissions are not supported on Android '
+          'Health Connect. Characteristics are only available on iOS '
+          'HealthKit.',
+        ),
     };
   }
 }

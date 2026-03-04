@@ -90,12 +90,13 @@ extension PermissionsListToDto on List<HealthDataPermission> {
   }
 }
 
-/// Converts health data permissions and exercise route permissions to a
-/// [PermissionsRequestDto].
+/// Converts health data permissions, exercise route permissions, and
+/// characteristic permissions to a [PermissionsRequestDto].
 @internal
 PermissionsRequestDto createPermissionsRequestDto({
   required List<HealthDataPermission> healthDataPermissions,
   required List<ExerciseRoutePermission> exerciseRoutePermissions,
+  List<HealthCharacteristicPermission> characteristicPermissions = const [],
 }) {
   final healthDataDtos = healthDataPermissions
       .expand<PermissionRequestDto>(_expandHealthDataPermission)
@@ -103,8 +104,15 @@ PermissionsRequestDto createPermissionsRequestDto({
   final exerciseRouteDtos = exerciseRoutePermissions
       .map((p) => p.toDto())
       .toList();
+  final characteristicDtos = characteristicPermissions
+      .map((p) => p.toDto())
+      .toList();
 
   return PermissionsRequestDto(
-    permissionRequests: [...healthDataDtos, ...exerciseRouteDtos],
+    permissionRequests: [
+      ...healthDataDtos,
+      ...exerciseRouteDtos,
+      ...characteristicDtos,
+    ],
   );
 }

@@ -2,6 +2,8 @@ import 'package:health_connector_core/src/annotations/annotations.dart';
 import 'package:health_connector_core/src/config/health_connector_config.dart';
 import 'package:health_connector_core/src/models/exceptions/health_connector_error_code.dart';
 import 'package:health_connector_core/src/models/exceptions/health_connector_exception.dart';
+import 'package:health_connector_core/src/models/health_characteristics/health_characteristic.dart';
+import 'package:health_connector_core/src/models/health_characteristics/health_characteristic_type.dart';
 import 'package:health_connector_core/src/models/health_data_sync/health_data_sync_result.dart';
 import 'package:health_connector_core/src/models/health_data_sync/health_data_sync_token.dart';
 import 'package:health_connector_core/src/models/health_data_types/health_data_type.dart';
@@ -320,4 +322,31 @@ abstract interface class HealthConnectorPlatformClient {
   /// - [HealthConnectorException] if the platform request fails
   @sinceV3_8_0
   Future<ExerciseRoute?> readExerciseRoute(HealthRecordId exerciseSessionId);
+
+  /// Reads a health characteristic from the platform.
+  ///
+  /// Health characteristics are static user profile data (e.g., biological sex,
+  /// date of birth) that do not change over time, unlike time-series health
+  /// records.
+  ///
+  /// The [characteristicType] parameter specifies which characteristic to read.
+  /// The returned [HealthCharacteristic] will be the appropriate subtype
+  /// matching the requested type.
+  ///
+  /// ## Platform Support
+  ///
+  /// This method is only supported on **iOS HealthKit**. Calling this method
+  /// on Android will throw an [UnsupportedOperationException].
+  ///
+  /// ## Throws
+  ///
+  /// - [AuthorizationException] if the required characteristic read permission
+  ///   has not been granted
+  /// - [UnsupportedOperationException] if called on an unsupported platform
+  /// - [HealthConnectorException] if the platform request fails
+  @sinceV3_9_0
+  @supportedOnAppleHealth
+  Future<HealthCharacteristic> readCharacteristic(
+    HealthCharacteristicType characteristicType,
+  );
 }

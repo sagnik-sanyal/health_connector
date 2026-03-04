@@ -4787,6 +4787,74 @@ class ExerciseRoutePermissionRequestResultDto
   final PermissionStatusDto status;
 }
 
+/// Types of health characteristics that can be read from HealthKit.
+enum HealthCharacteristicTypeDto {
+  /// The user's biological sex.
+  biologicalSex,
+
+  /// The user's date of birth.
+  dateOfBirth,
+}
+
+/// Represents the biological sex of a user as stored in HealthKit.
+enum BiologicalSexDto {
+  /// The user has not set their biological sex.
+  notSet,
+
+  /// Female biological sex.
+  female,
+
+  /// Male biological sex.
+  male,
+
+  /// Other biological sex.
+  other,
+}
+
+/// Base sealed class for health characteristic DTOs.
+sealed class HealthCharacteristicDto {}
+
+/// Represents a biological sex characteristic value.
+class BiologicalSexCharacteristicDto extends HealthCharacteristicDto {
+  BiologicalSexCharacteristicDto({required this.biologicalSex});
+
+  /// The user's biological sex.
+  final BiologicalSexDto biologicalSex;
+}
+
+/// Represents a date of birth characteristic value.
+class DateOfBirthCharacteristicDto extends HealthCharacteristicDto {
+  DateOfBirthCharacteristicDto({this.dateOfBirthMillisecondsSinceEpoch});
+
+  /// The user's date of birth as milliseconds since epoch, or null if not set.
+  final int? dateOfBirthMillisecondsSinceEpoch;
+}
+
+/// Represents a permission request for accessing a health characteristic.
+class HealthCharacteristicPermissionRequestDto extends PermissionRequestDto {
+  HealthCharacteristicPermissionRequestDto({
+    required this.characteristicType,
+  });
+
+  /// The type of health characteristic for which permission is requested.
+  final HealthCharacteristicTypeDto characteristicType;
+}
+
+/// Represents the result of a health characteristic permission request.
+class HealthCharacteristicPermissionRequestResultDto
+    extends PermissionRequestResultDto {
+  HealthCharacteristicPermissionRequestResultDto({
+    required this.permission,
+    required this.status,
+  });
+
+  /// The health characteristic permission that was requested.
+  final HealthCharacteristicPermissionRequestDto permission;
+
+  /// The status of the permission after the request.
+  final PermissionStatusDto status;
+}
+
 /// Aggregation metric types for health data queries.
 enum AggregationMetricDto {
   /// Average (mean) value across all data points.
@@ -5078,6 +5146,11 @@ abstract class HealthConnectorHKIOSApi {
 
   @async
   ExerciseRouteDto? readExerciseRoute(String exerciseSessionId);
+
+  @async
+  HealthCharacteristicDto readCharacteristic(
+    HealthCharacteristicTypeDto characteristicType,
+  );
 }
 
 /// Represents a peripheral perfusion index record.

@@ -29,4 +29,14 @@ extension PermissionListExtension on List<Permission> {
   @sinceV3_8_0
   List<ExerciseRoutePermission> get exerciseRoutePermissions =>
       whereType<ExerciseRoutePermission>().toList();
+
+  /// Returns a list containing only
+  /// [HealthCharacteristicPermission] instances.
+  ///
+  /// Filters the list to include only permissions that are instances of
+  /// [HealthCharacteristicPermission], which represent read-only access to
+  /// health characteristics such as biological sex and date of birth.
+  @sinceV3_9_0
+  List<HealthCharacteristicPermission> get characteristicPermissions =>
+      whereType<HealthCharacteristicPermission>().toList();
 }

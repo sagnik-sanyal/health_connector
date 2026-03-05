@@ -1,5 +1,8 @@
-import 'package:health_connector_core/health_connector_core_internal.dart'
-    show HealthCharacteristicType;
+import 'package:health_connector_core/health_connector_core.dart'
+    show
+        BiologicalSexCharacteristicType,
+        DateOfBirthCharacteristicType,
+        HealthCharacteristicType;
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_hk_ios_api.g.dart'
     show HealthCharacteristicTypeDto;
 import 'package:meta/meta.dart' show internal;
@@ -10,11 +13,10 @@ extension HealthCharacteristicTypeToDto on HealthCharacteristicType {
   /// Converts this characteristic type to the corresponding DTO.
   HealthCharacteristicTypeDto toDto() {
     return switch (this) {
-      HealthCharacteristicType.biologicalSex =>
+      BiologicalSexCharacteristicType() =>
         HealthCharacteristicTypeDto.biologicalSex,
-      HealthCharacteristicType.dateOfBirth =>
+      DateOfBirthCharacteristicType() =>
         HealthCharacteristicTypeDto.dateOfBirth,
-      _ => throw ArgumentError('Unknown HealthCharacteristicType: $this'),
     };
   }
 }

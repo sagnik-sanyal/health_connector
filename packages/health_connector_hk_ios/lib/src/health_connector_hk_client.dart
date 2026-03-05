@@ -837,7 +837,7 @@ class HealthConnectorHKClient implements HealthConnectorPlatformClient {
 
       throw HealthConnectorException.fromCode(
         e.code.toErrorCode(),
-        'Failed to read characteristic: ${e.message ?? 'Unknown error'}',
+        'Failed to read health characteristic: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );

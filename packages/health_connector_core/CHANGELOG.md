@@ -1,3 +1,13 @@
+## 3.9.0
+
+- **FEAT**: Add support for reading health characteristics (biological sex and date of birth) on iOS HealthKit.
+- **FEAT**: Add `HealthCharacteristicType` sealed class hierarchy for characteristic types.
+- **FEAT**: Add `HealthCharacteristic` sealed class hierarchy for characteristic return values.
+- **FEAT**: Add `BiologicalSex` enum with values: `notSet`, `female`, `male`, `other`.
+- **FEAT**: Add `HealthCharacteristicPermission` permission type for requesting characteristic access.
+- **FEAT**: Add `readCharacteristic()` method to `HealthConnectorPlatformClient` interface.
+- **FEAT**: Add `characteristicPermissions` getter to `PermissionListExtension`.
+
 ## 3.8.0
 
 - **FEAT**: Add support for exercise session route. ([ecbe4f0a](https://github.com/fam-tung-lam/health_connector/commit/ecbe4f0a75164d120acf644a07dc408f9cfd3d8c))

@@ -92,6 +92,7 @@ void main() {
           aggregationMetric: AggregationMetric.sum,
         ),
       );
+      registerFallbackValue(HealthCharacteristicType.biologicalSex);
     },
   );
 
@@ -1430,6 +1431,82 @@ void main() {
               expect(
                 () => connector.updateRecords(records),
                 throwsA(isA<HealthConnectorException>()),
+              );
+            },
+          );
+        },
+      );
+
+      group(
+        'readCharacteristic',
+        () {
+          test(
+            'GIVEN characteristic exists → '
+            'WHEN readCharacteristic is called → '
+            'THEN returns characteristic from client',
+            () async {
+              // GIVEN
+              final connector = HealthConnectorImpl(
+                config: const HealthConnectorConfig(),
+                healthPlatform: HealthPlatform.appleHealth,
+                healthPlatformClient: mockClient,
+              );
+              const characteristicType = HealthCharacteristicType.biologicalSex;
+              const expectedCharacteristic = BiologicalSexCharacteristic(
+                biologicalSex: BiologicalSex.female,
+              );
+
+              when(
+                () => mockClient.readCharacteristic(
+                  any<HealthCharacteristicType>(),
+                ),
+              ).thenAnswer(
+                (_) async => expectedCharacteristic,
+              );
+
+              // WHEN
+              final result = await connector.readCharacteristic(
+                characteristicType,
+              );
+
+              // THEN
+              expect(result, equals(expectedCharacteristic));
+              verify(
+                () => mockClient.readCharacteristic(
+                  characteristicType,
+                ),
+              ).called(1);
+            },
+          );
+
+          test(
+            'GIVEN exception from client → '
+            'WHEN readCharacteristic is called → '
+            'THEN rethrows exception',
+            () async {
+              // GIVEN
+              final connector = HealthConnectorImpl(
+                config: const HealthConnectorConfig(),
+                healthPlatform: HealthPlatform.appleHealth,
+                healthPlatformClient: mockClient,
+              );
+
+              when(
+                () => mockClient.readCharacteristic(
+                  any<HealthCharacteristicType>(),
+                ),
+              ).thenThrow(
+                const UnknownException('Fake exception'),
+              );
+
+              // WHEN & THEN
+              expect(
+                () => connector.readCharacteristic(
+                  HealthCharacteristicType.biologicalSex,
+                ),
+                throwsA(
+                  isA<HealthConnectorException>(),
+                ),
               );
             },
           );

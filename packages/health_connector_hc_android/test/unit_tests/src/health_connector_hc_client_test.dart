@@ -870,6 +870,25 @@ void main() {
               );
             },
           );
+
+          group(
+            'readCharacteristic',
+            () {
+              test(
+                'throws UnsupportedOperationException',
+                () {
+                  expect(
+                    () => client.readCharacteristic(
+                      HealthCharacteristicType.biologicalSex,
+                    ),
+                    throwsA(
+                      isA<UnsupportedOperationException>(),
+                    ),
+                  );
+                },
+              );
+            },
+          );
         },
       );
     },

@@ -64,6 +64,23 @@ void main() {
               );
             },
           );
+
+          test(
+            'throws UnsupportedOperationException for '
+            'HealthCharacteristicPermission',
+            () {
+              const permission = HealthCharacteristicPermission(
+                HealthCharacteristicType.biologicalSex,
+              );
+
+              expect(
+                () => permission.toDto(),
+                throwsA(
+                  isA<UnsupportedOperationException>(),
+                ),
+              );
+            },
+          );
         },
       );
     },

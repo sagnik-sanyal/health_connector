@@ -1,3 +1,11 @@
+## 3.9.0
+
+- **FEAT**: Add support for reading health characteristics via HealthKit.
+- **FEAT**: Implement `readCharacteristic()` method using `HKHealthStore.biologicalSex()` and `HKHealthStore.dateOfBirthComponents()`.
+- **FEAT**: Add Pigeon DTOs: `HealthCharacteristicTypeDto`, `BiologicalSexDto`, `HealthCharacteristicDto` hierarchy.
+- **FEAT**: Add characteristic permission support to permission request flow.
+- **FEAT**: Add mappers for health characteristic types and values.
+
 ## 3.8.0
 
 - **FEAT**: Add support for exercise session route. ([ecbe4f0a](https://github.com/fam-tung-lam/health_connector/commit/ecbe4f0a75164d120acf644a07dc408f9cfd3d8c))

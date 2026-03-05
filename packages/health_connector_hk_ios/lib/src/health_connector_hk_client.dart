@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:health_connector_core/health_connector_core_internal.dart';
 import 'package:health_connector_hk_ios/src/health_connector_hk_native_log_api.dart';
+import 'package:health_connector_hk_ios/src/mappers/health_characteristic_mapper.dart';
+import 'package:health_connector_hk_ios/src/mappers/health_characteristic_type_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_connector_config_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_connector_error_code_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_data_sync/health_data_sync_result_mapper.dart';
@@ -137,11 +139,13 @@ class HealthConnectorHKClient implements HealthConnectorPlatformClient {
   ) async {
     final healthDataPermissions = permissions.healthDataPermissions;
     final exerciseRoutePermissions = permissions.exerciseRoutePermissions;
+    final characteristicPermissions = permissions.characteristicPermissions;
     final featurePermissions = permissions.featurePermissions;
     final featureCount = featurePermissions.length;
     final context = {
       'health_data_count': healthDataPermissions.length,
       'exercise_route_count': exerciseRoutePermissions.length,
+      'characteristic_count': characteristicPermissions.length,
       'feature_count': featureCount,
       'total_permissions': permissions.length,
     };
@@ -166,12 +170,15 @@ class HealthConnectorHKClient implements HealthConnectorPlatformClient {
     final results = <PermissionRequestResult>[];
 
     final hasNativePermissions =
-        healthDataPermissions.isNotEmpty || exerciseRoutePermissions.isNotEmpty;
+        healthDataPermissions.isNotEmpty ||
+        exerciseRoutePermissions.isNotEmpty ||
+        characteristicPermissions.isNotEmpty;
     if (hasNativePermissions) {
       try {
         final requestDto = createPermissionsRequestDto(
           healthDataPermissions: healthDataPermissions,
           exerciseRoutePermissions: exerciseRoutePermissions,
+          characteristicPermissions: characteristicPermissions,
         );
 
         final responseDto = await _platformClient.requestPermissions(
@@ -779,6 +786,58 @@ class HealthConnectorHKClient implements HealthConnectorPlatformClient {
       throw HealthConnectorException.fromCode(
         e.code.toErrorCode(),
         'Failed to read exercise route: ${e.message ?? 'Unknown error'}',
+        cause: e,
+        stackTrace: st,
+      );
+    }
+  }
+
+  @override
+  Future<HealthCharacteristic> readCharacteristic(
+    HealthCharacteristicType characteristicType,
+  ) async {
+    final context = {
+      'characteristic_type': characteristicType.id,
+    };
+
+    HealthConnectorLogger.debug(
+      tag,
+      operation: 'readCharacteristic',
+      message: 'Reading health characteristic from HealthKit',
+      context: context,
+    );
+
+    try {
+      final resultDto = await _platformClient.readCharacteristic(
+        characteristicType.toDto(),
+      );
+
+      final characteristic = resultDto.toDomain();
+
+      HealthConnectorLogger.info(
+        tag,
+        operation: 'readCharacteristic',
+        message: 'Health characteristic read successfully',
+        context: {
+          ...context,
+          'result_type': characteristic.runtimeType.toString(),
+        },
+      );
+
+      return characteristic;
+    } on PlatformException catch (e, st) {
+      HealthConnectorLogger.error(
+        tag,
+        operation: 'readCharacteristic',
+        message: 'Failed to read health characteristic from HealthKit',
+        context: context,
+        exception: e,
+        stackTrace: st,
+      );
+
+      throw HealthConnectorException.fromCode(
+        e.code.toErrorCode(),
+        'Failed to read health characteristic: ${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );

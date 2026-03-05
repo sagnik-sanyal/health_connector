@@ -1,15 +1,18 @@
 import 'package:health_connector_core/health_connector_core_internal.dart'
     show
         ExerciseRoutePermission,
+        HealthCharacteristicPermission,
         HealthDataPermission,
         HealthDataPermissionAccessType,
         HealthPlatformFeaturePermission,
         InvalidArgumentException,
         Permission;
+import 'package:health_connector_hk_ios/src/mappers/health_characteristic_type_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_data_type_mapper.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_hk_ios_api.g.dart'
     show
         ExerciseRoutePermissionRequestDto,
+        HealthCharacteristicPermissionRequestDto,
         HealthDataPermissionRequestDto,
         PermissionAccessTypeDto,
         PermissionRequestDto;
@@ -22,7 +25,8 @@ export 'permissions_list_mapper.dart';
 /// Converts a [Permission] to [PermissionRequestDto].
 ///
 /// This extension provides a unified conversion for all permission types
-/// (health data and exercise route) to their corresponding DTOs.
+/// (health data, exercise route, and health characteristic) to their
+/// corresponding DTOs.
 @internal
 extension PermissionToDto on Permission {
   /// Converts this permission to the appropriate [PermissionRequestDto].
@@ -30,6 +34,8 @@ extension PermissionToDto on Permission {
   /// Uses pattern matching to handle different permission types:
   /// - [HealthDataPermission] → [HealthDataPermissionRequestDto]
   /// - [ExerciseRoutePermission] → [ExerciseRoutePermissionRequestDto]
+  /// - [HealthCharacteristicPermission] →
+  ///   [HealthCharacteristicPermissionRequestDto]
   /// - [HealthPlatformFeaturePermission] → throws [InvalidArgumentException]
   PermissionRequestDto toDto() {
     return switch (this) {
@@ -44,6 +50,10 @@ extension PermissionToDto on Permission {
             ? PermissionAccessTypeDto.read
             : PermissionAccessTypeDto.write,
       ),
+      final HealthCharacteristicPermission p =>
+        HealthCharacteristicPermissionRequestDto(
+          characteristicType: p.characteristicType.toDto(),
+        ),
       HealthPlatformFeaturePermission() => throw InvalidArgumentException(
         '$HealthPlatformFeaturePermission is not supported on iOS. '
         'Feature permissions are auto-granted on HealthKit.',

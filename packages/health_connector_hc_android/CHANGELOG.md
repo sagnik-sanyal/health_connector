@@ -1,3 +1,9 @@
+## 3.6.0
+
+- **NOTE**: Health characteristics (biological sex, date of birth) are not supported on Android Health Connect.
+- **IMPL**: Add throwing stub for `readCharacteristic()` that returns `UnsupportedOperationException`.
+- **IMPL**: Add handling for `HealthCharacteristicPermission` in permission mapper (throws exception).
+
 ## 3.5.0
 
 - **FEAT**: Add support for exercise session route. ([ecbe4f0a](https://github.com/fam-tung-lam/health_connector/commit/ecbe4f0a75164d120acf644a07dc408f9cfd3d8c))

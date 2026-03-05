@@ -1,3 +1,10 @@
+## 3.9.0
+
+- **FEAT**: Add `readCharacteristic()` method to read health characteristics (biological sex and date of birth).
+- **FEAT**: Support for health characteristics on iOS HealthKit only (Android throws `UnsupportedOperationException`).
+- **FEAT**: Add new domain types: `HealthCharacteristicType`, `HealthCharacteristic`, `BiologicalSex`, `HealthCharacteristicPermission`.
+- **DOCS**: Updated API documentation with characteristic usage examples.
+
 ## 3.8.0
 
 - **FEAT**: Add support for exercise session route. ([ecbe4f0a](https://github.com/fam-tung-lam/health_connector/commit/ecbe4f0a75164d120acf644a07dc408f9cfd3d8c))

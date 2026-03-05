@@ -1,14 +1,17 @@
 import 'package:health_connector_core/health_connector_core_internal.dart'
     show
         ExerciseRoutePermission,
+        HealthCharacteristicPermission,
         HealthDataPermission,
         HealthDataPermissionAccessType,
         PermissionRequestResult;
+import 'package:health_connector_hk_ios/src/mappers/health_characteristic_type_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/health_data_type_mapper.dart';
 import 'package:health_connector_hk_ios/src/mappers/permission_mappers/permission_status_mapper.dart';
 import 'package:health_connector_hk_ios/src/pigeon/health_connector_hk_ios_api.g.dart'
     show
         ExerciseRoutePermissionRequestResultDto,
+        HealthCharacteristicPermissionRequestResultDto,
         HealthDataPermissionRequestResultDto,
         PermissionAccessTypeDto,
         PermissionRequestResultDto;
@@ -41,6 +44,13 @@ extension PermissionRequestResultDtoListToDomain
             : ExerciseRoutePermission.write,
         status: result.status.toDomain(),
       ),
+      HealthCharacteristicPermissionRequestResultDto() =>
+        PermissionRequestResult(
+          permission: HealthCharacteristicPermission(
+            result.permission.characteristicType.toDomain(),
+          ),
+          status: result.status.toDomain(),
+        ),
     };
   }
 }

@@ -1,4 +1,6 @@
 import 'package:health_connector_core/src/annotations/annotations.dart';
+import 'package:health_connector_core/src/models/health_characteristics/health_characteristic_type.dart'
+    show HealthCharacteristicType;
 import 'package:health_connector_core/src/models/health_data_types/health_data_type.dart'
     show HealthDataType;
 import 'package:health_connector_core/src/models/health_platform.dart';
@@ -10,6 +12,7 @@ import 'package:health_connector_core/src/models/measurement_units/measurement_u
 import 'package:meta/meta.dart' show immutable;
 
 part 'exercise_route_permission.dart';
+part 'health_characteristic_permission.dart';
 part 'health_data_permission.dart';
 part 'health_platform_feature_permission.dart';
 

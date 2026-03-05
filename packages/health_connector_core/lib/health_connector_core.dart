@@ -18,6 +18,10 @@ export 'src/models/exceptions/health_connector_exception.dart'
         HealthServiceException,
         UnsupportedOperationException,
         UnknownException;
+export 'src/models/health_characteristics/biological_sex.dart'
+    show BiologicalSex;
+export 'src/models/health_characteristics/health_characteristic.dart';
+export 'src/models/health_characteristics/health_characteristic_type.dart';
 export 'src/models/health_data_sync/health_data_sync_result.dart'
     show HealthDataSyncResult;
 export 'src/models/health_data_sync/health_data_sync_token.dart'
@@ -59,6 +63,7 @@ export 'src/models/metadata/metadata.dart'
     show Metadata, Device, DeviceType, RecordingMethod, DataOrigin;
 export 'src/models/permissions/permission.dart'
     show
+        HealthCharacteristicPermission,
         HealthPlatformFeaturePermission,
         HealthDataPermission,
         HealthDataPermissionAccessType,

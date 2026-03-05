@@ -61,6 +61,10 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
             return try getHealthDataPermissionStatus(for: healthData)
         case let exerciseRoute as ExerciseRoutePermissionRequestDto:
             return try getExerciseRoutePermissionStatus(for: exerciseRoute)
+        case is HealthCharacteristicPermissionRequestDto:
+            // Characteristic permissions are read-only.
+            // iOS HealthKit always returns unknown for read permissions.
+            return .unknown
         default:
             throw HealthConnectorError.invalidArgument(
                 message: "Unknown permission type: \(type(of: permission))"
@@ -139,6 +143,23 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
                 types.formUnion(hkTypes)
             case let exerciseRoute as ExerciseRoutePermissionRequestDto where exerciseRoute.accessType == .read:
                 types.insert(HKSeriesType.workoutRoute())
+            case let characteristic as HealthCharacteristicPermissionRequestDto:
+                switch characteristic.characteristicType {
+                case .biologicalSex:
+                    guard let type = HKObjectType.characteristicType(forIdentifier: .biologicalSex) else {
+                        throw HealthConnectorError.invalidArgument(
+                            message: "Could not create biologicalSex characteristic type"
+                        )
+                    }
+                    types.insert(type)
+                case .dateOfBirth:
+                    guard let type = HKObjectType.characteristicType(forIdentifier: .dateOfBirth) else {
+                        throw HealthConnectorError.invalidArgument(
+                            message: "Could not create dateOfBirth characteristic type"
+                        )
+                    }
+                    types.insert(type)
+                }
             default:
                 continue
             }
@@ -177,6 +198,12 @@ struct HealthConnectorPermissionService: Sendable, Taggable {
         case let exerciseRoute as ExerciseRoutePermissionRequestDto:
             let status = try getExerciseRoutePermissionStatus(for: exerciseRoute)
             return ExerciseRoutePermissionRequestResultDto(permission: exerciseRoute, status: status)
+        case let characteristic as HealthCharacteristicPermissionRequestDto:
+            // Characteristic permissions are read-only. iOS always returns unknown
+            // for read permissions per HealthKit privacy model.
+            return HealthCharacteristicPermissionRequestResultDto(
+                permission: characteristic, status: .unknown
+            )
         default:
             throw HealthConnectorError.invalidArgument(
                 message: "Unknown permission type: \(type(of: permission))"

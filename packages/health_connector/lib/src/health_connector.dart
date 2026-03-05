@@ -1235,4 +1235,74 @@ abstract interface class HealthConnector {
   /// - [ExerciseRouteLocation] for individual GPS points
   @sinceV3_8_0
   Future<ExerciseRoute?> readExerciseRoute(HealthRecordId exerciseSessionId);
+
+  /// Reads a health characteristic from the platform.
+  ///
+  /// Health characteristics are static user profile data that differs from
+  /// time-series health records. They have no ID, no metadata, and no
+  /// timestamps. On iOS, they are read via dedicated HealthKit APIs
+  /// (`HKHealthStore.biologicalSex()`, `.dateOfBirthComponents()`).
+  ///
+  /// ## Permissions Required
+  ///
+  /// Before calling this method, request the appropriate read permission:
+  ///
+  /// ```dart
+  /// await connector.requestPermissions([
+  ///   HealthCharacteristicType.biologicalSex.readPermission,
+  ///   HealthCharacteristicType.dateOfBirth.readPermission,
+  /// ]);
+  /// ```
+  ///
+  /// ## Parameters
+  ///
+  /// - [characteristicType]: The type of characteristic to read.
+  ///
+  /// ## Returns
+  ///
+  /// - A [HealthCharacteristic] subtype matching the requested type:
+  ///   - [BiologicalSexCharacteristic] for
+  ///     [HealthCharacteristicType.biologicalSex]
+  ///   - [DateOfBirthCharacteristic] for
+  ///     [HealthCharacteristicType.dateOfBirth]
+  ///
+  /// ## Platform Differences
+  ///
+  /// ### iOS HealthKit
+  ///
+  /// - Returns the user's stored characteristic data.
+  /// - [BiologicalSex.notSet] is returned when the user hasn't set their
+  ///   biological sex.
+  /// - [DateOfBirthCharacteristic.dateOfBirth] is `null` when the user hasn't
+  ///   set their date of birth.
+  ///
+  /// ### Android Health Connect
+  ///
+  /// - Throws [UnsupportedOperationException] as characteristics are
+  ///   not available on Android.
+  ///
+  /// ## Throws
+  ///
+  /// - [UnsupportedOperationException] on Android Health Connect
+  /// - [HealthConnectorException] with
+  ///   [HealthConnectorErrorCode.permissionNotGranted] when
+  ///   the required read permission has not been granted
+  /// - [HealthConnectorException] when the platform request fails
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// final characteristic = await connector.readCharacteristic(
+  ///   HealthCharacteristicType.biologicalSex,
+  /// );
+  ///
+  /// if (characteristic is BiologicalSexCharacteristic) {
+  ///   print('Biological sex: ${characteristic.biologicalSex}');
+  /// }
+  /// ```
+  @sinceV3_9_0
+  @supportedOnAppleHealth
+  Future<HealthCharacteristic> readCharacteristic(
+    HealthCharacteristicType characteristicType,
+  );
 }

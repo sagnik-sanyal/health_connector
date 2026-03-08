@@ -76,6 +76,8 @@ sealed class HealthCharacteristicType implements HealthPlatformData {
   /// Corresponds to
   /// [`HKCharacteristicTypeIdentifier.biologicalSex`](https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier/biologicalsex)
   /// on iOS.
+  @sinceV3_9_0
+  @supportedOnAppleHealth
   static const BiologicalSexCharacteristicType biologicalSex =
       BiologicalSexCharacteristicType();
 
@@ -84,6 +86,8 @@ sealed class HealthCharacteristicType implements HealthPlatformData {
   /// Corresponds to
   /// [`HKCharacteristicTypeIdentifier.dateOfBirth`](https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier/dateofbirth)
   /// on iOS.
+  @sinceV3_9_0
+  @supportedOnAppleHealth
   static const DateOfBirthCharacteristicType dateOfBirth =
       DateOfBirthCharacteristicType();
 
